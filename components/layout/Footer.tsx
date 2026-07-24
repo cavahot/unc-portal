@@ -1,86 +1,180 @@
+import Image from 'next/image';
+import Link from 'next/link';
+
+const institutionalLinks = [
+  { label: 'Autoridades', href: '/institucional/autoridades' },
+  { label: 'Historia', href: '/institucional/historia' },
+  { label: 'Misión y Visión', href: '/institucional/mision-y-vision' },
+  { label: 'Organigrama', href: '/institucional/organigrama' },
+];
+
+const serviceLinks = [
+  { label: 'Carreras', href: '/carreras' },
+  { label: 'Trámites', href: '/tramites' },
+  { label: 'Transparencia', href: '/transparencia' },
+  { label: 'Contacto', href: '/contacto' },
+];
+
+const socialLinks = [
+  { label: 'Facebook', href: 'https://facebook.com/uncpy' },
+  { label: 'X', href: 'https://x.com/uncpy' },
+  { label: 'Instagram', href: 'https://instagram.com/uncpy' },
+  { label: 'YouTube', href: 'https://youtube.com/@uncpy' },
+];
+
 export default function Footer() {
   return (
-    <footer className="relative z-10 bg-slate-950 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
-                <span className="text-slate-950 font-bold text-lg">UNC</span>
+    <footer className="relative z-10 border-t border-white/10 bg-slate-950">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
+          {/* Identidad institucional */}
+          <div className="lg:pr-6">
+            <Link
+              href="/"
+              aria-label="Ir al inicio de la Universidad Nacional de Concepción"
+              className="mb-5 inline-flex items-center gap-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            >
+              <div className="relative h-16 w-16 shrink-0 lg:h-20 lg:w-20">
+                <Image
+                  src="/images/logo.png"
+                  alt="Logotipo oficial de la Universidad Nacional de Concepción"
+                  fill
+                  sizes="(min-width: 1024px) 80px, 64px"
+                  className="object-contain"
+                />
               </div>
+
               <div>
-                <span className="text-white font-semibold text-sm block">Universidad Nacional</span>
-                <span className="text-white/60 text-xs block">de Concepción</span>
+                <span className="block text-base font-semibold leading-tight text-white">
+                  Universidad Nacional
+                </span>
+                <span className="block text-sm leading-tight text-white/65">
+                  de Concepción
+                </span>
+                <span className="mt-1 block text-xs font-medium uppercase tracking-[0.18em] text-amber-400">
+                  Marcando el Norte
+                </span>
               </div>
-            </div>
-            <p className="text-white/50 text-sm leading-relaxed">
-              Formando líderes, generando conocimiento, transformando el futuro de Paraguay desde 1967.
+            </Link>
+
+            <p className="max-w-sm text-sm leading-relaxed text-white/55">
+              Excelencia académica, investigación, innovación y compromiso con
+              el desarrollo sostenible del Paraguay.
             </p>
           </div>
 
-          {/* Links */}
+          {/* Institucional */}
           <div>
-            <h3 className="text-white font-semibold text-sm mb-4">Institucional</h3>
+            <h2 className="mb-4 text-sm font-semibold text-white">
+              Institucional
+            </h2>
+
             <ul className="space-y-2.5">
-              {['Autoridades', 'Historia', 'Misión y Visión', 'Organigrama'].map((item) => (
-                <li key={item}>
-                  <a href={`/institucional/${item.toLowerCase().replace(/ /g, '-')}`} className="text-white/50 hover:text-amber-400 text-sm transition-colors">
-                    {item}
-                  </a>
+              {institutionalLinks.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-white/50 transition-colors hover:text-amber-400 focus-visible:outline-none focus-visible:text-amber-400"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Servicios */}
           <div>
-            <h3 className="text-white font-semibold text-sm mb-4">Servicios</h3>
+            <h2 className="mb-4 text-sm font-semibold text-white">
+              Servicios
+            </h2>
+
             <ul className="space-y-2.5">
-              {['Carreras', 'Trámites', 'Transparencia', 'Contacto'].map((item) => (
-                <li key={item}>
-                  <a href={`/${item.toLowerCase().replace(/ /g, '-')}`} className="text-white/50 hover:text-amber-400 text-sm transition-colors">
-                    {item}
-                  </a>
+              {serviceLinks.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-white/50 transition-colors hover:text-amber-400 focus-visible:outline-none focus-visible:text-amber-400"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Contacto */}
           <div>
-            <h3 className="text-white font-semibold text-sm mb-4">Contacto</h3>
-            <address className="not-italic text-white/50 text-sm space-y-2">
+            <h2 className="mb-4 text-sm font-semibold text-white">
+              Contacto
+            </h2>
+
+            <address className="space-y-2 text-sm not-italic text-white/50">
+              <p>Km 210, Ruta PY05</p>
               <p>Concepción, Paraguay</p>
-              <p>contacto@unc.edu.py</p>
-              <p>+595 31 XXX XXX</p>
+
+              <a
+                href="mailto:contacto@unc.edu.py"
+                className="block transition-colors hover:text-amber-400"
+              >
+                contacto@unc.edu.py
+              </a>
+
+              <a
+                href="https://www.unc.edu.py"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block transition-colors hover:text-amber-400"
+              >
+                www.unc.edu.py
+              </a>
             </address>
-            <div className="flex gap-3 mt-4">
-              {['facebook', 'twitter', 'instagram', 'youtube'].map((social) => (
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {socialLinks.map((social) => (
                 <a
-                  key={social}
-                  href={`https://${social}.com/uncpy`}
+                  key={social.label}
+                  href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
-                  aria-label={`Seguir en ${social}`}
+                  aria-label={`Visitar ${social.label} de la UNC`}
+                  className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 text-xs font-medium text-white/60 transition-all hover:-translate-y-0.5 hover:border-amber-400/40 hover:bg-amber-400/10 hover:text-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                 >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" />
-                  </svg>
+                  {social.label}
                 </a>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-white/30 text-xs">
-            © {new Date().getFullYear()} Universidad Nacional de Concepción. Todos los derechos reservados.
+        {/* Franja inferior */}
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-7 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-center text-xs text-white/35 sm:text-left">
+            © {new Date().getFullYear()} Universidad Nacional de Concepción.
+            Todos los derechos reservados.
           </p>
-          <div className="flex gap-6">
-            <a href="/privacidad" className="text-white/30 hover:text-white/60 text-xs transition-colors">Política de privacidad</a>
-            <a href="/accesibilidad" className="text-white/30 hover:text-white/60 text-xs transition-colors">Accesibilidad</a>
-            <a href="/mapa-sitio" className="text-white/30 hover:text-white/60 text-xs transition-colors">Mapa del sitio</a>
+
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            <Link
+              href="/privacidad"
+              className="text-xs text-white/35 transition-colors hover:text-white/70"
+            >
+              Política de privacidad
+            </Link>
+
+            <Link
+              href="/accesibilidad"
+              className="text-xs text-white/35 transition-colors hover:text-white/70"
+            >
+              Accesibilidad
+            </Link>
+
+            <Link
+              href="/mapa-sitio"
+              className="text-xs text-white/35 transition-colors hover:text-white/70"
+            >
+              Mapa del sitio
+            </Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -44,13 +44,13 @@ export default function Header() {
           {/* Identidad institucional */}
           <a
             href="/"
-            aria-label="Ir al inicio de la Universidad Nacional de ConcepciÃ³n"
+            aria-label="Ir al inicio de la Universidad Nacional de Concepciónn"
             className="flex shrink-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           >
             <div className="flex h-12 w-12 items-center justify-center lg:h-14 lg:w-14">
               <Image
                 src="/images/logo.png"
-                alt="Logotipo oficial de la Universidad Nacional de ConcepciÃ³n"
+                alt="Logotipo oficial de la Universidad Nacional de Concepción"
                 width={112}
                 height={112}
                 priority
@@ -65,12 +65,12 @@ export default function Header() {
               </span>
 
               <span className="block text-xs leading-tight text-white/70">
-                de ConcepciÃ³n
+                de Concepción
               </span>
             </div>
           </a>
 
-          {/* NavegaciÃ³n principal y menÃº mÃ³vil */}
+          {/* Navegación principal y menú móvil */}
           <MegaMenu />
 
           {/* Acciones del sector derecho */}
