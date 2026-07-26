@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import MegaMenu from '@/components/navigation/MegaMenu';
 
@@ -9,7 +10,7 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 40);
     };
 
     handleScroll();
@@ -25,60 +26,66 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#004700] text-white transition-shadow duration-300 ${
         scrolled
-          ? 'border-b border-white/5 bg-slate-950/90 shadow-lg backdrop-blur-xl'
-          : 'bg-transparent'
+          ? 'shadow-[0_14px_40px_-20px_rgba(0,26,0,0.9)]'
+          : 'shadow-[0_8px_24px_-20px_rgba(0,26,0,0.55)]'
       }`}
     >
-      {/* Enlace de salto para accesibilidad */}
+      {/* Enlace de accesibilidad */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-amber-500 focus:px-4 focus:py-2 focus:font-semibold focus:text-slate-950"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:inline-flex focus:items-center focus:rounded-full focus:border focus:border-[#5CFF5C] focus:bg-[#E6FFE6] focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-[#001A00] focus:shadow-lg"
       >
         Saltar al contenido principal
       </a>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between lg:h-20">
+      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-8">
+        <div className="flex h-[72px] items-center gap-3 xl:h-20">
           {/* Identidad institucional */}
-          <a
+          <Link
             href="/"
-            aria-label="Ir al inicio de la Universidad Nacional de Concepciónn"
-            className="flex shrink-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+            aria-label="Ir al inicio de la Universidad Nacional de Concepción"
+            className="group flex shrink-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
           >
-            <div className="flex h-12 w-12 items-center justify-center lg:h-14 lg:w-14">
+            <div className="relative h-12 w-12 shrink-0 transition-transform duration-300 group-hover:scale-[1.04] xl:h-14 xl:w-14">
               <Image
                 src="/images/logo.png"
                 alt="Logotipo oficial de la Universidad Nacional de Concepción"
-                width={112}
-                height={112}
+                fill
                 priority
-                sizes="(min-width: 1024px) 56px, 48px"
-                className="h-full w-full object-contain"
+                sizes="(min-width: 1280px) 56px, 48px"
+                className="object-contain"
               />
             </div>
 
-            <div className="hidden sm:block">
-              <span className="block text-sm font-semibold leading-tight text-white">
+            <div className="hidden 2xl:block">
+              <span className="block whitespace-nowrap text-sm font-semibold leading-tight text-white">
                 Universidad Nacional
               </span>
 
-              <span className="block text-xs leading-tight text-white/70">
+              <span className="block whitespace-nowrap text-xs leading-tight text-white/70">
                 de Concepción
               </span>
+
+              <span className="mt-0.5 block text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-[#8AFF8A]">
+                Marcando el Norte
+              </span>
             </div>
-          </a>
+          </Link>
 
-          {/* Navegación principal y menú móvil */}
-          <MegaMenu />
+          {/* Navegación central */}
+          <div className="min-w-0 flex-1">
+            <MegaMenu />
+          </div>
 
-          {/* Acciones del sector derecho */}
-          <div className="hidden items-center gap-3 lg:flex">
-            <a
+          {/* Acciones para escritorio amplio */}
+          <div className="hidden shrink-0 items-center gap-2 2xl:flex">
+            <Link
               href="/buscar"
-              className="rounded-full p-2.5 text-white/60 transition-colors hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-label="Buscar en el portal institucional"
+              title="Buscar"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.07] text-white/80 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#5CFF5C] hover:bg-[#00A300] hover:text-[#001A00] hover:shadow-[0_12px_28px_-14px_rgba(0,209,0,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
             >
               <svg
                 aria-hidden="true"
@@ -94,13 +101,14 @@ export default function Header() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-            </a>
+            </Link>
 
             <a
               href="https://aula.unc.edu.py"
               target="_blank"
               rel="noopener noreferrer"
-              className="pill-button pill-button-secondary px-4 py-2 text-xs"
+              aria-label="Acceder al Aula Virtual. Abre en una nueva pestaña"
+              className="pill-button pill-button-secondary px-5 py-2.5 text-xs"
             >
               Aula Virtual
             </a>
@@ -109,7 +117,8 @@ export default function Header() {
               href="https://intranet.unc.edu.py"
               target="_blank"
               rel="noopener noreferrer"
-              className="pill-button pill-button-primary px-4 py-2 text-xs"
+              aria-label="Acceder a la Intranet. Abre en una nueva pestaña"
+              className="pill-button pill-button-primary px-5 py-2.5 text-xs"
             >
               Intranet
             </a>

@@ -1,85 +1,615 @@
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
+
+import CinematicHero from '@/components/hero/CinematicHero';
+import Reveal from '@/components/motion/Reveal';
+import TiltCard from '@/components/motion/TiltCard';
+
+/* =========================================================
+   DATOS
+   ========================================================= */
+
+const quickLinks = [
+  {
+    title: 'Carreras',
+    description:
+      'Explora la oferta académica por facultad y nivel.',
+    href: '/carreras',
+    label: 'Oferta académica',
+    action: 'Consultar información',
+    external: false,
+  },
+  {
+    title: 'Calendario Académico',
+    description:
+      'Consulta fechas, periodos y actividades importantes.',
+    href: '/calendario-academico',
+    label: 'Fechas importantes',
+    action: 'Consultar información',
+    external: false,
+  },
+  {
+    title: 'Títulos y Legalizaciones',
+    description:
+      'Información sobre trámites y documentación académica.',
+    href: '/tramites',
+    label: 'Gestiones académicas',
+    action: 'Consultar información',
+    external: false,
+  },
+  {
+    title: 'Aula Virtual',
+    description:
+      'Accede a la plataforma institucional de aprendizaje.',
+    href: 'https://aula.unc.edu.py',
+    label: 'Plataforma educativa',
+    action: 'Acceder a la plataforma',
+    external: true,
+  },
+];
+
+const newsItems = [
+  {
+    title: 'Inicio de clases 2026',
+    date: '15 de julio de 2026',
+    dateTime: '2026-07-15',
+    category: 'Institucional',
+    href: '/noticias',
+    image:
+      '/images/campus-3d/hero-entry-960.webp',
+    imageAlt:
+      'Entrada principal del campus de la Universidad Nacional de Concepción',
+  },
+  {
+    title:
+      'Nueva carrera de Inteligencia Artificial',
+    date: '10 de julio de 2026',
+    dateTime: '2026-07-10',
+    category: 'Académica',
+    href: '/noticias',
+    image:
+      '/images/campus-3d/campus-aerial-960.webp',
+    imageAlt:
+      'Vista aérea del campus de la Universidad Nacional de Concepción',
+  },
+  {
+    title:
+      'Convenio internacional de investigación',
+    date: '5 de julio de 2026',
+    dateTime: '2026-07-05',
+    category: 'Investigación',
+    href: '/noticias',
+    image:
+      '/images/campus-3d/campus-gate-960.webp',
+    imageAlt:
+      'Acceso institucional de la Universidad Nacional de Concepción',
+  },
+];
+
+const transparencyItems = [
+  {
+    title: 'Ley 5189/14',
+    description:
+      'Información pública sobre remuneraciones y asignaciones.',
+    href: '/transparencia',
+    featured: true,
+  },
+  {
+    title: 'Ley 5282/14',
+    description:
+      'Acceso ciudadano a la información pública institucional.',
+    href: '/transparencia',
+    featured: false,
+  },
+];
+
+/* =========================================================
+   ICONOS
+   ========================================================= */
+
+function ArrowIcon({
+  className = 'h-4 w-4',
+}: {
+  className?: string;
+}) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M5 12h14m-6-6 6 6-6 6"
+      />
+    </svg>
+  );
+}
+
+function ExternalLinkIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M14 4h6m0 0v6m0-6-9 9M5 7v12h12v-5"
+      />
+    </svg>
+  );
+}
+
+function DocumentIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-7 w-7"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.8}
+        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"
+      />
+    </svg>
+  );
+}
+
+/* =========================================================
+   PÁGINA PRINCIPAL
+   ========================================================= */
 
 export default function Home() {
   return (
-    <div>
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Formando profesionales para el desarrollo del pais
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Universidad Nacional de Concepcion - Excelencia academica, investigacion e innovacion
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/carreras" className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition">
-              Explorar Carreras
-            </Link>
-            <Link href="/transparencia" className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-semibold transition backdrop-blur">
-              Transparencia
-            </Link>
+    <>
+      <CinematicHero />
+
+      {/* =====================================================
+          ACCESOS RÁPIDOS
+          ===================================================== */}
+
+      <section
+  id="accesos"
+  aria-labelledby="quick-links-title"
+  className="
+    relative z-20
+    -mt-[18svh]
+    overflow-hidden
+    bg-[linear-gradient(to_bottom,rgba(244,247,245,0)_0%,rgba(244,247,245,0.42)_18%,rgba(244,247,245,0.82)_38%,#F4F7F5_56%,#F4F7F5_100%)]
+    pb-24
+    pt-[27svh]
+    sm:-mt-[20svh]
+    sm:pb-28
+    sm:pt-[30svh]
+  "
+>
+        <div
+  aria-hidden="true"
+  className="pointer-events-none absolute left-1/2 top-[20svh] h-80 w-[70rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(0,163,0,0.08),transparent_68%)]"
+/>
+
+        <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <header className="mx-auto max-w-3xl text-center">
+              <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
+                Servicios institucionales
+              </span>
+
+              <h2
+                id="quick-links-title"
+                className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#09231D] sm:text-5xl lg:text-6xl"
+              >
+                Accesos rápidos
+              </h2>
+
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
+                Encuentra rápidamente los servicios académicos
+                y administrativos más consultados.
+              </p>
+            </header>
+          </Reveal>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            {quickLinks.map((item, index) => {
+              const content = (
+                <div className="relative z-10 flex h-full flex-col [transform:translateZ(24px)]">
+                  <div className="mb-7 flex items-center justify-between">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E6FFE6] text-sm font-extrabold text-[#004700] transition-colors duration-300 group-hover:bg-[#00A300] group-hover:text-white">
+                      {String(index + 1).padStart(
+                        2,
+                        '0',
+                      )}
+                    </span>
+
+                    <span className="text-[#008000] transition-all duration-300 group-hover:translate-x-1.5 group-hover:text-[#00A300]">
+                      {item.external ? (
+                        <ExternalLinkIcon />
+                      ) : (
+                        <ArrowIcon />
+                      )}
+                    </span>
+                  </div>
+
+                  <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-[#008000]">
+                    {item.label}
+                  </span>
+
+                  <h3 className="mt-3 text-xl font-bold leading-tight text-[#09231D]">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-6 text-[#6C7B76]">
+                    {item.description}
+                  </p>
+
+                  <span className="mt-auto inline-flex items-center gap-2 pt-8 text-xs font-bold text-[#008000] transition-colors duration-300 group-hover:text-[#004700]">
+                    {item.action}
+
+                    <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </div>
+              );
+
+              return (
+                <Reveal
+                  key={item.title}
+                  className="h-full"
+                  delay={index * 80}
+                >
+                  <TiltCard
+                    containerClassName="h-full"
+                    className="
+                      h-full rounded-[1.35rem]
+                      border border-[#D7E0DB]
+                      bg-white p-7
+                      shadow-[0_18px_48px_rgba(7,42,15,0.08)]
+                      hover:border-[#37D448]
+                      hover:shadow-[0_30px_65px_rgba(0,71,0,0.18)]
+                      focus-within:border-[#37D448]
+                      focus-within:shadow-[0_30px_65px_rgba(0,71,0,0.18)]
+                    "
+                  >
+                    {item.external ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${item.title}. Abre en una nueva pestaña`}
+                        className="group block h-full rounded-[1rem] focus-visible:outline-none"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="group block h-full rounded-[1rem] focus-visible:outline-none"
+                      >
+                        {content}
+                      </Link>
+                    )}
+                  </TiltCard>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Accesos rapidos</h3>
-          <div className="grid md:grid-cols-4 gap-4">
-            {[
-              { title: "Carreras", desc: "Todas las carreras por facultad", href: "/carreras" },
-              { title: "Calendario Academico", desc: "Fechas importantes del ano", href: "#" },
-              { title: "Titulos y Legalizaciones", desc: "Tramites de graduacion", href: "/tramites" },
-              { title: "Aula Virtual", desc: "Plataforma de aprendizaje", href: "#" },
-            ].map((item) => (
-              <Link key={item.title} href={item.href} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition border border-gray-100">
-                <h4 className="font-bold text-blue-900 mb-2">{item.title}</h4>
-                <p className="text-sm text-gray-600">{item.desc}</p>
+      {/* =====================================================
+          NOTICIAS
+          ===================================================== */}
+
+      <section
+        id="noticias"
+        aria-labelledby="news-title"
+        className="relative isolate overflow-hidden bg-[#00A300] py-24 text-[#001A00] sm:py-28"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-36 top-0 -z-10 h-[30rem] w-[30rem] rounded-full bg-white/15 blur-3xl"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-36 bottom-0 -z-10 h-[34rem] w-[34rem] rounded-full bg-[#5CFF5C]/20 blur-3xl"
+        />
+
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <header className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div className="max-w-3xl">
+                <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#001A00]/70">
+                  Actualidad universitaria
+                </span>
+
+                <h2
+                  id="news-title"
+                  className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#001A00] sm:text-5xl lg:text-6xl"
+                >
+                  Últimas noticias
+                </h2>
+
+                <p className="mt-5 max-w-2xl text-base leading-7 text-[#001A00]/75 sm:text-lg">
+                  Información sobre actividades académicas,
+                  investigación, extensión universitaria y
+                  gestión institucional.
+                </p>
+              </div>
+
+              <Link
+                href="/noticias"
+                className="
+                  group inline-flex w-fit items-center justify-center gap-3
+                  rounded-full border border-[#001A00]/15
+                  bg-[#001A00] px-6 py-3.5
+                  text-sm font-extrabold text-white
+                  shadow-[0_14px_32px_rgba(0,26,0,0.24)]
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  hover:bg-[#004700]
+                  hover:shadow-[0_20px_42px_rgba(0,26,0,0.3)]
+                  focus-visible:outline-none
+                "
+              >
+                Ver todas las noticias
+
+                <ArrowIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
               </Link>
+            </header>
+          </Reveal>
+
+          <div className="mt-14 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+            {newsItems.map((item, index) => (
+              <Reveal
+                key={item.title}
+                className="h-full"
+                delay={index * 90}
+              >
+                <TiltCard
+                  containerClassName="h-full"
+                  rotateX={6}
+                  rotateY={7}
+                  className="
+                    h-full rounded-[1.45rem]
+                    border border-[#001A00]/10
+                    bg-white
+                    shadow-[0_22px_55px_rgba(0,26,0,0.18)]
+                    hover:border-[#004700]/40
+                    hover:shadow-[0_34px_70px_rgba(0,26,0,0.28)]
+                  "
+                >
+                  <Link
+                    href={item.href}
+                    aria-label={`Leer noticia: ${item.title}`}
+                    className="group block h-full focus-visible:outline-none"
+                  >
+                    <div className="relative h-60 overflow-hidden sm:h-64">
+                      <Image
+                        src={item.image}
+                        alt={item.imageAlt}
+                        fill
+                        sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
+                        className="
+                          object-cover
+                          transition-transform
+                          duration-700
+                          ease-[cubic-bezier(0.2,0.7,0.2,1)]
+                          group-hover:scale-[1.08]
+                        "
+                      />
+
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-gradient-to-t from-[#001A00]/30 via-transparent to-transparent"
+                      />
+
+                      <span className="absolute left-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[#001A00] text-xs font-extrabold text-white shadow-lg">
+                        {String(index + 1).padStart(
+                          2,
+                          '0',
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="relative z-10 flex min-h-[205px] flex-col p-7 [transform:translateZ(24px)]">
+                      <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-[#008000]">
+                        {item.category}
+                      </span>
+
+                      <h3 className="mt-3 max-w-[95%] text-xl font-bold leading-snug text-[#09231D] transition-colors duration-300 group-hover:text-[#004700]">
+                        {item.title}
+                      </h3>
+
+                      <div className="mt-auto flex items-center justify-between gap-4 pt-7">
+                        <time
+                          dateTime={item.dateTime}
+                          className="text-sm text-[#52635E]"
+                        >
+                          {item.date}
+                        </time>
+
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E6FFE6] text-[#008000] transition-all duration-300 group-hover:translate-x-1 group-hover:bg-[#00A300] group-hover:text-white">
+                          <ArrowIcon />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </TiltCard>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6">Ultimas noticias</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { title: "Inicio de clases 2026", date: "15 de julio, 2026", cat: "Institucional" },
-              { title: "Nueva carrera de Inteligencia Artificial", date: "10 de julio, 2026", cat: "Academica" },
-              { title: "Convenio internacional de investigacion", date: "5 de julio, 2026", cat: "Investigacion" },
-            ].map((news) => (
-              <article key={news.title} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div className="h-40 bg-gray-200 flex items-center justify-center text-gray-400">
-                  <span>Imagen</span>
-                </div>
-                <div className="p-4">
-                  <span className="text-xs font-semibold text-orange-500 uppercase">{news.cat}</span>
-                  <h4 className="font-bold text-gray-800 mt-1 mb-2">{news.title}</h4>
-                  <p className="text-sm text-gray-500">{news.date}</p>
-                </div>
-              </article>
-            ))}
+      {/* =====================================================
+          TRANSPARENCIA
+          ===================================================== */}
+
+      <section
+        id="transparencia"
+        aria-labelledby="transparency-title"
+        className="relative overflow-hidden bg-[#F4F7F5] py-24 sm:py-28"
+      >
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <header className="mx-auto max-w-3xl text-center">
+              <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
+                Gestión pública
+              </span>
+
+              <h2
+                id="transparency-title"
+                className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#09231D] sm:text-5xl lg:text-6xl"
+              >
+                Transparencia activa
+              </h2>
+
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
+                Accede a documentos, normativas e información
+                pública de la Universidad Nacional de
+                Concepción.
+              </p>
+            </header>
+          </Reveal>
+
+          <div className="mx-auto mt-14 grid max-w-5xl gap-7 md:grid-cols-2">
+            {transparencyItems.map(
+              (item, index) => (
+                <Reveal
+                  key={item.title}
+                  className="h-full"
+                  delay={index * 100}
+                >
+                  <TiltCard
+                    containerClassName="h-full"
+                    rotateX={6}
+                    rotateY={7}
+                    className={`
+                      h-full rounded-[1.25rem]
+                      border bg-white p-7
+                      ${
+                        item.featured
+                          ? 'border-[#37D448]/60 shadow-[0_26px_60px_rgba(7,183,25,0.14)]'
+                          : 'border-[#D7E0DB] shadow-[0_18px_48px_rgba(7,42,15,0.08)]'
+                      }
+                      hover:border-[#37D448]
+                      hover:shadow-[0_30px_65px_rgba(0,71,0,0.17)]
+                    `}
+                  >
+                    <Link
+                      href={item.href}
+                      className="group grid h-full grid-cols-[58px_1fr_auto] items-center gap-5 focus-visible:outline-none"
+                    >
+                      <span
+                        className={`
+                          flex h-14 w-14 items-center justify-center rounded-2xl
+                          transition-all duration-300
+                          ${
+                            item.featured
+                              ? 'bg-[#00A300] text-white'
+                              : 'bg-[#E6FFE6] text-[#008000]'
+                          }
+                          group-hover:scale-105
+                          group-hover:bg-[#00A300]
+                          group-hover:text-white
+                        `}
+                      >
+                        <DocumentIcon />
+                      </span>
+
+                      <span className="min-w-0 [transform:translateZ(22px)]">
+                        <strong className="block text-lg font-bold text-[#004700]">
+                          {item.title}
+                        </strong>
+
+                        <small className="mt-2 block text-sm leading-6 text-[#6C7B76]">
+                          {item.description}
+                        </small>
+                      </span>
+
+                      <span className="text-[#008000] transition-all duration-300 group-hover:translate-x-1.5 group-hover:text-[#00A300]">
+                        <ArrowIcon className="h-5 w-5" />
+                      </span>
+                    </Link>
+                  </TiltCard>
+                </Reveal>
+              ),
+            )}
           </div>
+
+          <Reveal delay={180}>
+            <div className="mt-12 text-center">
+              <Link
+                href="/transparencia"
+                className="
+                  group inline-flex items-center justify-center gap-3
+                  rounded-full border border-[#008000]
+                  bg-transparent px-6 py-3.5
+                  text-sm font-extrabold text-[#004700]
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  hover:bg-[#008000]
+                  hover:text-white
+                  hover:shadow-[0_16px_34px_rgba(0,128,0,0.24)]
+                  focus-visible:outline-none
+                "
+              >
+                Consultar el portal de transparencia
+
+                <ArrowIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="py-12 bg-blue-50">
-        <div className="container mx-auto px-4">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Transparencia Activa</h3>
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <Link href="/transparencia" className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
-              <h4 className="font-bold text-blue-900 text-lg mb-2">Ley 5189/14</h4>
-              <p className="text-gray-600 text-sm">Acceso a la informacion publica</p>
-            </Link>
-            <Link href="/transparencia" className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
-              <h4 className="font-bold text-blue-900 text-lg mb-2">Ley 5282/14</h4>
-              <p className="text-gray-600 text-sm">Rendicion de cuentas</p>
-            </Link>
+      {/* =====================================================
+          FRANJA INSTITUCIONAL
+          ===================================================== */}
+
+      <section
+        id="institucional"
+        aria-label="Identidad institucional"
+        className="relative overflow-hidden bg-gradient-to-br from-[#004700] to-[#00A300] py-20 text-white"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-28 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-[#5CFF5C]/15 blur-3xl"
+        />
+
+        <Reveal>
+          <div className="relative mx-auto grid max-w-[1260px] gap-10 px-5 sm:px-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-end lg:px-8">
+            <div>
+              <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#B8FFB8]">
+                Universidad pública
+              </span>
+
+              <h2 className="mt-4 max-w-4xl font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl">
+                Excelencia académica, investigación e
+                innovación
+              </h2>
+            </div>
+
+            <p className="text-base leading-7 text-white/80 sm:text-lg">
+              Comprometidos con el desarrollo sostenible de
+              Concepción y del Paraguay.
+            </p>
           </div>
-        </div>
+        </Reveal>
       </section>
-    </div>
+    </>
   );
 }

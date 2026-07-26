@@ -398,33 +398,53 @@ export default function CinematicHero() {
       progress,
     );
 
-  const greenTransitionOpacity =
+  /*
+   * La fotografía permanece visible durante todo el recorrido.
+   * Solo pierde una pequeña cantidad de intensidad al final,
+   * evitando que el hero se convierta en una pantalla blanca.
+   */
+  const campusExitOpacity =
+    1 -
     smoothstep(
-      0.76,
-      0.95,
-      progress,
-    );
-
-  const lightTransitionOpacity =
-    smoothstep(
-      0.91,
-      1,
-      progress,
-    );
-
-  const bottomBlendOpacity =
-    0.24 +
-    smoothstep(
-      0.68,
+      0.86,
       1,
       progress,
     ) *
-      0.76;
+      0.1;
 
+  /*
+   * Tinte verde institucional muy suave. Su opacidad máxima
+   * es baja para mantener visibles los detalles del campus.
+   */
+  const greenTransitionOpacity =
+    smoothstep(
+      0.78,
+      1,
+      progress,
+    ) *
+      0.16;
+
+  /*
+   * Mezcla inferior progresiva hacia la superficie clara.
+   * La transición empieza antes y se concentra en la zona baja.
+   */
+  const bottomBlendOpacity =
+    0.08 +
+    smoothstep(
+      0.56,
+      1,
+      progress,
+    ) *
+      0.92;
+
+  /*
+   * Recorrido algo más corto: conserva el efecto de ingreso,
+   * pero elimina el tramo prolongado que antes parecía vacío.
+   */
   const sectionClassName =
     reducedMotion
       ? 'relative min-h-[720px]'
-      : 'relative h-[285svh] sm:h-[310svh] lg:h-[335svh]';
+      : 'relative h-[245svh] sm:h-[270svh] lg:h-[290svh]';
 
   const viewportClassName =
     reducedMotion
@@ -447,6 +467,9 @@ export default function CinematicHero() {
         <div
           className="absolute inset-0 z-0 will-change-transform"
           style={{
+            opacity:
+              campusExitOpacity,
+
             transform: reducedMotion
               ? 'none'
               : `
@@ -698,30 +721,27 @@ export default function CinematicHero() {
           </span>
         </div>
 
+        {/* =================================================
+            MEZCLA PROGRESIVA HACIA SERVICIOS INSTITUCIONALES
+            ================================================= */}
+
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-44 bg-gradient-to-b from-transparent via-[#F4F7F5]/25 to-[#F4F7F5]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[58vh] bg-[linear-gradient(to_bottom,transparent_0%,rgba(244,247,245,0.03)_18%,rgba(244,247,245,0.16)_40%,rgba(244,247,245,0.50)_70%,rgba(244,247,245,0.88)_90%,#F4F7F5_100%)]"
           style={{
             opacity:
               bottomBlendOpacity,
           }}
         />
 
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-30 bg-[#004700]"
-          style={{
-            opacity:
-              greenTransitionOpacity,
-          }}
-        />
+        {/* Tinte verde muy sutil, sin ocultar el campus */}
 
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-40 bg-[#F4F7F5]"
+          className="pointer-events-none absolute inset-0 z-[21] bg-[#004700]"
           style={{
             opacity:
-              lightTransitionOpacity,
+              greenTransitionOpacity,
           }}
         />
       </div>

@@ -1,6 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { createPortal } from 'react-dom';
+import {
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 interface MenuItem {
   label: string;
@@ -14,56 +22,136 @@ const menuData: MenuItem[] = [
     label: 'Institucional',
     href: '/institucional',
     children: [
-      { label: 'Historia', href: '/institucional/historia', description: 'Origen y evolución de la UNC' },
-      { label: 'Misión y Visión', href: '/institucional/mision-vision', description: 'Principios institucionales' },
-      { label: 'Autoridades', href: '/autoridades', description: 'Rectorado y órganos de gobierno' },
-      { label: 'Organigrama', href: '/institucional/organigrama', description: 'Estructura organizativa' },
+      {
+        label: 'Historia',
+        href: '/institucional/historia',
+        description: 'Origen y evolución de la Universidad.',
+      },
+      {
+        label: 'Misión y Visión',
+        href: '/institucional/mision-vision',
+        description: 'Principios y objetivos institucionales.',
+      },
+      {
+        label: 'Autoridades',
+        href: '/autoridades',
+        description: 'Rectorado y órganos de gobierno.',
+      },
+      {
+        label: 'Organigrama',
+        href: '/institucional/organigrama',
+        description: 'Estructura organizativa de la UNC.',
+      },
     ],
   },
   {
     label: 'Estudiar en la UNC',
     href: '/estudiar',
     children: [
-      { label: 'Carreras de Grado', href: '/carreras?nivel=grado', description: 'Oferta académica de pregrado' },
-      { label: 'Posgrados', href: '/carreras?nivel=posgrado', description: 'Maestrías, especializaciones y doctorados' },
-      { label: 'Admisión', href: '/estudiar/admision', description: 'Requisitos y proceso de inscripción' },
-      { label: 'Becas', href: '/estudiar/becas', description: 'Ayudas estudiantiles disponibles' },
+      {
+        label: 'Carreras de grado',
+        href: '/carreras?nivel=grado',
+        description: 'Oferta académica de carreras de grado.',
+      },
+      {
+        label: 'Posgrados',
+        href: '/carreras?nivel=posgrado',
+        description: 'Especializaciones, maestrías y doctorados.',
+      },
+      {
+        label: 'Admisión',
+        href: '/estudiar/admision',
+        description: 'Requisitos y procesos de inscripción.',
+      },
+      {
+        label: 'Becas',
+        href: '/estudiar/becas',
+        description: 'Programas de apoyo y bienestar estudiantil.',
+      },
     ],
   },
   {
     label: 'Investigación',
     href: '/investigacion',
     children: [
-      { label: 'Institutos', href: '/investigacion/institutos', description: 'Centros de investigación' },
-      { label: 'Publicaciones', href: '/investigacion/publicaciones', description: 'Revistas científicas y papers' },
-      { label: 'Proyectos', href: '/investigacion/proyectos', description: 'Investigaciones en curso' },
+      {
+        label: 'Institutos y centros',
+        href: '/investigacion/institutos',
+        description: 'Unidades dedicadas a la investigación.',
+      },
+      {
+        label: 'Publicaciones',
+        href: '/investigacion/publicaciones',
+        description: 'Revistas y producción científica.',
+      },
+      {
+        label: 'Proyectos',
+        href: '/investigacion/proyectos',
+        description: 'Investigaciones y líneas de trabajo.',
+      },
     ],
   },
   {
     label: 'Extensión',
     href: '/extension',
     children: [
-      { label: 'Cursos', href: '/extension/cursos', description: 'Educación continua' },
-      { label: 'Proyección Social', href: '/extension/proyeccion', description: 'Vinculación con la comunidad' },
+      {
+        label: 'Cursos',
+        href: '/extension/cursos',
+        description: 'Capacitación y educación continua.',
+      },
+      {
+        label: 'Proyección social',
+        href: '/extension/proyeccion',
+        description: 'Vinculación de la UNC con la comunidad.',
+      },
     ],
   },
   {
     label: 'Transparencia',
     href: '/transparencia',
     children: [
-      { label: 'Ley 5189', href: '/transparencia?ley=5189', description: 'Información pública obligatoria' },
-      { label: 'Ley 5282', href: '/transparencia?ley=5282', description: 'Rendición de cuentas' },
-      { label: 'Resoluciones', href: '/transparencia?tipo=resoluciones', description: 'Actos administrativos' },
-      { label: 'Datos Abiertos', href: '/transparencia/datos-abiertos', description: 'Datasets institucionales' },
+      {
+        label: 'Ley 5189/14',
+        href: '/transparencia?ley=5189',
+        description: 'Información pública obligatoria.',
+      },
+      {
+        label: 'Ley 5282/14',
+        href: '/transparencia?ley=5282',
+        description: 'Acceso a la información pública.',
+      },
+      {
+        label: 'Resoluciones',
+        href: '/transparencia?tipo=resoluciones',
+        description: 'Actos administrativos institucionales.',
+      },
+      {
+        label: 'Datos abiertos',
+        href: '/transparencia/datos-abiertos',
+        description: 'Documentos y conjuntos de datos públicos.',
+      },
     ],
   },
   {
     label: 'Trámites',
     href: '/tramites',
     children: [
-      { label: 'Títulos y Legalizaciones', href: '/tramites/titulos', description: 'Gestión de documentos académicos' },
-      { label: 'Mesa de Entrada', href: '/tramites/mesa-entrada', description: 'Presentación de documentos' },
-      { label: 'Solicitud de Información', href: '/tramites/solicitud-informacion', description: 'Acceso a información pública' },
+      {
+        label: 'Títulos y legalizaciones',
+        href: '/tramites/titulos',
+        description: 'Gestión de documentos académicos.',
+      },
+      {
+        label: 'Mesa de entrada',
+        href: '/tramites/mesa-entrada',
+        description: 'Presentación y seguimiento de documentos.',
+      },
+      {
+        label: 'Solicitud de información',
+        href: '/tramites/solicitud-informacion',
+        description: 'Acceso ciudadano a información pública.',
+      },
     ],
   },
   {
@@ -72,171 +160,725 @@ const menuData: MenuItem[] = [
   },
 ];
 
+function ChevronIcon({
+  expanded = false,
+}: {
+  expanded?: boolean;
+}) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
+        expanded ? 'rotate-180' : ''
+      }`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 9l-7 7-7-7"
+      />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 6h16M4 12h16M4 18h16"
+      />
+    </svg>
+  );
+}
+
+function normalizePath(href: string) {
+  return href.split('?')[0];
+}
+
 export default function MegaMenu() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pathname = usePathname();
 
-  // Cerrar con Escape
+  const [activeIndex, setActiveIndex] =
+    useState<number | null>(null);
+
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
+
+  const [mobileSection, setMobileSection] =
+    useState<number | null>(null);
+
+  const [mounted, setMounted] =
+    useState(false);
+
+  const menuRef = useRef<HTMLElement>(null);
+
+  const mobilePanelRef =
+    useRef<HTMLDivElement>(null);
+
+  const mobileToggleRef =
+    useRef<HTMLButtonElement>(null);
+
+  const timeoutRef =
+    useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /*
+   * Habilita el portal únicamente después de montar
+   * el componente en el navegador.
+   */
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setActiveIndex(null);
+    setMounted(true);
+  }, []);
+
+  /*
+   * Cierra los menús cuando cambia la ruta.
+   */
+  useEffect(() => {
+    setActiveIndex(null);
+    setMobileOpen(false);
+    setMobileSection(null);
+  }, [pathname]);
+
+  /*
+   * Cierre mediante tecla Escape.
+   */
+  useEffect(() => {
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      setActiveIndex(null);
+      setMobileSection(null);
+
+      if (mobileOpen) {
         setMobileOpen(false);
+
+        window.setTimeout(() => {
+          mobileToggleRef.current?.focus();
+        }, 0);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
-  // Cerrar al hacer click fuera
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener(
+        'keydown',
+        handleKeyDown,
+      );
+    };
+  }, [mobileOpen]);
+
+  /*
+   * Cierra el desplegable de escritorio al hacer clic
+   * fuera del componente.
+   */
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
+      ) {
         setActiveIndex(null);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener(
+      'mousedown',
+      handleClickOutside,
+    );
+
+    return () => {
+      document.removeEventListener(
+        'mousedown',
+        handleClickOutside,
+      );
+    };
   }, []);
 
-  const handleMouseEnter = (index: number) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  /*
+   * Bloquea el desplazamiento de la página cuando
+   * el menú móvil está abierto.
+   */
+  useEffect(() => {
+    if (!mobileOpen) {
+      return;
+    }
+
+    const previousOverflow =
+      document.body.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+
+    const focusTimer = window.setTimeout(() => {
+      const firstFocusable =
+        mobilePanelRef.current?.querySelector<HTMLElement>(
+          '[data-mobile-autofocus]',
+        );
+
+      firstFocusable?.focus();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
+  /*
+   * Limpia el temporizador del menú de escritorio.
+   */
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const isPathActive = (href: string) => {
+    const normalizedHref = normalizePath(href);
+
+    if (normalizedHref === '/') {
+      return pathname === '/';
+    }
+
+    return (
+      pathname === normalizedHref ||
+      pathname.startsWith(`${normalizedHref}/`)
+    );
+  };
+
+  const openMenu = (index: number) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     setActiveIndex(index);
   };
 
-  const handleMouseLeave = () => {
+  const closeDesktopMenu = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    setActiveIndex(null);
+  };
+
+  const scheduleClose = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     timeoutRef.current = setTimeout(() => {
       setActiveIndex(null);
-    }, 200);
+    }, 160);
   };
 
-  const handleFocus = (index: number) => {
-    setActiveIndex(index);
+  const openMobileMenu = () => {
+    setActiveIndex(null);
+    setMobileOpen(true);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+    setMobileSection(null);
+
+    window.setTimeout(() => {
+      mobileToggleRef.current?.focus();
+    }, 0);
+  };
+
+  /*
+   * Mantiene el foco dentro del diálogo móvil.
+   */
+  const handleMobileKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (event.key !== 'Tab') {
+      return;
+    }
+
+    const panel = mobilePanelRef.current;
+
+    if (!panel) {
+      return;
+    }
+
+    const focusableElements = Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        [
+          'a[href]',
+          'button:not([disabled])',
+          '[tabindex]:not([tabindex="-1"])',
+        ].join(','),
+      ),
+    ).filter((element) => {
+      return element.offsetParent !== null;
+    });
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement =
+      focusableElements[focusableElements.length - 1];
+
+    if (
+      event.shiftKey &&
+      document.activeElement === firstElement
+    ) {
+      event.preventDefault();
+      lastElement.focus();
+      return;
+    }
+
+    if (
+      !event.shiftKey &&
+      document.activeElement === lastElement
+    ) {
+      event.preventDefault();
+      firstElement.focus();
+    }
   };
 
   return (
-    <nav 
+    <nav
       ref={menuRef}
-      className="w-full"
       aria-label="Navegación principal"
+      className="relative flex justify-end"
     >
-      {/* Desktop menu */}
-      <ul className="hidden lg:flex items-center gap-1">
-        {menuData.map((item, index) => (
-          <li 
-            key={item.label}
-            className="relative"
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <button
-              className={`px-4 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
-                activeIndex === index
-                  ? 'text-amber-400 bg-white/10'
-                  : 'text-white/80 hover:text-white hover:bg-white/5'
-              }`}
-              aria-expanded={activeIndex === index}
-              aria-haspopup={item.children ? true : undefined}
-              onFocus={() => handleFocus(index)}
-              onClick={() => setActiveIndex(activeIndex === index ? null : index)}
+      {/* Navegación de escritorio */}
+      <ul className="hidden items-center gap-0.5 xl:flex">
+        {menuData.map((item, index) => {
+          const hasChildren =
+            Boolean(item.children?.length);
+
+          const isExpanded =
+            activeIndex === index;
+
+          const isCurrent =
+            isPathActive(item.href);
+
+          const alignRight =
+            index >= menuData.length - 3;
+
+          const triggerId =
+            `desktop-menu-trigger-${index}`;
+
+          const panelId =
+            `desktop-menu-panel-${index}`;
+
+          return (
+            <li
+              key={item.label}
+              className="relative"
+              onMouseEnter={() => {
+                if (hasChildren) {
+                  openMenu(index);
+                }
+              }}
+              onMouseLeave={scheduleClose}
+              onBlur={(event) => {
+                const nextTarget =
+                  event.relatedTarget as Node | null;
+
+                if (
+                  nextTarget &&
+                  event.currentTarget.contains(nextTarget)
+                ) {
+                  return;
+                }
+
+                scheduleClose();
+              }}
             >
-              {item.label}
-              {item.children && (
-                <svg 
-                  className={`inline-block ml-1 w-3.5 h-3.5 transition-transform duration-200 ${
-                    activeIndex === index ? 'rotate-180' : ''
-                  }`} 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              )}
-            </button>
-
-            {/* Mega menu dropdown */}
-            {item.children && activeIndex === index && (
-              <div 
-                className="absolute top-full left-0 mt-2 w-[480px] glass-panel p-5 z-50"
-                role="menu"
-              >
-                <div className="grid grid-cols-1 gap-1">
-                  {item.children.map((child) => (
-                    <a
-                      key={child.href}
-                      href={child.href}
-                      className="group flex flex-col p-3 rounded-xl hover:bg-white/5 transition-colors"
-                      role="menuitem"
-                    >
-                      <span className="text-white font-medium text-sm group-hover:text-amber-400 transition-colors">
-                        {child.label}
-                      </span>
-                      {child.description && (
-                        <span className="text-white/50 text-xs mt-0.5">
-                          {child.description}
-                        </span>
-                      )}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {/* Mobile hamburger */}
-      <button
-        className="lg:hidden p-2 text-white/80 hover:text-white"
-        onClick={() => setMobileOpen(!mobileOpen)}
-        aria-expanded={mobileOpen}
-        aria-label="Abrir menú de navegación"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          {mobileOpen ? (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          ) : (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          )}
-        </svg>
-      </button>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 top-16 z-40 bg-slate-950/95 backdrop-blur-xl p-6 overflow-y-auto">
-          <ul className="space-y-1">
-            {menuData.map((item) => (
-              <li key={item.label}>
-                <a
-                  href={item.href}
-                  className="block px-4 py-3 text-white font-medium rounded-xl hover:bg-white/5"
-                  onClick={() => setMobileOpen(false)}
+              {hasChildren ? (
+                <button
+                  id={triggerId}
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded={isExpanded}
+                  aria-controls={panelId}
+                  aria-current={
+                    isCurrent ? 'page' : undefined
+                  }
+                  onFocus={() => openMenu(index)}
+                  onClick={() => {
+                    setActiveIndex(
+                      isExpanded ? null : index,
+                    );
+                  }}
+                  className={`inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-2.5 text-[0.76rem] font-medium transition-all duration-200 2xl:px-3 2xl:text-[0.82rem] ${
+                    isExpanded || isCurrent
+                      ? 'bg-unc-600/[0.18] text-unc-300'
+                      : 'text-white/75 hover:bg-white/[0.07] hover:text-white'
+                  }`}
                 >
                   {item.label}
-                </a>
-                {item.children && (
-                  <ul className="ml-4 mt-1 space-y-1">
-                    {item.children.map((child) => (
-                      <li key={child.href}>
-                        <a
+
+                  <span className="ml-1">
+                    <ChevronIcon
+                      expanded={isExpanded}
+                    />
+                  </span>
+                </button>
+              ) : (
+                <Link
+                  href={item.href}
+                  aria-current={
+                    isCurrent ? 'page' : undefined
+                  }
+                  onFocus={closeDesktopMenu}
+                  className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-2.5 text-[0.76rem] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300 2xl:px-3 2xl:text-[0.82rem] ${
+                    isCurrent
+                      ? 'bg-unc-600/[0.18] text-unc-300'
+                      : 'text-white/75 hover:bg-white/[0.07] hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )}
+
+              {hasChildren && isExpanded && (
+                <div
+                  id={panelId}
+                  aria-labelledby={triggerId}
+                  onMouseEnter={() => openMenu(index)}
+                  onMouseLeave={scheduleClose}
+                  className={`glass-panel absolute top-[calc(100%+0.7rem)] z-[60] w-[510px] p-3 ${
+                    alignRight ? 'right-0' : 'left-0'
+                  }`}
+                >
+                  <div className="mb-2 flex items-center justify-between border-b border-white/10 px-3 pb-3">
+                    <div>
+                      <p className="text-sm font-semibold text-white">
+                        {item.label}
+                      </p>
+
+                      <p className="mt-0.5 text-xs text-white/45">
+                        Accesos institucionales relacionados
+                      </p>
+                    </div>
+
+                    <Link
+                      href={item.href}
+                      onClick={closeDesktopMenu}
+                      className="rounded-full border border-unc-400/25 bg-unc-600/10 px-3 py-1.5 text-xs font-medium text-unc-300 transition-colors hover:bg-unc-600/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
+                    >
+                      Ver sección
+                    </Link>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1">
+                    {item.children?.map((child) => {
+                      const childIsCurrent =
+                        isPathActive(child.href);
+
+                      return (
+                        <Link
+                          key={child.href}
                           href={child.href}
-                          className="block px-4 py-2 text-white/60 text-sm rounded-xl hover:bg-white/5 hover:text-white"
-                          onClick={() => setMobileOpen(false)}
+                          aria-current={
+                            childIsCurrent
+                              ? 'page'
+                              : undefined
+                          }
+                          onClick={closeDesktopMenu}
+                          className={`group rounded-xl p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300 ${
+                            childIsCurrent
+                              ? 'bg-unc-600/[0.16]'
+                              : 'hover:bg-white/[0.07]'
+                          }`}
                         >
-                          {child.label}
-                        </a>
+                          <span
+                            className={`block text-sm font-medium transition-colors ${
+                              childIsCurrent
+                                ? 'text-unc-300'
+                                : 'text-white group-hover:text-unc-300'
+                            }`}
+                          >
+                            {child.label}
+                          </span>
+
+                          {child.description && (
+                            <span className="mt-1 block text-xs leading-relaxed text-white/50">
+                              {child.description}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Activador móvil */}
+      <button
+        ref={mobileToggleRef}
+        type="button"
+        onClick={openMobileMenu}
+        aria-expanded={mobileOpen}
+        aria-controls="mobile-main-menu"
+        aria-label="Abrir menú de navegación"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/80 transition-colors hover:border-unc-400/30 hover:bg-unc-600/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300 xl:hidden"
+      >
+        <MenuIcon />
+      </button>
+
+      {/* Menú móvil mediante portal */}
+      {mounted &&
+        mobileOpen &&
+        createPortal(
+          <div
+            ref={mobilePanelRef}
+            id="mobile-main-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menú principal"
+            onKeyDown={handleMobileKeyDown}
+            className="fixed inset-0 z-[100] h-[100dvh] min-h-screen overflow-hidden bg-[#050d0a] xl:hidden"
+          >
+            {/* Cabecera móvil */}
+            <div className="flex h-[72px] items-center justify-between border-b border-white/10 bg-[#050d0a] px-4">
+              <div>
+                <p className="text-sm font-semibold text-white">
+                  Menú principal
+                </p>
+
+                <p className="mt-0.5 text-xs text-white/45">
+                  Universidad Nacional de Concepción
+                </p>
+              </div>
+
+              <button
+                type="button"
+                data-mobile-autofocus
+                onClick={closeMobileMenu}
+                aria-label="Cerrar menú de navegación"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/80 transition-colors hover:border-unc-400/30 hover:bg-unc-600/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+
+            {/* Contenido desplazable */}
+            <div className="h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain px-4 py-5">
+              <div className="mx-auto max-w-2xl pb-12">
+                <div className="mb-5 grid grid-cols-2 gap-2">
+                  <a
+                    href="https://aula.unc.edu.py"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pill-button pill-button-secondary px-4 py-3 text-xs"
+                  >
+                    Aula Virtual
+                  </a>
+
+                  <a
+                    href="https://intranet.unc.edu.py"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pill-button pill-button-primary px-4 py-3 text-xs"
+                  >
+                    Intranet
+                  </a>
+                </div>
+
+                <ul className="space-y-2">
+                  {menuData.map((item, index) => {
+                    const hasChildren =
+                      Boolean(item.children?.length);
+
+                    const expanded =
+                      mobileSection === index;
+
+                    const isCurrent =
+                      isPathActive(item.href);
+
+                    const sectionId =
+                      `mobile-menu-section-${index}`;
+
+                    return (
+                      <li
+                        key={item.label}
+                        className={`overflow-hidden rounded-2xl border ${
+                          isCurrent
+                            ? 'border-unc-400/30 bg-unc-600/[0.10]'
+                            : 'border-white/[0.08] bg-white/[0.04]'
+                        }`}
+                      >
+                        {hasChildren ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setMobileSection(
+                                  expanded ? null : index,
+                                );
+                              }}
+                              aria-expanded={expanded}
+                              aria-controls={sectionId}
+                              className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left font-medium text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-unc-300"
+                            >
+                              <span>{item.label}</span>
+
+                              <span className="text-unc-300">
+                                <ChevronIcon
+                                  expanded={expanded}
+                                />
+                              </span>
+                            </button>
+
+                            {expanded && (
+                              <div
+                                id={sectionId}
+                                className="border-t border-white/[0.08] px-3 pb-3 pt-2"
+                              >
+                                <Link
+                                  href={item.href}
+                                  onClick={closeMobileMenu}
+                                  className="mb-1 block rounded-xl bg-unc-600/[0.15] px-3 py-3 text-sm font-medium text-unc-300 transition-colors hover:bg-unc-600/[0.22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
+                                >
+                                  Ver sección principal
+                                </Link>
+
+                                {item.children?.map(
+                                  (child) => {
+                                    const childIsCurrent =
+                                      isPathActive(
+                                        child.href,
+                                      );
+
+                                    return (
+                                      <Link
+                                        key={child.href}
+                                        href={child.href}
+                                        onClick={
+                                          closeMobileMenu
+                                        }
+                                        aria-current={
+                                          childIsCurrent
+                                            ? 'page'
+                                            : undefined
+                                        }
+                                        className={`block rounded-xl px-3 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300 ${
+                                          childIsCurrent
+                                            ? 'bg-white/[0.06] text-unc-300'
+                                            : 'text-white/70 hover:bg-white/[0.05] hover:text-white'
+                                        }`}
+                                      >
+                                        <span className="block font-medium">
+                                          {child.label}
+                                        </span>
+
+                                        {child.description && (
+                                          <span className="mt-1 block text-xs leading-relaxed text-white/40">
+                                            {
+                                              child.description
+                                            }
+                                          </span>
+                                        )}
+                                      </Link>
+                                    );
+                                  },
+                                )}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <Link
+                            href={item.href}
+                            onClick={closeMobileMenu}
+                            aria-current={
+                              isCurrent
+                                ? 'page'
+                                : undefined
+                            }
+                            className={`block px-4 py-4 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-unc-300 ${
+                              isCurrent
+                                ? 'text-unc-300'
+                                : 'text-white hover:bg-white/[0.04]'
+                            }`}
+                          >
+                            {item.label}
+                          </Link>
+                        )}
                       </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                    );
+                  })}
+                </ul>
+
+                <Link
+                  href="/buscar"
+                  onClick={closeMobileMenu}
+                  className="mt-5 flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-medium text-white/75 transition-colors hover:border-unc-400/30 hover:bg-unc-600/[0.12] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
+                >
+                  <SearchIcon />
+                  Buscar en el portal
+                </Link>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </nav>
   );
 }
