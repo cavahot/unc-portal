@@ -1,0 +1,7 @@
+{
+  "name": "@unc/cms-types",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/payload-types.ts",
+  "types": "src/payload-types.ts"
+}
