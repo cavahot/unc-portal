@@ -539,7 +539,7 @@ export default function Footer() {
 
               <Link
                 href="/contacto"
-className="footer-contact-button group mt-6"              >
+                  className="footer-contact-button group mt-6"              >
                 Ver información de contacto
 
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
