@@ -69,6 +69,9 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    noticias: Noticia;
+    paginas: Pagina;
+    auditoria: Auditoria;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +81,9 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    noticias: NoticiasSelect<false> | NoticiasSelect<true>;
+    paginas: PaginasSelect<false> | PaginasSelect<true>;
+    auditoria: AuditoriaSelect<false> | AuditoriaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +93,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    navegacion: Navegacion;
+  };
+  globalsSelect: {
+    navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -178,6 +188,293 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "noticias".
+ */
+export interface Noticia {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  featuredImage?: (number | null) | Media;
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  category: 'institucional' | 'academica' | 'investigacion' | 'extension' | 'eventos' | 'comunicados';
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  faculty?: string | null;
+  author?: string | null;
+  /**
+   * Mostrar en portada
+   */
+  featured?: boolean | null;
+  /**
+   * Fecha de publicación
+   */
+  publishedAt?: string | null;
+  /**
+   * Estado del flujo de aprobación editorial
+   */
+  approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
+  /**
+   * Historial de aprobaciones y rechazos
+   */
+  approvalHistory?:
+    | {
+        revisor: string;
+        accion: 'sent_to_review' | 'reviewed' | 'approved' | 'rejected';
+        comentario?: string | null;
+        fecha: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "paginas".
+ */
+export interface Pagina {
+  id: number;
+  title: string;
+  /**
+   * Ruta completa sin barra inicial ni final (ej: "institucional/historia"). Solo minúsculas, números y guiones.
+   */
+  slug: string;
+  layout?:
+    | (
+        | {
+            heading: string;
+            subheading?: string | null;
+            backgroundImage?: (number | null) | Media;
+            ctaLabel?: string | null;
+            ctaUrl?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'richText';
+          }
+        | {
+            heading: string;
+            text?: string | null;
+            buttonLabel: string;
+            buttonUrl: string;
+            style?: ('primary' | 'secondary' | 'outline') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  label: string;
+                  value: string;
+                  icon?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'statistics';
+          }
+        | {
+            ratio?: ('50-50' | '60-40' | '40-60') | null;
+            left?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            right?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'twoColumn';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  quote: string;
+                  author: string;
+                  role?: string | null;
+                  photo?: (number | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faq';
+          }
+      )[]
+    | null;
+  /**
+   * Estado del flujo de aprobación editorial
+   */
+  approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
+  /**
+   * Historial de aprobaciones y rechazos
+   */
+  approvalHistory?:
+    | {
+        revisor: string;
+        accion: 'sent_to_review' | 'reviewed' | 'approved' | 'rejected';
+        comentario?: string | null;
+        fecha: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Registro de eventos y acciones en el sistema
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditoria".
+ */
+export interface Auditoria {
+  id: number;
+  /**
+   * Email del usuario que realizó la acción
+   */
+  usuario: string;
+  /**
+   * Rol del usuario al momento de la acción
+   */
+  rol?: string | null;
+  accion:
+    | 'login'
+    | 'logout'
+    | 'crear'
+    | 'actualizar'
+    | 'eliminar'
+    | 'publicar'
+    | 'cambiar_rol'
+    | 'revisar'
+    | 'aprobar'
+    | 'rechazar'
+    | 'importar'
+    | 'revalidar';
+  /**
+   * Colección afectada (noticias, usuarios, media, etc)
+   */
+  coleccion?: string | null;
+  /**
+   * ID o título del documento afectado
+   */
+  documento?: string | null;
+  /**
+   * Fecha y hora del evento
+   */
+  fechaHora: string;
+  /**
+   * Dirección IP del cliente
+   */
+  ip?: string | null;
+  resultado: 'exito' | 'error' | 'advertencia';
+  /**
+   * Descripción o mensaje del evento
+   */
+  mensaje?: string | null;
+  /**
+   * JSON con los cambios realizados (antes/después)
+   */
+  cambiosRelevantes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -207,6 +504,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'noticias';
+        value: number | Noticia;
+      } | null)
+    | ({
+        relationTo: 'paginas';
+        value: number | Pagina;
+      } | null)
+    | ({
+        relationTo: 'auditoria';
+        value: number | Auditoria;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -293,6 +602,174 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "noticias_select".
+ */
+export interface NoticiasSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  summary?: T;
+  content?: T;
+  featuredImage?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  category?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  faculty?: T;
+  author?: T;
+  featured?: T;
+  publishedAt?: T;
+  approvalStatus?: T;
+  approvalHistory?:
+    | T
+    | {
+        revisor?: T;
+        accion?: T;
+        comentario?: T;
+        fecha?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "paginas_select".
+ */
+export interface PaginasSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              backgroundImage?: T;
+              ctaLabel?: T;
+              ctaUrl?: T;
+              id?: T;
+              blockName?: T;
+            };
+        richText?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              heading?: T;
+              text?: T;
+              buttonLabel?: T;
+              buttonUrl?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+        statistics?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    icon?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        twoColumn?:
+          | T
+          | {
+              ratio?: T;
+              left?: T;
+              right?: T;
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    quote?: T;
+                    author?: T;
+                    role?: T;
+                    photo?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        faq?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
+  approvalStatus?: T;
+  approvalHistory?:
+    | T
+    | {
+        revisor?: T;
+        accion?: T;
+        comentario?: T;
+        fecha?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditoria_select".
+ */
+export interface AuditoriaSelect<T extends boolean = true> {
+  usuario?: T;
+  rol?: T;
+  accion?: T;
+  coleccion?: T;
+  documento?: T;
+  fechaHora?: T;
+  ip?: T;
+  resultado?: T;
+  mensaje?: T;
+  cambiosRelevantes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -330,6 +807,78 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Estructura de navegación principal del portal (hasta 2 niveles)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navegacion".
+ */
+export interface Navegacion {
+  id: number;
+  links?:
+    | {
+        label: string;
+        type: 'manual' | 'relationship';
+        /**
+         * Requerido cuando el tipo es "Manual"
+         */
+        url?: string | null;
+        /**
+         * Requerido cuando el tipo es "Relación"
+         */
+        page?: (number | null) | Pagina;
+        newTab?: boolean | null;
+        children?:
+          | {
+              label: string;
+              type: 'manual' | 'relationship';
+              /**
+               * Requerido cuando el tipo es "Manual"
+               */
+              url?: string | null;
+              /**
+               * Requerido cuando el tipo es "Relación"
+               */
+              page?: (number | null) | Pagina;
+              newTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navegacion_select".
+ */
+export interface NavegacionSelect<T extends boolean = true> {
+  links?:
+    | T
+    | {
+        label?: T;
+        type?: T;
+        url?: T;
+        page?: T;
+        newTab?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              type?: T;
+              url?: T;
+              page?: T;
+              newTab?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
