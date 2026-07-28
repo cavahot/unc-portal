@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { getPayload } from 'payload'
+import config from '../payload.config'
 import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
 import { notifyApprovalStateChange } from '../utilities/notifications'
 import { notifyN8N } from '../utilities/notifications'
@@ -231,6 +233,14 @@ export const Noticias: CollectionConfig = {
           )
         }
 
+        // Obtener datos de contacto del usuario actual
+        const payload = await getPayload({ config })
+        const userEmail = req.user?.email || usuario
+        const currentUser = await payload.findByID({
+          collection: 'users',
+          id: req.user?.id,
+        })
+
         // Notificar a N8N cuando se crea una noticia o se envía a revisión
         if (operation === 'create') {
           await notifyN8N({
@@ -240,6 +250,8 @@ export const Noticias: CollectionConfig = {
             noticiaSlug: doc.slug,
             usuarioEmail: usuario,
             usuarioNombre: req.user?.email,
+            revisorTelefono: currentUser?.telefono as string | undefined,
+            revisorTelegramId: currentUser?.telegramUserId as string | undefined,
           })
         } else if (previousDoc?.approvalStatus !== doc.approvalStatus && doc.approvalStatus === 'en_revision') {
           await notifyN8N({
@@ -249,7 +261,8 @@ export const Noticias: CollectionConfig = {
             noticiaSlug: doc.slug,
             usuarioEmail: usuario,
             usuarioNombre: req.user?.email,
-            revisorEmail: undefined,
+            revisorTelefono: currentUser?.telefono as string | undefined,
+            revisorTelegramId: currentUser?.telegramUserId as string | undefined,
           })
         }
       },
