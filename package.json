@@ -17,9 +17,14 @@
     "build:portal": "next build",
     "build:cms": "npm run build --workspace=@unc/cms",
     "build:all": "npm run build:cms && npm run build:portal",
-    "sync:types": "node -e \"require('fs').copyFileSync('apps/cms/src/payload-types.ts', 'packages/cms-types/src/payload-types.ts')\""
+    "sync:types": "node -e \"require('fs').copyFileSync('apps/cms/src/payload-types.ts', 'packages/cms-types/src/payload-types.ts')\"",
+    "backup": "bash scripts/backup/backup.sh",
+    "backup:named": "bash scripts/backup/backup.sh $1",
+    "backup:restore": "bash scripts/backup/restore.sh $1",
+    "backup:list": "ls -lh ./backups/ 2>/dev/null || echo 'No backups found'"
   },
   "dependencies": {
+    "@unc/cms-types": "*",
     "next": "^16.2.12",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
