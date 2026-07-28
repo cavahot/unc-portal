@@ -3,9 +3,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import type { Navegacion } from '@unc/cms-types';
 import MegaMenu from '@/components/navigation/MegaMenu';
 
-export default function Header() {
+interface HeaderProps {
+  navigation?: Navegacion;
+}
+
+export default function Header({ navigation }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -76,7 +81,7 @@ export default function Header() {
 
           {/* Navegación central */}
           <div className="min-w-0 flex-1">
-            <MegaMenu />
+            <MegaMenu navigation={navigation} />
           </div>
 
           {/* Acciones para escritorio amplio */}

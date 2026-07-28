@@ -16,7 +16,7 @@ export const FALLBACK_NAVIGATION: Navegacion = {
 
 export async function getNavigation(): Promise<Navegacion> {
   try {
-    return await cmsFetch<Navegacion>('/globals/navegacion', {
+    return await cmsFetch<Navegacion>('/globals/navegacion?depth=2', {
       tags: ['navegacion'],
     });
   } catch (error) {
