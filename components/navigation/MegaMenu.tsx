@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import type { Navegacion } from '@unc/cms-types';
 
 interface MenuItem {
   label: string;
@@ -17,7 +18,39 @@ interface MenuItem {
   children?: MenuItem[];
 }
 
-const menuData: MenuItem[] = [
+interface MegaMenuProps {
+  navigation?: Navegacion;
+}
+
+/**
+ * Resolves a CMS navigation link to a portal href.
+ * - `manual` links use the stored URL as-is.
+ * - `relationship` links resolve to the related Pagina's full-path slug.
+ */
+function resolveHref(link: {
+  type: 'manual' | 'relationship';
+  url?: string | null;
+  page?: number | { slug: string } | null;
+}): string {
+  if (link.type === 'relationship' && link.page && typeof link.page === 'object') {
+    return `/${link.page.slug}`;
+  }
+
+  return link.url || '#';
+}
+
+function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
+  return (navigation.links || []).map((link) => ({
+    label: link.label,
+    href: resolveHref(link),
+    children: (link.children || []).map((child) => ({
+      label: child.label,
+      href: resolveHref(child),
+    })),
+  }));
+}
+
+const fallbackMenuData: MenuItem[] = [
   {
     label: 'Institucional',
     href: '/institucional',
@@ -246,8 +279,13 @@ function normalizePath(href: string) {
   return href.split('?')[0];
 }
 
-export default function MegaMenu() {
+export default function MegaMenu({ navigation }: MegaMenuProps) {
   const pathname = usePathname();
+
+  const menuData =
+    navigation && navigation.links && navigation.links.length > 0
+      ? mapCmsNavigation(navigation)
+      : fallbackMenuData;
 
   const [activeIndex, setActiveIndex] =
     useState<number | null>(null);
