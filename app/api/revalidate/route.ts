@@ -1,0 +1,102 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag, revalidatePath } from 'next/cache';
+
+export async function POST(request: NextRequest) {
+  const authHeader = request.headers.get('Authorization');
+  const secret = process.env.REVALIDATION_SECRET;
+
+  if (!secret) {
+    return NextResponse.json(
+      { error: 'Revalidation secret is not configured on the server' },
+      { status: 500 }
+    );
+  }
+
+  if (authHeader !== `Bearer ${secret}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json().catch(() => ({}));
+    const { tag, path } = body;
+
+    if (!tag && !path) {
+      return NextResponse.json(
+        { error: 'You must provide a "tag" or a "path" to revalidate' },
+        { status: 400 }
+      );
+    }
+
+    if (tag) {
+      revalidateTag(tag, { expire: 0 });
+      console.log(`[Revalidate] Success for tag: ${tag}`);
+    }
+
+    if (path) {
+      revalidatePath(path);
+      console.log(`[Revalidate] Success for path: ${path}`);
+    }
+
+    return NextResponse.json({
+      revalidated: true,
+      tag: tag || null,
+      path: path || null,
+      now: Date.now(),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Unknown revalidation error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const secretParam = searchParams.get('secret');
+  const secret = process.env.REVALIDATION_SECRET;
+
+  if (!secret) {
+    return NextResponse.json(
+      { error: 'Revalidation secret is not configured on the server' },
+      { status: 500 }
+    );
+  }
+
+  if (secretParam !== secret) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const tag = searchParams.get('tag');
+  const path = searchParams.get('path');
+
+  if (!tag && !path) {
+    return NextResponse.json(
+      { error: 'You must provide a "tag" or a "path" query parameter' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    if (tag) {
+      revalidateTag(tag, { expire: 0 });
+      console.log(`[Revalidate] GET Success for tag: ${tag}`);
+    }
+    if (path) {
+      revalidatePath(path);
+      console.log(`[Revalidate] GET Success for path: ${path}`);
+    }
+
+    return NextResponse.json({
+      revalidated: true,
+      tag: tag || null,
+      path: path || null,
+      now: Date.now(),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Unknown revalidation error' },
+      { status: 500 }
+    );
+  }
+}
