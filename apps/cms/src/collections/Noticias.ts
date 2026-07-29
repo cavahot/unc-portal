@@ -189,6 +189,21 @@ export const Noticias: CollectionConfig = {
     drafts: true,
   },
   hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        if (data && !data.slug && data.title) {
+          data.slug = data.title
+            .toString()
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+        }
+        return data
+      },
+    ],
     afterChange: [
       async ({ doc, previousDoc, req, operation }) => {
         const usuario = req.user?.email || 'sistema'
