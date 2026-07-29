@@ -39,6 +39,13 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "apps/cms/scripts",
+    "apps/cms/src/app",
+    "apps/cms/src/admin",
+    "evolution-api-src",
+    "patches",
+    "scratch",
+    "docker"
   ]
 }

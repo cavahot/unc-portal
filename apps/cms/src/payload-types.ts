@@ -148,6 +148,14 @@ export interface User {
     | 'media-manager'
     | 'auditor'
     | 'viewer';
+  /**
+   * Número de teléfono para notificaciones via Whatsapp y Telegram
+   */
+  telefono?: string | null;
+  /**
+   * ID del usuario en Telegram para recibir notificaciones
+   */
+  telegramUserId?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -565,6 +573,8 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  telefono?: T;
+  telegramUserId?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
