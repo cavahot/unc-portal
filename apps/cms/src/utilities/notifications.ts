@@ -16,6 +16,8 @@ export interface NotificationData {
   usuarioEmail: string
   usuarioNombre?: string
   revisorEmail?: string
+  revisorTelefono?: string
+  revisorTelegramId?: string
   comentario?: string
 }
 
@@ -57,7 +59,11 @@ export async function notifyN8N(data: NotificationData): Promise<void> {
     const response = await fetch(n8nWebhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        ...payload,
+        revisorTelefono: data.revisorTelefono,
+        revisorTelegramId: data.revisorTelegramId,
+      }),
     })
 
     console.log(`N8N response: ${response.status} ${response.statusText}`)

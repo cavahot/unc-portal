@@ -69,5 +69,25 @@ export const Users: CollectionConfig = {
           'Define las funciones y permisos institucionales del usuario dentro del CMS.',
       },
     },
+    {
+      name: 'telefono',
+      type: 'text',
+      label: 'Número de teléfono',
+      required: false,
+      admin: {
+        placeholder: '+595 9XX XXX XXXX (Whatsapp/Telegram)',
+        description: 'Número de teléfono para notificaciones via Whatsapp y Telegram',
+      },
+    },
+    {
+      name: 'telegramUserId',
+      type: 'text',
+      label: 'Telegram User ID',
+      required: false,
+      admin: {
+        placeholder: 'Usuario Telegram (obtenido de @userinfobot)',
+        description: 'ID del usuario en Telegram para recibir notificaciones',
+      },
+    },
   ],
 }
