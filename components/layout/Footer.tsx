@@ -82,22 +82,22 @@ const academicLinks: FooterLinkItem[] = [
 const socialLinks: SocialLinkItem[] = [
   {
     label: 'Facebook',
-    href: 'https://facebook.com/uncpy',
+    href: 'https://www.facebook.com/people/unc_py/100089915906133/?mibextid=ZbWKwL',
     icon: 'facebook',
   },
   {
     label: 'X',
-    href: 'https://x.com/uncpy',
+    href: 'https://x.com/UncConcepcion',
     icon: 'x',
   },
   {
     label: 'Instagram',
-    href: 'https://instagram.com/uncpy',
+    href: 'https://www.instagram.com/unc_py/',
     icon: 'instagram',
   },
   {
     label: 'YouTube',
-    href: 'https://youtube.com/@uncpy',
+    href: 'https://youtube.com/@universidadnacionaldeconce5302?si=o_PW3t0JmcZLeKrS',
     icon: 'youtube',
   },
 ];
@@ -174,6 +174,25 @@ function MailIcon() {
         strokeLinejoin="round"
         strokeWidth={1.8}
         d="M4 7l8 6 8-6"
+      />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-5 w-5"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.8}
+        d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3.1-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 2.9a2 2 0 01-.5 2.1l-1.3 1.3a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.7 2z"
       />
     </svg>
   );
@@ -372,6 +391,36 @@ function FooterNavigationColumn({
   );
 }
 
+function MiticLogo() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 120 36"
+      className="h-9 w-auto"
+      aria-hidden="true"
+    >
+      {/* Simplified shield */}
+      <path
+        d="M8 4 L16 2 L24 4 L26 14 C26 22 16 28 16 28 C16 28 6 22 6 14 Z"
+        fill="none"
+        stroke="rgba(255,255,255,0.7)"
+        strokeWidth="1.2"
+      />
+      <path
+        d="M11 13 l3 3 5-5"
+        fill="none"
+        stroke="rgba(255,255,255,0.7)"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* MITIC text */}
+      <text x="32" y="17" fontFamily="sans-serif" fontSize="11" fontWeight="700" fill="rgba(255,255,255,0.85)">MITIC</text>
+      <text x="32" y="27" fontFamily="sans-serif" fontSize="6.5" fill="rgba(255,255,255,0.5)">Gobierno del Paraguay</text>
+    </svg>
+  );
+}
+
 /* =========================================================
    FOOTER PRINCIPAL
    ========================================================= */
@@ -511,7 +560,7 @@ export default function Footer() {
                 </div>
 
                 <a
-                  href="mailto:contacto@unc.edu.py"
+                  href="mailto:secgral@unc.edu.py"
                   className="flex items-center gap-3 rounded-lg text-sm text-white/70 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
                 >
                   <span className="shrink-0 text-[#8AFF8A]">
@@ -519,8 +568,19 @@ export default function Footer() {
                   </span>
 
                   <span className="break-all">
-                    contacto@unc.edu.py
+                    secgral@unc.edu.py
                   </span>
+                </a>
+
+                <a
+                  href="tel:+5953312410690"
+                  className="flex items-center gap-3 rounded-lg text-sm text-white/70 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
+                >
+                  <span className="shrink-0 text-[#8AFF8A]">
+                    <PhoneIcon />
+                  </span>
+
+                  <span>(595 331) 241069 – 240883</span>
                 </a>
 
                 <a
@@ -582,6 +642,29 @@ export default function Footer() {
               Mapa del sitio
             </Link>
           </nav>
+
+          <div className="flex flex-col items-center gap-2 sm:items-end">
+            <p className="text-center text-[0.6rem] text-white/30 sm:text-right">
+              Basado en la{' '}
+              <a
+                href="https://mitic.gov.py/materiales/norma-de-gobierno-linea-grafica/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white/60"
+              >
+                Guía estándar para sitios web del Gobierno
+              </a>
+            </p>
+            <a
+              href="https://mitic.gov.py/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Desarrollado siguiendo los estándares MITIC — Ministerio de Tecnologías de la Información y Comunicación"
+              className="opacity-70 transition-opacity hover:opacity-100"
+            >
+              <MiticLogo />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
