@@ -52,144 +52,69 @@ function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
 
 const fallbackMenuData: MenuItem[] = [
   {
+    label: 'Inicio',
+    href: '/',
+  },
+  {
     label: 'Institucional',
-    href: '/institucional',
+    href: 'https://www.unc.edu.py/institucional/',
     children: [
-      {
-        label: 'Historia',
-        href: '/institucional/historia',
-        description: 'Origen y evolución de la Universidad.',
-      },
-      {
-        label: 'Misión y Visión',
-        href: '/institucional/mision-vision',
-        description: 'Principios y objetivos institucionales.',
-      },
-      {
-        label: 'Autoridades',
-        href: '/autoridades',
-        description: 'Rectorado y órganos de gobierno.',
-      },
-      {
-        label: 'Organigrama',
-        href: '/institucional/organigrama',
-        description: 'Estructura organizativa de la UNC.',
-      },
+      { label: 'Historia', href: 'https://www.unc.edu.py/historia-3/' },
+      { label: 'Misión, Visión y Valores', href: 'https://www.unc.edu.py/mision-vision-y-valores/' },
+      { label: 'Marco Legal', href: 'https://www.unc.edu.py/marco-legal/' },
+      { label: 'Organigrama', href: 'https://www.unc.edu.py/organigrama/' },
+      { label: 'Autoridades', href: 'https://www.unc.edu.py/autoridades/' },
+      { label: 'Transparencia', href: 'https://www.unc.edu.py/transparencia/' },
+      { label: 'Trámites', href: 'https://www.unc.edu.py/tramites/' },
+      { label: 'Títulos', href: 'https://www.unc.edu.py/titulos/' },
+      { label: 'Legalizaciones', href: 'https://www.unc.edu.py/legalizaciones/' },
+      { label: 'Solicitud de gestión de títulos', href: 'https://www.unc.edu.py/solicitud-de-gestion-de-titulos/' },
+      { label: 'Convenios', href: 'https://www.unc.edu.py/convenios/' },
+      { label: 'Tribunal Electoral', href: 'https://www.unc.edu.py/tribunal-electoral/' },
     ],
   },
   {
-    label: 'Estudiar en la UNC',
-    href: '/estudiar',
+    label: 'Facultades',
+    href: '#',
     children: [
-      {
-        label: 'Carreras de grado',
-        href: '/carreras?nivel=grado',
-        description: 'Oferta académica de carreras de grado.',
-      },
-      {
-        label: 'Posgrados',
-        href: '/carreras?nivel=posgrado',
-        description: 'Especializaciones, maestrías y doctorados.',
-      },
-      {
-        label: 'Admisión',
-        href: '/estudiar/admision',
-        description: 'Requisitos y procesos de inscripción.',
-      },
-      {
-        label: 'Becas',
-        href: '/estudiar/becas',
-        description: 'Programas de apoyo y bienestar estudiantil.',
-      },
-    ],
-  },
-  {
-    label: 'Investigación',
-    href: '/investigacion',
-    children: [
-      {
-        label: 'Institutos y centros',
-        href: '/investigacion/institutos',
-        description: 'Unidades dedicadas a la investigación.',
-      },
-      {
-        label: 'Publicaciones',
-        href: '/investigacion/publicaciones',
-        description: 'Revistas y producción científica.',
-      },
-      {
-        label: 'Proyectos',
-        href: '/investigacion/proyectos',
-        description: 'Investigaciones y líneas de trabajo.',
-      },
-    ],
-  },
-  {
-    label: 'Extensión',
-    href: '/extension',
-    children: [
-      {
-        label: 'Cursos',
-        href: '/extension/cursos',
-        description: 'Capacitación y educación continua.',
-      },
-      {
-        label: 'Proyección social',
-        href: '/extension/proyeccion',
-        description: 'Vinculación de la UNC con la comunidad.',
-      },
-    ],
-  },
-  {
-    label: 'Transparencia',
-    href: '/transparencia',
-    children: [
-      {
-        label: 'Ley 5189/14',
-        href: '/transparencia?ley=5189',
-        description: 'Información pública obligatoria.',
-      },
-      {
-        label: 'Ley 5282/14',
-        href: '/transparencia?ley=5282',
-        description: 'Acceso a la información pública.',
-      },
-      {
-        label: 'Resoluciones',
-        href: '/transparencia?tipo=resoluciones',
-        description: 'Actos administrativos institucionales.',
-      },
-      {
-        label: 'Datos abiertos',
-        href: '/transparencia/datos-abiertos',
-        description: 'Documentos y conjuntos de datos públicos.',
-      },
-    ],
-  },
-  {
-    label: 'Trámites',
-    href: '/tramites',
-    children: [
-      {
-        label: 'Títulos y legalizaciones',
-        href: '/tramites/titulos',
-        description: 'Gestión de documentos académicos.',
-      },
-      {
-        label: 'Mesa de entrada',
-        href: '/tramites/mesa-entrada',
-        description: 'Presentación y seguimiento de documentos.',
-      },
-      {
-        label: 'Solicitud de información',
-        href: '/tramites/solicitud-informacion',
-        description: 'Acceso ciudadano a información pública.',
-      },
+      { label: 'Facultad de Odontología', href: 'https://www.unc.edu.py/facultad-de-odontologia/' },
+      { label: 'Facultad de Medicina', href: 'https://www.unc.edu.py/facultad-de-medicina/' },
+      { label: 'Facultad de Ciencias Agrarias', href: 'https://www.unc.edu.py/facultad-de-ciencias-agrarias/' },
+      { label: 'Facultad de Ciencias Exactas y Tecnológicas', href: 'https://www.unc.edu.py/facultad-de-ciencias-exactas-y-tecnologicas/' },
+      { label: 'Facultad de Humanidades y Ciencias de la Educación', href: 'https://www.unc.edu.py/facultad-de-humanidades-y-ciencias-de-la-educacion/' },
+      { label: 'Facultad de Ciencias Económicas y Administrativas', href: 'https://www.unc.edu.py/facultad-de-ciencias-economicas-y-administrativas/' },
+      { label: 'Aranceles Rectorado', href: 'https://www.unc.edu.py/aranceles-rectorado/' },
     ],
   },
   {
     label: 'Noticias',
     href: '/noticias',
+  },
+  {
+    label: 'Preguntas Frecuentes',
+    href: 'https://www.unc.edu.py/preguntas-frecuentes/',
+  },
+  {
+    label: 'Contactos',
+    href: 'https://www.unc.edu.py/contacto/',
+    children: [
+      { label: 'Contactos por dependencia', href: 'https://www.unc.edu.py/contactos-por-dependencia/' },
+    ],
+  },
+  {
+    label: 'Academia',
+    href: '#',
+    children: [
+      { label: 'Dirección General Académica', href: 'https://www.unc.edu.py/direccion-general-academica/' },
+      { label: 'Aseguramiento de la Calidad', href: 'https://www.unc.edu.py/aseguramiento-de-la-calidad/' },
+      { label: 'Investigación', href: 'https://www.unc.edu.py/investigacion/' },
+      { label: 'Extensión y Vinculación', href: 'https://www.unc.edu.py/extension-y-vinculacion/' },
+      { label: 'Bienestar Institucional', href: 'https://www.unc.edu.py/bienestar-institucional/' },
+    ],
+  },
+  {
+    label: 'Aula Virtual',
+    href: 'https://www.unc.edu.py/aula-virtual/',
   },
 ];
 
