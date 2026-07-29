@@ -250,8 +250,8 @@ export const Noticias: CollectionConfig = {
             noticiaSlug: doc.slug,
             usuarioEmail: usuario,
             usuarioNombre: req.user?.email,
-            revisorTelefono: currentUser?.telefono as string | undefined,
-            revisorTelegramId: currentUser?.telegramUserId as string | undefined,
+            revisorTelefono: (currentUser as any)?.telefono as string | undefined,
+            revisorTelegramId: (currentUser as any)?.telegramUserId as string | undefined,
           })
         } else if (previousDoc?.approvalStatus !== doc.approvalStatus && doc.approvalStatus === 'en_revision') {
           await notifyN8N({
@@ -261,8 +261,8 @@ export const Noticias: CollectionConfig = {
             noticiaSlug: doc.slug,
             usuarioEmail: usuario,
             usuarioNombre: req.user?.email,
-            revisorTelefono: currentUser?.telefono as string | undefined,
-            revisorTelegramId: currentUser?.telegramUserId as string | undefined,
+            revisorTelefono: (currentUser as any)?.telefono as string | undefined,
+            revisorTelegramId: (currentUser as any)?.telegramUserId as string | undefined,
           })
         }
       },
