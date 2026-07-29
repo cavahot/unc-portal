@@ -15,9 +15,13 @@ export async function cmsFetch<T>(
   const headers = new Headers(options.headers);
   headers.set('Accept', 'application/json');
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
   const fetchOptions: RequestInit = {
     ...options,
     headers,
+    signal: controller.signal,
     next: {
       tags: options.tags,
       revalidate: options.next?.revalidate,
@@ -26,6 +30,7 @@ export async function cmsFetch<T>(
 
   try {
     const res = await fetch(url, fetchOptions);
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
@@ -37,6 +42,7 @@ export async function cmsFetch<T>(
 
     return (await res.json()) as T;
   } catch (error) {
+    clearTimeout(timeoutId);
     if (error instanceof CmsError) {
       throw error;
     }
