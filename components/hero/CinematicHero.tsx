@@ -619,7 +619,7 @@ export default function CinematicHero() {
                 />
 
                 <span>
-                  Fundada en 1967
+                  Fundada en 2007
                 </span>
 
                 <span
