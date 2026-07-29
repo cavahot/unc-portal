@@ -236,10 +236,10 @@ export const Noticias: CollectionConfig = {
         // Obtener datos de contacto del usuario actual
         const payload = await getPayload({ config })
         const userEmail = req.user?.email || usuario
-        const currentUser = await payload.findByID({
+        const currentUser = req.user?.id ? await payload.findByID({
           collection: 'users',
-          id: req.user?.id,
-        })
+          id: req.user.id as string | number,
+        }) : null
 
         // Notificar a N8N cuando se crea una noticia o se envía a revisión
         if (operation === 'create') {
