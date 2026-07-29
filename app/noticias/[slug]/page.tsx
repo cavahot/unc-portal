@@ -1,8 +1,10 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getNewsBySlug, getNewsBySlugDraft } from '@/lib/cms/queries/news'
 import RichText from '@/components/RichText'
+import { UNC_BLUR } from '@/lib/imagePlaceholder'
 
 const CATEGORY_LABELS: Record<string, string> = {
   institucional: 'Institucional',
@@ -59,10 +61,15 @@ export default async function NoticiaDetailPage({ params }: { params: Promise<{ 
       {/* Imagen hero */}
       {noticia.featuredImage?.url && (
         <div className="relative h-72 w-full overflow-hidden sm:h-96 lg:h-[480px]">
-          <img
+          <Image
             src={noticia.featuredImage.url}
             alt={noticia.featuredImage.alt || noticia.title}
-            className="h-full w-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            placeholder="blur"
+            blurDataURL={UNC_BLUR}
+            priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
         </div>
@@ -144,11 +151,17 @@ export default async function NoticiaDetailPage({ params }: { params: Promise<{ 
               {noticia.gallery.map((item, i) => (
                 <div key={i} className="overflow-hidden rounded-xl">
                   {item.image.url && (
-                    <img
-                      src={item.image.url}
-                      alt={item.caption || item.image.alt || ''}
-                      className="h-40 w-full object-cover"
-                    />
+                    <div className="relative h-40 w-full">
+                      <Image
+                        src={item.image.url}
+                        alt={item.caption || item.image.alt || ''}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 33vw"
+                        className="object-cover"
+                        placeholder="blur"
+                        blurDataURL={UNC_BLUR}
+                      />
+                    </div>
                   )}
                   {item.caption && (
                     <p className="mt-1 text-xs text-white/40">{item.caption}</p>
