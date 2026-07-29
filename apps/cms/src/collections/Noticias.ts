@@ -20,6 +20,7 @@ export const Noticias: CollectionConfig = {
   fields: [
     {
       name: 'title',
+      label: 'Título',
       type: 'text',
       required: true,
       minLength: 5,
@@ -27,16 +28,18 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'slug',
+      label: 'Slug (URL)',
       type: 'text',
       required: true,
       unique: true,
       index: true,
       admin: {
-        readOnly: true,
+        description: 'Generado automáticamente desde el título. Puedes editarlo manualmente.',
       },
     },
     {
       name: 'summary',
+      label: 'Resumen',
       type: 'textarea',
       required: true,
       minLength: 20,
@@ -44,27 +47,32 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'content',
+      label: 'Contenido',
       type: 'richText',
       required: true,
     },
     {
       name: 'featuredImage',
+      label: 'Imagen destacada',
       type: 'relationship',
       relationTo: 'media',
       required: false,
     },
     {
       name: 'gallery',
+      label: 'Galería de imágenes',
       type: 'array',
       fields: [
         {
           name: 'image',
+          label: 'Imagen',
           type: 'relationship',
           relationTo: 'media',
           required: true,
         },
         {
           name: 'caption',
+          label: 'Epígrafe',
           type: 'text',
           required: false,
         },
@@ -73,6 +81,7 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'category',
+      label: 'Categoría',
       type: 'select',
       options: [
         { label: 'Institucional', value: 'institucional' },
@@ -87,10 +96,12 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'tags',
+      label: 'Etiquetas',
       type: 'array',
       fields: [
         {
           name: 'tag',
+          label: 'Etiqueta',
           type: 'text',
           required: true,
         },
@@ -99,6 +110,7 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'faculty',
+      label: 'Facultad',
       type: 'text',
       required: false,
       admin: {
@@ -107,6 +119,7 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'author',
+      label: 'Autor',
       type: 'text',
       required: false,
       admin: {
@@ -115,23 +128,23 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'featured',
+      label: '¿Destacar en portada?',
       type: 'checkbox',
       defaultValue: false,
       admin: {
-        description: 'Mostrar en portada',
+        description: 'Mostrar en la sección destacada del portal',
       },
     },
     {
       name: 'publishedAt',
+      label: 'Fecha de publicación',
       type: 'date',
       required: false,
       index: true,
-      admin: {
-        description: 'Fecha de publicación',
-      },
     },
     {
       name: 'approvalStatus',
+      label: 'Estado editorial',
       type: 'select',
       defaultValue: 'draft',
       options: [
@@ -149,15 +162,18 @@ export const Noticias: CollectionConfig = {
     },
     {
       name: 'approvalHistory',
+      label: 'Historial de aprobaciones',
       type: 'array',
       fields: [
         {
           name: 'revisor',
+          label: 'Revisor',
           type: 'text',
           required: true,
         },
         {
           name: 'accion',
+          label: 'Acción',
           type: 'select',
           options: [
             { label: 'Enviado a revisión', value: 'sent_to_review' },
@@ -169,11 +185,13 @@ export const Noticias: CollectionConfig = {
         },
         {
           name: 'comentario',
+          label: 'Comentario',
           type: 'textarea',
           required: false,
         },
         {
           name: 'fecha',
+          label: 'Fecha',
           type: 'date',
           required: true,
           defaultValue: () => new Date().toISOString(),
