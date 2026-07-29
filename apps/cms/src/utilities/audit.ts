@@ -60,7 +60,7 @@ export function getClientIP(req: PayloadRequest | undefined): string {
   const forwarded = req.headers?.get?.('x-forwarded-for')
   if (forwarded) return forwarded.split(',')[0].trim()
 
-  const ip = req.ip || req.headers?.get?.('x-real-ip')
+  const ip = (req as any).ip || req.headers?.get?.('x-real-ip')
   return ip || 'unknown'
 }
 
