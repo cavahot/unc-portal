@@ -4,6 +4,8 @@ import Link from 'next/link';
 import CinematicHero from '@/components/hero/CinematicHero';
 import Reveal from '@/components/motion/Reveal';
 import TiltCard from '@/components/motion/TiltCard';
+import StatsBlock from '@/components/stats/StatsBlock';
+import { getNews } from '@/lib/cms/queries/news';
 
 /* =========================================================
    DATOS
@@ -45,44 +47,6 @@ const quickLinks = [
     label: 'Plataforma educativa',
     action: 'Acceder a la plataforma',
     external: true,
-  },
-];
-
-const newsItems = [
-  {
-    title: 'Inicio de clases 2026',
-    date: '15 de julio de 2026',
-    dateTime: '2026-07-15',
-    category: 'Institucional',
-    href: '/noticias',
-    image:
-      '/images/campus-3d/hero-entry-960.webp',
-    imageAlt:
-      'Entrada principal del campus de la Universidad Nacional de Concepción',
-  },
-  {
-    title:
-      'Nueva carrera de Inteligencia Artificial',
-    date: '10 de julio de 2026',
-    dateTime: '2026-07-10',
-    category: 'Académica',
-    href: '/noticias',
-    image:
-      '/images/campus-3d/campus-aerial-960.webp',
-    imageAlt:
-      'Vista aérea del campus de la Universidad Nacional de Concepción',
-  },
-  {
-    title:
-      'Convenio internacional de investigación',
-    date: '5 de julio de 2026',
-    dateTime: '2026-07-05',
-    category: 'Investigación',
-    href: '/noticias',
-    image:
-      '/images/campus-3d/campus-gate-960.webp',
-    imageAlt:
-      'Acceso institucional de la Universidad Nacional de Concepción',
   },
 ];
 
@@ -172,7 +136,9 @@ function DocumentIcon() {
    PÁGINA PRINCIPAL
    ========================================================= */
 
-export default function Home() {
+export default async function Home() {
+  const { docs: noticias } = await getNews({ limit: 6 })
+
   return (
     <>
       <CinematicHero />
@@ -372,9 +338,9 @@ export default function Home() {
           </Reveal>
 
           <div className="mt-14 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
-            {newsItems.map((item, index) => (
+            {noticias.map((n, index) => (
               <Reveal
-                key={item.title}
+                key={n.id}
                 className="h-full"
                 delay={index * 90}
               >
@@ -392,14 +358,14 @@ export default function Home() {
                   "
                 >
                   <Link
-                    href={item.href}
-                    aria-label={`Leer noticia: ${item.title}`}
+                    href={`/noticias/${n.slug}`}
+                    aria-label={`Leer noticia: ${n.title}`}
                     className="group block h-full focus-visible:outline-none"
                   >
                     <div className="relative h-60 overflow-hidden sm:h-64">
                       <Image
-                        src={item.image}
-                        alt={item.imageAlt}
+                        src={n.featuredImage?.url ?? '/images/campus-3d/hero-entry-960.webp'}
+                        alt={n.featuredImage?.alt ?? n.title}
                         fill
                         sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
                         className="
@@ -426,19 +392,25 @@ export default function Home() {
 
                     <div className="relative z-10 flex min-h-[205px] flex-col p-7 [transform:translateZ(24px)]">
                       <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-[#008000]">
-                        {item.category}
+                        {n.category ?? 'Institucional'}
                       </span>
 
                       <h3 className="mt-3 max-w-[95%] text-xl font-bold leading-snug text-[#09231D] transition-colors duration-300 group-hover:text-[#004700]">
-                        {item.title}
+                        {n.title}
                       </h3>
 
                       <div className="mt-auto flex items-center justify-between gap-4 pt-7">
                         <time
-                          dateTime={item.dateTime}
+                          dateTime={n.publishedAt ?? ''}
                           className="text-sm text-[#52635E]"
                         >
-                          {item.date}
+                          {n.publishedAt
+                            ? new Date(n.publishedAt).toLocaleDateString('es-PY', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })
+                            : ''}
                         </time>
 
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E6FFE6] text-[#008000] transition-all duration-300 group-hover:translate-x-1 group-hover:bg-[#00A300] group-hover:text-white">
@@ -453,6 +425,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <StatsBlock />
 
       {/* =====================================================
           TRANSPARENCIA
