@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getNews } from '@/lib/cms/queries/news'
+import { UNC_BLUR } from '@/lib/imagePlaceholder'
 
 const CATEGORY_LABELS: Record<string, string> = {
   institucional: 'Institucional',
@@ -55,10 +57,14 @@ export default async function NoticiasPage() {
               >
                 {n.featuredImage?.url ? (
                   <div className="relative h-48 overflow-hidden">
-                    <img
+                    <Image
                       src={n.featuredImage.url}
                       alt={n.featuredImage.alt || n.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      placeholder="blur"
+                      blurDataURL={UNC_BLUR}
                     />
                   </div>
                 ) : (
