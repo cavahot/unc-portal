@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import CinematicHero from '@/components/hero/CinematicHero';
+import InstitutionalAccessSection from '@/components/institutional/InstitutionalAccessSection';
 import Reveal from '@/components/motion/Reveal';
 import TiltCard from '@/components/motion/TiltCard';
 import StatsBlock from '@/components/stats/StatsBlock';
@@ -273,6 +274,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <InstitutionalAccessSection />
 
       {/* =====================================================
           NOTICIAS
