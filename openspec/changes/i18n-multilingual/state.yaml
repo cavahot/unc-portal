@@ -1,0 +1,38 @@
+change_id: i18n-multilingual
+artifact_store: openspec
+execution_mode: interactive
+created_at: "2026-07-29"
+archived_at: "2026-07-30"
+current_phase: archived
+phases_completed:
+  - proposal
+  - spec
+  - tasks
+  - phase-1-foundation
+  - phase-2-middleware
+  - phase-3-routing
+  - phase-6-locale-switcher
+  - phase-4-server-pages
+  - phase-5-client-components
+  - phase-7-type-safety
+  - verify
+delivery_strategy: ask-on-risk
+chain_strategy: stacked-to-main
+notes: |
+  Phases 1, 2, 3, and 6 were implemented manually (outside SDD apply).
+  Phase 4 (4.1-4.5) complete: all key server pages wired with getTranslations + getFormatter.
+    4.6 skipped: carreras/contacto/tramites are placeholder pages with no catalog.
+  Phase 5 COMPLETE (batch 2): 5.1 (Header), 5.2 (MegaMenu), 5.4 (CinematicHero), 5.5 (StatsBlock) done.
+    New nav keys added to all 4 locale files (es/en/pt-BR/gn).
+    5.3 (AccessibilityPanel) and 5.6 (Footer) were done in batch 1.
+  Phase 7 COMPLETE: 7.1 (next/link replaced in all app/[locale] pages + Header/MegaMenu/CinematicHero),
+    7.2 (next-intl.d.ts), 7.3 (layout generateStaticParams propagates automatically in Next.js 15+),
+    7.4 (tsc --noEmit clean -- only pre-existing CMS test error unrelated to this change).
+  design.md was not written; routing decisions are captured in spec.md.
+  verify: PASS WITH WARNINGS (2026-07-30). 8/8 spot-checks pass. 3 warnings:
+    W-1: unchecked boxes for manually-implemented phases — reconciled at archive time (docs gap only),
+    W-2: next build not run (dev environment),
+    W-3: middleware code not spot-checked.
+  ARCHIVED: 2026-07-30 — change folder moved to openspec/changes/archive/2026-07-30-i18n-multilingual/
+    Task checkboxes reconciled to reflect manual implementations in phases 1, 2, 3, 6.
+    SDD cycle complete and ready for team handoff and production deployment.

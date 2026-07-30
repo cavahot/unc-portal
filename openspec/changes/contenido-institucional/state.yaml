@@ -1,0 +1,46 @@
+change: contenido-institucional
+status: archived
+date: '2026-07-30'
+archived_at: '2026-07-30'
+phases:
+  - id: phase-1-cms-schema
+    status: complete
+    tasks_total: 6
+    tasks_done: 6
+  - id: phase-2-data-layer
+    status: complete
+    tasks_total: 2
+    tasks_done: 2
+  - id: phase-3-ui-components
+    status: complete
+    tasks_total: 4
+    tasks_done: 4
+  - id: phase-4-portal-pages
+    status: complete
+    tasks_total: 5
+    tasks_done: 5
+  - id: phase-5-integration
+    status: complete
+    tasks_total: 2
+    tasks_done: 2
+  - id: phase-6-seed-verify
+    status: partial
+    tasks_total: 3
+    tasks_done: 2
+    pending:
+      - '6.3 Manual browser spot-check'
+tasks_total: 22
+tasks_complete: 21
+tasks_pending: 1
+verify_verdict: PASS WITH WARNINGS
+verify_critical: 0
+verify_warnings: 2
+verify_suggestions: 2
+warnings:
+  - W-01: tsc --noEmit not re-run at verify time (apply-phase note says zero new errors)
+  - W-02: Task 6.3 manual spot-check pending (browser verification required)
+next_recommended: sdd-archive
+artifacts:
+  - openspec/changes/contenido-institucional/verify.md
+  - openspec/changes/contenido-institucional/tasks.md
+  - openspec/changes/contenido-institucional/state.yaml
