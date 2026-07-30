@@ -1,0 +1,18 @@
+{
+  "pageTitleDefault": "Buscar — Universidad Nacional de Concepción",
+  "pageTitleQuery": "Búsqueda: \"{q}\" — UNC",
+  "pageDescription": "Buscar noticias y contenido en el portal de la Universidad Nacional de Concepción.",
+  "portalLabel": "Portal UNC",
+  "headingExplore": "Explorar noticias",
+  "headingResults": "Resultados para",
+  "resultsSingular": "resultado",
+  "resultsPlural": "resultados",
+  "searchPlaceholder": "Buscar noticias...",
+  "searchAriaLabel": "Buscar en el portal",
+  "searchButton": "Buscar",
+  "noResults": "No encontramos resultados para \"{query}\"",
+  "noResultsHint": "Intentá con otras palabras",
+  "viewAllNews": "Ver todas las noticias",
+  "sectionNews": "Noticias",
+  "sectionTesis": "Tesis"
+}

@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "tagline": "Marcando el Norte",
+    "imageAlt": "Acceso principal de la Universidad Nacional de Concepción",
+    "title1": "Bienvenidos a la",
+    "title2": "Universidad Nacional",
+    "title3": "de Concepción",
+    "description": "Una universidad pública que integra identidad, excelencia académica, investigación, innovación y compromiso con el desarrollo sostenible del norte del Paraguay.",
+    "ctaExplore": "Explorar carreras",
+    "ctaAbout": "Conocer la UNC",
+    "badgePublic": "Universidad pública",
+    "badgeFounded": "Fundada en 2007",
+    "badgeLocation": "Concepción · Paraguay",
+    "scrollLabel": "Desplázate para ingresar",
+    "mainAccess": "Acceso principal"
+  },
+  "quickLinks": {
+    "sectionLabel": "Servicios institucionales",
+    "title": "Accesos rápidos",
+    "description": "Encuentra rápidamente los servicios académicos y administrativos más consultados.",
+    "actionConsult": "Consultar información",
+    "actionAccess": "Acceder a la plataforma",
+    "items": {
+      "carreras": {
+        "title": "Carreras",
+        "description": "Explora la oferta académica por facultad y nivel.",
+        "label": "Oferta académica"
+      },
+      "calendario": {
+        "title": "Calendario Académico",
+        "description": "Consulta fechas, periodos y actividades importantes.",
+        "label": "Fechas importantes"
+      },
+      "titulos": {
+        "title": "Títulos y Legalizaciones",
+        "description": "Información sobre trámites y documentación académica.",
+        "label": "Gestiones académicas"
+      },
+      "aulaVirtual": {
+        "title": "Aula Virtual",
+        "description": "Accede a la plataforma institucional de aprendizaje.",
+        "label": "Plataforma educativa"
+      }
+    }
+  },
+  "news": {
+    "sectionLabel": "Actualidad universitaria",
+    "title": "Últimas noticias",
+    "description": "Información sobre actividades académicas, investigación, extensión universitaria y gestión institucional.",
+    "viewAll": "Ver todas las noticias",
+    "readNews": "Leer noticia: {title}",
+    "defaultCategory": "Institucional"
+  },
+  "stats": {
+    "sectionLabel": "UNC en números",
+    "title": "Estadísticas institucionales",
+    "items": {
+      "diasActividad": "Días de actividad",
+      "estudiantes": "Estudiantes",
+      "carrerasAcreditadas": "Carreras acreditadas",
+      "docentesColaboradores": "Docentes y colaboradores",
+      "facultades": "Facultades",
+      "egresados": "Egresados"
+    }
+  },
+  "transparency": {
+    "sectionLabel": "Gestión pública",
+    "title": "Transparencia activa",
+    "description": "Accede a documentos, normativas e información pública de la Universidad Nacional de Concepción.",
+    "viewPortal": "Consultar el portal de transparencia",
+    "items": {
+      "ley5189": {
+        "title": "Ley 5189/14",
+        "description": "Información pública sobre remuneraciones y asignaciones."
+      },
+      "ley5282": {
+        "title": "Ley 5282/14",
+        "description": "Acceso ciudadano a la información pública institucional."
+      }
+    }
+  },
+  "institutional": {
+    "label": "Universidad pública",
+    "title": "Excelencia académica, investigación e innovación",
+    "description": "Comprometidos con el desarrollo sostenible de Concepción y del Paraguay."
+  }
+}

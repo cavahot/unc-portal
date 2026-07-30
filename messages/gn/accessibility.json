@@ -1,0 +1,19 @@
+{
+  "triggerLabel": "Herramientas de accesibilidad",
+  "panelLabel": "Herramientas de accesibilidad",
+  "panelTitle": "Herramientas de accesibilidad",
+  "closePanel": "Cerrar panel",
+  "fontSizeLabel": "Tamaño de texto",
+  "settingsSaved": "Las preferencias se guardan automáticamente en tu navegador.",
+  "tools": {
+    "increaseFontSize": "Aumentar texto",
+    "decreaseFontSize": "Disminuir texto",
+    "grayscale": "Escala de grises",
+    "highContrast": "Alto contraste",
+    "negative": "Contr. negativo",
+    "lightBg": "Fondo claro",
+    "underlineLinks": "Subrayar enlaces",
+    "readableFont": "Fuente legible",
+    "reset": "Reiniciar"
+  }
+}

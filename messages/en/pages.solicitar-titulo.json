@@ -1,0 +1,30 @@
+{
+  "pageTitle": "Request Degree — UNC",
+  "pageDescription": "Request your university degree at the National University of Concepción through the official form.",
+  "portalLabel": "UNC Portal",
+  "heading": "University Degree Request",
+  "description": "Start the process of obtaining your university diploma online through the official form of the National University of Concepción.",
+  "ctaLabel": "Start now",
+  "ctaHeading": "Ready to request your degree?",
+  "ctaNote": "This form opens in Google Forms in a new tab.",
+  "ctaButton": "Start request",
+  "processHeading": "Request process",
+  "steps": {
+    "step01": {
+      "title": "Complete the form",
+      "description": "Enter your personal information and details about your program."
+    },
+    "step02": {
+      "title": "Attach documentation",
+      "description": "National ID, graduation certificate and other documents required by your school."
+    },
+    "step03": {
+      "title": "Track your request",
+      "description": "You will receive notifications about the status of your request via your registered email."
+    },
+    "step04": {
+      "title": "Degree pickup",
+      "description": "Once approved, we will notify you of the date and place for collecting your university diploma."
+    }
+  }
+}

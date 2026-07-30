@@ -1,0 +1,82 @@
+{
+  "ariaLabel": "Navegação principal",
+  "openMenu": "Abrir menu de navegação",
+  "closeMenu": "Fechar menu de navegação",
+  "mainMenu": "Menu principal",
+  "relatedLinks": "Links institucionais relacionados",
+  "viewSection": "Ver seção",
+  "viewMainSection": "Ver seção principal",
+  "searchInPortal": "Buscar no portal",
+  "items": {
+    "inicio": "Início",
+    "institucional": "Institucional",
+    "facultades": "Faculdades",
+    "noticias": "Notícias",
+    "preguntasFrecuentes": "Perguntas Frequentes",
+    "contactos": "Contatos",
+    "academia": "Academia"
+  },
+  "institutional": {
+    "historia": "História",
+    "misionVisionValores": "Missão, Visão e Valores",
+    "marcoLegal": "Marco Legal",
+    "organigrama": "Organograma",
+    "autoridades": "Autoridades",
+    "transparenciaLey5189": "Transparência Lei 5.189",
+    "transparenciaLey5282": "Transparência Lei 5.282",
+    "informacionPublica": "Informação Pública",
+    "tramites": "Trâmites",
+    "titulos": "Títulos",
+    "solicitarTitulo": "Solicitar Título",
+    "legalizaciones": "Legalizações",
+    "convenios": "Convênios",
+    "tribunalElectoral": "Tribunal Eleitoral"
+  },
+  "facultades": {
+    "odontologia": "Faculdade de Odontologia",
+    "medicina": "Faculdade de Medicina",
+    "cienciasAgrarias": "Faculdade de Ciências Agrárias",
+    "cienciasExactas": "Faculdade de Ciências Exatas e Tecnológicas",
+    "humanidades": "Faculdade de Humanidades e Ciências da Educação",
+    "cienciasEconomicas": "Faculdade de Ciências Econômicas e Administrativas",
+    "arancelesRectorado": "Anuidades da Reitoria"
+  },
+  "contactos": {
+    "porDependencia": "Contatos por departamento"
+  },
+  "academia": {
+    "direccionAcademica": "Diretoria Acadêmica Geral",
+    "aseguramientoCalidad": "Garantia de Qualidade",
+    "investigacion": "Pesquisa",
+    "extensionVinculacion": "Extensão e Vinculação",
+    "bienestarInstitucional": "Bem-estar Institucional",
+    "revistasAcademicas": "Revistas Acadêmicas",
+    "bibliotecaDigital": "Biblioteca Digital"
+  },
+  "footer": {
+    "institutional": {
+      "title": "Institucional",
+      "ariaLabel": "Links institucionais",
+      "autoridades": "Autoridades",
+      "historia": "História",
+      "misionVision": "Missão e Visão",
+      "organigrama": "Organograma"
+    },
+    "services": {
+      "title": "Serviços",
+      "ariaLabel": "Serviços institucionais",
+      "carreras": "Cursos",
+      "tramites": "Trâmites",
+      "transparencia": "Transparência",
+      "contacto": "Contato"
+    },
+    "academia": {
+      "title": "Academia",
+      "ariaLabel": "Links acadêmicos",
+      "investigacion": "Pesquisa",
+      "extension": "Extensão universitária",
+      "noticias": "Notícias",
+      "calendarioAcademico": "Calendário acadêmico"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "pageTitle": "News - National University of Concepción",
+  "pageDescription": "Latest news and institutional announcements from UNC.",
+  "portalLabel": "UNC Portal",
+  "heading": "News",
+  "subheading": "Latest news and announcements from the National University of Concepción",
+  "empty": "No news available at this time.",
+  "categories": {
+    "institucional": "Institutional",
+    "academica": "Academic",
+    "investigacion": "Research",
+    "extension": "Extension",
+    "eventos": "Events",
+    "comunicados": "Announcements"
+  }
+}

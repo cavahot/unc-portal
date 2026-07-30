@@ -1,0 +1,19 @@
+{
+  "triggerLabel": "Ferramentas de acessibilidade",
+  "panelLabel": "Ferramentas de acessibilidade",
+  "panelTitle": "Ferramentas de acessibilidade",
+  "closePanel": "Fechar painel",
+  "fontSizeLabel": "Tamanho do texto",
+  "settingsSaved": "Suas preferências são salvas automaticamente no seu navegador.",
+  "tools": {
+    "increaseFontSize": "Aumentar texto",
+    "decreaseFontSize": "Diminuir texto",
+    "grayscale": "Escala de cinza",
+    "highContrast": "Alto contraste",
+    "negative": "Contraste negativo",
+    "lightBg": "Fundo claro",
+    "underlineLinks": "Sublinhar links",
+    "readableFont": "Fonte legível",
+    "reset": "Redefinir"
+  }
+}

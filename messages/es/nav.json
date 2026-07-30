@@ -1,0 +1,82 @@
+{
+  "ariaLabel": "Navegación principal",
+  "openMenu": "Abrir menú de navegación",
+  "closeMenu": "Cerrar menú de navegación",
+  "mainMenu": "Menú principal",
+  "relatedLinks": "Accesos institucionales relacionados",
+  "viewSection": "Ver sección",
+  "viewMainSection": "Ver sección principal",
+  "searchInPortal": "Buscar en el portal",
+  "items": {
+    "inicio": "Inicio",
+    "institucional": "Institucional",
+    "facultades": "Facultades",
+    "noticias": "Noticias",
+    "preguntasFrecuentes": "Preguntas Frecuentes",
+    "contactos": "Contactos",
+    "academia": "Academia"
+  },
+  "institutional": {
+    "historia": "Historia",
+    "misionVisionValores": "Misión, Visión y Valores",
+    "marcoLegal": "Marco Legal",
+    "organigrama": "Organigrama",
+    "autoridades": "Autoridades",
+    "transparenciaLey5189": "Transparencia Ley 5.189",
+    "transparenciaLey5282": "Transparencia Ley 5.282",
+    "informacionPublica": "Información Pública",
+    "tramites": "Trámites",
+    "titulos": "Títulos",
+    "solicitarTitulo": "Solicitar Título",
+    "legalizaciones": "Legalizaciones",
+    "convenios": "Convenios",
+    "tribunalElectoral": "Tribunal Electoral"
+  },
+  "facultades": {
+    "odontologia": "Facultad de Odontología",
+    "medicina": "Facultad de Medicina",
+    "cienciasAgrarias": "Facultad de Ciencias Agrarias",
+    "cienciasExactas": "Facultad de Ciencias Exactas y Tecnológicas",
+    "humanidades": "Facultad de Humanidades y Ciencias de la Educación",
+    "cienciasEconomicas": "Facultad de Ciencias Económicas y Administrativas",
+    "arancelesRectorado": "Aranceles Rectorado"
+  },
+  "contactos": {
+    "porDependencia": "Contactos por dependencia"
+  },
+  "academia": {
+    "direccionAcademica": "Dirección General Académica",
+    "aseguramientoCalidad": "Aseguramiento de la Calidad",
+    "investigacion": "Investigación",
+    "extensionVinculacion": "Extensión y Vinculación",
+    "bienestarInstitucional": "Bienestar Institucional",
+    "revistasAcademicas": "Revistas Académicas",
+    "bibliotecaDigital": "Biblioteca Digital"
+  },
+  "footer": {
+    "institutional": {
+      "title": "Institucional",
+      "ariaLabel": "Enlaces institucionales",
+      "autoridades": "Autoridades",
+      "historia": "Historia",
+      "misionVision": "Misión y Visión",
+      "organigrama": "Organigrama"
+    },
+    "services": {
+      "title": "Servicios",
+      "ariaLabel": "Servicios institucionales",
+      "carreras": "Carreras",
+      "tramites": "Trámites",
+      "transparencia": "Transparencia",
+      "contacto": "Contacto"
+    },
+    "academia": {
+      "title": "Academia",
+      "ariaLabel": "Enlaces académicos",
+      "investigacion": "Investigación",
+      "extension": "Extensión universitaria",
+      "noticias": "Noticias",
+      "calendarioAcademico": "Calendario académico"
+    }
+  }
+}

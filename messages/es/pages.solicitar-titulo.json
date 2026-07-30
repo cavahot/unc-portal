@@ -1,0 +1,30 @@
+{
+  "pageTitle": "Solicitar Título — UNC",
+  "pageDescription": "Solicita la gestión de tu título universitario en la Universidad Nacional de Concepción a través del formulario oficial.",
+  "portalLabel": "Portal UNC",
+  "heading": "Solicitud de Título Universitario",
+  "description": "Iniciá el proceso de gestión de tu diploma universitario de forma online a través del formulario oficial de la Universidad Nacional de Concepción.",
+  "ctaLabel": "Iniciar ahora",
+  "ctaHeading": "¿Listo para solicitar tu título?",
+  "ctaNote": "Este formulario abre en Google Forms en una nueva pestaña.",
+  "ctaButton": "Iniciar solicitud",
+  "processHeading": "Proceso de solicitud",
+  "steps": {
+    "step01": {
+      "title": "Completá el formulario",
+      "description": "Ingresá tus datos personales y la información de tu carrera."
+    },
+    "step02": {
+      "title": "Adjuntá la documentación",
+      "description": "Cédula de identidad, certificado de egreso y demás documentos requeridos según tu facultad."
+    },
+    "step03": {
+      "title": "Seguimiento",
+      "description": "Recibirás notificaciones sobre el estado de tu solicitud a través del correo registrado."
+    },
+    "step04": {
+      "title": "Retiro del título",
+      "description": "Una vez aprobado, te notificaremos la fecha y lugar de entrega de tu diploma universitario."
+    }
+  }
+}

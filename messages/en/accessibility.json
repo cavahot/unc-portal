@@ -1,0 +1,19 @@
+{
+  "triggerLabel": "Accessibility tools",
+  "panelLabel": "Accessibility tools",
+  "panelTitle": "Accessibility tools",
+  "closePanel": "Close panel",
+  "fontSizeLabel": "Text size",
+  "settingsSaved": "Your preferences are automatically saved in your browser.",
+  "tools": {
+    "increaseFontSize": "Increase text",
+    "decreaseFontSize": "Decrease text",
+    "grayscale": "Grayscale",
+    "highContrast": "High contrast",
+    "negative": "Negative contrast",
+    "lightBg": "Light background",
+    "underlineLinks": "Underline links",
+    "readableFont": "Readable font",
+    "reset": "Reset"
+  }
+}

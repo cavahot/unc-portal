@@ -1,0 +1,18 @@
+{
+  "pageTitleDefault": "Search — National University of Concepción",
+  "pageTitleQuery": "Search: \"{q}\" — UNC",
+  "pageDescription": "Search news and content on the National University of Concepción portal.",
+  "portalLabel": "UNC Portal",
+  "headingExplore": "Explore news",
+  "headingResults": "Results for",
+  "resultsSingular": "result",
+  "resultsPlural": "results",
+  "searchPlaceholder": "Search news...",
+  "searchAriaLabel": "Search the portal",
+  "searchButton": "Search",
+  "noResults": "No results found for \"{query}\"",
+  "noResultsHint": "Try different keywords",
+  "viewAllNews": "View all news",
+  "sectionNews": "News",
+  "sectionTesis": "Theses"
+}
