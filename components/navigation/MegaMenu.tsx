@@ -112,10 +112,6 @@ const fallbackMenuData: MenuItem[] = [
       { label: 'Bienestar Institucional', href: 'https://www.unc.edu.py/bienestar-institucional/' },
     ],
   },
-  {
-    label: 'Aula Virtual',
-    href: 'https://www.unc.edu.py/aula-virtual/',
-  },
 ];
 
 function ChevronIcon({
