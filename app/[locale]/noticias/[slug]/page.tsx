@@ -15,7 +15,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   comunicados: 'Comunicados',
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { slug } = await params
   const noticia = await getNewsBySlug(slug).catch(() => null)
   if (!noticia) return { title: 'Noticia no encontrada' }
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function NoticiaDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function NoticiaDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { slug } = await params
   const { isEnabled: isDraft } = await draftMode()
 

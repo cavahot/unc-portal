@@ -13,11 +13,11 @@ export default function NoticiaDetallePage({ searchParams }: { searchParams: { s
 
       <div className="prose max-w-none text-gray-700">
         <p className="text-lg leading-relaxed mb-4">
-          Contenido de la noticia en desarrollo. Esta es una plantilla para demostrar 
+          Contenido de la noticia en desarrollo. Esta es una plantilla para demostrar
           la estructura de la pagina de detalle de noticias del portal institucional.
         </p>
         <p className="leading-relaxed mb-4">
-          La Universidad Nacional de Concepcion continua su proceso de modernizacion 
+          La Universidad Nacional de Concepcion continua su proceso de modernizacion
           digital para brindar mejores servicios a la comunidad universitaria.
         </p>
       </div>
