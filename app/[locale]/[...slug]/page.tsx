@@ -4,7 +4,7 @@ import { getPageBySlug } from '@/lib/cms/queries/pages';
 import { BlockRenderer } from '@/lib/cms/blocks/renderer';
 
 interface PageProps {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ locale: string; slug: string[] }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
