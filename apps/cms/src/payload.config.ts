@@ -11,9 +11,13 @@ import sharp from 'sharp'
 import { Media } from './collections/Media'
 import { Noticias } from './collections/Noticias'
 import { Paginas } from './collections/Paginas'
+import { Revistas } from './collections/Revistas'
+import { Tesis } from './collections/Tesis'
 import { Users } from './collections/Users'
 import { Auditoria } from './collections/Auditoria'
 import { Navegacion } from './globals/Navegacion'
+import { Transparencia } from './globals/Transparencia'
+import { EnlacesExternos } from './globals/EnlacesExternos'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -88,10 +92,12 @@ export default buildConfig({
     Media,
     Noticias,
     Paginas,
+    Revistas,
+    Tesis,
     Auditoria,
   ],
 
-  globals: [Navegacion],
+  globals: [Navegacion, Transparencia, EnlacesExternos],
 
   editor: lexicalEditor(),
 
