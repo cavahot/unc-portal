@@ -3,6 +3,10 @@ import { revalidatePortalTag } from '../utilities/revalidation'
 
 export const Tesis: CollectionConfig = {
   slug: 'tesis',
+  labels: {
+    singular: 'Tesis Académica',
+    plural: 'Tesis Académicas',
+  },
   admin: {
     useAsTitle: 'titulo',
     defaultColumns: ['titulo', 'autor', 'anio', 'facultad'],
