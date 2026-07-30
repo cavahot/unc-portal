@@ -213,6 +213,53 @@
     outline: 3px solid var(--verde-300);
     outline-offset: 3px;
   }
+
+  /* =========================================================
+     ACCESSIBILITY TOOLBAR — runtime classes
+     ========================================================= */
+
+  .a11y-grayscale body {
+    filter: grayscale(100%);
+  }
+
+  .a11y-high-contrast body {
+    background: #000 !important;
+    color: #fff !important;
+  }
+  .a11y-high-contrast a {
+    color: #ffff00 !important;
+  }
+  .a11y-high-contrast button,
+  .a11y-high-contrast input,
+  .a11y-high-contrast select,
+  .a11y-high-contrast textarea {
+    outline: 2px solid #fff !important;
+  }
+
+  .a11y-negative body {
+    filter: invert(100%) hue-rotate(180deg);
+  }
+
+  .a11y-light-bg body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  .a11y-light-bg header {
+    background: #ffffff !important;
+  }
+  .a11y-light-bg footer {
+    background: #f5f5f5 !important;
+    color: #111111 !important;
+  }
+
+  .a11y-underline-links a {
+    text-decoration: underline !important;
+  }
+
+  .a11y-readable-font,
+  .a11y-readable-font * {
+    font-family: Arial, Helvetica, sans-serif !important;
+  }
 }
 
 /* =========================================================
