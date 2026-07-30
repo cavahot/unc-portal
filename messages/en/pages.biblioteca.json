@@ -1,0 +1,17 @@
+{
+  "pageTitleDefault": "Digital Library — National University of Concepción",
+  "pageTitleQuery": "Library: \"{q}\" — UNC",
+  "pageDescription": "Repository of theses and academic works of the National University of Concepción.",
+  "portalLabel": "UNC Portal",
+  "headingDefault": "Digital Library",
+  "headingResults": "Results for",
+  "subheading": "Explore our digital library — repository of theses and academic works.",
+  "resultsSingular": "result",
+  "resultsPlural": "results",
+  "searchPlaceholder": "Search by title or author...",
+  "searchAriaLabel": "Search theses in the library",
+  "searchButton": "Search",
+  "emptyPrompt": "Enter a term to search the digital library.",
+  "noResults": "No results found for \"{query}\"",
+  "noResultsHint": "Try different keywords or consult the library directly."
+}

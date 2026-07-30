@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "tagline": "Marking the North",
+    "imageAlt": "Main entrance of the National University of Concepción",
+    "title1": "Welcome to the",
+    "title2": "National University",
+    "title3": "of Concepción",
+    "description": "A public university that integrates identity, academic excellence, research, innovation and commitment to the sustainable development of northern Paraguay.",
+    "ctaExplore": "Explore programs",
+    "ctaAbout": "Learn about UNC",
+    "badgePublic": "Public university",
+    "badgeFounded": "Founded in 2007",
+    "badgeLocation": "Concepción · Paraguay",
+    "scrollLabel": "Scroll to enter",
+    "mainAccess": "Main entrance"
+  },
+  "quickLinks": {
+    "sectionLabel": "Institutional services",
+    "title": "Quick access",
+    "description": "Quickly find the most consulted academic and administrative services.",
+    "actionConsult": "Get information",
+    "actionAccess": "Access the platform",
+    "items": {
+      "carreras": {
+        "title": "Programs",
+        "description": "Explore academic offerings by school and level.",
+        "label": "Academic programs"
+      },
+      "calendario": {
+        "title": "Academic Calendar",
+        "description": "Check dates, periods and important activities.",
+        "label": "Important dates"
+      },
+      "titulos": {
+        "title": "Degrees & Legalizations",
+        "description": "Information about procedures and academic documentation.",
+        "label": "Academic procedures"
+      },
+      "aulaVirtual": {
+        "title": "Virtual Classroom",
+        "description": "Access the institutional learning platform.",
+        "label": "Educational platform"
+      }
+    }
+  },
+  "news": {
+    "sectionLabel": "University news",
+    "title": "Latest news",
+    "description": "Information about academic activities, research, university outreach and institutional management.",
+    "viewAll": "View all news",
+    "readNews": "Read news: {title}",
+    "defaultCategory": "Institutional"
+  },
+  "stats": {
+    "sectionLabel": "UNC in numbers",
+    "title": "Institutional statistics",
+    "items": {
+      "diasActividad": "Days of activity",
+      "estudiantes": "Students",
+      "carrerasAcreditadas": "Accredited programs",
+      "docentesColaboradores": "Faculty and staff",
+      "facultades": "Schools",
+      "egresados": "Graduates"
+    }
+  },
+  "transparency": {
+    "sectionLabel": "Public management",
+    "title": "Active transparency",
+    "description": "Access documents, regulations and public information from the National University of Concepción.",
+    "viewPortal": "View the transparency portal",
+    "items": {
+      "ley5189": {
+        "title": "Law 5189/14",
+        "description": "Public information on salaries and allocations."
+      },
+      "ley5282": {
+        "title": "Law 5282/14",
+        "description": "Citizens' access to institutional public information."
+      }
+    }
+  },
+  "institutional": {
+    "label": "Public university",
+    "title": "Academic excellence, research and innovation",
+    "description": "Committed to the sustainable development of Concepción and Paraguay."
+  }
+}

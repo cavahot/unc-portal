@@ -1,0 +1,82 @@
+{
+  "ariaLabel": "Main navigation",
+  "openMenu": "Open navigation menu",
+  "closeMenu": "Close navigation menu",
+  "mainMenu": "Main menu",
+  "relatedLinks": "Related institutional links",
+  "viewSection": "View section",
+  "viewMainSection": "View main section",
+  "searchInPortal": "Search the portal",
+  "items": {
+    "inicio": "Home",
+    "institucional": "Institutional",
+    "facultades": "Schools",
+    "noticias": "News",
+    "preguntasFrecuentes": "FAQ",
+    "contactos": "Contact",
+    "academia": "Academia"
+  },
+  "institutional": {
+    "historia": "History",
+    "misionVisionValores": "Mission, Vision & Values",
+    "marcoLegal": "Legal Framework",
+    "organigrama": "Organizational Chart",
+    "autoridades": "Authorities",
+    "transparenciaLey5189": "Transparency Law 5.189",
+    "transparenciaLey5282": "Transparency Law 5.282",
+    "informacionPublica": "Public Information",
+    "tramites": "Procedures",
+    "titulos": "Degrees",
+    "solicitarTitulo": "Request Degree",
+    "legalizaciones": "Legalizations",
+    "convenios": "Agreements",
+    "tribunalElectoral": "Electoral Tribunal"
+  },
+  "facultades": {
+    "odontologia": "School of Dentistry",
+    "medicina": "School of Medicine",
+    "cienciasAgrarias": "School of Agricultural Sciences",
+    "cienciasExactas": "School of Exact and Technological Sciences",
+    "humanidades": "School of Humanities and Education",
+    "cienciasEconomicas": "School of Economics and Administration",
+    "arancelesRectorado": "Rectorate Fees"
+  },
+  "contactos": {
+    "porDependencia": "Contacts by department"
+  },
+  "academia": {
+    "direccionAcademica": "Academic Affairs Office",
+    "aseguramientoCalidad": "Quality Assurance",
+    "investigacion": "Research",
+    "extensionVinculacion": "Extension and Outreach",
+    "bienestarInstitucional": "Institutional Welfare",
+    "revistasAcademicas": "Academic Journals",
+    "bibliotecaDigital": "Digital Library"
+  },
+  "footer": {
+    "institutional": {
+      "title": "Institutional",
+      "ariaLabel": "Institutional links",
+      "autoridades": "Authorities",
+      "historia": "History",
+      "misionVision": "Mission & Vision",
+      "organigrama": "Organizational Chart"
+    },
+    "services": {
+      "title": "Services",
+      "ariaLabel": "Institutional services",
+      "carreras": "Programs",
+      "tramites": "Procedures",
+      "transparencia": "Transparency",
+      "contacto": "Contact"
+    },
+    "academia": {
+      "title": "Academia",
+      "ariaLabel": "Academic links",
+      "investigacion": "Research",
+      "extension": "University extension",
+      "noticias": "News",
+      "calendarioAcademico": "Academic calendar"
+    }
+  }
+}

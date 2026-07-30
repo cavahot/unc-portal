@@ -1,0 +1,16 @@
+{
+  "pageTitle": "Noticias - Universidad Nacional de Concepción",
+  "pageDescription": "Novedades y comunicados institucionales de la UNC.",
+  "portalLabel": "Portal UNC",
+  "heading": "Noticias",
+  "subheading": "Novedades y comunicados de la Universidad Nacional de Concepción",
+  "empty": "No hay noticias disponibles en este momento.",
+  "categories": {
+    "institucional": "Institucional",
+    "academica": "Académica",
+    "investigacion": "Investigación",
+    "extension": "Extensión",
+    "eventos": "Eventos",
+    "comunicados": "Comunicados"
+  }
+}
