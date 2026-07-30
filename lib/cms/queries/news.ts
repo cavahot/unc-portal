@@ -138,3 +138,42 @@ export async function getNewsBySlugDraft(slug: string): Promise<NewsItem | null>
 
   return res.docs[0] || null
 }
+
+export async function getNewsByQuery(
+  q: string,
+  options: { limit?: number } = {}
+): Promise<PayloadResponse<NewsItem>> {
+  const limit = options.limit ?? 12
+  try {
+    const params = new URLSearchParams()
+    params.append('where[or][0][title][like]', q)
+    params.append('where[or][1][summary][like]', q)
+    params.append('where[_status][equals]', 'published')
+    params.append('sort', '-publishedAt')
+    params.append('limit', String(limit))
+    params.append('depth', '2')
+
+    return await cmsFetch<PayloadResponse<NewsItem>>(`/noticias?${params.toString()}`, {
+      tags: ['noticias-search'],
+    })
+  } catch {
+    const lower = q.toLowerCase()
+    const docs = DEMO_NEWS.filter(
+      (n) =>
+        n.title.toLowerCase().includes(lower) ||
+        (n.summary ?? '').toLowerCase().includes(lower),
+    )
+    return {
+      docs,
+      totalDocs: docs.length,
+      limit,
+      totalPages: 1,
+      page: 1,
+      pagingCounter: 1,
+      hasNextPage: false,
+      hasPrevPage: false,
+      prevPage: null,
+      nextPage: null,
+    }
+  }
+}
