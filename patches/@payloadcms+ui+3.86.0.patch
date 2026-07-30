@@ -1,0 +1,36 @@
+--- a/node_modules/@payloadcms/ui/dist/fields/Blocks/index.js
++++ b/node_modules/@payloadcms/ui/dist/fields/Blocks/index.js
+@@ -58,6 +58,7 @@
+       minRows: minRowsProp,
+       required
+     },
++    forceRender,
+     path: pathFromProps,
+     permissions,
+     readOnly,
+@@ -409,6 +410,7 @@
+               duplicateRow: duplicateRow,
+               errorCount: rowErrorCount,
+               fields: blockConfig.fields,
++              forceRender: forceRender,
+               hasMaxRows: hasMaxRows,
+               isLoading: isLoading,
+               isSortable: isSortable,
+--- a/node_modules/@payloadcms/ui/dist/fields/Blocks/BlockRow.js
++++ b/node_modules/@payloadcms/ui/dist/fields/Blocks/BlockRow.js
+@@ -27,6 +27,7 @@
+     duplicateRow,
+     errorCount,
+     fields,
++    forceRender,
+     hasMaxRows,
+     isLoading: isLoadingFromProps,
+     isSortable,
+@@ -168,6 +169,7 @@
+         children: isLoading ? _jsx(ShimmerEffect, {}) : _jsx(RenderFields, {
+           className: `${baseClass}__fields`,
+           fields,
++          forceRender,
+           margins: "small",
+           parentIndexPath: "",
+           parentPath: path,
