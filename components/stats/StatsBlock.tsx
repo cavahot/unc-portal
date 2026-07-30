@@ -2,8 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+// UNC comenzó operaciones el 3 de agosto de 2009
+const FOUNDING_DATE = new Date('2009-08-03')
+
+function daysSinceFounding(): number {
+  return Math.floor((Date.now() - FOUNDING_DATE.getTime()) / 86_400_000)
+}
+
 const STATS = [
-  { value: 6205, label: 'Días de actividad' },
+  { value: daysSinceFounding(), label: 'Días de actividad' },
   { value: 4985, label: 'Estudiantes' },
   { value: 10,   label: 'Carreras acreditadas' },
   { value: 762,  label: 'Docentes y colaboradores' },
