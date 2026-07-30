@@ -138,7 +138,7 @@ function DocumentIcon() {
    ========================================================= */
 
 export default async function Home() {
-  const { docs: noticias } = await getNews({ limit: 6 }).catch(() => ({ docs: [] }))
+  const { docs: noticias } = await getNews({ limit: 6 })
 
   return (
     <>
