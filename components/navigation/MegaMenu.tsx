@@ -204,6 +204,10 @@ function normalizePath(href: string) {
   return href.split('?')[0];
 }
 
+function isExternal(href: string) {
+  return href.startsWith('http://') || href.startsWith('https://');
+}
+
 export default function MegaMenu({ navigation }: MegaMenuProps) {
   const pathname = usePathname();
 
@@ -546,6 +550,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                     isCurrent ? 'page' : undefined
                   }
                   onFocus={closeDesktopMenu}
+                  {...(isExternal(item.href) && { target: '_blank', rel: 'noopener noreferrer' })}
                   className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-2.5 text-[0.76rem] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300 2xl:px-3 2xl:text-[0.82rem] ${
                     isCurrent
                       ? 'bg-unc-600/[0.18] text-unc-300'
@@ -580,6 +585,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                     <Link
                       href={item.href}
                       onClick={closeDesktopMenu}
+                      {...(isExternal(item.href) && { target: '_blank', rel: 'noopener noreferrer' })}
                       className="rounded-full border border-unc-400/25 bg-unc-600/10 px-3 py-1.5 text-xs font-medium text-unc-300 transition-colors hover:bg-unc-600/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
                     >
                       Ver sección
@@ -601,6 +607,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                               : undefined
                           }
                           onClick={closeDesktopMenu}
+                          {...(isExternal(child.href) && { target: '_blank', rel: 'noopener noreferrer' })}
                           className={`group rounded-xl p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300 ${
                             childIsCurrent
                               ? 'bg-unc-600/[0.16]'
