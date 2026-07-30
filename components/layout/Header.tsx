@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { Navegacion } from '@unc/cms-types';
 import MegaMenu from '@/components/navigation/MegaMenu';
+import LocaleSwitcher from '@/components/layout/LocaleSwitcher';
 
 interface HeaderProps {
   navigation?: Navegacion;
@@ -107,6 +108,8 @@ export default function Header({ navigation }: HeaderProps) {
                 />
               </svg>
             </Link>
+
+            <LocaleSwitcher />
 
             <a
               href="https://aula.unc.edu.py"
