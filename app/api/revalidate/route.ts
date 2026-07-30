@@ -27,6 +27,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const ALLOWED_TAGS = new Set([
+      'noticias',
+      'noticias-search',
+      'navegacion',
+      'transparencia',
+      'revistas',
+      'tesis',
+      'enlaces-externos',
+    ]);
+
+    if (tag && !ALLOWED_TAGS.has(tag) && !tag.startsWith('noticias:')) {
+      return NextResponse.json({ error: `Unknown tag: ${tag}` }, { status: 400 });
+    }
+
     if (tag) {
       revalidateTag(tag, { expire: 0 });
       console.log(`[Revalidate] Success for tag: ${tag}`);
