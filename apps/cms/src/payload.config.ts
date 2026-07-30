@@ -8,6 +8,8 @@ import { buildConfig } from 'payload'
 import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 
+import { Carreras } from './collections/Carreras'
+import { Facultades } from './collections/Facultades'
 import { Media } from './collections/Media'
 import { Noticias } from './collections/Noticias'
 import { Paginas } from './collections/Paginas'
@@ -94,6 +96,8 @@ export default buildConfig({
     Paginas,
     Revistas,
     Tesis,
+    Facultades,
+    Carreras,
     Auditoria,
   ],
 

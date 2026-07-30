@@ -35,6 +35,8 @@ export async function POST(request: NextRequest) {
       'revistas',
       'tesis',
       'enlaces-externos',
+      'facultades',
+      'carreras',
     ]);
 
     if (tag && !ALLOWED_TAGS.has(tag) && !tag.startsWith('noticias:')) {
