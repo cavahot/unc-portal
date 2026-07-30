@@ -1,0 +1,8 @@
+change_id: global-search
+artifact_store: openspec
+execution_mode: interactive
+created_at: "2026-07-29"
+current_phase: done
+phases_completed:
+  - proposal
+delivery_strategy: ask-on-risk

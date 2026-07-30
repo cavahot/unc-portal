@@ -201,6 +201,9 @@ export interface Media {
 export interface Noticia {
   id: number;
   title: string;
+  /**
+   * Generado automáticamente desde el título. Puedes editarlo manualmente.
+   */
   slug: string;
   summary: string;
   content: {
@@ -236,12 +239,9 @@ export interface Noticia {
   faculty?: string | null;
   author?: string | null;
   /**
-   * Mostrar en portada
+   * Mostrar en la sección destacada del portal
    */
   featured?: boolean | null;
-  /**
-   * Fecha de publicación
-   */
   publishedAt?: string | null;
   /**
    * Estado del flujo de aprobación editorial
