@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useEffect, useState } from 'react';
 import type { Navegacion } from '@unc/cms-types';
 import MegaMenu from '@/components/navigation/MegaMenu';
@@ -12,6 +13,7 @@ interface HeaderProps {
 }
 
 export default function Header({ navigation }: HeaderProps) {
+  const t = useTranslations('nav');
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function Header({ navigation }: HeaderProps) {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:inline-flex focus:items-center focus:rounded-full focus:border focus:border-[#5CFF5C] focus:bg-[#E6FFE6] focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-[#001A00] focus:shadow-lg"
       >
-        Saltar al contenido principal
+        {t('skipLink')}
       </a>
 
       <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-8">
@@ -51,13 +53,13 @@ export default function Header({ navigation }: HeaderProps) {
           {/* Identidad institucional */}
           <Link
             href="/"
-            aria-label="Ir al inicio de la Universidad Nacional de Concepción"
+            aria-label={t('homeAriaLabel')}
             className="group flex shrink-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
           >
             <div className="relative h-12 w-12 shrink-0 transition-transform duration-300 group-hover:scale-[1.04] xl:h-14 xl:w-14">
               <Image
                 src="/images/logo.png"
-                alt="Logotipo oficial de la Universidad Nacional de Concepción"
+                alt={t('logoAlt')}
                 fill
                 priority
                 sizes="(min-width: 1280px) 56px, 48px"
@@ -67,15 +69,15 @@ export default function Header({ navigation }: HeaderProps) {
 
             <div className="hidden 2xl:block">
               <span className="block whitespace-nowrap text-sm font-semibold leading-tight text-white">
-                Universidad Nacional
+                {t('brandName')}
               </span>
 
               <span className="block whitespace-nowrap text-xs leading-tight text-white/70">
-                de Concepción
+                {t('brandLocation')}
               </span>
 
               <span className="mt-0.5 block text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-[#8AFF8A]">
-                Marcando el Norte
+                {t('brandTagline')}
               </span>
             </div>
           </Link>
@@ -89,8 +91,8 @@ export default function Header({ navigation }: HeaderProps) {
           <div className="hidden shrink-0 items-center gap-2 2xl:flex">
             <Link
               href="/buscar"
-              aria-label="Buscar en el portal institucional"
-              title="Buscar"
+              aria-label={t('searchAriaLabel')}
+              title={t('searchTitle')}
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.07] text-white/80 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#5CFF5C] hover:bg-[#00A300] hover:text-[#001A00] hover:shadow-[0_12px_28px_-14px_rgba(0,209,0,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
             >
               <svg
@@ -115,20 +117,20 @@ export default function Header({ navigation }: HeaderProps) {
               href="https://aula.unc.edu.py"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Acceder al Aula Virtual. Abre en una nueva pestaña"
+              aria-label={t('aulaVirtualAriaLabel')}
               className="pill-button pill-button-secondary px-5 py-2.5 text-xs"
             >
-              Aula Virtual
+              {t('aulaVirtual')}
             </a>
 
             <a
               href="https://intranet.unc.edu.py"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Acceder a la Intranet. Abre en una nueva pestaña"
+              aria-label={t('intranetAriaLabel')}
               className="pill-button pill-button-primary px-5 py-2.5 text-xs"
             >
-              Intranet
+              {t('intranet')}
             </a>
           </div>
         </div>

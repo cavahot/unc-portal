@@ -1,27 +1,32 @@
+import { getTranslations } from 'next-intl/server'
 import { getTesisByQuery } from '@/lib/cms/queries/institutional'
 import ThesisCard from '@/components/institutional/ThesisCard'
 
 export async function generateMetadata({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>
   searchParams: Promise<{ q?: string }>
 }) {
-  const { q } = await searchParams
+  const [{ locale }, { q }] = await Promise.all([params, searchParams])
+  const t = await getTranslations({ locale, namespace: 'pages.biblioteca' })
   return {
-    title: q
-      ? `Biblioteca: "${q}" — UNC`
-      : 'Biblioteca Digital — Universidad Nacional de Concepción',
-    description:
-      'Repositorio de tesis y trabajos académicos de la Universidad Nacional de Concepción.',
+    title: q ? t('pageTitleQuery', { q }) : t('pageTitleDefault'),
+    description: t('pageDescription'),
   }
 }
 
 export default async function BibliotecaPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>
   searchParams: Promise<{ q?: string }>
 }) {
-  const { q } = await searchParams
+  const [{ locale }, { q }] = await Promise.all([params, searchParams])
+  const t = await getTranslations({ locale, namespace: 'pages.biblioteca' })
+
   const query = q?.trim() ?? ''
 
   let docs: Awaited<ReturnType<typeof getTesisByQuery>>['docs'] = []
@@ -41,22 +46,20 @@ export default async function BibliotecaPage({
 
         {/* Hero */}
         <div className="mb-10">
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">Portal UNC</p>
+          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('portalLabel')}</p>
           <h1 className="text-4xl font-bold text-white">
             {query ? (
-              <>Resultados para <span className="text-[#5CFF5C]">&ldquo;{query}&rdquo;</span></>
+              <>{t('headingResults')} <span className="text-[#5CFF5C]">&ldquo;{query}&rdquo;</span></>
             ) : (
-              'Biblioteca Digital'
+              t('headingDefault')
             )}
           </h1>
           {!query && (
-            <p className="mt-2 text-white/50">
-              Explora nuestra biblioteca digital — repositorio de tesis y trabajos académicos.
-            </p>
+            <p className="mt-2 text-white/50">{t('subheading')}</p>
           )}
           {query && (
             <p className="mt-2 text-white/40">
-              {docs.length} {docs.length === 1 ? 'resultado' : 'resultados'}
+              {docs.length} {docs.length === 1 ? t('resultsSingular') : t('resultsPlural')}
             </p>
           )}
         </div>
@@ -68,8 +71,8 @@ export default async function BibliotecaPage({
               type="search"
               name="q"
               defaultValue={query}
-              placeholder="Buscar por título o autor..."
-              aria-label="Buscar tesis en la biblioteca"
+              placeholder={t('searchPlaceholder')}
+              aria-label={t('searchAriaLabel')}
               className="flex-1 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#5CFF5C]/50 focus:outline-none focus:ring-1 focus:ring-[#5CFF5C]/50"
             />
             <button
@@ -80,7 +83,7 @@ export default async function BibliotecaPage({
                 <circle cx="11" cy="11" r="7" strokeWidth={2} />
                 <path d="m21 21-4.35-4.35" strokeWidth={2} strokeLinecap="round" />
               </svg>
-              Buscar
+              {t('searchButton')}
             </button>
           </div>
         </form>
@@ -94,7 +97,7 @@ export default async function BibliotecaPage({
                   d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <p className="text-white/40">Ingresá un término para buscar en la biblioteca digital.</p>
+            <p className="text-white/40">{t('emptyPrompt')}</p>
           </div>
         ) : docs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
@@ -105,9 +108,9 @@ export default async function BibliotecaPage({
               </svg>
             </div>
             <p className="text-lg font-semibold text-white/60">
-              No encontramos resultados para &ldquo;{query}&rdquo;
+              {t('noResults', { query })}
             </p>
-            <p className="mt-2 text-sm text-white/30">Intentá con otras palabras o consultá la biblioteca directamente.</p>
+            <p className="mt-2 text-sm text-white/30">{t('noResultsHint')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

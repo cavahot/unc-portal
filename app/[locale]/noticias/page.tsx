@@ -1,30 +1,43 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import { getTranslations, getFormatter } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import { getNews } from '@/lib/cms/queries/news'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  institucional: 'Institucional',
-  academica: 'Académica',
-  investigacion: 'Investigación',
-  extension: 'Extensión',
-  eventos: 'Eventos',
-  comunicados: 'Comunicados',
+type CategoryKey = 'institucional' | 'academica' | 'investigacion' | 'extension' | 'eventos' | 'comunicados'
+const KNOWN_CATEGORIES = new Set<string>(['institucional', 'academica', 'investigacion', 'extension', 'eventos', 'comunicados'])
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'pages.noticias' })
+  return {
+    title: t('pageTitle'),
+    description: t('pageDescription'),
+  }
 }
 
-export const metadata = {
-  title: 'Noticias - Universidad Nacional de Concepción',
-  description: 'Novedades y comunicados institucionales de la UNC.',
-}
+export default async function NoticiasPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const [t, format] = await Promise.all([
+    getTranslations({ locale, namespace: 'pages.noticias' }),
+    getFormatter({ locale }),
+  ])
 
-export default async function NoticiasPage() {
   let noticias: Awaited<ReturnType<typeof getNews>>['docs'] = []
 
   try {
     const res = await getNews({ limit: 24 })
     noticias = res.docs ?? []
   } catch {
-    // CMS no disponible — estado vacío
+    // CMS unavailable — empty state
   }
 
   return (
@@ -32,9 +45,9 @@ export default async function NoticiasPage() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
         <div className="mb-12">
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">Portal UNC</p>
-          <h1 className="text-4xl font-bold text-white">Noticias</h1>
-          <p className="mt-2 text-white/50">Novedades y comunicados de la Universidad Nacional de Concepción</p>
+          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('portalLabel')}</p>
+          <h1 className="text-4xl font-bold text-white">{t('heading')}</h1>
+          <p className="mt-2 text-white/50">{t('subheading')}</p>
         </div>
 
         {noticias.length === 0 ? (
@@ -45,7 +58,7 @@ export default async function NoticiasPage() {
                   d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6" />
               </svg>
             </div>
-            <p className="text-white/40">No hay noticias disponibles en este momento.</p>
+            <p className="text-white/40">{t('empty')}</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -79,7 +92,9 @@ export default async function NoticiasPage() {
                 <div className="flex flex-1 flex-col p-5">
                   {n.category && (
                     <span className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#5CFF5C]">
-                      {CATEGORY_LABELS[n.category] ?? n.category}
+                      {KNOWN_CATEGORIES.has(n.category)
+                        ? t(`categories.${n.category as CategoryKey}`)
+                        : n.category}
                     </span>
                   )}
                   <h2 className="mb-2 line-clamp-3 text-[0.95rem] font-semibold leading-snug text-white transition-colors group-hover:text-[#8AFF8A]">
@@ -90,7 +105,7 @@ export default async function NoticiasPage() {
                   )}
                   {n.publishedAt && (
                     <p className="mt-4 text-xs text-white/30">
-                      {new Date(n.publishedAt).toLocaleDateString('es-PY', {
+                      {format.dateTime(new Date(n.publishedAt), {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',

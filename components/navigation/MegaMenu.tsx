@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/navigation';
 import { createPortal } from 'react-dom';
 import {
   KeyboardEvent,
@@ -209,6 +209,7 @@ function isExternal(href: string) {
 }
 
 export default function MegaMenu({ navigation }: MegaMenuProps) {
+  const t = useTranslations('nav');
   const pathname = usePathname();
 
   const menuData =
@@ -465,7 +466,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
   return (
     <nav
       ref={menuRef}
-      aria-label="Navegación principal"
+      aria-label={t('ariaLabel')}
       className="relative flex justify-end"
     >
       {/* Navegación de escritorio */}
@@ -578,7 +579,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                       </p>
 
                       <p className="mt-0.5 text-xs text-white/45">
-                        Accesos institucionales relacionados
+                        {t('relatedLinks')}
                       </p>
                     </div>
 
@@ -588,7 +589,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                       {...(isExternal(item.href) && { target: '_blank', rel: 'noopener noreferrer' })}
                       className="rounded-full border border-unc-400/25 bg-unc-600/10 px-3 py-1.5 text-xs font-medium text-unc-300 transition-colors hover:bg-unc-600/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
                     >
-                      Ver sección
+                      {t('viewSection')}
                     </Link>
                   </div>
 
@@ -647,7 +648,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
         onClick={openMobileMenu}
         aria-expanded={mobileOpen}
         aria-controls="mobile-main-menu"
-        aria-label="Abrir menú de navegación"
+        aria-label={t('openMenu')}
         className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/80 transition-colors hover:border-unc-400/30 hover:bg-unc-600/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300 xl:hidden"
       >
         <MenuIcon />
@@ -662,7 +663,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
             id="mobile-main-menu"
             role="dialog"
             aria-modal="true"
-            aria-label="Menú principal"
+            aria-label={t('mainMenu')}
             onKeyDown={handleMobileKeyDown}
             className="fixed inset-0 z-[100] h-[100dvh] min-h-screen overflow-hidden bg-[#050d0a] xl:hidden"
           >
@@ -670,7 +671,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
             <div className="flex h-[72px] items-center justify-between border-b border-white/10 bg-[#050d0a] px-4">
               <div>
                 <p className="text-sm font-semibold text-white">
-                  Menú principal
+                  {t('mainMenu')}
                 </p>
 
                 <p className="mt-0.5 text-xs text-white/45">
@@ -682,7 +683,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                 type="button"
                 data-mobile-autofocus
                 onClick={closeMobileMenu}
-                aria-label="Cerrar menú de navegación"
+                aria-label={t('closeMenu')}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/80 transition-colors hover:border-unc-400/30 hover:bg-unc-600/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
               >
                 <CloseIcon />
@@ -697,18 +698,20 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                     href="https://aula.unc.edu.py"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={t('aulaVirtualAriaLabel')}
                     className="pill-button pill-button-secondary px-4 py-3 text-xs"
                   >
-                    Aula Virtual
+                    {t('aulaVirtual')}
                   </a>
 
                   <a
                     href="https://intranet.unc.edu.py"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={t('intranetAriaLabel')}
                     className="pill-button pill-button-primary px-4 py-3 text-xs"
                   >
-                    Intranet
+                    {t('intranet')}
                   </a>
                 </div>
 
@@ -767,7 +770,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                                   onClick={closeMobileMenu}
                                   className="mb-1 block rounded-xl bg-unc-600/[0.15] px-3 py-3 text-sm font-medium text-unc-300 transition-colors hover:bg-unc-600/[0.22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
                                 >
-                                  Ver sección principal
+                                  {t('viewMainSection')}
                                 </Link>
 
                                 {item.children?.map(
@@ -842,7 +845,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                   className="mt-5 flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-medium text-white/75 transition-colors hover:border-unc-400/30 hover:bg-unc-600/[0.12] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
                 >
                   <SearchIcon />
-                  Buscar en el portal
+                  {t('searchInPortal')}
                 </Link>
               </div>
             </div>

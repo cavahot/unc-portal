@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 /* ─── State ─────────────────────────────────────────────── */
 
@@ -167,6 +168,7 @@ function ToolButton({
 /* ─── Main component ─────────────────────────────────────── */
 
 export default function AccessibilityPanel() {
+  const t = useTranslations('accessibility')
   const [isOpen, setIsOpen] = useState(false)
   const { state, toggle, increaseFontSize, decreaseFontSize, reset } = useA11y()
   const panelRef  = useRef<HTMLElement>(null)
@@ -207,15 +209,15 @@ export default function AccessibilityPanel() {
   }, [isOpen])
 
   const tools: Tool[] = [
-    { key: 'increaseFontSize', label: 'Aumentar texto',   icon: <IconTextUp /> },
-    { key: 'decreaseFontSize', label: 'Disminuir texto',  icon: <IconTextDown /> },
-    { key: 'grayscale',        label: 'Escala de grises', icon: <IconGrayscale /> },
-    { key: 'highContrast',     label: 'Alto contraste',   icon: <IconContrast /> },
-    { key: 'negative',         label: 'Contr. negativo',  icon: <IconNegative /> },
-    { key: 'lightBg',          label: 'Fondo claro',      icon: <IconLightBg /> },
-    { key: 'underlineLinks',   label: 'Subrayar enlaces', icon: <IconUnderline /> },
-    { key: 'readableFont',     label: 'Fuente legible',   icon: <IconReadableFont /> },
-    { key: 'reset',            label: 'Reiniciar',        icon: <IconReset /> },
+    { key: 'increaseFontSize', label: t('tools.increaseFontSize'), icon: <IconTextUp /> },
+    { key: 'decreaseFontSize', label: t('tools.decreaseFontSize'), icon: <IconTextDown /> },
+    { key: 'grayscale',        label: t('tools.grayscale'),        icon: <IconGrayscale /> },
+    { key: 'highContrast',     label: t('tools.highContrast'),     icon: <IconContrast /> },
+    { key: 'negative',         label: t('tools.negative'),         icon: <IconNegative /> },
+    { key: 'lightBg',          label: t('tools.lightBg'),          icon: <IconLightBg /> },
+    { key: 'underlineLinks',   label: t('tools.underlineLinks'),   icon: <IconUnderline /> },
+    { key: 'readableFont',     label: t('tools.readableFont'),     icon: <IconReadableFont /> },
+    { key: 'reset',            label: t('tools.reset'),            icon: <IconReset /> },
   ]
 
   function handleTool(key: Tool['key']) {
@@ -238,7 +240,7 @@ export default function AccessibilityPanel() {
         onClick={() => setIsOpen(v => !v)}
         aria-expanded={isOpen}
         aria-controls="accessibility-panel"
-        aria-label="Herramientas de accesibilidad"
+        aria-label={t('triggerLabel')}
         className="fixed right-0 top-1/2 z-50 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-l-2xl border border-r-0 border-[#5CFF5C]/30 bg-[#004700] text-white shadow-[0_4px_24px_rgba(0,71,0,0.6)] transition-all duration-200 hover:w-14 hover:bg-[#005c00] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
       >
         <IconAccessibility />
@@ -257,7 +259,7 @@ export default function AccessibilityPanel() {
       <aside
         id="accessibility-panel"
         ref={panelRef}
-        aria-label="Herramientas de accesibilidad"
+        aria-label={t('panelLabel')}
         className={[
           'fixed right-0 top-0 z-50 flex h-full w-[280px] max-w-full flex-col bg-slate-900 shadow-[-8px_0_40px_rgba(0,0,0,0.5)] transition-transform duration-250 ease-out sm:w-[300px]',
           isOpen ? 'translate-x-0' : 'translate-x-full',
@@ -268,12 +270,12 @@ export default function AccessibilityPanel() {
           <div className="flex items-center gap-2">
             <IconAccessibility />
             <h2 className="text-sm font-semibold text-white">
-              Herramientas de accesibilidad
+              {t('panelTitle')}
             </h2>
           </div>
           <button
             onClick={() => { setIsOpen(false); triggerRef.current?.focus() }}
-            aria-label="Cerrar panel"
+            aria-label={t('closePanel')}
             className="rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
           >
             <IconClose />
@@ -282,7 +284,7 @@ export default function AccessibilityPanel() {
 
         {/* Font size indicator */}
         <div className="border-b border-white/10 px-5 py-3">
-          <p className="text-[0.65rem] uppercase tracking-widest text-white/40">Tamaño de texto</p>
+          <p className="text-[0.65rem] uppercase tracking-widest text-white/40">{t('fontSizeLabel')}</p>
           <p className="mt-0.5 text-sm font-semibold text-white">{state.fontSize}%</p>
         </div>
 
@@ -305,7 +307,7 @@ export default function AccessibilityPanel() {
         {/* Footer */}
         <div className="border-t border-white/10 px-5 py-3">
           <p className="text-[0.6rem] leading-4 text-white/30">
-            Las preferencias se guardan automáticamente en tu navegador.
+            {t('settingsSaved')}
           </p>
         </div>
       </aside>

@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import {
   useCallback,
   useEffect,
@@ -79,6 +80,7 @@ function ScrollIcon() {
 }
 
 export default function CinematicHero() {
+  const t = useTranslations('pages.home');
   const sectionRef =
     useRef<HTMLElement>(null);
 
@@ -473,7 +475,7 @@ export default function CinematicHero() {
         >
           <Image
             src="/images/campus-3d/hero-entry.webp"
-            alt="Acceso principal de la Universidad Nacional de Concepción"
+            alt={t('hero.imageAlt')}
             fill
             priority
             quality={92}
@@ -560,7 +562,7 @@ export default function CinematicHero() {
                 />
 
                 <span className="text-[0.67rem] font-extrabold uppercase tracking-[0.31em] text-[#B8FFB8] sm:text-xs">
-                  Marcando el Norte
+                  {t('hero.tagline')}
                 </span>
               </div>
 
@@ -569,23 +571,20 @@ export default function CinematicHero() {
                 className="mt-6 max-w-[780px] font-serif text-[3.15rem] font-bold leading-[0.9] tracking-[-0.055em] text-white [text-shadow:0_7px_34px_rgba(0,26,0,0.82)] sm:text-[4.4rem] lg:text-[5.5rem] xl:text-[6.25rem]"
               >
                 <span className="block">
-                  Bienvenidos a la
+                  {t('hero.title1')}
                 </span>
 
                 <span className="block">
-                  Universidad Nacional
+                  {t('hero.title2')}
                 </span>
 
                 <span className="block">
-                  de Concepción
+                  {t('hero.title3')}
                 </span>
               </h1>
 
               <p className="mt-7 max-w-[650px] text-sm font-medium leading-7 text-white/[0.86] [text-shadow:0_3px_14px_rgba(0,26,0,0.9)] sm:text-base lg:text-lg">
-                Una universidad pública que integra identidad,
-                excelencia académica, investigación, innovación
-                y compromiso con el desarrollo sostenible del
-                norte del Paraguay.
+                {t('hero.description')}
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -593,7 +592,7 @@ export default function CinematicHero() {
                   href="/carreras"
                   className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#00D100] px-6 py-3 text-sm font-extrabold text-[#001A00] shadow-[0_15px_38px_rgba(0,209,0,0.28)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#5CFF5C] hover:shadow-[0_20px_48px_rgba(92,255,92,0.36)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8FFB8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
                 >
-                  Explorar carreras
+                  {t('hero.ctaExplore')}
 
                   <ArrowIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                 </Link>
@@ -602,7 +601,7 @@ export default function CinematicHero() {
                   href="/institucional"
                   className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-white/45 bg-white/[0.11] px-6 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(0,26,0,0.2)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-white/75 hover:bg-white/[0.2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
                 >
-                  Conocer la UNC
+                  {t('hero.ctaAbout')}
 
                   <ArrowIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                 </Link>
@@ -610,7 +609,7 @@ export default function CinematicHero() {
 
               <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/25 pt-5 text-[0.65rem] font-bold uppercase tracking-[0.17em] text-white/75 sm:text-xs">
                 <span>
-                  Universidad pública
+                  {t('hero.badgePublic')}
                 </span>
 
                 <span
@@ -619,7 +618,7 @@ export default function CinematicHero() {
                 />
 
                 <span>
-                  Fundada en 2007
+                  {t('hero.badgeFounded')}
                 </span>
 
                 <span
@@ -628,7 +627,7 @@ export default function CinematicHero() {
                 />
 
                 <span>
-                  Concepción · Paraguay
+                  {t('hero.badgeLocation')}
                 </span>
               </div>
             </div>
@@ -645,7 +644,7 @@ export default function CinematicHero() {
         >
           <span className="h-2 w-2 rounded-full bg-[#5CFF5C] shadow-[0_0_16px_rgba(92,255,92,0.9)]" />
 
-          Acceso principal
+          {t('hero.mainAccess')}
         </div>
 
         <div
@@ -657,7 +656,7 @@ export default function CinematicHero() {
           }}
         >
           <span className="[writing-mode:vertical-rl] rotate-180 text-[0.57rem] font-bold uppercase tracking-[0.26em] text-white/70">
-            Desplázate para ingresar
+            {t('hero.scrollLabel')}
           </span>
 
           <div className="relative h-24 w-px overflow-hidden bg-white/25">
@@ -690,7 +689,7 @@ export default function CinematicHero() {
           }}
         >
           <span className="text-[0.58rem] font-bold uppercase tracking-[0.21em] text-white/75">
-            Desplázate para ingresar
+            {t('hero.scrollLabel')}
           </span>
 
           <span className="flex h-8 w-8 animate-bounce items-center justify-center rounded-full border border-white/30 bg-white/[0.1] text-white backdrop-blur-sm">

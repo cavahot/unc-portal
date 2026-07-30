@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { getTranslations, getFormatter } from 'next-intl/server';
 
 import CinematicHero from '@/components/hero/CinematicHero';
 import InstitutionalAccessSection from '@/components/institutional/InstitutionalAccessSection';
@@ -7,66 +7,7 @@ import Reveal from '@/components/motion/Reveal';
 import TiltCard from '@/components/motion/TiltCard';
 import StatsBlock from '@/components/stats/StatsBlock';
 import { getNews } from '@/lib/cms/queries/news';
-
-/* =========================================================
-   DATOS
-   ========================================================= */
-
-const quickLinks = [
-  {
-    title: 'Carreras',
-    description:
-      'Explora la oferta académica por facultad y nivel.',
-    href: '/carreras',
-    label: 'Oferta académica',
-    action: 'Consultar información',
-    external: false,
-  },
-  {
-    title: 'Calendario Académico',
-    description:
-      'Consulta fechas, periodos y actividades importantes.',
-    href: '/calendario-academico',
-    label: 'Fechas importantes',
-    action: 'Consultar información',
-    external: false,
-  },
-  {
-    title: 'Títulos y Legalizaciones',
-    description:
-      'Información sobre trámites y documentación académica.',
-    href: '/tramites',
-    label: 'Gestiones académicas',
-    action: 'Consultar información',
-    external: false,
-  },
-  {
-    title: 'Aula Virtual',
-    description:
-      'Accede a la plataforma institucional de aprendizaje.',
-    href: 'https://aula.unc.edu.py',
-    label: 'Plataforma educativa',
-    action: 'Acceder a la plataforma',
-    external: true,
-  },
-];
-
-const transparencyItems = [
-  {
-    title: 'Ley 5189/14',
-    description:
-      'Información pública sobre remuneraciones y asignaciones.',
-    href: '/transparencia',
-    featured: true,
-  },
-  {
-    title: 'Ley 5282/14',
-    description:
-      'Acceso ciudadano a la información pública institucional.',
-    href: '/transparencia',
-    featured: false,
-  },
-];
+import { Link } from '@/i18n/navigation';
 
 /* =========================================================
    ICONOS
@@ -137,8 +78,69 @@ function DocumentIcon() {
    PÁGINA PRINCIPAL
    ========================================================= */
 
-export default async function Home() {
-  const { docs: noticias } = await getNews({ limit: 6 })
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const [t, format, { docs: noticias }] = await Promise.all([
+    getTranslations({ locale, namespace: 'pages.home' }),
+    getFormatter({ locale }),
+    getNews({ limit: 6 }),
+  ]);
+
+  /* ---- datos con strings traducidas ---- */
+
+  const quickLinks = [
+    {
+      title: t('quickLinks.items.carreras.title'),
+      description: t('quickLinks.items.carreras.description'),
+      href: '/carreras',
+      label: t('quickLinks.items.carreras.label'),
+      action: t('quickLinks.actionConsult'),
+      external: false,
+    },
+    {
+      title: t('quickLinks.items.calendario.title'),
+      description: t('quickLinks.items.calendario.description'),
+      href: '/calendario-academico',
+      label: t('quickLinks.items.calendario.label'),
+      action: t('quickLinks.actionConsult'),
+      external: false,
+    },
+    {
+      title: t('quickLinks.items.titulos.title'),
+      description: t('quickLinks.items.titulos.description'),
+      href: '/tramites',
+      label: t('quickLinks.items.titulos.label'),
+      action: t('quickLinks.actionConsult'),
+      external: false,
+    },
+    {
+      title: t('quickLinks.items.aulaVirtual.title'),
+      description: t('quickLinks.items.aulaVirtual.description'),
+      href: 'https://aula.unc.edu.py',
+      label: t('quickLinks.items.aulaVirtual.label'),
+      action: t('quickLinks.actionAccess'),
+      external: true,
+    },
+  ];
+
+  const transparencyItems = [
+    {
+      title: t('transparency.items.ley5189.title'),
+      description: t('transparency.items.ley5189.description'),
+      href: '/transparencia',
+      featured: true,
+    },
+    {
+      title: t('transparency.items.ley5282.title'),
+      description: t('transparency.items.ley5282.description'),
+      href: '/transparencia',
+      featured: false,
+    },
+  ];
 
   return (
     <>
@@ -172,19 +174,18 @@ export default async function Home() {
           <Reveal>
             <header className="mx-auto max-w-3xl text-center">
               <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
-                Servicios institucionales
+                {t('quickLinks.sectionLabel')}
               </span>
 
               <h2
                 id="quick-links-title"
                 className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#09231D] sm:text-5xl lg:text-6xl"
               >
-                Accesos rápidos
+                {t('quickLinks.title')}
               </h2>
 
               <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
-                Encuentra rápidamente los servicios académicos
-                y administrativos más consultados.
+                {t('quickLinks.description')}
               </p>
             </header>
           </Reveal>
@@ -254,7 +255,7 @@ export default async function Home() {
                         href={item.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`${item.title}. Abre en una nueva pestaña`}
+                        aria-label={`${item.title}`}
                         className="group block h-full rounded-[1rem] focus-visible:outline-none"
                       >
                         {content}
@@ -301,20 +302,18 @@ export default async function Home() {
             <header className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
               <div className="max-w-3xl">
                 <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#001A00]/70">
-                  Actualidad universitaria
+                  {t('news.sectionLabel')}
                 </span>
 
                 <h2
                   id="news-title"
                   className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#001A00] sm:text-5xl lg:text-6xl"
                 >
-                  Últimas noticias
+                  {t('news.title')}
                 </h2>
 
                 <p className="mt-5 max-w-2xl text-base leading-7 text-[#001A00]/75 sm:text-lg">
-                  Información sobre actividades académicas,
-                  investigación, extensión universitaria y
-                  gestión institucional.
+                  {t('news.description')}
                 </p>
               </div>
 
@@ -333,7 +332,7 @@ export default async function Home() {
                   focus-visible:outline-none
                 "
               >
-                Ver todas las noticias
+                {t('news.viewAll')}
 
                 <ArrowIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
               </Link>
@@ -362,7 +361,7 @@ export default async function Home() {
                 >
                   <Link
                     href={`/noticias/${n.slug}`}
-                    aria-label={`Leer noticia: ${n.title}`}
+                    aria-label={t('news.readNews', { title: n.title })}
                     className="group block h-full focus-visible:outline-none"
                   >
                     <div className="relative h-60 overflow-hidden sm:h-64">
@@ -395,7 +394,7 @@ export default async function Home() {
 
                     <div className="relative z-10 flex min-h-[205px] flex-col p-7 [transform:translateZ(24px)]">
                       <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-[#008000]">
-                        {n.category ?? 'Institucional'}
+                        {n.category ?? t('news.defaultCategory')}
                       </span>
 
                       <h3 className="mt-3 max-w-[95%] text-xl font-bold leading-snug text-[#09231D] transition-colors duration-300 group-hover:text-[#004700]">
@@ -408,7 +407,7 @@ export default async function Home() {
                           className="text-sm text-[#52635E]"
                         >
                           {n.publishedAt
-                            ? new Date(n.publishedAt).toLocaleDateString('es-PY', {
+                            ? format.dateTime(new Date(n.publishedAt), {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
@@ -444,20 +443,18 @@ export default async function Home() {
           <Reveal>
             <header className="mx-auto max-w-3xl text-center">
               <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
-                Gestión pública
+                {t('transparency.sectionLabel')}
               </span>
 
               <h2
                 id="transparency-title"
                 className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#09231D] sm:text-5xl lg:text-6xl"
               >
-                Transparencia activa
+                {t('transparency.title')}
               </h2>
 
               <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
-                Accede a documentos, normativas e información
-                pública de la Universidad Nacional de
-                Concepción.
+                {t('transparency.description')}
               </p>
             </header>
           </Reveal>
@@ -544,7 +541,7 @@ export default async function Home() {
                   focus-visible:outline-none
                 "
               >
-                Consultar el portal de transparencia
+                {t('transparency.viewPortal')}
 
                 <ArrowIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
               </Link>
@@ -559,7 +556,7 @@ export default async function Home() {
 
       <section
         id="institucional"
-        aria-label="Identidad institucional"
+        aria-label={t('institutional.label')}
         className="relative overflow-hidden bg-gradient-to-br from-[#004700] to-[#00A300] py-20 text-white"
       >
         <div
@@ -571,18 +568,16 @@ export default async function Home() {
           <div className="relative mx-auto grid max-w-[1260px] gap-10 px-5 sm:px-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-end lg:px-8">
             <div>
               <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#B8FFB8]">
-                Universidad pública
+                {t('institutional.label')}
               </span>
 
               <h2 className="mt-4 max-w-4xl font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl">
-                Excelencia académica, investigación e
-                innovación
+                {t('institutional.title')}
               </h2>
             </div>
 
             <p className="text-base leading-7 text-white/80 sm:text-lg">
-              Comprometidos con el desarrollo sostenible de
-              Concepción y del Paraguay.
+              {t('institutional.description')}
             </p>
           </div>
         </Reveal>

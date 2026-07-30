@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 type FooterLinkItem = {
   label: string;
@@ -425,7 +426,8 @@ function MiticLogo() {
    FOOTER PRINCIPAL
    ========================================================= */
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations('common');
   const currentYear = new Date().getFullYear();
 
   return (
@@ -455,13 +457,13 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <Link
               href="/"
-              aria-label="Ir al inicio de la Universidad Nacional de Concepción"
+              aria-label={t('goHome')}
               className="group inline-flex items-center gap-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
             >
               <div className="relative h-16 w-16 shrink-0 transition-transform duration-300 group-hover:scale-[1.03] sm:h-[72px] sm:w-[72px]">
                 <Image
                   src="/images/logo.png"
-                  alt="Logotipo oficial de la Universidad Nacional de Concepción"
+                  alt={t('officialLogo')}
                   fill
                   sizes="72px"
                   className="object-contain"
@@ -470,28 +472,27 @@ export default function Footer() {
 
               <div>
                 <span className="block text-base font-semibold leading-tight text-white">
-                  Universidad Nacional
+                  {t('universidadNacional')}
                 </span>
 
                 <span className="block text-sm leading-tight text-white/70">
-                  de Concepción
+                  {t('deConcepcion')}
                 </span>
 
                 <span className="mt-1.5 block text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-[#8AFF8A]">
-                  Marcando el Norte
+                  {t('tagline')}
                 </span>
               </div>
             </Link>
 
             <p className="mt-5 max-w-sm text-sm leading-6 text-white/65">
-              Excelencia académica, investigación, innovación y compromiso con
-              el desarrollo sostenible del Paraguay.
+              {t('institutionalDescription')}
             </p>
 
-            {/* Redes sociales */}
+            {/* Social networks */}
             <div className="mt-6">
               <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/50">
-                Redes oficiales
+                {t('socialNetworks')}
               </h2>
 
               <div className="flex flex-wrap items-center gap-3">
@@ -501,7 +502,7 @@ export default function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`Visitar ${social.label} de la Universidad Nacional de Concepción`}
+                    aria-label={t('visitSocial', { network: social.label })}
                     title={social.label}
                     className="social-icon-button"
                   >
@@ -515,22 +516,22 @@ export default function Footer() {
           {/* Navegación institucional */}
           <div className="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-3 lg:col-span-5">
             <FooterNavigationColumn
-              title="Institucional"
+              title={t('institutional')}
               links={institutionalLinks}
-              ariaLabel="Enlaces institucionales"
+              ariaLabel={t('institutional')}
             />
 
             <FooterNavigationColumn
-              title="Servicios"
+              title={t('services')}
               links={serviceLinks}
-              ariaLabel="Servicios institucionales"
+              ariaLabel={t('services')}
             />
 
             <div className="col-span-2 sm:col-span-1">
               <FooterNavigationColumn
-                title="Academia"
+                title={t('academia')}
                 links={academicLinks}
-                ariaLabel="Enlaces académicos"
+                ariaLabel={t('academia')}
               />
             </div>
           </div>
@@ -539,11 +540,11 @@ export default function Footer() {
           <div className="lg:col-span-3">
             <div className="rounded-3xl border border-white/15 bg-[#001A00]/45 p-5 shadow-[0_22px_48px_-26px_rgba(0,26,0,0.9)] backdrop-blur-sm sm:p-6">
               <span className="text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-[#8AFF8A]">
-                Rectorado
+                {t('rectorado')}
               </span>
 
               <h2 className="mt-2 text-lg font-semibold text-white">
-                Contacto institucional
+                {t('contactInstitutional')}
               </h2>
 
               <address className="mt-5 space-y-4 not-italic">
@@ -552,10 +553,8 @@ export default function Footer() {
                     <LocationIcon />
                   </span>
 
-                  <p className="text-sm leading-6 text-white/70">
-                    Km 210, Ruta PY05
-                    <br />
-                    Concepción, Paraguay
+                  <p className="text-sm leading-6 text-white/70" style={{ whiteSpace: 'pre-line' }}>
+                    {t('address')}
                   </p>
                 </div>
 
@@ -600,7 +599,7 @@ export default function Footer() {
               <Link
                 href="/contacto"
                   className="footer-contact-button group mt-6"              >
-                Ver información de contacto
+                {t('seeContactInfo')}
 
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
                   <ArrowIcon />
@@ -613,53 +612,52 @@ export default function Footer() {
         {/* Barra legal inferior */}
         <div className="mt-10 flex flex-col gap-5 border-t border-white/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-center text-xs leading-5 text-white/50 sm:text-left">
-            © {currentYear} Universidad Nacional de Concepción. Todos los
-            derechos reservados.
+            {t('allRightsReserved', { year: currentYear })}
           </p>
 
           <nav
-            aria-label="Información legal"
+            aria-label={t('legalInfo')}
             className="flex flex-wrap justify-center gap-x-5 gap-y-2 sm:justify-end"
           >
             <Link
               href="/privacidad"
               className="rounded text-xs text-white/50 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
             >
-              Política de privacidad
+              {t('privacyPolicy')}
             </Link>
 
             <Link
               href="/accesibilidad"
               className="rounded text-xs text-white/50 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
             >
-              Accesibilidad
+              {t('accessibility')}
             </Link>
 
             <Link
               href="/mapa-sitio"
               className="rounded text-xs text-white/50 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
             >
-              Mapa del sitio
+              {t('sitemap')}
             </Link>
           </nav>
 
           <div className="flex flex-col items-center gap-2 sm:items-end">
             <p className="text-center text-[0.6rem] text-white/30 sm:text-right">
-              Basado en la{' '}
+              {t('miticStandard')}{' '}
               <a
                 href="https://mitic.gov.py/materiales/norma-de-gobierno-linea-grafica/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-white/60"
               >
-                Guía estándar para sitios web del Gobierno
+                {t('miticStandardLink')}
               </a>
             </p>
             <a
               href="https://mitic.gov.py/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Desarrollado siguiendo los estándares MITIC — Ministerio de Tecnologías de la Información y Comunicación"
+              aria-label={t('miticAriaLabel')}
               className="opacity-70 transition-opacity hover:opacity-100"
             >
               <MiticLogo />

@@ -1,37 +1,39 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import { getTranslations, getFormatter } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import { getNews, getNewsByQuery } from '@/lib/cms/queries/news'
 import { getTesisByQuery } from '@/lib/cms/queries/institutional'
 import ThesisCard from '@/components/institutional/ThesisCard'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  institucional: 'Institucional',
-  academica: 'Académica',
-  investigacion: 'Investigación',
-  extension: 'Extensión',
-  eventos: 'Eventos',
-  comunicados: 'Comunicados',
-}
-
 export async function generateMetadata({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>
   searchParams: Promise<{ q?: string }>
 }) {
-  const { q } = await searchParams
+  const [{ locale }, { q }] = await Promise.all([params, searchParams])
+  const t = await getTranslations({ locale, namespace: 'pages.buscar' })
   return {
-    title: q ? `Búsqueda: "${q}" — UNC` : 'Buscar — Universidad Nacional de Concepción',
-    description: 'Buscar noticias y contenido en el portal de la Universidad Nacional de Concepción.',
+    title: q ? t('pageTitleQuery', { q }) : t('pageTitleDefault'),
+    description: t('pageDescription'),
   }
 }
 
 export default async function BuscarPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>
   searchParams: Promise<{ q?: string }>
 }) {
-  const { q } = await searchParams
+  const [{ locale }, { q }] = await Promise.all([params, searchParams])
+  const [t, format] = await Promise.all([
+    getTranslations({ locale, namespace: 'pages.buscar' }),
+    getFormatter({ locale }),
+  ])
+
   const query = q?.trim() ?? ''
 
   const [{ docs: results }, { docs: tesisResults }] = await Promise.all([
@@ -45,18 +47,18 @@ export default async function BuscarPage({
 
         {/* Header */}
         <div className="mb-10">
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">Portal UNC</p>
+          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('portalLabel')}</p>
           <h1 className="text-4xl font-bold text-white">
             {query ? (
-              <>Resultados para <span className="text-[#5CFF5C]">&ldquo;{query}&rdquo;</span></>
+              <>{t('headingResults')} <span className="text-[#5CFF5C]">&ldquo;{query}&rdquo;</span></>
             ) : (
-              'Explorar noticias'
+              t('headingExplore')
             )}
           </h1>
           {query && (
             <p className="mt-2 text-white/40">
               {results.length + tesisResults.length}{' '}
-              {results.length + tesisResults.length === 1 ? 'resultado' : 'resultados'}
+              {results.length + tesisResults.length === 1 ? t('resultsSingular') : t('resultsPlural')}
             </p>
           )}
         </div>
@@ -68,8 +70,8 @@ export default async function BuscarPage({
               type="search"
               name="q"
               defaultValue={query}
-              placeholder="Buscar noticias..."
-              aria-label="Buscar en el portal"
+              placeholder={t('searchPlaceholder')}
+              aria-label={t('searchAriaLabel')}
               className="flex-1 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#5CFF5C]/50 focus:outline-none focus:ring-1 focus:ring-[#5CFF5C]/50"
             />
             <button
@@ -80,7 +82,7 @@ export default async function BuscarPage({
                 <circle cx="11" cy="11" r="7" strokeWidth={2} />
                 <path d="m21 21-4.35-4.35" strokeWidth={2} strokeLinecap="round" />
               </svg>
-              Buscar
+              {t('searchButton')}
             </button>
           </div>
         </form>
@@ -95,24 +97,24 @@ export default async function BuscarPage({
               </svg>
             </div>
             <p className="text-lg font-semibold text-white/60">
-              No encontramos resultados para &ldquo;{query}&rdquo;
+              {t('noResults', { query })}
             </p>
-            <p className="mt-2 text-sm text-white/30">Intentá con otras palabras</p>
+            <p className="mt-2 text-sm text-white/30">{t('noResultsHint')}</p>
             <Link
               href="/noticias"
               className="mt-6 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm text-white/60 transition-all hover:border-[#5CFF5C]/40 hover:text-white"
             >
-              Ver todas las noticias
+              {t('viewAllNews')}
             </Link>
           </div>
         ) : (
           <div className="space-y-12">
-            {/* Noticias section */}
+            {/* News section */}
             {results.length > 0 && (
               <section aria-labelledby="resultados-noticias">
                 {query && (
                   <h2 id="resultados-noticias" className="mb-6 text-lg font-semibold text-white/70">
-                    Noticias
+                    {t('sectionNews')}
                     <span className="ml-2 text-sm font-normal text-white/30">({results.length})</span>
                   </h2>
                 )}
@@ -147,7 +149,7 @@ export default async function BuscarPage({
                       <div className="flex flex-1 flex-col p-5">
                         {n.category && (
                           <span className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#5CFF5C]">
-                            {CATEGORY_LABELS[n.category] ?? n.category}
+                            {n.category}
                           </span>
                         )}
                         <h2 className="mb-2 line-clamp-3 text-[0.95rem] font-semibold leading-snug text-white transition-colors group-hover:text-[#8AFF8A]">
@@ -158,7 +160,7 @@ export default async function BuscarPage({
                         )}
                         {n.publishedAt && (
                           <p className="mt-4 text-xs text-white/30">
-                            {new Date(n.publishedAt).toLocaleDateString('es-PY', {
+                            {format.dateTime(new Date(n.publishedAt), {
                               year: 'numeric',
                               month: 'long',
                               day: 'numeric',
@@ -172,11 +174,11 @@ export default async function BuscarPage({
               </section>
             )}
 
-            {/* Tesis section — only shown when a query is present */}
+            {/* Thesis section — only shown when a query is present */}
             {query && tesisResults.length > 0 && (
               <section aria-labelledby="resultados-tesis">
                 <h2 id="resultados-tesis" className="mb-6 text-lg font-semibold text-white/70">
-                  Tesis
+                  {t('sectionTesis')}
                   <span className="ml-2 text-sm font-normal text-white/30">({tesisResults.length})</span>
                 </h2>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

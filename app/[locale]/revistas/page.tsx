@@ -1,13 +1,28 @@
+import { getTranslations } from 'next-intl/server'
 import { getRevistas } from '@/lib/cms/queries/institutional'
 import JournalCard from '@/components/institutional/JournalCard'
 
-export const metadata = {
-  title: 'Revistas — UNC',
-  description:
-    'Revistas académicas y científicas de la Universidad Nacional de Concepción.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'pages.revistas' })
+  return {
+    title: t('pageTitle'),
+    description: t('pageDescription'),
+  }
 }
 
-export default async function RevistasPage() {
+export default async function RevistasPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'pages.revistas' })
+
   let docs: Awaited<ReturnType<typeof getRevistas>>['docs'] = []
 
   try {
@@ -23,11 +38,9 @@ export default async function RevistasPage() {
 
         {/* Hero */}
         <div className="mb-12">
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">Portal UNC</p>
-          <h1 className="text-4xl font-bold text-white">Revistas Académicas UNC</h1>
-          <p className="mt-2 text-white/50">
-            Publicaciones académicas y científicas de la Universidad Nacional de Concepción.
-          </p>
+          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('portalLabel')}</p>
+          <h1 className="text-4xl font-bold text-white">{t('heading')}</h1>
+          <p className="mt-2 text-white/50">{t('subheading')}</p>
         </div>
 
         {docs.length === 0 ? (
@@ -38,7 +51,7 @@ export default async function RevistasPage() {
                   d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <p className="text-white/40">No hay revistas disponibles en este momento.</p>
+            <p className="text-white/40">{t('empty')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -5,6 +5,11 @@
   "heading": "Noticias",
   "subheading": "Novedades y comunicados de la Universidad Nacional de Concepción",
   "empty": "No hay noticias disponibles en este momento.",
+  "home": "Inicio",
+  "gallery": "Galería",
+  "backToNews": "Ver más noticias",
+  "draftBanner": "Vista previa — esta noticia no está publicada",
+  "draftExit": "Salir del preview",
   "categories": {
     "institucional": "Institucional",
     "academica": "Académica",

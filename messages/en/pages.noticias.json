@@ -5,6 +5,11 @@
   "heading": "News",
   "subheading": "Latest news and announcements from the National University of Concepción",
   "empty": "No news available at this time.",
+  "home": "Home",
+  "gallery": "Gallery",
+  "backToNews": "View more news",
+  "draftBanner": "Preview — this news item is not published",
+  "draftExit": "Exit preview",
   "categories": {
     "institucional": "Institutional",
     "academica": "Academic",
