@@ -1,0 +1,16 @@
+{
+  "pageTitle": "Facultades — UNC",
+  "pageDescription": "Conoce las facultades de la Universidad Nacional de Concepción.",
+  "portalLabel": "Estructura Académica",
+  "heading": "Nuestras Facultades",
+  "subheading": "Unidades académicas que conforman la Universidad Nacional de Concepción",
+  "verCarreras": "Ver carreras",
+  "carrerasCount": "{count, plural, one {# carrera} other {# carreras}}",
+  "empty": "No se encontraron facultades.",
+  "home": "Inicio",
+  "facultades": "Facultades",
+  "decano": "Decano/a",
+  "contacto": "Contacto",
+  "backToFacultades": "Volver a Facultades",
+  "carrerasTitle": "Carreras ofrecidas"
+}

@@ -1,0 +1,16 @@
+{
+  "pageTitle": "Carreras — UNC",
+  "pageDescription": "Explora las carreras universitarias de la Universidad Nacional de Concepción.",
+  "portalLabel": "Oferta Académica",
+  "heading": "Nuestras Carreras",
+  "subheading": "Formación universitaria de excelencia en Concepción, Paraguay",
+  "duration": "{years} años",
+  "modalidad": "Modalidad",
+  "titulo": "Título otorgado",
+  "verDetalle": "Ver carrera",
+  "verFacultad": "Ver facultad",
+  "empty": "No se encontraron carreras disponibles.",
+  "home": "Inicio",
+  "carreras": "Carreras",
+  "backToCarreras": "Volver a Carreras"
+}

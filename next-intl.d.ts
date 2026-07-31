@@ -9,6 +9,8 @@ import type esPagesRevistas from './messages/es/pages.revistas.json';
 import type esPagesBiblioteca from './messages/es/pages.biblioteca.json';
 import type esPagesSolicitarTitulo from './messages/es/pages.solicitar-titulo.json';
 import type esPagesInformacionPublica from './messages/es/pages.informacion-publica.json';
+import type esPagesCarreras from './messages/es/pages.carreras.json';
+import type esPagesFacultades from './messages/es/pages.facultades.json';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -25,6 +27,8 @@ declare global {
       biblioteca: typeof esPagesBiblioteca;
       'solicitar-titulo': typeof esPagesSolicitarTitulo;
       'informacion-publica': typeof esPagesInformacionPublica;
+      carreras: typeof esPagesCarreras;
+      facultades: typeof esPagesFacultades;
     };
   }
 }

@@ -1,0 +1,16 @@
+{
+  "pageTitle": "Faculties — UNC",
+  "pageDescription": "Learn about the faculties of the National University of Concepción.",
+  "portalLabel": "Academic Structure",
+  "heading": "Our Faculties",
+  "subheading": "Academic units that make up the National University of Concepción",
+  "verCarreras": "View programs",
+  "carrerasCount": "{count, plural, one {# program} other {# programs}}",
+  "empty": "No faculties found.",
+  "home": "Home",
+  "facultades": "Faculties",
+  "decano": "Dean",
+  "contacto": "Contact",
+  "backToFacultades": "Back to Faculties",
+  "carrerasTitle": "Available programs"
+}

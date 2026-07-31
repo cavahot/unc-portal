@@ -1,0 +1,16 @@
+{
+  "pageTitle": "Facultad — UNC",
+  "pageDescription": "Eikuaa facultad Universidad Nacional de Concepción pegua.",
+  "portalLabel": "Tembiapo Apohára",
+  "heading": "Ore Facultad",
+  "subheading": "Tembiapo apohára Universidad Nacional de Concepción pegua",
+  "verCarreras": "Ehecha aprenduka",
+  "carrerasCount": "{count, plural, one {# aprenduka} other {# aprenduka}}",
+  "empty": "Ndoikói facultad.",
+  "home": "Óga",
+  "facultades": "Facultad",
+  "decano": "Decano/a",
+  "contacto": "Ñomongeta",
+  "backToFacultades": "Jevy Facultad-pe",
+  "carrerasTitle": "Aprenduka ofrece"
+}
