@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "title": "Contato — Universidade Nacional de Concepción",
+    "description": "Entre em contato com a Universidade Nacional de Concepción. Endereço, telefones, e-mail institucional e formulário de contato."
+  },
+  "breadcrumb": {
+    "home": "Início",
+    "contact": "Contato"
+  },
+  "hero": {
+    "label": "Comunicação institucional",
+    "title": "Estamos aqui para ajudar",
+    "description": "Encontre todas as informações de contato da Universidade Nacional de Concepción. Reitoria, faculdades e escritórios administrativos."
+  },
+  "info": {
+    "address": {
+      "label": "Endereço",
+      "value": "Km 210, Rodovia PY05\nConcepción, Paraguai",
+      "action": "Ver no Google Maps"
+    },
+    "phone": {
+      "label": "Telefones",
+      "value": "(595 331) 241069\n(595 331) 240883",
+      "action": "Ligar agora"
+    },
+    "email": {
+      "label": "E-mail institucional",
+      "value": "secgral@unc.edu.py",
+      "action": "Enviar e-mail"
+    },
+    "hours": {
+      "label": "Horário de atendimento",
+      "value": "Segunda a sexta\n07:00 – 13:00",
+      "action": "Ver calendário"
+    }
+  },
+  "form": {
+    "title": "Envie uma mensagem",
+    "description": "Preencha o formulário e entraremos em contato em breve.",
+    "fields": {
+      "name": "Nome completo",
+      "namePlaceholder": "Seu nome e sobrenome",
+      "email": "Endereço de e-mail",
+      "emailPlaceholder": "seu@email.com",
+      "subject": "Assunto",
+      "subjectPlaceholder": "Como podemos ajudá-lo?",
+      "message": "Mensagem",
+      "messagePlaceholder": "Escreva sua consulta aqui..."
+    },
+    "submit": "Enviar mensagem",
+    "disclaimer": "Ao enviar este formulário, seu cliente de e-mail será aberto com os dados preenchidos.",
+    "privacy": "Política de privacidade"
+  },
+  "social": {
+    "title": "Siga-nos nas redes"
+  }
+}

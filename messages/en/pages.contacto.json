@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "title": "Contact — National University of Concepción",
+    "description": "Get in touch with the National University of Concepción. Find the address, phones, institutional email and contact form."
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "contact": "Contact"
+  },
+  "hero": {
+    "label": "Institutional communication",
+    "title": "We're here to help",
+    "description": "Find all contact information for the National University of Concepción. Rector's office, faculties and administrative offices."
+  },
+  "info": {
+    "address": {
+      "label": "Address",
+      "value": "Km 210, PY05 Route\nConcepción, Paraguay",
+      "action": "View on Google Maps"
+    },
+    "phone": {
+      "label": "Phone",
+      "value": "(595 331) 241069\n(595 331) 240883",
+      "action": "Call now"
+    },
+    "email": {
+      "label": "Institutional email",
+      "value": "secgral@unc.edu.py",
+      "action": "Send email"
+    },
+    "hours": {
+      "label": "Office hours",
+      "value": "Monday to Friday\n07:00 – 13:00",
+      "action": "View calendar"
+    }
+  },
+  "form": {
+    "title": "Send us a message",
+    "description": "Fill out the form and we will contact you shortly.",
+    "fields": {
+      "name": "Full name",
+      "namePlaceholder": "Your name and surname",
+      "email": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "subject": "Subject",
+      "subjectPlaceholder": "How can we help you?",
+      "message": "Message",
+      "messagePlaceholder": "Write your query here..."
+    },
+    "submit": "Send message",
+    "disclaimer": "Submitting this form will open your email client with the data pre-filled.",
+    "privacy": "Privacy policy"
+  },
+  "social": {
+    "title": "Follow us"
+  }
+}

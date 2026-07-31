@@ -5,7 +5,8 @@ const NAMESPACES = [
   'pages.home', 'pages.noticias', 'pages.buscar',
   'pages.transparencia', 'pages.revistas', 'pages.biblioteca',
   'pages.solicitar-titulo', 'pages.informacion-publica',
-  'pages.carreras', 'pages.facultades',
+  'pages.carreras', 'pages.facultades', 'pages.contacto',
+  'pages.institucional',
 ]
 
 export async function loadMessages(locale: string): Promise<AbstractIntlMessages> {

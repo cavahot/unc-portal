@@ -21,6 +21,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
     'pages.biblioteca',
     'pages.solicitar-titulo',
     'pages.informacion-publica',
+    'pages.carreras',
+    'pages.facultades',
+    'pages.contacto',
+    'pages.institucional',
   ]
 
   const messages: AbstractIntlMessages = {}

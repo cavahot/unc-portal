@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "title": "Institution — Universidad Nacional de Concepción",
+    "description": "Learn about the Universidad Nacional de Concepción: history, mission, vision, authorities and organizational structure."
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "page": "The Institution"
+  },
+  "hero": {
+    "label": "Public university",
+    "title": "The Institution",
+    "description": "A public university committed to the sustainable development of northern Paraguay, with over a decade training excellent professionals."
+  },
+  "about": {
+    "label": "Who we are",
+    "title": "A university with its own identity",
+    "description": "The Universidad Nacional de Concepción was created by Law No. 3,751/09 and is the only public university in northern Paraguay. Its mission is to train professionals with ethical values, critical thinking and social impact.",
+    "founded": "2007",
+    "foundedLabel": "Year founded",
+    "location": "Concepción, PY",
+    "locationLabel": "Main campus",
+    "status": "Public",
+    "statusLabel": "Institution type"
+  },
+  "sections": {
+    "title": "Learn more about UNC",
+    "description": "Explore the different dimensions that make up the institutional identity of the Universidad Nacional de Concepción.",
+    "items": {
+      "historia": {
+        "label": "Journey",
+        "title": "History",
+        "description": "Since its founding in 2007, UNC has grown to become the benchmark for higher education in northern Paraguay.",
+        "action": "View history"
+      },
+      "mision": {
+        "label": "Institutional purpose",
+        "title": "Mission & Vision",
+        "description": "Learn about the purpose, values and future vision that guide every decision at the University.",
+        "action": "View mission & vision"
+      },
+      "autoridades": {
+        "label": "University governance",
+        "title": "Authorities",
+        "description": "The Rector, the Superior Council and the authorities of each faculty who lead the institution.",
+        "action": "View authorities"
+      },
+      "organigrama": {
+        "label": "Institutional structure",
+        "title": "Org Chart",
+        "description": "The complete organizational structure of the Universidad Nacional de Concepción.",
+        "action": "View org chart"
+      }
+    }
+  },
+  "values": {
+    "label": "Principles that guide us",
+    "title": "Institutional values",
+    "items": {
+      "excelencia": {
+        "title": "Academic excellence",
+        "description": "Permanent commitment to quality in professional training and knowledge production."
+      },
+      "inclusion": {
+        "title": "Inclusion",
+        "description": "Equal opportunities for all students, regardless of background or condition."
+      },
+      "innovacion": {
+        "title": "Innovation",
+        "description": "Promotion of applied research and creative thinking to solve real challenges."
+      },
+      "compromiso": {
+        "title": "Social commitment",
+        "description": "Active engagement with the community of Concepción and northern Paraguay."
+      }
+    }
+  }
+}

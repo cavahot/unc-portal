@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "title": "Mbo'ehao — Universidad Nacional de Concepción",
+    "description": "Eikuaa Universidad Nacional de Concepción rehegua: tembiasakue, mba'aporã, hekokatu ha tembiapo ñemombyky."
+  },
+  "breadcrumb": {
+    "home": "Óga",
+    "page": "Mbo'ehao"
+  },
+  "hero": {
+    "label": "Mbo'ehao ñemigua",
+    "title": "Mbo'ehao",
+    "description": "Mbo'ehao ñemigua, Paraguái yvate pegua ñemoarandu ha ñemombyky rehegua mba'aporã, opa arambýre oñemomba'e porã haguã."
+  },
+  "about": {
+    "label": "Mba'éicha ore",
+    "title": "Mbo'ehao oñemoheñói",
+    "description": "Universidad Nacional de Concepción oñembokatúva Ley N° 3.751/09 ndive ha Paraguái yvate-pegua mbo'ehao ñemiguáicha oĩva. Iñapytyvõ oñemomba'epyrã ñepyrũrã ára rehegua, hyakuã rehegua ha tembiapo rehegua.",
+    "founded": "2007",
+    "foundedLabel": "Ára oñembokatúva",
+    "location": "Concepción, PY",
+    "locationLabel": "Óga tuicha",
+    "status": "Ñemigua",
+    "statusLabel": "Mbo'ehao mba'e"
+  },
+  "sections": {
+    "title": "Eikuaa UNC rehegua mba'eve",
+    "description": "Eñemoheñói Universidad Nacional de Concepción rehegua mba'e.",
+    "items": {
+      "historia": {
+        "label": "Tembiasakue",
+        "title": "Mba'esyry",
+        "description": "2007 guive, UNC oikoporã oñemomba'e porã haguã Paraguái yvate pegua mbo'ehaópe.",
+        "action": "Ehecha tembiasakue"
+      },
+      "mision": {
+        "label": "Mbo'ehao mba'aporã",
+        "title": "Mba'aporã ha Hekokatu",
+        "description": "Eikuaa mba'aporã, mba'e iporãva ha hekokatu péva oguerohecharã mbo'ehaope.",
+        "action": "Ehecha mba'aporã"
+      },
+      "autoridades": {
+        "label": "Mbo'ehao mba'epohã",
+        "title": "Mba'epohãnguéra",
+        "description": "Rector, Junta Superior ha mbo'ehao reheguáva oñemomba'e porãva mbo'ehaópe.",
+        "action": "Ehecha mba'epohãnguéra"
+      },
+      "organigrama": {
+        "label": "Mbo'ehao ñemombyky",
+        "title": "Organigrama",
+        "description": "Universidad Nacional de Concepción rehegua ñemombyky opa.",
+        "action": "Ehecha organigrama"
+      }
+    }
+  },
+  "values": {
+    "label": "Mba'e oñepyrũ ore",
+    "title": "Mbo'ehao mba'e iporãva",
+    "items": {
+      "excelencia": {
+        "title": "Mbo'e iporã",
+        "description": "Mba'aporã porãite rehegua mbo'e ha ñeporandu rehegua."
+      },
+      "inclusion": {
+        "title": "Mbo'e opavavépe",
+        "description": "Mbo'epyrã opavapy rehe, mba'eve ndohekói mba'épa oñemomba'e."
+      },
+      "innovacion": {
+        "title": "Pyahu rehegua",
+        "description": "Ñeporandu ha ñemomba'e porã rehegua mba'eve oñepyrũ."
+      },
+      "compromiso": {
+        "title": "Tembiapo ñemomba'e",
+        "description": "Concepción ha Paraguái yvate pegua ñemomba'e porãite."
+      }
+    }
+  }
+}

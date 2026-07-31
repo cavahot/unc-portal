@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
 import { getT, getF } from '@/lib/i18n/server';
 
 import CinematicHero from '@/components/hero/CinematicHero';
@@ -84,6 +86,9 @@ export default async function Home({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+    notFound()
+  }
   const [t, format, { docs: noticias }] = await Promise.all([
     getT(locale, 'pages.home'),
     getF(locale),

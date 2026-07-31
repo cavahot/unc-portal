@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "title": "Ñomongeta — Universidad Nacional de Concepción",
+    "description": "Eñomongeta Universidad Nacional de Concepción ndive. Eheka kundaharape, telefono, ñanduti ha formulario."
+  },
+  "breadcrumb": {
+    "home": "Ypykue",
+    "contact": "Ñomongeta"
+  },
+  "hero": {
+    "label": "Ñomongeta tee",
+    "title": "Rojuhu ne rendape",
+    "description": "Eheka Universidad Nacional de Concepción ñomongeta marandu. Rector retã, facultad ha administración."
+  },
+  "info": {
+    "address": {
+      "label": "Kundaharape",
+      "value": "Km 210, Tape PY05\nConcepción, Paraguái",
+      "action": "Ehecha Google Maps-pe"
+    },
+    "phone": {
+      "label": "Telefono",
+      "value": "(595 331) 241069\n(595 331) 240883",
+      "action": "Eñe'ẽ ko'ãga"
+    },
+    "email": {
+      "label": "Ñanduti tee",
+      "value": "secgral@unc.edu.py",
+      "action": "Emondo ñanduti"
+    },
+    "hours": {
+      "label": "Mba'apohaguã aravo",
+      "value": "Arambotÿ – Arambokõi\n07:00 – 13:00",
+      "action": "Ehecha tembiasakue"
+    }
+  },
+  "form": {
+    "title": "Emoñe'ẽ ore ndive",
+    "description": "Emyendy formulario ha roñomongeta nde ndive ipype.",
+    "fields": {
+      "name": "Téra pyahu",
+      "namePlaceholder": "Nde réra ha nde túva réra",
+      "email": "Ñanduti",
+      "emailPlaceholder": "nde@ñanduti.com",
+      "subject": "Mba'éichagua",
+      "subjectPlaceholder": "Mba'épe roguerojuhu?",
+      "message": "Ñe'ẽ",
+      "messagePlaceholder": "Embohasa nde rembiapo ko'ápe..."
+    },
+    "submit": "Emondo ñe'ẽ",
+    "disclaimer": "Ko formulario emondóvo eipe'a nde ñanduti cliente.",
+    "privacy": "Ñemigua rembiapo"
+  },
+  "social": {
+    "title": "Eroike ore ñandejára-pe"
+  }
+}
