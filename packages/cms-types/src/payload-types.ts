@@ -71,6 +71,10 @@ export interface Config {
     media: Media;
     noticias: Noticia;
     paginas: Pagina;
+    revistas: Revista;
+    tesis: Tesis;
+    facultades: Facultade;
+    carreras: Carrera;
     auditoria: Auditoria;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,6 +87,10 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     noticias: NoticiasSelect<false> | NoticiasSelect<true>;
     paginas: PaginasSelect<false> | PaginasSelect<true>;
+    revistas: RevistasSelect<false> | RevistasSelect<true>;
+    tesis: TesisSelect<false> | TesisSelect<true>;
+    facultades: FacultadesSelect<false> | FacultadesSelect<true>;
+    carreras: CarrerasSelect<false> | CarrerasSelect<true>;
     auditoria: AuditoriaSelect<false> | AuditoriaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -95,9 +103,13 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     navegacion: Navegacion;
+    transparencia: Transparencia;
+    'enlaces-externos': EnlacesExterno;
   };
   globalsSelect: {
     navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
+    transparencia: TransparenciaSelect<false> | TransparenciaSelect<true>;
+    'enlaces-externos': EnlacesExternosSelect<false> | EnlacesExternosSelect<true>;
   };
   locale: null;
   widgets: {
@@ -148,6 +160,14 @@ export interface User {
     | 'media-manager'
     | 'auditor'
     | 'viewer';
+  /**
+   * Número de teléfono para notificaciones via Whatsapp y Telegram
+   */
+  telefono?: string | null;
+  /**
+   * ID del usuario en Telegram para recibir notificaciones
+   */
+  telegramUserId?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -193,6 +213,9 @@ export interface Media {
 export interface Noticia {
   id: number;
   title: string;
+  /**
+   * Generado automáticamente desde el título. Puedes editarlo manualmente.
+   */
   slug: string;
   summary: string;
   content: {
@@ -228,12 +251,9 @@ export interface Noticia {
   faculty?: string | null;
   author?: string | null;
   /**
-   * Mostrar en portada
+   * Mostrar en la sección destacada del portal
    */
   featured?: boolean | null;
-  /**
-   * Fecha de publicación
-   */
   publishedAt?: string | null;
   /**
    * Estado del flujo de aprobación editorial
@@ -409,6 +429,82 @@ export interface Pagina {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revistas".
+ */
+export interface Revista {
+  id: number;
+  nombre: string;
+  /**
+   * Generado automáticamente desde el nombre. Puedes editarlo manualmente.
+   */
+  slug: string;
+  descripcion: string;
+  anioInicio: number;
+  urlOjs: string;
+  portada?: (number | null) | Media;
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tesis".
+ */
+export interface Tesis {
+  id: number;
+  titulo: string;
+  autor: string;
+  anio: number;
+  resumen?: string | null;
+  facultad:
+    'odontologia' | 'medicina' | 'ciencias-agrarias' | 'ciencias-exactas' | 'humanidades' | 'ciencias-economicas';
+  urlPdf: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facultades".
+ */
+export interface Facultade {
+  id: number;
+  nombre: string;
+  /**
+   * Generado automáticamente desde el nombre.
+   */
+  slug: string;
+  descripcion?: string | null;
+  decano?: string | null;
+  email?: string | null;
+  telefono?: string | null;
+  imagen?: (number | null) | Media;
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carreras".
+ */
+export interface Carrera {
+  id: number;
+  nombre: string;
+  /**
+   * Generado automáticamente desde el nombre.
+   */
+  slug: string;
+  facultad: number | Facultade;
+  duracion: number;
+  titulo: string;
+  modalidad?: ('Presencial' | 'Semipresencial' | 'Virtual') | null;
+  descripcion?: string | null;
+  resolucion?: string | null;
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Registro de eventos y acciones en el sistema
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -514,6 +610,22 @@ export interface PayloadLockedDocument {
         value: number | Pagina;
       } | null)
     | ({
+        relationTo: 'revistas';
+        value: number | Revista;
+      } | null)
+    | ({
+        relationTo: 'tesis';
+        value: number | Tesis;
+      } | null)
+    | ({
+        relationTo: 'facultades';
+        value: number | Facultade;
+      } | null)
+    | ({
+        relationTo: 'carreras';
+        value: number | Carrera;
+      } | null)
+    | ({
         relationTo: 'auditoria';
         value: number | Auditoria;
       } | null);
@@ -565,6 +677,8 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  telefono?: T;
+  telegramUserId?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -752,6 +866,68 @@ export interface PaginasSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revistas_select".
+ */
+export interface RevistasSelect<T extends boolean = true> {
+  nombre?: T;
+  slug?: T;
+  descripcion?: T;
+  anioInicio?: T;
+  urlOjs?: T;
+  portada?: T;
+  activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tesis_select".
+ */
+export interface TesisSelect<T extends boolean = true> {
+  titulo?: T;
+  autor?: T;
+  anio?: T;
+  resumen?: T;
+  facultad?: T;
+  urlPdf?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facultades_select".
+ */
+export interface FacultadesSelect<T extends boolean = true> {
+  nombre?: T;
+  slug?: T;
+  descripcion?: T;
+  decano?: T;
+  email?: T;
+  telefono?: T;
+  imagen?: T;
+  activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carreras_select".
+ */
+export interface CarrerasSelect<T extends boolean = true> {
+  nombre?: T;
+  slug?: T;
+  facultad?: T;
+  duracion?: T;
+  titulo?: T;
+  modalidad?: T;
+  descripcion?: T;
+  resolucion?: T;
+  activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auditoria_select".
  */
 export interface AuditoriaSelect<T extends boolean = true> {
@@ -852,6 +1028,61 @@ export interface Navegacion {
   createdAt?: string | null;
 }
 /**
+ * Documentos de transparencia institucional (Ley 5189 y Ley 5282)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transparencia".
+ */
+export interface Transparencia {
+  id: number;
+  ley5189?:
+    | {
+        label: string;
+        url?: string | null;
+        nota?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  ley5282?:
+    | {
+        label: string;
+        url?: string | null;
+        nota?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Enlaces externos institucionales y contenido de información pública
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enlaces-externos".
+ */
+export interface EnlacesExterno {
+  id: number;
+  formularioTitulos?: string | null;
+  urlPortalInfoPublica?: string | null;
+  contenidoInfoPublica?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navegacion_select".
  */
@@ -876,6 +1107,43 @@ export interface NavegacionSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transparencia_select".
+ */
+export interface TransparenciaSelect<T extends boolean = true> {
+  ley5189?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        nota?: T;
+        id?: T;
+      };
+  ley5282?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        nota?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enlaces-externos_select".
+ */
+export interface EnlacesExternosSelect<T extends boolean = true> {
+  formularioTitulos?: T;
+  urlPortalInfoPublica?: T;
+  contenidoInfoPublica?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

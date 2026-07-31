@@ -1,49 +1,64 @@
 import { cmsFetch } from '../client'
+import type { Carrera, Facultade } from '@unc/cms-types'
 import { PayloadResponse } from '../types'
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// When queried with depth:1, the facultad relation is always populated.
+export type CarreraPopulada = Omit<Carrera, 'facultad'> & { facultad: Facultade }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Carrera = any
+export type { Carrera }
+
+// Helper to safely read the populated facultad object
+export function getFacultadFromCarrera(carrera: Carrera): Facultade | null {
+  if (typeof carrera.facultad === 'object' && carrera.facultad !== null) {
+    return carrera.facultad as Facultade
+  }
+  return null
+}
 
 // ─── Fallback data ────────────────────────────────────────────────────────────
 
-const FALLBACK_CARRERAS: Carrera[] = [
+const FALLBACK_CARRERAS = [
   {
-    id: '1',
+    id: 1,
     nombre: 'Ingeniería Civil',
     slug: 'ingenieria-civil',
-    facultad: { nombre: 'Facultad de Ciencias Exactas y Tecnológicas', slug: 'ciencias-exactas' },
+    facultad: { id: 4, nombre: 'Facultad de Ciencias Exactas y Tecnológicas', slug: 'ciencias-exactas', activa: true } as Facultade,
     duracion: 5,
     titulo: 'Ingeniero Civil',
-    modalidad: 'Presencial',
+    modalidad: 'Presencial' as const,
     activa: true,
+    updatedAt: '',
+    createdAt: '',
   },
   {
-    id: '2',
+    id: 2,
     nombre: 'Medicina',
     slug: 'medicina',
-    facultad: { nombre: 'Facultad de Medicina', slug: 'medicina' },
+    facultad: { id: 2, nombre: 'Facultad de Medicina', slug: 'medicina', activa: true } as Facultade,
     duracion: 6,
     titulo: 'Médico Cirujano',
-    modalidad: 'Presencial',
+    modalidad: 'Presencial' as const,
     activa: true,
+    updatedAt: '',
+    createdAt: '',
   },
   {
-    id: '3',
+    id: 3,
     nombre: 'Odontología',
     slug: 'odontologia',
-    facultad: { nombre: 'Facultad de Odontología', slug: 'odontologia' },
+    facultad: { id: 1, nombre: 'Facultad de Odontología', slug: 'odontologia', activa: true } as Facultade,
     duracion: 5,
     titulo: 'Odontólogo',
-    modalidad: 'Presencial',
+    modalidad: 'Presencial' as const,
     activa: true,
+    updatedAt: '',
+    createdAt: '',
   },
-]
+] satisfies CarreraPopulada[]
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function getCarreras(): Promise<Carrera[]> {
+export async function getCarreras(): Promise<CarreraPopulada[]> {
   try {
     const params = new URLSearchParams()
     params.append('where[activa][equals]', 'true')
@@ -51,7 +66,7 @@ export async function getCarreras(): Promise<Carrera[]> {
     params.append('depth', '1')
     params.append('limit', '200')
 
-    const res = await cmsFetch<PayloadResponse<Carrera>>(`/carreras?${params.toString()}`, {
+    const res = await cmsFetch<PayloadResponse<CarreraPopulada>>(`/carreras?${params.toString()}`, {
       tags: ['carreras'],
     })
 
@@ -61,14 +76,14 @@ export async function getCarreras(): Promise<Carrera[]> {
   }
 }
 
-export async function getCarreraBySlug(slug: string): Promise<Carrera | null> {
+export async function getCarreraBySlug(slug: string): Promise<CarreraPopulada | null> {
   try {
     const params = new URLSearchParams()
     params.append('where[slug][equals]', slug)
     params.append('depth', '1')
     params.append('limit', '1')
 
-    const res = await cmsFetch<PayloadResponse<Carrera>>(`/carreras?${params.toString()}`, {
+    const res = await cmsFetch<PayloadResponse<CarreraPopulada>>(`/carreras?${params.toString()}`, {
       tags: ['carreras'],
     })
 
@@ -78,7 +93,7 @@ export async function getCarreraBySlug(slug: string): Promise<Carrera | null> {
   }
 }
 
-export async function getCarrerasByFacultad(facultadSlug: string): Promise<Carrera[]> {
+export async function getCarrerasByFacultad(facultadSlug: string): Promise<CarreraPopulada[]> {
   try {
     const params = new URLSearchParams()
     params.append('where[activa][equals]', 'true')
@@ -87,12 +102,12 @@ export async function getCarrerasByFacultad(facultadSlug: string): Promise<Carre
     params.append('depth', '1')
     params.append('limit', '100')
 
-    const res = await cmsFetch<PayloadResponse<Carrera>>(`/carreras?${params.toString()}`, {
+    const res = await cmsFetch<PayloadResponse<CarreraPopulada>>(`/carreras?${params.toString()}`, {
       tags: ['carreras'],
     })
 
-    return res.docs ?? FALLBACK_CARRERAS.filter((c) => c.facultad?.slug === facultadSlug)
+    return res.docs ?? FALLBACK_CARRERAS.filter((c) => (c.facultad as Facultade).slug === facultadSlug)
   } catch {
-    return FALLBACK_CARRERAS.filter((c) => c.facultad?.slug === facultadSlug)
+    return FALLBACK_CARRERAS.filter((c) => (c.facultad as Facultade).slug === facultadSlug)
   }
 }

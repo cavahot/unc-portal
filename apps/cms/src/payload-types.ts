@@ -73,6 +73,8 @@ export interface Config {
     paginas: Pagina;
     revistas: Revista;
     tesis: Tesis;
+    facultades: Facultade;
+    carreras: Carrera;
     auditoria: Auditoria;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +89,8 @@ export interface Config {
     paginas: PaginasSelect<false> | PaginasSelect<true>;
     revistas: RevistasSelect<false> | RevistasSelect<true>;
     tesis: TesisSelect<false> | TesisSelect<true>;
+    facultades: FacultadesSelect<false> | FacultadesSelect<true>;
+    carreras: CarrerasSelect<false> | CarrerasSelect<true>;
     auditoria: AuditoriaSelect<false> | AuditoriaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -460,6 +464,47 @@ export interface Tesis {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facultades".
+ */
+export interface Facultade {
+  id: number;
+  nombre: string;
+  /**
+   * Generado automáticamente desde el nombre.
+   */
+  slug: string;
+  descripcion?: string | null;
+  decano?: string | null;
+  email?: string | null;
+  telefono?: string | null;
+  imagen?: (number | null) | Media;
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carreras".
+ */
+export interface Carrera {
+  id: number;
+  nombre: string;
+  /**
+   * Generado automáticamente desde el nombre.
+   */
+  slug: string;
+  facultad: number | Facultade;
+  duracion: number;
+  titulo: string;
+  modalidad?: ('Presencial' | 'Semipresencial' | 'Virtual') | null;
+  descripcion?: string | null;
+  resolucion?: string | null;
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Registro de eventos y acciones en el sistema
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -571,6 +616,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'tesis';
         value: number | Tesis;
+      } | null)
+    | ({
+        relationTo: 'facultades';
+        value: number | Facultade;
+      } | null)
+    | ({
+        relationTo: 'carreras';
+        value: number | Carrera;
       } | null)
     | ({
         relationTo: 'auditoria';
@@ -837,6 +890,39 @@ export interface TesisSelect<T extends boolean = true> {
   resumen?: T;
   facultad?: T;
   urlPdf?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facultades_select".
+ */
+export interface FacultadesSelect<T extends boolean = true> {
+  nombre?: T;
+  slug?: T;
+  descripcion?: T;
+  decano?: T;
+  email?: T;
+  telefono?: T;
+  imagen?: T;
+  activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carreras_select".
+ */
+export interface CarrerasSelect<T extends boolean = true> {
+  nombre?: T;
+  slug?: T;
+  facultad?: T;
+  duracion?: T;
+  titulo?: T;
+  modalidad?: T;
+  descripcion?: T;
+  resolucion?: T;
+  activa?: T;
   updatedAt?: T;
   createdAt?: T;
 }
