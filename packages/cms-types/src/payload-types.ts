@@ -194,6 +194,7 @@ export interface User {
 export interface Media {
   id: number;
   alt: string;
+  blurDataURL?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1164,9 +1165,4 @@ export interface CollectionsWidget {
  */
 export interface Auth {
   [k: string]: unknown;
-}
-
-
-declare module 'payload' {
-  export interface GeneratedTypes extends Config {}
 }

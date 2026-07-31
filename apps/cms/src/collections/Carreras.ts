@@ -40,7 +40,7 @@ export const Carreras: CollectionConfig = {
       name: 'facultad',
       label: 'Facultad',
       type: 'relationship',
-      relationTo: 'facultades' as any,
+      relationTo: 'facultades',
       required: true,
       hasMany: false,
     },
