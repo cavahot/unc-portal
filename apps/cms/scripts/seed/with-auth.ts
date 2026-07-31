@@ -21,7 +21,7 @@ async function seedWithAuth() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: 'admin@unc.edu.py',
-        password: 'Admin@2026',
+        password: process.env.SEED_ADMIN_PASSWORD ?? 'Admin@2026',
       }),
     })
 

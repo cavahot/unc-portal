@@ -32,7 +32,7 @@ async function init() {
         collection: 'users',
         data: {
           email: 'admin@unc.edu.py',
-          password: 'Admin@2026',
+          password: process.env.SEED_ADMIN_PASSWORD ?? 'Admin@2026',
           role: 'superadmin',
         },
       })

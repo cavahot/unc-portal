@@ -33,6 +33,7 @@ yarn-error.log*
 # Local env files
 .env*.local
 .env
+*.env
 
 # Vercel
 .vercel
@@ -47,3 +48,6 @@ infrastructure/docker/.env
 
 apps/cms/.env
 apps/cms/.env.before-db-fix
+apps/cms/.env.pre-mailpit.backup
+apps/cms/*.backup
+apps/cms/test.env
