@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { getTranslations, getFormatter } from 'next-intl/server'
+import { getT, getF } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
 import { getNews } from '@/lib/cms/queries/news'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
@@ -13,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.noticias' })
+  const t = await getT(locale, 'pages.noticias')
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),
@@ -27,8 +27,8 @@ export default async function NoticiasPage({
 }) {
   const { locale } = await params
   const [t, format] = await Promise.all([
-    getTranslations({ locale, namespace: 'pages.noticias' }),
-    getFormatter({ locale }),
+    getT(locale, 'pages.noticias'),
+    getF(locale),
   ])
 
   let noticias: Awaited<ReturnType<typeof getNews>>['docs'] = []

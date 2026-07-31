@@ -1,5 +1,4 @@
 import { NextIntlClientProvider } from 'next-intl'
-import type { AbstractIntlMessages } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { Inter } from 'next/font/google'
 import { routing } from '@/i18n/routing'
@@ -7,42 +6,9 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import AccessibilityPanel from '@/components/accessibility/AccessibilityPanel'
 import { getNavigation, FALLBACK_NAVIGATION } from '@/lib/cms/queries/navigation'
+import { loadMessages } from '@/lib/i18n/server'
 
 const inter = Inter({ subsets: ['latin'] })
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }))
-}
-
-const NAMESPACES = [
-  'common', 'nav', 'accessibility',
-  'pages.home', 'pages.noticias', 'pages.buscar',
-  'pages.transparencia', 'pages.revistas', 'pages.biblioteca',
-  'pages.solicitar-titulo', 'pages.informacion-publica',
-]
-
-async function loadMessages(locale: string): Promise<AbstractIntlMessages> {
-  const messages: Record<string, unknown> = {}
-  for (const ns of NAMESPACES) {
-    let mod: { default: unknown } | undefined
-    try {
-      mod = await import(`../../messages/${locale}/${ns}.json`)
-    } catch {
-      try {
-        mod = await import(`../../messages/es/${ns}.json`)
-      } catch { /* skip */ }
-    }
-    if (!mod) continue
-    const parts = ns.split('.')
-    let cursor = messages as Record<string, unknown>
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!cursor[parts[i]]) cursor[parts[i]] = {}
-      cursor = cursor[parts[i]] as Record<string, unknown>
-    }
-    cursor[parts[parts.length - 1]] = mod.default
-  }
-  return messages as AbstractIntlMessages
-}
 
 export default async function LocaleLayout({
   children,
@@ -79,7 +45,7 @@ export default async function LocaleLayout({
             {children}
           </main>
 
-          <Footer />
+          <Footer locale={locale} />
 
           <AccessibilityPanel />
         </NextIntlClientProvider>

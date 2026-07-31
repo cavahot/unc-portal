@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getT } from '@/lib/i18n/server'
 import { getTesisByQuery } from '@/lib/cms/queries/institutional'
 import ThesisCard from '@/components/institutional/ThesisCard'
 
@@ -10,7 +10,7 @@ export async function generateMetadata({
   searchParams: Promise<{ q?: string }>
 }) {
   const [{ locale }, { q }] = await Promise.all([params, searchParams])
-  const t = await getTranslations({ locale, namespace: 'pages.biblioteca' })
+  const t = await getT(locale, 'pages.biblioteca')
   return {
     title: q ? t('pageTitleQuery', { q }) : t('pageTitleDefault'),
     description: t('pageDescription'),
@@ -25,7 +25,7 @@ export default async function BibliotecaPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const [{ locale }, { q }] = await Promise.all([params, searchParams])
-  const t = await getTranslations({ locale, namespace: 'pages.biblioteca' })
+  const t = await getT(locale, 'pages.biblioteca')
 
   const query = q?.trim() ?? ''
 

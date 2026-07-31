@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getT } from '@/lib/i18n/server';
 
 type FooterLinkItem = {
   label: string;
@@ -426,8 +426,8 @@ function MiticLogo() {
    FOOTER PRINCIPAL
    ========================================================= */
 
-export default async function Footer() {
-  const t = await getTranslations('common');
+export default async function Footer({ locale }: { locale: string }) {
+  const t = await getT(locale, 'common');
   const currentYear = new Date().getFullYear();
 
   return (

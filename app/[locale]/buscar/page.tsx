@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { getTranslations, getFormatter } from 'next-intl/server'
+import { getT, getF } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
 import { getNews, getNewsByQuery } from '@/lib/cms/queries/news'
 import { getTesisByQuery } from '@/lib/cms/queries/institutional'
@@ -14,7 +14,7 @@ export async function generateMetadata({
   searchParams: Promise<{ q?: string }>
 }) {
   const [{ locale }, { q }] = await Promise.all([params, searchParams])
-  const t = await getTranslations({ locale, namespace: 'pages.buscar' })
+  const t = await getT(locale, 'pages.buscar')
   return {
     title: q ? t('pageTitleQuery', { q }) : t('pageTitleDefault'),
     description: t('pageDescription'),
@@ -30,8 +30,8 @@ export default async function BuscarPage({
 }) {
   const [{ locale }, { q }] = await Promise.all([params, searchParams])
   const [t, format] = await Promise.all([
-    getTranslations({ locale, namespace: 'pages.buscar' }),
-    getFormatter({ locale }),
+    getT(locale, 'pages.buscar'),
+    getF(locale),
   ])
 
   const query = q?.trim() ?? ''

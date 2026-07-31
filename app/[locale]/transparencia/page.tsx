@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getT } from '@/lib/i18n/server'
 import { getTransparencia } from '@/lib/cms/queries/institutional'
 import DocumentCard from '@/components/institutional/DocumentCard'
 
@@ -8,7 +8,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.transparencia' })
+  const t = await getT(locale, 'pages.transparencia')
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),
@@ -21,7 +21,7 @@ export default async function TransparenciaPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.transparencia' })
+  const t = await getT(locale, 'pages.transparencia')
 
   let data: Awaited<ReturnType<typeof getTransparencia>> = { ley5189: [], ley5282: [] }
 

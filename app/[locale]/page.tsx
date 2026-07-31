@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { getTranslations, getFormatter } from 'next-intl/server';
+import { getT, getF } from '@/lib/i18n/server';
 
 import CinematicHero from '@/components/hero/CinematicHero';
 import InstitutionalAccessSection from '@/components/institutional/InstitutionalAccessSection';
@@ -85,8 +85,8 @@ export default async function Home({
 }) {
   const { locale } = await params;
   const [t, format, { docs: noticias }] = await Promise.all([
-    getTranslations({ locale, namespace: 'pages.home' }),
-    getFormatter({ locale }),
+    getT(locale, 'pages.home'),
+    getF(locale),
     getNews({ limit: 6 }),
   ]);
 

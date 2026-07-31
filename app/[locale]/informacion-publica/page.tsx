@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getT } from '@/lib/i18n/server'
 import { getEnlacesExternos } from '@/lib/cms/queries/institutional'
 import ExternalCTA from '@/components/institutional/ExternalCTA'
 import RichText from '@/components/RichText'
@@ -9,7 +9,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.informacion-publica' })
+  const t = await getT(locale, 'pages.informacion-publica')
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),
@@ -24,7 +24,7 @@ export default async function InformacionPublicaPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.informacion-publica' })
+  const t = await getT(locale, 'pages.informacion-publica')
 
   let portalUrl = FALLBACK_PORTAL_URL
   let richContent: { root: any } | null = null

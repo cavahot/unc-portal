@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getT } from '@/lib/i18n/server'
 import { getRevistas } from '@/lib/cms/queries/institutional'
 import JournalCard from '@/components/institutional/JournalCard'
 
@@ -8,7 +8,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.revistas' })
+  const t = await getT(locale, 'pages.revistas')
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),
@@ -21,7 +21,7 @@ export default async function RevistasPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.revistas' })
+  const t = await getT(locale, 'pages.revistas')
 
   let docs: Awaited<ReturnType<typeof getRevistas>>['docs'] = []
 

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
-import { getTranslations, getFormatter } from 'next-intl/server'
+import { getT, getF } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
 import { getNewsBySlug, getNewsBySlugDraft } from '@/lib/cms/queries/news'
 import RichText from '@/components/RichText'
@@ -13,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>
 }) {
   const { locale, slug } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.noticias' })
+  const t = await getT(locale, 'pages.noticias')
   const noticia = await getNewsBySlug(slug).catch(() => null)
   if (!noticia) return { title: t('empty') }
   return {
@@ -34,8 +34,8 @@ export default async function NoticiaDetailPage({
 }) {
   const { locale, slug } = await params
   const [t, format] = await Promise.all([
-    getTranslations({ locale, namespace: 'pages.noticias' }),
-    getFormatter({ locale }),
+    getT(locale, 'pages.noticias'),
+    getF(locale),
   ])
 
   const { isEnabled: isDraft } = await draftMode()

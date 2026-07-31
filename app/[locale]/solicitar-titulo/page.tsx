@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getT } from '@/lib/i18n/server'
 import { getEnlacesExternos } from '@/lib/cms/queries/institutional'
 import ExternalCTA from '@/components/institutional/ExternalCTA'
 
@@ -8,7 +8,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.solicitar-titulo' })
+  const t = await getT(locale, 'pages.solicitar-titulo')
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),
@@ -26,7 +26,7 @@ export default async function SolicitarTituloPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'pages.solicitar-titulo' })
+  const t = await getT(locale, 'pages.solicitar-titulo')
 
   let formUrl = FALLBACK_FORM_URL
 
