@@ -194,6 +194,9 @@ export interface User {
 export interface Media {
   id: number;
   alt: string;
+  /**
+   * Placeholder de blur generado automáticamente para Next.js Image.
+   */
   blurDataURL?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -703,6 +706,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  blurDataURL?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
