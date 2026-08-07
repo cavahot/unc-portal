@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { getT } from '@/lib/i18n/server';
+import { Link } from '@/i18n/navigation';
 
 type FooterLinkItem = {
   label: string;
@@ -26,19 +26,19 @@ type SocialLinkItem = {
 const institutionalLinks: FooterLinkItem[] = [
   {
     label: 'Autoridades',
-    href: '/institucional/autoridades',
+    href: '/autoridades',
   },
   {
     label: 'Historia',
-    href: '/institucional/historia',
+    href: '/historia',
   },
   {
     label: 'Misión y Visión',
-    href: '/institucional/mision-y-vision',
+    href: '/mision-vision-y-valores',
   },
   {
     label: 'Organigrama',
-    href: '/institucional/organigrama',
+    href: '/organigrama',
   },
 ];
 
@@ -83,7 +83,7 @@ const academicLinks: FooterLinkItem[] = [
 const socialLinks: SocialLinkItem[] = [
   {
     label: 'Facebook',
-    href: 'https://www.facebook.com/people/unc_py/100089915906133/?mibextid=ZbWKwL',
+    href: 'https://www.facebook.com/profile.php?id=100089915906133',
     icon: 'facebook',
   },
   {
@@ -98,7 +98,7 @@ const socialLinks: SocialLinkItem[] = [
   },
   {
     label: 'YouTube',
-    href: 'https://youtube.com/@universidadnacionaldeconce5302?si=o_PW3t0JmcZLeKrS',
+    href: 'https://youtube.com/@universidadnacionaldeconce5302',
     icon: 'youtube',
   },
 ];
