@@ -10,6 +10,7 @@ import sharp from 'sharp'
 
 import { Carreras } from './collections/Carreras'
 import { Facultades } from './collections/Facultades'
+import { MarcoLegal } from './collections/MarcoLegal'
 import { Media } from './collections/Media'
 import { Noticias } from './collections/Noticias'
 import { Paginas } from './collections/Paginas'
@@ -17,9 +18,17 @@ import { Revistas } from './collections/Revistas'
 import { Tesis } from './collections/Tesis'
 import { Users } from './collections/Users'
 import { Auditoria } from './collections/Auditoria'
+import { Autoridades } from './collections/Autoridades'
+import { Ley5189 } from './collections/Ley5189'
+import { Ley5282 } from './collections/Ley5282'
+import Convenios from './collections/Convenios'
+import TribunalMiembros from './collections/TribunalMiembros'
+import TribunalDocumentos from './collections/TribunalDocumentos'
+import ArancelesRectorado from './collections/ArancelesRectorado'
 import { Navegacion } from './globals/Navegacion'
 import { Transparencia } from './globals/Transparencia'
 import { EnlacesExternos } from './globals/EnlacesExternos'
+import { Estadisticas } from './globals/Estadisticas'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -98,10 +107,18 @@ export default buildConfig({
     Tesis,
     Facultades,
     Carreras,
+    MarcoLegal,
     Auditoria,
+    Autoridades,
+    Ley5189,
+    Ley5282,
+    Convenios,
+    TribunalMiembros,
+    TribunalDocumentos,
+    ArancelesRectorado,
   ],
 
-  globals: [Navegacion, Transparencia, EnlacesExternos],
+  globals: [Navegacion, Transparencia, EnlacesExternos, Estadisticas],
 
   editor: lexicalEditor(),
 
@@ -140,20 +157,24 @@ export default buildConfig({
   sharp,
 
   plugins: [
-    s3Storage({
-      collections: {
-        media: true,
-      },
-      bucket: process.env.S3_BUCKET || 'unc-media',
-      config: {
-        credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
-        },
-        endpoint: process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',
-        forcePathStyle: true,
-        region: process.env.S3_REGION || 'us-east-1',
-      },
-    }),
+    // S3 storage only when credentials are explicitly configured.
+    // Without them, Payload falls back to local filesystem (safe for local dev).
+    ...(process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY
+      ? [
+          s3Storage({
+            collections: { media: true },
+            bucket: process.env.S3_BUCKET || 'unc-media',
+            config: {
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID,
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+              },
+              endpoint: process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',
+              forcePathStyle: true,
+              region: process.env.S3_REGION || 'us-east-1',
+            },
+          }),
+        ]
+      : []),
   ],
 })

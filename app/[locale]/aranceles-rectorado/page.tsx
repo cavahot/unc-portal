@@ -1,55 +1,26 @@
 import { getTranslations, getLocale } from 'next-intl/server'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import {
+  getArancelesRectorado,
+  groupAranceles,
+  formatMonto,
+  type ArancelRectorado,
+} from '@/lib/cms/queries/aranceles'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('pages.aranceles-rectorado.meta')
   return { title: t('title'), description: t('description') }
 }
 
-// ── Static data ───────────────────────────────────────────────────────────────
-
-const MULTAS = [
-  { concepto: 'Multa por mora en matrícula — Posgrado/Maestría', monto: '10.000' },
-  { concepto: 'Multa por mora en pago de cuota — Posgrado/Maestría', monto: '10.000' },
-  { concepto: 'Penalidad por incumplimiento de contrato', monto: '60.000' },
-]
-
-const VENTA = [
-  { concepto: 'Constancias Varias', monto: '50.000' },
-  { concepto: 'Expedición de título universitario', monto: '100.000' },
-  { concepto: 'Registro de título universitario', monto: '200.000' },
-  { concepto: 'Certificado de capacitación', monto: '100.000' },
-  { concepto: 'Credencial de estudiante / funcionario / docente', monto: '100.000' },
-  { concepto: 'Certificados de estudios parcial y completo', monto: '50.000' },
-  { concepto: 'Certificado de trabajo', monto: '30.000' },
-  { concepto: 'Resumen anual de haberes', monto: '50.000' },
-]
-
-const EDUCATIVOS = [
-  { concepto: 'Matrícula Posgrado — Didáctica', monto: '500.000' },
-  { concepto: 'Matrícula Maestría', monto: '500.000' },
-  { concepto: 'Cuota Posgrado — Didáctica (módulo)', monto: '300.000' },
-  { concepto: 'Cuota Maestría — Educación Superior (módulo)', monto: '400.000' },
-  { concepto: 'Legalización de documentos', monto: '50.000' },
-  { concepto: 'Autenticación de documentos', monto: '100.000' },
-  { concepto: 'Defensa de Tesis de Maestría', monto: '1.000.000' },
-  { concepto: 'Matrícula Programa de Formación en Posgrado', monto: '100.000' },
-  { concepto: 'Cuota mensual Programa de Formación', monto: '100.000' },
-  { concepto: 'Cuota Doctorado — Educación (módulo)', monto: '750.000' },
-  { concepto: 'Tutoría final Tesis Doctoral', monto: '2.500.000' },
-  { concepto: 'Presentación de proyecto de Tesis Doctoral', monto: '500.000' },
-  { concepto: 'Examen extraordinario — Doctorado', monto: '300.000' },
-]
-
-// ── Component ─────────────────────────────────────────────────────────────────
+// ── Sub-components ────────────────────────────────────────────────────────────
 
 function ArancelTable({
   rows,
   colConcepto,
   colMonto,
 }: {
-  rows: { concepto: string; monto: string }[]
+  rows: ArancelRectorado[]
   colConcepto: string
   colMonto: string
 }) {
@@ -63,11 +34,11 @@ function ArancelTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-[#5CFF5C]/8">
-          {rows.map((row, i) => (
-            <tr key={i} className="transition-colors hover:bg-[#5CFF5C]/5">
+          {rows.map((row) => (
+            <tr key={row.id} className="transition-colors hover:bg-[#5CFF5C]/5">
               <td className="px-5 py-3.5 text-slate-300">{row.concepto}</td>
               <td className="px-5 py-3.5 text-right font-mono font-semibold tabular-nums text-[#5CFF5C]">
-                {row.monto}
+                {formatMonto(row.monto)}
               </td>
             </tr>
           ))}
@@ -82,6 +53,9 @@ function ArancelTable({
 export default async function ArancelesRectoradoPage() {
   const locale = await getLocale()
   const t      = await getTranslations('pages.aranceles-rectorado')
+
+  const aranceles = await getArancelesRectorado()
+  const { multas, venta, educativos } = groupAranceles(aranceles)
 
   return (
     <main className="min-h-screen bg-[#0c1c0c] text-slate-100">
@@ -127,41 +101,44 @@ export default async function ArancelesRectoradoPage() {
       {/* ── Content ─────────────────────────────────────────────────────────── */}
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 space-y-12">
 
-        {/* Multas */}
-        <section aria-labelledby="multas-heading">
-          <h2 id="multas-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
-            {t('grupos.multas.title')}
-          </h2>
-          <ArancelTable
-            rows={MULTAS}
-            colConcepto={t('grupos.multas.concepto')}
-            colMonto={t('grupos.multas.monto')}
-          />
-        </section>
+        {multas.length > 0 && (
+          <section aria-labelledby="multas-heading">
+            <h2 id="multas-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
+              {t('grupos.multas.title')}
+            </h2>
+            <ArancelTable
+              rows={multas}
+              colConcepto={t('grupos.multas.concepto')}
+              colMonto={t('grupos.multas.monto')}
+            />
+          </section>
+        )}
 
-        {/* Venta de bienes y servicios */}
-        <section aria-labelledby="venta-heading">
-          <h2 id="venta-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
-            {t('grupos.venta.title')}
-          </h2>
-          <ArancelTable
-            rows={VENTA}
-            colConcepto={t('grupos.venta.concepto')}
-            colMonto={t('grupos.venta.monto')}
-          />
-        </section>
+        {venta.length > 0 && (
+          <section aria-labelledby="venta-heading">
+            <h2 id="venta-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
+              {t('grupos.venta.title')}
+            </h2>
+            <ArancelTable
+              rows={venta}
+              colConcepto={t('grupos.venta.concepto')}
+              colMonto={t('grupos.venta.monto')}
+            />
+          </section>
+        )}
 
-        {/* Aranceles educativos */}
-        <section aria-labelledby="educativos-heading">
-          <h2 id="educativos-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
-            {t('grupos.educativos.title')}
-          </h2>
-          <ArancelTable
-            rows={EDUCATIVOS}
-            colConcepto={t('grupos.educativos.concepto')}
-            colMonto={t('grupos.educativos.monto')}
-          />
-        </section>
+        {educativos.length > 0 && (
+          <section aria-labelledby="educativos-heading">
+            <h2 id="educativos-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
+              {t('grupos.educativos.title')}
+            </h2>
+            <ArancelTable
+              rows={educativos}
+              colConcepto={t('grupos.educativos.concepto')}
+              colMonto={t('grupos.educativos.monto')}
+            />
+          </section>
+        )}
 
         {/* Nota */}
         <div className="rounded-xl border border-[#5CFF5C]/10 bg-[#5CFF5C]/5 px-6 py-4">
