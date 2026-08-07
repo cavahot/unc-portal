@@ -164,6 +164,14 @@ export default buildConfig({
           s3Storage({
             collections: { media: true },
             bucket: process.env.S3_BUCKET || 'unc-media',
+            // S3_PUBLIC_URL: public base URL for serving files.
+            // Local dev:  http://127.0.0.1:9100 (MinIO path-style)
+            // Production: https://files.unc.edu.py  (CDN or public MinIO)
+            generateFileURL: ({ filename }) => {
+              const base   = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || 'http://127.0.0.1:9100'
+              const bucket = process.env.S3_BUCKET || 'unc-media'
+              return `${base}/${bucket}/${filename}`
+            },
             config: {
               credentials: {
                 accessKeyId: process.env.S3_ACCESS_KEY_ID,
