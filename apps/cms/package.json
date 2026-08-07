@@ -18,24 +18,24 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.86.0",
-    "@payloadcms/email-nodemailer": "^3.86.0",
-    "@payloadcms/next": "3.86.0",
-    "@payloadcms/richtext-lexical": "3.86.0",
-    "@payloadcms/storage-s3": "^3.86.0",
-    "@payloadcms/translations": "3.86.0",
-    "@payloadcms/ui": "3.86.0",
+    "@payloadcms/db-postgres": "3.87.1",
+    "@payloadcms/email-nodemailer": "^3.87.1",
+    "@payloadcms/next": "3.87.1",
+    "@payloadcms/richtext-lexical": "3.87.1",
+    "@payloadcms/storage-s3": "^3.87.1",
+    "@payloadcms/translations": "3.87.1",
+    "@payloadcms/ui": "3.87.1",
     "@swc/helpers": "0.5.15",
     "cross-env": "7.0.3",
     "dotenv": "16.4.7",
     "graphql": "16.14.2",
     "next": "16.2.12",
     "nodemailer": "^9.0.3",
-    "payload": "3.86.0",
+    "payload": "3.87.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "scheduler": "0.27.0",
-    "sharp": "0.34.5"
+    "sharp": "0.35.3"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",
@@ -51,7 +51,7 @@
     "tsx": "4.22.4",
     "typescript": "5.7.3",
     "vite-tsconfig-paths": "6.0.5",
-    "vitest": "4.0.18"
+    "vitest": "4.1.10"
   },
   "engines": {
     "node": "^18.20.2 || >=20.9.0",
