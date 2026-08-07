@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Ciencias Económicas Mbo'ehao | UNC",
+    "description": "Mbo'éhao, posgrado, tembiasakue ha ñomongeta Ciencias Económicas Mbo'ehaógui UNC-pe."
+  },
+  "breadcrumb": { "facultades": "Mbo'ehaovéva", "nombre": "Ciencias Económicas" },
+  "hero": {
+    "badge": "Mbo'ehao",
+    "nombre": "Ciencias Económicas ha Administrativas Mbo'ehao",
+    "tagline": "Ojapo profesional tembiapo ñepytyvõ ha viru ñembojoavy ndive."
+  },
+  "grado": {
+    "title": "Mbo'éhao Tuichakue",
+    "subtitle": "CONES oñemoĩva'ekue mbo'éhao",
+    "cols": { "carrera": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Posgrado Mbo'éhao",
+    "subtitle": "Maestría, especialización ha doctorado",
+    "cols": { "programa": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Mboimba",
+    "subtitle": "Mba'e jeporu tee",
+    "monto": "Viru (Gs.)",
+    "grupos": {
+      "multas": "Mba'e jepysore",
+      "venta": "Kuatiapyrã ñemoña",
+      "academicos": "Mbo'éhao mboimba",
+      "campo": "Yvypóra mba'e"
+    }
+  },
+  "contacto": {
+    "title": "Ñomongeta",
+    "direccion": "Ruta Py05, Km 210, Concepción, Paraguay",
+    "telefono": "(595 331) 241749",
+    "emails": ["secretariageneral@fcea-unc.edu.py"],
+    "web": "www.fcea-unc.edu.py",
+    "sitio": "Mbo'ehao rendápe jaho"
+  }
+}

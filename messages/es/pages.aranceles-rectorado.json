@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "Aranceles del Rectorado | UNC",
+    "description": "Aranceles y tasas oficiales del Rectorado de la Universidad Nacional de Concepción vigentes según resolución institucional."
+  },
+  "breadcrumb": { "inicio": "Inicio", "nombre": "Aranceles Rectorado" },
+  "hero": {
+    "badge": "Rectorado",
+    "titulo": "Aranceles del Rectorado",
+    "subtitulo": "Valores vigentes según resolución institucional de la Universidad Nacional de Concepción."
+  },
+  "grupos": {
+    "multas": {
+      "title": "Multas y Derechos No Tributarios",
+      "concepto": "Concepto",
+      "monto": "Monto (Gs.)"
+    },
+    "venta": {
+      "title": "Venta de Bienes y Servicios",
+      "concepto": "Concepto",
+      "monto": "Monto (Gs.)"
+    },
+    "educativos": {
+      "title": "Aranceles Educativos",
+      "concepto": "Concepto",
+      "monto": "Monto (Gs.)"
+    }
+  },
+  "nota": "Los valores corresponden a los aranceles oficiales publicados por el Rectorado de la UNC. Para consultas específicas comuníquese con la Secretaría General."
+}

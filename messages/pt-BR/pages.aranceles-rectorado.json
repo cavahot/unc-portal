@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "Anuidades da Reitoria | UNC",
+    "description": "Anuidades e taxas oficiais da Reitoria da Universidade Nacional de Concepción vigentes conforme resolução institucional."
+  },
+  "breadcrumb": { "inicio": "Início", "nombre": "Anuidades da Reitoria" },
+  "hero": {
+    "badge": "Reitoria",
+    "titulo": "Anuidades da Reitoria",
+    "subtitulo": "Valores vigentes conforme resolução institucional da Universidade Nacional de Concepción."
+  },
+  "grupos": {
+    "multas": {
+      "title": "Multas e Direitos Não Tributários",
+      "concepto": "Conceito",
+      "monto": "Valor (Gs.)"
+    },
+    "venta": {
+      "title": "Venda de Bens e Serviços",
+      "concepto": "Conceito",
+      "monto": "Valor (Gs.)"
+    },
+    "educativos": {
+      "title": "Taxas Educacionais",
+      "concepto": "Conceito",
+      "monto": "Valor (Gs.)"
+    }
+  },
+  "nota": "Os valores correspondem às anuidades oficiais publicadas pela Reitoria da UNC. Para consultas específicas entre em contato com a Secretaria Geral."
+}

@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Ciencias Exactas Mbo'ehao | UNC",
+    "description": "Mbo'éhao, posgrado, tembiasakue ha ñomongeta Ciencias Exactas Mbo'ehaógui UNC-pe."
+  },
+  "breadcrumb": { "facultades": "Mbo'ehaovéva", "nombre": "Ciencias Exactas" },
+  "hero": {
+    "badge": "Mbo'ehao",
+    "nombre": "Ciencias Exactas ha Tecnológicas Mbo'ehao",
+    "tagline": "Ojapo ingeniero ha científico tecnología ñemoñare ndive."
+  },
+  "grado": {
+    "title": "Mbo'éhao Tuichakue",
+    "subtitle": "CONES oñemoĩva'ekue mbo'éhao",
+    "cols": { "carrera": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Posgrado Mbo'éhao",
+    "subtitle": "Maestría ha especialización",
+    "cols": { "programa": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Mboimba",
+    "subtitle": "Mba'e jeporu tee",
+    "monto": "Viru (Gs.)",
+    "grupos": {
+      "multas": "Mba'e jepysore",
+      "venta": "Kuatiapyrã ñemoña",
+      "academicos": "Mbo'éhao mboimba",
+      "campo": "Yvypóra mba'e"
+    }
+  },
+  "contacto": {
+    "title": "Ñomongeta",
+    "direccion": "Ruta Py05, Km 210, Concepción, Paraguay",
+    "telefono": "(595 331) 243361",
+    "emails": ["academicofacet@unc.edu.py", "decanatofacet@unc.edu.py"],
+    "web": "www.facet-unc.edu.py",
+    "sitio": "Mbo'ehao rendápe jaho"
+  }
+}

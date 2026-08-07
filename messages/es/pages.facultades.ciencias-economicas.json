@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Facultad de Ciencias Económicas y Administrativas | UNC",
+    "description": "Carreras de grado y posgrado, aranceles y contacto de la Facultad de Ciencias Económicas y Administrativas de la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": { "facultades": "Facultades", "nombre": "Ciencias Económicas y Adm." },
+  "hero": {
+    "badge": "Unidad Académica",
+    "nombre": "Facultad de Ciencias Económicas y Administrativas",
+    "tagline": "Formando profesionales líderes en administración, contabilidad e informática para el desarrollo empresarial del Paraguay."
+  },
+  "grado": {
+    "title": "Carreras de Grado",
+    "subtitle": "Programas de formación de grado acreditados por el CONES",
+    "cols": { "carrera": "Carrera", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Programas de Posgrado",
+    "subtitle": "Maestrías, especializaciones y doctorado de formación avanzada",
+    "cols": { "programa": "Programa", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Aranceles",
+    "subtitle": "Valores vigentes según resolución institucional",
+    "monto": "Monto (Gs.)",
+    "grupos": {
+      "multas": "Multas y Otros Derechos No Tributarios",
+      "venta": "Venta de Libros, Formularios y Documentos",
+      "academicos": "Aranceles Académicos",
+      "campo": "Prácticas y Laboratorio"
+    }
+  },
+  "contacto": {
+    "title": "Contacto",
+    "direccion": "Ruta Py05, Km 210, Concepción, Paraguay",
+    "telefono": "(595 331) 241749",
+    "emails": ["secretariageneral@fcea-unc.edu.py"],
+    "web": "www.fcea-unc.edu.py",
+    "sitio": "Ir al sitio web de la Facultad"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Facultad de Ciencias Exactas y Tecnológicas | UNC",
+    "description": "Carreras de grado y posgrado, aranceles y contacto de la Facultad de Ciencias Exactas y Tecnológicas de la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": { "facultades": "Facultades", "nombre": "Ciencias Exactas y Tecnológicas" },
+  "hero": {
+    "badge": "Unidad Académica",
+    "nombre": "Facultad de Ciencias Exactas y Tecnológicas",
+    "tagline": "Formando ingenieros y científicos para el desarrollo tecnológico sostenible del Paraguay."
+  },
+  "grado": {
+    "title": "Carreras de Grado",
+    "subtitle": "Programas de formación de grado acreditados por el CONES",
+    "cols": { "carrera": "Carrera", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Programas de Posgrado",
+    "subtitle": "Maestrías y especializaciones de formación avanzada",
+    "cols": { "programa": "Programa", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Aranceles",
+    "subtitle": "Valores vigentes según resolución institucional",
+    "monto": "Monto (Gs.)",
+    "grupos": {
+      "multas": "Multas y Otros Derechos No Tributarios",
+      "venta": "Venta de Libros, Formularios y Documentos",
+      "academicos": "Aranceles Académicos",
+      "campo": "Prácticas y Laboratorio"
+    }
+  },
+  "contacto": {
+    "title": "Contacto",
+    "direccion": "Ruta Py05, Km 210, Concepción, Paraguay",
+    "telefono": "(595 331) 243361",
+    "emails": ["academicofacet@unc.edu.py", "decanatofacet@unc.edu.py"],
+    "web": "www.facet-unc.edu.py",
+    "sitio": "Ir al sitio web de la Facultad"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "Rectorado Mboimba | UNC",
+    "description": "UNC Rectorado mba'e jeporu tee oñemoĩva'ekue."
+  },
+  "breadcrumb": { "inicio": "Ñepyrũ", "nombre": "Rectorado Mboimba" },
+  "hero": {
+    "badge": "Rectorado",
+    "titulo": "Rectorado Mboimba",
+    "subtitulo": "UNC mba'e jeporu tee oñemoĩva'ekue."
+  },
+  "grupos": {
+    "multas": {
+      "title": "Mba'e Jepysore",
+      "concepto": "Mba'e",
+      "monto": "Viru (Gs.)"
+    },
+    "venta": {
+      "title": "Mba'e Ñemoña",
+      "concepto": "Mba'e",
+      "monto": "Viru (Gs.)"
+    },
+    "educativos": {
+      "title": "Mbo'éhao Mboimba",
+      "concepto": "Mba'e",
+      "monto": "Viru (Gs.)"
+    }
+  },
+  "nota": "UNC Rectorado oñemoĩva'ekue mba'e jeporu tee. Ñomongeta apytépe ehenói Secretaría General-pe."
+}

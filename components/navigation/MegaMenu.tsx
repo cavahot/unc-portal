@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
+import LocaleSwitcher from '@/components/layout/LocaleSwitcher';
 import { createPortal } from 'react-dom';
 import {
   KeyboardEvent,
@@ -57,35 +58,36 @@ const fallbackMenuData: MenuItem[] = [
   },
   {
     label: 'Institucional',
-    href: 'https://www.unc.edu.py/institucional/',
+    href: '/institucional',
     children: [
-      { label: 'Historia', href: 'https://www.unc.edu.py/historia-3/' },
-      { label: 'Misión, Visión y Valores', href: 'https://www.unc.edu.py/mision-vision-y-valores/' },
-      { label: 'Marco Legal', href: 'https://www.unc.edu.py/marco-legal/' },
-      { label: 'Organigrama', href: 'https://www.unc.edu.py/organigrama/' },
-      { label: 'Autoridades', href: 'https://www.unc.edu.py/autoridades/' },
-      { label: 'Transparencia Ley 5.189', href: '/transparencia' },
-      { label: 'Transparencia Ley 5.282', href: '/transparencia' },
+      { label: 'Historia', href: '/historia' },
+      { label: 'Misión, Visión y Valores', href: '/mision-vision-y-valores' },
+      { label: 'Marco Legal', href: '/marco-legal' },
+      { label: 'Organigrama', href: '/organigrama' },
+      { label: 'Autoridades', href: '/autoridades' },
+      { label: 'Ley 5189/2014', href: '/ley-5189' },
+      { label: 'Ley 5282/2014', href: '/ley-5282' },
+      { label: 'Transparencia', href: '/transparencia' },
       { label: 'Información Pública', href: '/informacion-publica' },
-      { label: 'Trámites', href: 'https://www.unc.edu.py/tramites/' },
-      { label: 'Títulos', href: 'https://www.unc.edu.py/titulos/' },
+      { label: 'Trámites', href: '/tramites' },
+      { label: 'Títulos', href: '/titulos' },
       { label: 'Solicitar Título', href: '/solicitar-titulo' },
-      { label: 'Legalizaciones', href: 'https://www.unc.edu.py/legalizaciones/' },
-      { label: 'Convenios', href: 'https://www.unc.edu.py/convenios/' },
-      { label: 'Tribunal Electoral', href: 'https://www.unc.edu.py/tribunal-electoral/' },
+      { label: 'Legalizaciones', href: '/legalizaciones' },
+      { label: 'Convenios', href: '/convenios' },
+      { label: 'Tribunal Electoral', href: '/tribunal-electoral' },
     ],
   },
   {
     label: 'Facultades',
     href: '#',
     children: [
-      { label: 'Facultad de Odontología', href: 'https://www.unc.edu.py/facultad-de-odontologia/' },
-      { label: 'Facultad de Medicina', href: 'https://www.unc.edu.py/facultad-de-medicina/' },
-      { label: 'Facultad de Ciencias Agrarias', href: 'https://www.unc.edu.py/facultad-de-ciencias-agrarias/' },
-      { label: 'Facultad de Ciencias Exactas y Tecnológicas', href: 'https://www.unc.edu.py/facultad-de-ciencias-exactas-y-tecnologicas/' },
-      { label: 'Facultad de Humanidades y Ciencias de la Educación', href: 'https://www.unc.edu.py/facultad-de-humanidades-y-ciencias-de-la-educacion/' },
-      { label: 'Facultad de Ciencias Económicas y Administrativas', href: 'https://www.unc.edu.py/facultad-de-ciencias-economicas-y-administrativas/' },
-      { label: 'Aranceles Rectorado', href: 'https://www.unc.edu.py/aranceles-rectorado/' },
+      { label: 'Facultad de Odontología', href: '/facultades/odontologia' },
+      { label: 'Facultad de Medicina', href: '/facultades/medicina' },
+      { label: 'Facultad de Ciencias Agrarias', href: '/facultades/agrarias' },
+      { label: 'Facultad de Ciencias Exactas y Tecnológicas', href: '/facultades/ciencias-exactas' },
+      { label: 'Facultad de Humanidades y Ciencias de la Educación', href: '/facultades/humanidades' },
+      { label: 'Facultad de Ciencias Económicas y Administrativas', href: '/facultades/ciencias-economicas' },
+      { label: 'Aranceles Rectorado', href: '/aranceles-rectorado' },
     ],
   },
   {
@@ -98,9 +100,9 @@ const fallbackMenuData: MenuItem[] = [
   },
   {
     label: 'Contactos',
-    href: 'https://www.unc.edu.py/contacto/',
+    href: '/contacto',
     children: [
-      { label: 'Contactos por dependencia', href: 'https://www.unc.edu.py/contactos-por-dependencia/' },
+      { label: 'Contactos por dependencia', href: '/contacto#dependencias' },
     ],
   },
   {
@@ -600,7 +602,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
 
                       return (
                         <Link
-                          key={child.href}
+                          key={child.label}
                           href={child.href}
                           aria-current={
                             childIsCurrent
@@ -693,6 +695,11 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
             {/* Contenido desplazable */}
             <div className="h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain px-4 py-5">
               <div className="mx-auto max-w-2xl pb-12">
+                {/* Selector de idioma */}
+                <div className="mb-4 flex justify-center">
+                  <LocaleSwitcher />
+                </div>
+
                 <div className="mb-5 grid grid-cols-2 gap-2">
                   <a
                     href="https://aula.unc.edu.py"
@@ -782,7 +789,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
 
                                     return (
                                       <Link
-                                        key={child.href}
+                                        key={child.label}
                                         href={child.href}
                                         onClick={
                                           closeMobileMenu

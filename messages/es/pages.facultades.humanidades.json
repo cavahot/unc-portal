@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Facultad de Humanidades y Ciencias de la Educación | UNC",
+    "description": "Carreras de grado y posgrado, aranceles y contacto de la Facultad de Humanidades y Ciencias de la Educación de la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": { "facultades": "Facultades", "nombre": "Humanidades y C. de la Educación" },
+  "hero": {
+    "badge": "Unidad Académica",
+    "nombre": "Facultad de Humanidades y Ciencias de la Educación",
+    "tagline": "Formando profesionales comprometidos con la educación, la cultura y el desarrollo humano del Paraguay."
+  },
+  "grado": {
+    "title": "Carreras de Grado",
+    "subtitle": "Programas de formación de grado acreditados por el CONES",
+    "cols": { "carrera": "Carrera", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Programas de Posgrado",
+    "subtitle": "Especializaciones y maestrías de formación avanzada",
+    "cols": { "programa": "Programa", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Aranceles",
+    "subtitle": "Valores vigentes según resolución institucional",
+    "monto": "Monto (Gs.)",
+    "grupos": {
+      "multas": "Multas y Otros Derechos No Tributarios",
+      "venta": "Venta de Libros, Formularios y Documentos",
+      "academicos": "Aranceles Académicos",
+      "campo": "Prácticas y Laboratorio"
+    }
+  },
+  "contacto": {
+    "title": "Contacto",
+    "direccion": "Ruta Py05, Km 210, Concepción, Paraguay",
+    "telefono": "(595 331) 243176",
+    "emails": ["secgral@fhyce.edu.py", "administracion@fhyce.edu.py"],
+    "web": "www.fhyce.edu.py",
+    "sitio": "Ir al sitio web de la Facultad"
+  }
+}

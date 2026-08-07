@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Faculdade de Ciências Econômicas e Administrativas | UNC",
+    "description": "Cursos de graduação, pós-graduação, anuidades e contato da Faculdade de Ciências Econômicas e Administrativas da Universidade Nacional de Concepción."
+  },
+  "breadcrumb": { "facultades": "Faculdades", "nombre": "Ciências Econômicas e Adm." },
+  "hero": {
+    "badge": "Unidade Acadêmica",
+    "nombre": "Faculdade de Ciências Econômicas e Administrativas",
+    "tagline": "Formando profissionais líderes em administração, contabilidade e informática para o desenvolvimento empresarial do Paraguai."
+  },
+  "grado": {
+    "title": "Cursos de Graduação",
+    "subtitle": "Programas de graduação credenciados pelo CONES",
+    "cols": { "carrera": "Curso", "sede": "Câmpus", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Programas de Pós-Graduação",
+    "subtitle": "Mestrados, especializações e doutorado de formação avançada",
+    "cols": { "programa": "Programa", "sede": "Câmpus", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Anuidades e Taxas",
+    "subtitle": "Valores vigentes conforme resolução institucional",
+    "monto": "Valor (Gs.)",
+    "grupos": {
+      "multas": "Multas e Outros Direitos Não Tributários",
+      "venta": "Livros, Formulários e Documentos",
+      "academicos": "Taxas Acadêmicas",
+      "campo": "Práticas e Laboratório"
+    }
+  },
+  "contacto": {
+    "title": "Contato",
+    "direccion": "Ruta Py05, Km 210, Concepción, Paraguai",
+    "telefono": "(595 331) 241749",
+    "emails": ["secretariageneral@fcea-unc.edu.py"],
+    "web": "www.fcea-unc.edu.py",
+    "sitio": "Acessar site da Faculdade"
+  }
+}
