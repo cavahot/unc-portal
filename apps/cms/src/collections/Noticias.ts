@@ -4,12 +4,13 @@ import config from '../payload.config'
 import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
 import { notifyApprovalStateChange } from '../utilities/notifications'
 import { notifyN8N } from '../utilities/notifications'
+import { revalidatePortalTag } from '../utilities/revalidation'
 
 export const Noticias: CollectionConfig = {
   slug: 'noticias',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', '_status', 'category', 'publishedAt', 'createdBy'],
+    defaultColumns: ['title', 'featured', '_status', 'category', 'publishedAt'],
   },
   access: {
     read: async () => true,
@@ -233,6 +234,10 @@ export const Noticias: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, previousDoc, req, operation }) => {
+        // Revalidate portal cache on every change so featured/published state
+        // is reflected immediately without waiting for ISR expiry.
+        await revalidatePortalTag('noticias')
+
         const usuario = req.user?.email || 'sistema'
         const rol = req.user?.role || 'system'
         const ip = getClientIP(req)

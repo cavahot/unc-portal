@@ -90,12 +90,15 @@ export default async function Home({
   if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound()
   }
-  const [t, format, { docs: noticias }, stats] = await Promise.all([
+  // Try featured news first; fall back to latest if none are marked featured
+  const [t, format, featuredResult, latestResult, stats] = await Promise.all([
     getT(locale, 'pages.home'),
     getF(locale),
+    getNews({ featured: true, limit: 6 }),
     getNews({ limit: 6 }),
     getStatsGlobal(),
   ]);
+  const noticias = featuredResult.docs.length > 0 ? featuredResult.docs : latestResult.docs;
 
   /* ---- datos con strings traducidas ---- */
 
