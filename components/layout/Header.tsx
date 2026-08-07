@@ -87,6 +87,11 @@ export default function Header({ navigation }: HeaderProps) {
             <MegaMenu navigation={navigation} />
           </div>
 
+          {/* Banderas — visibles desde xl */}
+          <div className="hidden shrink-0 xl:flex">
+            <LocaleSwitcher />
+          </div>
+
           {/* Acciones para escritorio amplio */}
           <div className="hidden shrink-0 items-center gap-2 2xl:flex">
             <Link
@@ -110,8 +115,6 @@ export default function Header({ navigation }: HeaderProps) {
                 />
               </svg>
             </Link>
-
-            <LocaleSwitcher />
 
             <a
               href="https://aula.unc.edu.py"

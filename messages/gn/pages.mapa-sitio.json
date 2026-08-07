@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "title": "Portal Ñemombyky — Universidad Nacional de Concepción",
+    "description": "Universidad Nacional de Concepción portal rehegua tembi'u ha kuatia opavave ñemombyky."
+  },
+  "hero": {
+    "label": "Ñemboja",
+    "title": "Portal Ñemombyky",
+    "description": "Portal institutional rehegua tembi'u opavave ñemombyky."
+  },
+  "sections": {
+    "institucion": {
+      "title": "Mbo'ehao",
+      "laInstitucion": "Mbo'ehao",
+      "historia": "Tembiasakue",
+      "misionYVision": "Mba'aporã ha Ohecha haguépe",
+      "autoridades": "Mba'epohãnguéra",
+      "organigrama": "Organigrama",
+      "marcoLegal": "Marco Legal",
+      "transparencia": "Ñe'ẽ ñemombe'u"
+    },
+    "academia": {
+      "title": "Mbo'ehára",
+      "carreras": "Mbo'epyrãnguéra",
+      "facultades": "Mbo'ehao pytyvõrãnguéra",
+      "investigacion": "Mba'ekuaapyrã",
+      "extension": "Mbo'e ñepyrũ",
+      "revistas": "Kuatia mba'ekuaapyrã",
+      "biblioteca": "Kuatiárrenda",
+      "calendario": "Mbo'e Aravo"
+    },
+    "servicios": {
+      "title": "Pytyvõguéra",
+      "tramites": "Trámites",
+      "solicitarTitulo": "Título ñemomba'e",
+      "informacionPublica": "Tetãgua marandu",
+      "buscar": "Heka"
+    },
+    "actualidad": {
+      "title": "Ko'ãga rehegua",
+      "noticias": "Marandu",
+      "contacto": "Ñomongeta"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacidad": "Privacidad política",
+      "accesibilidad": "Ñembyaikuépe joaju"
+    }
+  }
+}

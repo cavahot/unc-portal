@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "title": "Títulos Universitarios | Universidad Nacional de Concepción",
+    "description": "Información sobre los títulos habilitantes expedidos por la Universidad Nacional de Concepción: solicitud, requisitos, plazos y reconocimiento de títulos."
+  },
+  "breadcrumb": { "home": "Inicio", "page": "Títulos" },
+  "hero": {
+    "label": "Secretaría General",
+    "title": "Títulos Universitarios",
+    "description": "Información sobre los títulos habilitantes expedidos por la UNC"
+  },
+  "infoCards": {
+    "c1": { "label": "Plazo de procesamiento", "value": "Consultar en ventanilla", "note": "El plazo puede variar según el período del año y la carga administrativa." },
+    "c2": { "label": "Requisitos documentales", "value": "Ver lista completa", "note": "Acta de nacimiento, CI vigente, documentación académica y comprobante de pago." },
+    "c3": { "label": "Arancel vigente", "value": "Consultar en ventanilla", "note": "Los montos se actualizan periódicamente. Consulte siempre la tarifa vigente." }
+  },
+  "graduates": {
+    "label": "Para graduados",
+    "title": "Solicitud de título",
+    "description": "Pasos para solicitar su diploma de graduado una vez completados los requisitos académicos.",
+    "s1": { "title": "Verificar requisitos académicos", "description": "Asegúrese de haber cumplido con todas las asignaturas, prácticas y el trabajo final requerido por su carrera." },
+    "s2": { "title": "Presentar solicitud formal", "description": "Completar el formulario de solicitud de título en la Dirección General Académica y adjuntar la documentación requerida." },
+    "s3": { "title": "Abono de aranceles", "description": "Realizar el pago del arancel correspondiente según la escala vigente. Consultar el monto actualizado en ventanilla." },
+    "s4": { "title": "Retiro del título habilitante", "description": "Una vez procesada la solicitud, recibirá notificación para concurrir al retiro del diploma en la Secretaría General." }
+  },
+  "graduatesCta": "Iniciar solicitud de título",
+  "recognition": {
+    "label": "Trámite especial",
+    "title": "Reconocimiento de títulos",
+    "body1": "El reconocimiento de títulos expedidos por universidades extranjeras, o la validación de títulos de la UNC ante organismos nacionales e internacionales, se tramita a través de la Dirección General Académica en coordinación con el Ministerio de Educación y Ciencias de la República del Paraguay.",
+    "body2": "Para iniciar este proceso, los interesados deben presentar la documentación original debidamente apostillada o legalizada según corresponda, junto con la traducción oficial al idioma español cuando los documentos estén en otro idioma.",
+    "linkLegalizaciones": "Ver legalizaciones",
+    "linkTramites": "Ver todos los trámites"
+  }
+}

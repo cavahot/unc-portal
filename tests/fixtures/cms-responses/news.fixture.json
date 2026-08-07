@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "slug": "rector-unc-participo-jornadas-investigadores-innovadores",
+    "title": "Rector de la UNC participó en las XX Jornadas de Jóvenes Investigadores e Innovadores",
+    "summary": "El Prof. Dr. Clarito Rojas Marín, Rector de la Universidad Nacional de Concepción, participó en la apertura de las XX Jornadas de Jóvenes Investigadores e Innovadores de la UNA 2026.",
+    "content": null,
+    "publishedAt": "2026-07-24T00:00:00.000Z",
+    "featuredImage": null,
+    "category": "investigacion",
+    "tags": [{ "tag": "investigación" }, { "tag": "innovación" }],
+    "featured": true,
+    "author": "Comunicación Institucional"
+  },
+  {
+    "id": 2,
+    "slug": "unc-mecanismo-piloto-evaluacion-resultados-medicina",
+    "title": "UNC participó en la presentación del Mecanismo Piloto para la Evaluación de Resultados en Medicina",
+    "summary": "El Rector participó en la presentación del Mecanismo Piloto para la Evaluación de Resultados en Medicina, que busca establecer estándares de calidad en la formación médica.",
+    "content": null,
+    "publishedAt": "2026-07-24T00:00:00.000Z",
+    "featuredImage": null,
+    "category": "academica",
+    "tags": [{ "tag": "medicina" }, { "tag": "calidad académica" }],
+    "featured": true,
+    "author": "Comunicación Institucional"
+  },
+  {
+    "id": 3,
+    "slug": "autoridades-unc-reunion-ministerio-interior",
+    "title": "Autoridades de la UNC participaron en reunión con el Ministerio del Interior",
+    "summary": "Con el objetivo de fortalecer la cooperación entre el Gobierno Nacional y las instituciones de educación superior, autoridades de la UNC se reunieron con representantes del Ministerio del Interior.",
+    "content": null,
+    "publishedAt": "2026-07-15T00:00:00.000Z",
+    "featuredImage": null,
+    "category": "institucional",
+    "tags": [{ "tag": "gobierno" }, { "tag": "extensión" }],
+    "featured": false,
+    "author": "Comunicación Institucional"
+  }
+]

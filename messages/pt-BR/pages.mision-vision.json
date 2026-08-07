@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "title": "Missão, Visão e Valores | Universidad Nacional de Concepción",
+    "description": "Conheça a missão, a visão e os valores institucionais da Universidad Nacional de Concepción, guia de seu trabalho acadêmico e compromisso social."
+  },
+  "breadcrumb": { "home": "Início", "page": "Missão, Visão e Valores" },
+  "hero": {
+    "label": "Identidade institucional",
+    "title": "Missão, Visão e Valores",
+    "description": "Os princípios que norteiam o trabalho acadêmico e institucional da Universidad Nacional de Concepción"
+  },
+  "mission": {
+    "label": "Missão",
+    "title": "Nossa razão de ser",
+    "body": "Formar profissionais íntegros com sólidos conhecimentos científicos e técnicos, comprometidos com o desenvolvimento sustentável do norte do Paraguai e o bem-estar da sociedade."
+  },
+  "vision": {
+    "label": "Visão",
+    "title": "Para onde vamos",
+    "body": "Ser uma universidade de excelência, referência em pesquisa, inovação e extensão universitária, reconhecida nacional e internacionalmente pela qualidade de seus processos acadêmicos."
+  },
+  "values": {
+    "eyebrow": "Princípios norteadores",
+    "title": "Nossos valores",
+    "description": "Os valores institucionais que orientam a conduta de toda a comunidade universitária.",
+    "v1": { "name": "Excelência", "description": "Busca permanente de qualidade em todos os processos acadêmicos, administrativos e institucionais." },
+    "v2": { "name": "Integridade", "description": "Atuação ética e transparente em todas as dimensões da vida universitária." },
+    "v3": { "name": "Inovação", "description": "Fomento da criatividade, da pesquisa e da adoção de novos conhecimentos e tecnologias." },
+    "v4": { "name": "Inclusão", "description": "Garantia de acesso ao ensino superior sem distinção de origem, condição social ou econômica." },
+    "v5": { "name": "Compromisso social", "description": "Responsabilidade ativa com o desenvolvimento humano, econômico e cultural da comunidade regional." },
+    "v6": { "name": "Responsabilidade", "description": "Cumprimento rigoroso dos compromissos institucionais com os estudantes, o Estado e a sociedade." }
+  },
+  "cta": {
+    "label": "Saiba mais",
+    "title": "Descubra nossa história e estrutura",
+    "description": "Explore os fundamentos institucionais da Universidad Nacional de Concepción.",
+    "linkHistory": "Ver história",
+    "linkAuthorities": "Ver autoridades"
+  }
+}

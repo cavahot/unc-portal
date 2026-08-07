@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Faculdade de Odontologia | UNC",
+    "description": "Cursos de graduação e pós-graduação, mensalidades e contato da Faculdade de Odontologia da Universidade Nacional de Concepción."
+  },
+  "breadcrumb": { "facultades": "Faculdades", "nombre": "Odontologia" },
+  "hero": {
+    "badge": "Unidade Acadêmica",
+    "nombre": "Faculdade de Odontologia",
+    "tagline": "Formando profissionais comprometidos com a saúde bucal e o bem-estar comunitário."
+  },
+  "grado": {
+    "title": "Cursos de Graduação",
+    "subtitle": "Programas de formação superior acreditados pelo CONES",
+    "cols": { "carrera": "Curso", "sede": "Sede ou Filial", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Programas de Pós-Graduação",
+    "subtitle": "Especializações e programas de formação avançada",
+    "cols": { "programa": "Programa", "sede": "Sede ou Filial", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Mensalidades",
+    "subtitle": "Valores vigentes conforme resolução institucional",
+    "monto": "Valor (Gs.)",
+    "grupos": {
+      "multas": "Multas e Outros Direitos Não Tributários",
+      "venta": "Venda de Livros, Formulários e Documentos",
+      "servicios": "Venda de Serviços da Administração Pública",
+      "medicos": "Serviços Médicos e Hospitalares"
+    }
+  },
+  "contacto": {
+    "title": "Contato",
+    "direccion": "Campus Universitário: Ruta Py05, Km 210, Concepción, Paraguai",
+    "telefono": "(595 331) 241680",
+    "emails": ["decanatofo@unc.edu.py", "secretariagralfo@unc.edu.py"],
+    "web": "www.founc.edu.py",
+    "sitio": "Acessar site da Faculdade"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Research | Universidad Nacional de Concepción",
+    "description": "Discover the research projects, groups and lines of inquiry at the Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Science and knowledge",
+    "title": "Research",
+    "description": "UNC promotes the generation of scientific knowledge oriented toward the sustainable development of Concepción and northern Paraguay."
+  },
+  "lines": {
+    "title": "Research lines",
+    "description": "Priority areas of scientific production by faculty"
+  },
+  "areas": {
+    "a1": {
+      "area": "Health Sciences",
+      "p1": "Epidemiology of tropical diseases in northern Paraguay",
+      "p2": "Community oral health in rural areas of Concepción",
+      "p3": "Nutritional impact on school performance"
+    },
+    "a2": {
+      "area": "Agricultural Sciences and Environment",
+      "p1": "Sustainable agriculture and water resource management",
+      "p2": "Biodiversity and conservation of the Paraguayan Chaco",
+      "p3": "Impact of climate change on regional agricultural production"
+    },
+    "a3": {
+      "area": "Technology and Engineering",
+      "p1": "Renewable energy applied to rural communities",
+      "p2": "Road infrastructure and construction management in northern Paraguay",
+      "p3": "Geographic information systems for territorial planning"
+    },
+    "a4": {
+      "area": "Social Sciences and Humanities",
+      "p1": "History and cultural heritage of the Concepción region",
+      "p2": "Intercultural bilingual education in indigenous communities",
+      "p3": "Local economic development and regional entrepreneurship"
+    }
+  },
+  "cta": {
+    "title": "Want to publish or collaborate?",
+    "description": "Contact the Research Directorate to join projects or submit proposals.",
+    "link": "Contact us"
+  }
+}

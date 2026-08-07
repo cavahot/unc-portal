@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Authorities | Universidad Nacional de Concepción",
+    "description": "Institutional management team of the Universidad Nacional de Concepción: Rector, Vice-Rectors, General Secretariat and Directorates."
+  },
+  "breadcrumb": { "home": "Home", "page": "Authorities" },
+  "hero": {
+    "label": "Institutional management",
+    "title": "Authorities",
+    "description": "Institutional management team committed to university excellence"
+  },
+  "section": {
+    "label": "Governance structure",
+    "title": "Leadership team",
+    "description": "The authorities of the Universidad Nacional de Concepción are democratically elected in accordance with the University Statute, ensuring participatory and transparent governance."
+  },
+  "authorities": {
+    "a1": { "role": "Rector", "description": "Highest authority of the Universidad Nacional de Concepción. Represents the institution before national and international bodies." },
+    "a2": { "role": "Academic Vice-Rector", "description": "Responsible for planning, supervising and evaluating the university's academic and research processes." },
+    "a3": { "role": "Administrative Vice-Rector", "description": "Oversees the administrative, financial and asset management of the institution." },
+    "a4": { "role": "General Secretary", "description": "Responsible for document management, administrative acts and coordination of collegiate governing bodies." },
+    "a5": { "role": "General Academic Directorate", "description": "Coordinates academic programs, admissions, registration and all aspects of the student academic journey." },
+    "a6": { "role": "Administrative and Financial Directorate", "description": "Manages economic resources, institutional budget, procurement and general services." }
+  },
+  "note": "For up-to-date information about the authorities, please contact the General Secretariat of the Rectorate of the Universidad Nacional de Concepción, located in the city of Concepción, Paraguay.",
+  "organigrama": {
+    "label": "Full structure",
+    "title": "Want to see the complete organizational structure?",
+    "description": "Consult the institutional org chart with all departments and areas of the university.",
+    "link": "View institutional org chart"
+  }
+}

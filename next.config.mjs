@@ -27,11 +27,19 @@ const nextConfig = {
     ]
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ['image/webp'],
     remotePatterns: [
       // MinIO local (dev)
       { protocol: 'http', hostname: 'localhost', port: '9100', pathname: '/**' },
       { protocol: 'http', hostname: '127.0.0.1', port: '9100', pathname: '/**' },
+      // Payload CMS local media (dev)
+      { protocol: 'http', hostname: 'localhost', port: '3002', pathname: '/**' },
+      { protocol: 'http', hostname: '127.0.0.1', port: '3002', pathname: '/**' },
+      // WordPress original (imágenes migradas que aún no están en Payload)
+      { protocol: 'https', hostname: 'www.unc.edu.py', pathname: '/**' },
+      { protocol: 'https', hostname: 'migracion.unc.edu.py', pathname: '/**' },
+      // Flag CDN para los selectores de idioma
+      { protocol: 'https', hostname: 'flagcdn.com', pathname: '/**' },
       // Servidor dedicado — configurar MEDIA_HOSTNAME en Vercel env vars
       ...(process.env.MEDIA_HOSTNAME
         ? [{ protocol: 'https', hostname: process.env.MEDIA_HOSTNAME, pathname: '/**' }]

@@ -1,30 +1,30 @@
 {
-  "pageTitle": "Solicitar Título — UNC",
-  "pageDescription": "Solicita la gestión de tu título universitario en la Universidad Nacional de Concepción a través del formulario oficial.",
+  "pageTitle": "Solicitar Diploma — UNC",
+  "pageDescription": "Solicite a gestão do seu diploma universitário na Universidade Nacional de Concepción por meio do formulário oficial.",
   "portalLabel": "Portal UNC",
-  "heading": "Solicitud de Título Universitario",
-  "description": "Iniciá el proceso de gestión de tu diploma universitario de forma online a través del formulario oficial de la Universidad Nacional de Concepción.",
-  "ctaLabel": "Iniciar ahora",
-  "ctaHeading": "¿Listo para solicitar tu título?",
-  "ctaNote": "Este formulario abre en Google Forms en una nueva pestaña.",
-  "ctaButton": "Iniciar solicitud",
-  "processHeading": "Proceso de solicitud",
+  "heading": "Solicitação de Diploma Universitário",
+  "description": "Inicie o processo de gestão do seu diploma universitário de forma on-line por meio do formulário oficial da Universidade Nacional de Concepción.",
+  "ctaLabel": "Iniciar agora",
+  "ctaHeading": "Pronto para solicitar seu diploma?",
+  "ctaNote": "Este formulário abre no Google Forms em uma nova aba.",
+  "ctaButton": "Iniciar solicitação",
+  "processHeading": "Processo de solicitação",
   "steps": {
     "step01": {
-      "title": "Completá el formulario",
-      "description": "Ingresá tus datos personales y la información de tu carrera."
+      "title": "Preencha o formulário",
+      "description": "Informe seus dados pessoais e as informações do seu curso."
     },
     "step02": {
-      "title": "Adjuntá la documentación",
-      "description": "Cédula de identidad, certificado de egreso y demás documentos requeridos según tu facultad."
+      "title": "Anexe a documentação",
+      "description": "Cédula de identidade, certificado de conclusão e demais documentos exigidos pela sua faculdade."
     },
     "step03": {
-      "title": "Seguimiento",
-      "description": "Recibirás notificaciones sobre el estado de tu solicitud a través del correo registrado."
+      "title": "Acompanhamento",
+      "description": "Você receberá notificações sobre o andamento da sua solicitação pelo e-mail cadastrado."
     },
     "step04": {
-      "title": "Retiro del título",
-      "description": "Una vez aprobado, te notificaremos la fecha y lugar de entrega de tu diploma universitario."
+      "title": "Retirada do diploma",
+      "description": "Após a aprovação, você será notificado sobre a data e o local de entrega do seu diploma universitário."
     }
   }
 }

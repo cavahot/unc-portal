@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Faculty of Medicine | UNC",
+    "description": "Medicine degree, postgraduate specializations, fees and contact of the Faculty of Medicine at the National University of Concepción."
+  },
+  "breadcrumb": { "facultades": "Faculties", "nombre": "Medicine" },
+  "hero": {
+    "badge": "Academic Unit",
+    "nombre": "Faculty of Medicine",
+    "tagline": "Training physicians committed to the health and well-being of the Paraguayan community."
+  },
+  "grado": {
+    "title": "Undergraduate Programs",
+    "subtitle": "Undergraduate programs accredited by CONES",
+    "cols": { "carrera": "Program", "sede": "Campus", "resolucion": "CONES Res." }
+  },
+  "posgrado": {
+    "title": "Postgraduate Programs",
+    "subtitle": "Specializations and master's programs",
+    "cols": { "programa": "Program", "sede": "Campus", "resolucion": "CONES Res." }
+  },
+  "aranceles": {
+    "title": "Tuition & Fees",
+    "subtitle": "Current rates per institutional resolution",
+    "monto": "Amount (Gs.)",
+    "grupos": {
+      "multas": "Fines and Non-Tax Rights",
+      "venta": "Books, Forms and Documents",
+      "academicos": "Academic Fees",
+      "clinicos": "Clinical and Hospital Services"
+    }
+  },
+  "contacto": {
+    "title": "Contact",
+    "direccion": "Ruta Py05, Km 210 – Hospital Regional Campus, Concepción",
+    "telefono": "(595 331) 242591 / 241022",
+    "emails": ["fm-secretariageneral@unc.edu.py"],
+    "web": "www.fmedicina-unc.edu.py",
+    "sitio": "Visit Faculty Website"
+  }
+}

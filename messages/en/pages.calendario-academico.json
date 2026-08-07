@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "title": "Academic Calendar | Universidad Nacional de Concepción",
+    "description": "Official academic calendar of the Universidad Nacional de Concepción: enrollment, midterms, finals and key dates."
+  },
+  "hero": {
+    "label": "Academic management",
+    "title": "Academic calendar",
+    "description": "Key dates of the 2026 academic year at the Universidad Nacional de Concepción."
+  },
+  "semesters": {
+    "s1": {
+      "label": "1st Semester 2026",
+      "e1": { "fecha": "Mar 2", "descripcion": "Classes begin" },
+      "e2": { "fecha": "Mar 16–27", "descripcion": "Late enrollment period" },
+      "e3": { "fecha": "May 5–16", "descripcion": "Midterms, 1st sitting" },
+      "e4": { "fecha": "Jun 23 – Jul 4", "descripcion": "Midterms, 2nd sitting" },
+      "e5": { "fecha": "Jul 11", "descripcion": "End of semester" }
+    },
+    "s2": {
+      "label": "2nd Semester 2026",
+      "e1": { "fecha": "Aug 3", "descripcion": "Classes begin" },
+      "e2": { "fecha": "Aug 17–28", "descripcion": "Late enrollment period" },
+      "e3": { "fecha": "Oct 5–16", "descripcion": "Midterms, 1st sitting" },
+      "e4": { "fecha": "Nov 23 – Dec 4", "descripcion": "Midterms, 2nd sitting" },
+      "e5": { "fecha": "Dec 11", "descripcion": "End of semester" }
+    }
+  },
+  "finals": {
+    "title": "Final exam sessions",
+    "headerPeriod": "Period",
+    "headerDates": "Dates",
+    "f1": { "periodo": "December 2025", "fechas": "Dec 1 – 19" },
+    "f2": { "periodo": "February 2026", "fechas": "Feb 2 – 20" },
+    "f3": { "periodo": "July 2026", "fechas": "Jul 14 – Aug 1" },
+    "f4": { "periodo": "December 2026", "fechas": "Dec 1 – 19" }
+  },
+  "note": {
+    "label": "Note: ",
+    "body": "Dates are indicative and may be changed by resolution of the Superior Council. Always check with your faculty before registering for exams."
+  }
+}

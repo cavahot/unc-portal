@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Ñembyaikuépe joaju — Universidad Nacional de Concepción",
+    "description": "Universidad Nacional de Concepción portal rehegua ñembyaikuépe joaju ñemombe'u."
+  },
+  "hero": {
+    "label": "Opavavépe joaju",
+    "title": "Ñembyaikuépe joaju ñemombe'u",
+    "description": "Universidad Nacional de Concepción oñemomba'e portal digital ñembyaikuépe joaju rehe MITIC ha WCAG 2.1 nivel AA reheve."
+  },
+  "features": {
+    "title": "Ñembyaikuépe joaju mba'e",
+    "description": "Ko portal omoĩ ko'ã tembiporu opavave oiporu porã haguã:",
+    "f1": { "title": "Kuatia tuichakue ñemomba'e", "description": "Ikatu retuicha térã remboyvuku kuatia portalpe ñembyaikuépe joaju panel ndive, pantalla ysyry-pe oĩva." },
+    "f2": { "title": "Ohechauka mba'e", "description": "Portal omboguejy ohechauka tuicha ha gris escala haguã mba'e hesakã haguã maranduháva." },
+    "f3": { "title": "Joaju ñomimbyrã", "description": "Ikatu remombyry portal rehegua joaju opavave ñomimbyrã eikuaa porã haguã." },
+    "f4": { "title": "Eñemoĩ kuatia", "description": "Opción kuatia ñemomba'e porã haguã, oĩháicha maranduháva dyslexia oĩvapepe." },
+    "f5": { "title": "Teclado ndive ñemboja", "description": "Portal opa teclado ndive oñembojáva. Tab emomba'e tembiporu peve ha Enter embokatú haguã." },
+    "f6": { "title": "Responsivo design", "description": "Portal oñemomba'e pantalla tuicha opa peve, móvil guive escritorio monitor peve." }
+  },
+  "cta": {
+    "title": "Ñembyaikuépe joaju apañuãi ñemombe'u",
+    "description": "Portalpe ñembyaikuépe joaju apañuãi reheha'arã, emoñe'ẽ",
+    "subject": "\"Accesibilidad\" rembiapokue ndive. Oñemomba'e 5 arapotĩ guive ñemomba'e haguã."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "title": "Tribunal Electoral | UNC",
+    "description": "Conocé la composición y los documentos oficiales del Tribunal Electoral de la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": "Tribunal Electoral",
+  "hero": {
+    "badge": "Gobierno Universitario",
+    "title": "Tribunal Electoral",
+    "description": "Órgano autónomo encargado de garantizar la transparencia y legalidad de los procesos electorales universitarios."
+  },
+  "members": {
+    "title": "Composición del Tribunal",
+    "subtitle": "Autoridades designadas para el período electoral vigente"
+  },
+  "downloads": {
+    "title": "Documentos Principales",
+    "subtitle": "Documentos normativos y de planificación del proceso electoral",
+    "download": "Descargar",
+    "pending": "Próximamente"
+  },
+  "accordion": {
+    "title": "Documentos del Proceso Electoral",
+    "subtitle": "Accedé a los documentos oficiales de cada etapa del proceso",
+    "viewDoc": "Ver documento",
+    "noDocuments": "No hay documentos disponibles en esta sección.",
+    "tipos": {
+      "lista-inscriptos":  "Lista de Inscriptos",
+      "formato-notas":     "Formato de Notas",
+      "padron-electoral":  "Oficialización de Padrón Electoral",
+      "candidaturas":      "Puesta de Manifiesto de Movimientos y Candidaturas",
+      "oficializacion":    "Oficialización de Candidaturas",
+      "proclamacion":      "Proclamación de Candidatos"
+    }
+  }
+}

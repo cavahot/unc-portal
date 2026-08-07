@@ -8,6 +8,10 @@
     "start": "next start -p 3001",
     "lint": "next lint",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit --project tsconfig.portal.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:int": "vitest run --config vitest.int.config.ts",
+    "test:e2e": "playwright test",
+    "test:all": "npm run test && npm run test:int && npm run test:e2e",
     "infra:up": "docker compose -f infrastructure/docker/compose.yaml up -d",
     "infra:status": "docker compose -f infrastructure/docker/compose.yaml ps",
     "dev:portal": "next dev -p 3000",
@@ -21,26 +25,36 @@
     "backup": "bash scripts/backup/backup.sh",
     "backup:named": "bash scripts/backup/backup.sh $1",
     "backup:restore": "bash scripts/backup/restore.sh $1",
-    "backup:list": "ls -lh ./backups/ 2>/dev/null || echo 'No backups found'"
+    "backup:list": "ls -lh ./backups/ 2>/dev/null || echo 'No backups found'",
+    "seed:convenios": "node scripts/seed-convenios.mjs",
+    "seed:tribunal": "node scripts/seed-tribunal.mjs",
+    "seed:odontologia": "node scripts/seed-odontologia.mjs",
+    "seed:medicina": "node scripts/seed-medicina.mjs",
+    "seed:agrarias": "node scripts/seed-agrarias.mjs"
   },
   "dependencies": {
     "@unc/cms-types": "*",
     "next": "^16.2.12",
     "next-intl": "^3.26.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.45.0",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@vitest/ui": "^2.0.0",
     "autoprefixer": "^10.4.20",
     "concurrently": "^10.0.4",
     "eslint": "^8",
     "eslint-config-next": "^15.4.11",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2.0.0"
   },
   "workspaces": [
     "apps/*",

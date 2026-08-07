@@ -3,7 +3,11 @@ import type { Carrera, Facultade } from '@unc/cms-types'
 import { PayloadResponse } from '../types'
 
 // When queried with depth:1, the facultad relation is always populated.
-export type CarreraPopulada = Omit<Carrera, 'facultad'> & { facultad: Facultade }
+export type CarreraPopulada = Omit<Carrera, 'facultad'> & {
+  facultad: Facultade
+  tipo?:    'grado' | 'posgrado'
+  sede?:    string
+}
 
 export type { Carrera }
 
@@ -90,6 +94,29 @@ export async function getCarreraBySlug(slug: string): Promise<CarreraPopulada | 
     return res.docs?.[0] ?? null
   } catch {
     return FALLBACK_CARRERAS.find((c) => c.slug === slug) ?? null
+  }
+}
+
+export async function getCarrerasByFacultadAndTipo(
+  facultadSlug: string,
+  tipo: 'grado' | 'posgrado',
+): Promise<CarreraPopulada[]> {
+  try {
+    const params = new URLSearchParams()
+    params.append('where[activa][equals]', 'true')
+    params.append('where[facultad.slug][equals]', facultadSlug)
+    params.append('where[tipo][equals]', tipo)
+    params.append('sort', 'nombre')
+    params.append('depth', '1')
+    params.append('limit', '100')
+
+    const res = await cmsFetch<PayloadResponse<CarreraPopulada>>(`/carreras?${params.toString()}`, {
+      tags: ['carreras'],
+    })
+
+    return res.docs ?? []
+  } catch {
+    return []
   }
 }
 

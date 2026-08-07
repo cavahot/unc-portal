@@ -31,6 +31,8 @@ export const Media: CollectionConfig = {
       'image/gif',
       'image/svg+xml',
       'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ],
   },
   hooks: {

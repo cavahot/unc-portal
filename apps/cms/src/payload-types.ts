@@ -75,7 +75,15 @@ export interface Config {
     tesis: Tesis;
     facultades: Facultade;
     carreras: Carrera;
+    'marco-legal': MarcoLegal;
     auditoria: Auditoria;
+    autoridades: Autoridade;
+    ley5189: Ley5189;
+    ley5282: Ley5282;
+    convenios: Convenio;
+    'tribunal-miembros': TribunalMiembro;
+    'tribunal-documentos': TribunalDocumento;
+    'aranceles-rectorado': ArancelesRectorado;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -91,7 +99,15 @@ export interface Config {
     tesis: TesisSelect<false> | TesisSelect<true>;
     facultades: FacultadesSelect<false> | FacultadesSelect<true>;
     carreras: CarrerasSelect<false> | CarrerasSelect<true>;
+    'marco-legal': MarcoLegalSelect<false> | MarcoLegalSelect<true>;
     auditoria: AuditoriaSelect<false> | AuditoriaSelect<true>;
+    autoridades: AutoridadesSelect<false> | AutoridadesSelect<true>;
+    ley5189: Ley5189Select<false> | Ley5189Select<true>;
+    ley5282: Ley5282Select<false> | Ley5282Select<true>;
+    convenios: ConveniosSelect<false> | ConveniosSelect<true>;
+    'tribunal-miembros': TribunalMiembrosSelect<false> | TribunalMiembrosSelect<true>;
+    'tribunal-documentos': TribunalDocumentosSelect<false> | TribunalDocumentosSelect<true>;
+    'aranceles-rectorado': ArancelesRectoradoSelect<false> | ArancelesRectoradoSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -105,11 +121,13 @@ export interface Config {
     navegacion: Navegacion;
     transparencia: Transparencia;
     'enlaces-externos': EnlacesExterno;
+    estadisticas: Estadistica;
   };
   globalsSelect: {
     navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
     transparencia: TransparenciaSelect<false> | TransparenciaSelect<true>;
     'enlaces-externos': EnlacesExternosSelect<false> | EnlacesExternosSelect<true>;
+    estadisticas: EstadisticasSelect<false> | EstadisticasSelect<true>;
   };
   locale: null;
   widgets: {
@@ -238,6 +256,10 @@ export interface Noticia {
     [k: string]: unknown;
   };
   featuredImage?: (number | null) | Media;
+  /**
+   * URL directa de imagen cuando no hay archivo en Media (ej: imágenes migradas de WordPress).
+   */
+  featuredImageUrl?: string | null;
   gallery?:
     | {
         image: number | Media;
@@ -504,7 +526,58 @@ export interface Carrera {
   modalidad?: ('Presencial' | 'Semipresencial' | 'Virtual') | null;
   descripcion?: string | null;
   resolucion?: string | null;
+  tipo?: ('grado' | 'posgrado') | null;
+  /**
+   * Ej: Central/Concepción
+   */
+  sede?: string | null;
   activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Documentos normativos que rigen la vida institucional de la UNC.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "marco-legal".
+ */
+export interface MarcoLegal {
+  id: number;
+  title: string;
+  /**
+   * Agrupa el documento en la página pública
+   */
+  category:
+    | 'ley-creacion'
+    | 'estatuto'
+    | 'reglamento-general'
+    | 'reglamentos-especiales'
+    | 'codigos'
+    | 'politicas'
+    | 'planes'
+    | 'manuales'
+    | 'procedimientos'
+    | 'protocolos';
+  /**
+   * Breve descripción del contenido del documento
+   */
+  description?: string | null;
+  /**
+   * Sube el archivo directamente. Tiene prioridad sobre la URL externa.
+   */
+  file?: (number | null) | Media;
+  /**
+   * Se usa como enlace de descarga cuando no hay archivo subido.
+   */
+  externalUrl?: string | null;
+  /**
+   * Menor número = aparece primero dentro de su categoría
+   */
+  order?: number | null;
+  /**
+   * Solo los documentos publicados se muestran en el portal
+   */
+  active?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -574,6 +647,227 @@ export interface Auditoria {
   createdAt: string;
 }
 /**
+ * Autoridades y funcionarios de la institución con fotografías y currículum.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "autoridades".
+ */
+export interface Autoridade {
+  id: number;
+  name: string;
+  /**
+   * Ej: Rector, Decana de la Facultad de Humanidades
+   */
+  role: string;
+  type: 'rector' | 'vicerrector' | 'decano' | 'secretario' | 'director';
+  /**
+   * Nombre de la facultad que dirige
+   */
+  faculty?: string | null;
+  photo?: (number | null) | Media;
+  /**
+   * Suba el CV en formato PDF o Word (.doc, .docx)
+   */
+  cvFile?: (number | null) | Media;
+  /**
+   * Enlace externo al CV si no se sube un archivo
+   */
+  cvUrl?: string | null;
+  bio?: string | null;
+  email?: string | null;
+  /**
+   * Número menor = aparece primero
+   */
+  order?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Documentos requeridos por la Ley 5189/2014 sobre provisión de información en el uso de recursos públicos.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ley5189".
+ */
+export interface Ley5189 {
+  id: number;
+  /**
+   * Categoría exigida por la Ley 5189/2014
+   */
+  category:
+    | 'organigrama'
+    | 'direccion-telefono'
+    | 'nomina-personal'
+    | 'presupuesto-ingresos-gastos'
+    | 'anexo-personal'
+    | 'ejecucion-presupuestaria'
+    | 'registro-viaticos'
+    | 'bienes-patrimoniales'
+    | 'funcionarios-comisionados'
+    | 'otras-informaciones'
+    | 'cumplimiento-art7';
+  /**
+   * Ej: "Enero 2024", "2024", "I Trimestre 2024"
+   */
+  period: string;
+  /**
+   * Nota breve sobre este documento específico
+   */
+  description?: string | null;
+  /**
+   * URL de Google Drive para descarga del documento
+   */
+  driveUrl: string;
+  /**
+   * Menor número = aparece primero dentro de su categoría
+   */
+  order?: number | null;
+  /**
+   * Solo los documentos publicados se muestran en el portal
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Documentos requeridos por el Art. 8° de la Ley 5282/2014 de Libre Acceso Ciudadano a la Información Pública y Transparencia Gubernamental.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ley5282".
+ */
+export interface Ley5282 {
+  id: number;
+  /**
+   * Ítem exigido por el Art. 8° de la Ley 5282/2014
+   */
+  category:
+    | 'item-1'
+    | 'item-2'
+    | 'item-3'
+    | 'item-4'
+    | 'item-5'
+    | 'item-6'
+    | 'item-7'
+    | 'item-8'
+    | 'item-9'
+    | 'item-10'
+    | 'item-11'
+    | 'item-12'
+    | 'item-13'
+    | 'item-14'
+    | 'item-15'
+    | 'item-16'
+    | 'item-17';
+  /**
+   * Ej: "Enero 2024", "2024", "I Trimestre 2024"
+   */
+  period: string;
+  /**
+   * Nota breve sobre este documento específico
+   */
+  description?: string | null;
+  /**
+   * URL de Google Drive para descarga del documento
+   */
+  driveUrl: string;
+  /**
+   * Menor número = aparece primero dentro de su categoría
+   */
+  order?: number | null;
+  /**
+   * Solo los documentos publicados se muestran en el portal
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "convenios".
+ */
+export interface Convenio {
+  id: number;
+  title: string;
+  type: 'nacional' | 'internacional';
+  year: number;
+  parties: string;
+  objective: string;
+  signedMonth?: string | null;
+  duration?: string | null;
+  /**
+   * URL de Google Drive del documento PDF. Dejar vacío si no hay documento disponible.
+   */
+  driveUrl?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tribunal-miembros".
+ */
+export interface TribunalMiembro {
+  id: number;
+  nombre: string;
+  cargo: string;
+  foto?: (number | null) | Media;
+  /**
+   * Número menor aparece primero
+   */
+  orden?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tribunal-documentos".
+ */
+export interface TribunalDocumento {
+  id: number;
+  titulo: string;
+  tipo:
+    | 'principal-cronograma'
+    | 'principal-reglamento'
+    | 'lista-inscriptos'
+    | 'formato-notas'
+    | 'padron-electoral'
+    | 'candidaturas'
+    | 'oficializacion'
+    | 'proclamacion';
+  descripcion?: string | null;
+  /**
+   * URL de Google Drive, MinIO, o cualquier enlace público al documento.
+   */
+  driveUrl?: string | null;
+  orden?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Aranceles, multas y servicios cobrados directamente por el Rectorado.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aranceles-rectorado".
+ */
+export interface ArancelesRectorado {
+  id: number;
+  concepto: string;
+  /**
+   * Importe en guaraníes. Ej: 50000 para Gs. 50.000
+   */
+  monto: number;
+  grupo: 'multas' | 'venta' | 'educativos';
+  /**
+   * Menor número aparece primero dentro del grupo.
+   */
+  orden?: number | null;
+  activo?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -630,8 +924,40 @@ export interface PayloadLockedDocument {
         value: number | Carrera;
       } | null)
     | ({
+        relationTo: 'marco-legal';
+        value: number | MarcoLegal;
+      } | null)
+    | ({
         relationTo: 'auditoria';
         value: number | Auditoria;
+      } | null)
+    | ({
+        relationTo: 'autoridades';
+        value: number | Autoridade;
+      } | null)
+    | ({
+        relationTo: 'ley5189';
+        value: number | Ley5189;
+      } | null)
+    | ({
+        relationTo: 'ley5282';
+        value: number | Ley5282;
+      } | null)
+    | ({
+        relationTo: 'convenios';
+        value: number | Convenio;
+      } | null)
+    | ({
+        relationTo: 'tribunal-miembros';
+        value: number | TribunalMiembro;
+      } | null)
+    | ({
+        relationTo: 'tribunal-documentos';
+        value: number | TribunalDocumento;
+      } | null)
+    | ({
+        relationTo: 'aranceles-rectorado';
+        value: number | ArancelesRectorado;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -729,6 +1055,7 @@ export interface NoticiasSelect<T extends boolean = true> {
   summary?: T;
   content?: T;
   featuredImage?: T;
+  featuredImageUrl?: T;
   gallery?:
     | T
     | {
@@ -927,7 +1254,24 @@ export interface CarrerasSelect<T extends boolean = true> {
   modalidad?: T;
   descripcion?: T;
   resolucion?: T;
+  tipo?: T;
+  sede?: T;
   activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "marco-legal_select".
+ */
+export interface MarcoLegalSelect<T extends boolean = true> {
+  title?: T;
+  category?: T;
+  description?: T;
+  file?: T;
+  externalUrl?: T;
+  order?: T;
+  active?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -946,6 +1290,110 @@ export interface AuditoriaSelect<T extends boolean = true> {
   resultado?: T;
   mensaje?: T;
   cambiosRelevantes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "autoridades_select".
+ */
+export interface AutoridadesSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  type?: T;
+  faculty?: T;
+  photo?: T;
+  cvFile?: T;
+  cvUrl?: T;
+  bio?: T;
+  email?: T;
+  order?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ley5189_select".
+ */
+export interface Ley5189Select<T extends boolean = true> {
+  category?: T;
+  period?: T;
+  description?: T;
+  driveUrl?: T;
+  order?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ley5282_select".
+ */
+export interface Ley5282Select<T extends boolean = true> {
+  category?: T;
+  period?: T;
+  description?: T;
+  driveUrl?: T;
+  order?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "convenios_select".
+ */
+export interface ConveniosSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  year?: T;
+  parties?: T;
+  objective?: T;
+  signedMonth?: T;
+  duration?: T;
+  driveUrl?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tribunal-miembros_select".
+ */
+export interface TribunalMiembrosSelect<T extends boolean = true> {
+  nombre?: T;
+  cargo?: T;
+  foto?: T;
+  orden?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tribunal-documentos_select".
+ */
+export interface TribunalDocumentosSelect<T extends boolean = true> {
+  titulo?: T;
+  tipo?: T;
+  descripcion?: T;
+  driveUrl?: T;
+  orden?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aranceles-rectorado_select".
+ */
+export interface ArancelesRectoradoSelect<T extends boolean = true> {
+  concepto?: T;
+  monto?: T;
+  grupo?: T;
+  orden?: T;
+  activo?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1088,6 +1536,22 @@ export interface EnlacesExterno {
   createdAt?: string | null;
 }
 /**
+ * Estadísticas institucionales de la Universidad Nacional de Concepción
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "estadisticas".
+ */
+export interface Estadistica {
+  id: number;
+  totalEstudiantes: number;
+  totalDocentes: number;
+  totalEgresados: number;
+  totalCarrerasAcreditadas: number;
+  totalFacultades: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navegacion_select".
  */
@@ -1149,6 +1613,20 @@ export interface EnlacesExternosSelect<T extends boolean = true> {
   formularioTitulos?: T;
   urlPortalInfoPublica?: T;
   contenidoInfoPublica?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "estadisticas_select".
+ */
+export interface EstadisticasSelect<T extends boolean = true> {
+  totalEstudiantes?: T;
+  totalDocentes?: T;
+  totalEgresados?: T;
+  totalCarrerasAcreditadas?: T;
+  totalFacultades?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "title": "Electoral Tribunal | UNC",
+    "description": "Meet the members and access the official documents of the Electoral Tribunal of the National University of Concepción."
+  },
+  "breadcrumb": "Electoral Tribunal",
+  "hero": {
+    "badge": "University Governance",
+    "title": "Electoral Tribunal",
+    "description": "Autonomous body responsible for ensuring the transparency and legality of university electoral processes."
+  },
+  "members": {
+    "title": "Tribunal Composition",
+    "subtitle": "Designated authorities for the current electoral term"
+  },
+  "downloads": {
+    "title": "Main Documents",
+    "subtitle": "Regulatory and planning documents for the electoral process",
+    "download": "Download",
+    "pending": "Coming soon"
+  },
+  "accordion": {
+    "title": "Electoral Process Documents",
+    "subtitle": "Access the official documents for each stage of the process",
+    "viewDoc": "View document",
+    "noDocuments": "No documents available in this section.",
+    "tipos": {
+      "lista-inscriptos":  "List of Registered Candidates",
+      "formato-notas":     "Notes Format",
+      "padron-electoral":  "Electoral Roll Officialization",
+      "candidaturas":      "Disclosure of Movements and Candidacies",
+      "oficializacion":    "Officialization of Candidacies",
+      "proclamacion":      "Proclamation of Candidates"
+    }
+  }
+}

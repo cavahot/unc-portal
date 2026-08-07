@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "title": "Trámites — Universidad Nacional de Concepción",
+    "description": "UNC rehegua trámite mbo'ehao pytyvõrãnguéra rupi: mba'e oñeikotevẽva ha mba'éicha oñemba'apo."
+  },
+  "breadcrumb": { "home": "Ñepyrũ", "page": "Trámites" },
+  "hero": {
+    "label": "Pytyvõ institucional",
+    "title": "Trámites",
+    "description": "Mbo'ehao pytyvõrãnguéra rupi trámite mba'e oñeikotevẽva"
+  },
+  "help": {
+    "title": "¿Reñeporandu?",
+    "description": "Eñomongeta Secretaría General pegua:",
+    "email": "secgral@unc.edu.py"
+  }
+}

@@ -59,6 +59,15 @@ export const Noticias: CollectionConfig = {
       required: false,
     },
     {
+      name: 'featuredImageUrl',
+      label: 'URL imagen destacada (externa)',
+      type: 'text',
+      required: false,
+      admin: {
+        description: 'URL directa de imagen cuando no hay archivo en Media (ej: imágenes migradas de WordPress).',
+      },
+    },
+    {
       name: 'gallery',
       label: 'Galería de imágenes',
       type: 'array',

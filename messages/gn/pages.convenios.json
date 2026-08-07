@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "Acuerdos | Universidad Nacional de Concepción",
+    "description": "Acuerdos de cooperación firmados por la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": "Acuerdos",
+  "hero": {
+    "badge": "Mbo'ehao rape",
+    "title": "Acuerdos Institucionales",
+    "description": "La Universidad Nacional de Concepción oĩ acuerdos de cooperación con instituciones nacionales e internacionales para fortalecer la educación, la investigación y el intercambio académico."
+  },
+  "stats": {
+    "total": "acuerdos ofirmados",
+    "nacional": "nacionales",
+    "internacional": "internacionales"
+  },
+  "tabs": {
+    "all": "Opavave",
+    "nacional": "Tetã rokẽ",
+    "internacional": "Tekohegua"
+  },
+  "card": {
+    "duration": "Ára",
+    "signed": "Ofirmaha",
+    "objective": "Mba'érepa",
+    "viewDocument": "Ehecha kuatia",
+    "noDocument": "Kuatia noñeikéiva"
+  },
+  "empty": {
+    "title": "Ndaipóri acuerdos",
+    "description": "Ndaipóri acuerdos oñemongeta'ỹva ko categoría-pe."
+  }
+}

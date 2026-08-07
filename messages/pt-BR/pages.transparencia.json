@@ -1,16 +1,16 @@
 {
-  "pageTitle": "Transparencia — UNC",
-  "pageDescription": "Información institucional de cumplimiento legal según las Leyes N° 5.189/2014 y N° 5.282/2014 de la Universidad Nacional de Concepción.",
+  "pageTitle": "Transparência — UNC",
+  "pageDescription": "Informações institucionais de cumprimento legal segundo as Leis N° 5.189/2014 e N° 5.282/2014 da Universidade Nacional de Concepción.",
   "portalLabel": "Portal UNC",
-  "heading": "Transparencia Institucional",
-  "description": "En cumplimiento de las Leyes de Transparencia de la República del Paraguay, la Universidad Nacional de Concepción pone a disposición de la ciudadanía la siguiente información institucional.",
+  "heading": "Transparência Institucional",
+  "description": "Em cumprimento às Leis de Transparência da República do Paraguai, a Universidade Nacional de Concepción disponibiliza à cidadania as seguintes informações institucionais.",
   "ley5189": {
-    "heading": "Ley N° 5.189/2014",
-    "description": "Que establece la obligatoriedad de la provisión de informaciones en los organismos, entidades e instituciones del Estado."
+    "heading": "Lei N° 5.189/2014",
+    "description": "Que estabelece a obrigatoriedade da prestação de informações nos organismos, entidades e instituições do Estado."
   },
   "ley5282": {
-    "heading": "Ley N° 5.282/2014",
-    "description": "De libre acceso ciudadano a la información pública y gubernamental."
+    "heading": "Lei N° 5.282/2014",
+    "description": "De livre acesso cidadão à informação pública e governamental."
   },
-  "noDocuments": "No hay documentos disponibles."
+  "noDocuments": "Não há documentos disponíveis."
 }

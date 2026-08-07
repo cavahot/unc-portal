@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Mbo'e Ñepyrũ — Universidad Nacional de Concepción",
+    "description": "UNC rehegua mbo'e ñepyrũ programa ha tetã ñemomba'e."
+  },
+  "hero": {
+    "label": "Tetã ndive ñemomba'e",
+    "title": "Mbo'e ñepyrũ",
+    "description": "UNC oguata mbo'eháo guive tetã rehe pytyvõ haguã Concepción rehegua ñemombarete, arandú ha tembiapo rehegua."
+  },
+  "programs": {
+    "title": "Programa oĩva",
+    "p1": { "titulo": "Mbo'e ñepyrũ", "descripcion": "Curso, taller ha diplomaturas opavave haguã mbo'ehára ha tetãygua ñemba'apo." },
+    "p2": { "titulo": "Mbo'eháva pytyvõ", "descripcion": "Mbo'eháva ha mbo'ehára oho ñu ha tetã remimbiokuéra pegua jekuaa ha pytyvõ ndive." },
+    "p3": { "titulo": "Arandú ha arte", "descripcion": "Arandú tembiapo, exposición, coro ha artístico grupo ombojoajúva mbo'eháo ha Concepción ndive." },
+    "p4": { "titulo": "Tesãi pytyvõ", "descripcion": "Tesãi bucal, preventivo medicina ha vacunación kambã Ministerio de Salud Pública ndive." },
+    "p5": { "titulo": "Léi rehegua pytyvõ", "descripcion": "Léi rehegua pytyvõ viru'y háguerã, léi mbo'eháva ndive mbo'ehára jepytyvõ rehe." },
+    "p6": { "titulo": "Yvy tembiapo pytyvõ", "descripcion": "Ñu-pe oĩva tembiapohápe pytyvõ técnico yvy, mymba ha yvy ñangareko porã rehe." }
+  },
+  "cta": {
+    "title": "Ñemboguapy mbo'e ñepyrũpe",
+    "description": "Mbo'ehára, mbo'eháva ha tetãygua oĩva ikatu omboñepyrũ térã ñemboguapy mbo'e ñepyrũ programape. Emoñe'ẽ"
+  }
+}

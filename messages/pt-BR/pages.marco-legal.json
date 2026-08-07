@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Marco Legal | Universidade Nacional de Concepción",
+    "description": "Base normativa que rege a vida institucional da Universidade Nacional de Concepción: lei de criação, estatuto universitário e regulamentos internos."
+  },
+  "breadcrumb": {
+    "home": "Início",
+    "institutional": "Institucional"
+  },
+  "hero": {
+    "eyebrow": "Normativa institucional",
+    "title": "Marco Legal",
+    "description": "Base normativa que rege a vida institucional da Universidade Nacional de Concepción.",
+    "softwareNote": "Recomendamos ter instalado um software compatível com documentos PDF, DOCS e XLS."
+  },
+  "docs": {
+    "eyebrow": "Documentos normativos",
+    "heading": "Instrumentos legais vigentes",
+    "description": "A Universidade Nacional de Concepción é regida por um conjunto de instrumentos normativos que garantem seu funcionamento transparente, democrático e orientado ao bem comum.",
+    "totalLabel": "documentos",
+    "downloadLabel": "Baixar",
+    "empty": "Nenhum documento disponível no momento.",
+    "fallbackNote": "Exibindo documentos de referência. Conectando ao servidor..."
+  },
+  "info": {
+    "eyebrow": "Informações adicionais",
+    "title": "Transparência institucional",
+    "description": "Para acessar informações adicionais sobre a normativa institucional ou solicitar cópias dos documentos legais, dirija-se à Secretaria Geral da Reitoria da UNC.",
+    "ctaTramites": "Ver procedimentos disponíveis",
+    "ctaInstitutional": "Voltar ao Institucional"
+  }
+}

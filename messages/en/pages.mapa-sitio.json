@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "title": "Site map | Universidad Nacional de Concepción",
+    "description": "Complete index of all sections and pages of the Universidad Nacional de Concepción portal."
+  },
+  "hero": {
+    "label": "Navigation",
+    "title": "Site map",
+    "description": "Complete index of all sections of the institutional portal."
+  },
+  "sections": {
+    "institucion": {
+      "title": "Institution",
+      "laInstitucion": "The Institution",
+      "historia": "History",
+      "misionYVision": "Mission & Vision",
+      "autoridades": "Authorities",
+      "organigrama": "Org Chart",
+      "marcoLegal": "Legal Framework",
+      "transparencia": "Transparency"
+    },
+    "academia": {
+      "title": "Academics",
+      "carreras": "Degree programs",
+      "facultades": "Faculties",
+      "investigacion": "Research",
+      "extension": "University outreach",
+      "revistas": "Scientific journals",
+      "biblioteca": "Library",
+      "calendario": "Academic calendar"
+    },
+    "servicios": {
+      "title": "Services",
+      "tramites": "Administrative procedures",
+      "solicitarTitulo": "Request degree",
+      "informacionPublica": "Public information",
+      "buscar": "Search"
+    },
+    "actualidad": {
+      "title": "News",
+      "noticias": "News",
+      "contacto": "Contact"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacidad": "Privacy policy",
+      "accesibilidad": "Accessibility"
+    }
+  }
+}

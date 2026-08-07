@@ -9,6 +9,7 @@ import Reveal from '@/components/motion/Reveal';
 import TiltCard from '@/components/motion/TiltCard';
 import StatsBlock from '@/components/stats/StatsBlock';
 import { getNews } from '@/lib/cms/queries/news';
+import { getStatsGlobal } from '@/lib/cms/queries/stats';
 import { Link } from '@/i18n/navigation';
 
 /* =========================================================
@@ -89,10 +90,11 @@ export default async function Home({
   if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound()
   }
-  const [t, format, { docs: noticias }] = await Promise.all([
+  const [t, format, { docs: noticias }, stats] = await Promise.all([
     getT(locale, 'pages.home'),
     getF(locale),
     getNews({ limit: 6 }),
+    getStatsGlobal(),
   ]);
 
   /* ---- datos con strings traducidas ---- */
@@ -136,13 +138,13 @@ export default async function Home({
     {
       title: t('transparency.items.ley5189.title'),
       description: t('transparency.items.ley5189.description'),
-      href: '/transparencia',
+      href: '/ley-5189',
       featured: true,
     },
     {
       title: t('transparency.items.ley5282.title'),
       description: t('transparency.items.ley5282.description'),
-      href: '/transparencia',
+      href: '/ley-5282',
       featured: false,
     },
   ];
@@ -371,7 +373,7 @@ export default async function Home({
                   >
                     <div className="relative h-60 overflow-hidden sm:h-64">
                       <Image
-                        src={n.featuredImage?.url ?? '/images/campus-3d/hero-entry-960.webp'}
+                        src={n.featuredImage?.url ?? n.featuredImageUrl ?? '/images/campus-3d/hero-entry-960.webp'}
                         alt={n.featuredImage?.alt ?? n.title}
                         fill
                         sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
@@ -433,7 +435,7 @@ export default async function Home({
         </div>
       </section>
 
-      <StatsBlock />
+      <StatsBlock locale={locale} stats={stats} />
 
       {/* =====================================================
           TRANSPARENCIA

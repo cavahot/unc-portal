@@ -135,7 +135,7 @@ function FeaturedCard({ item }: { item: typeof ACCESS_ITEMS[number] }) {
   return (
     <Link
       href={item.href}
-      className="group relative col-span-1 flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/30 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(52,211,153,0.08)] md:col-span-2 lg:col-span-1 xl:col-span-2"
+      className="group relative col-span-1 flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/30 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(52,211,153,0.08)] md:col-span-2 lg:col-span-1 xl:col-span-2 xl:row-span-2"
     >
       <div className={`pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br ${item.accent} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
 

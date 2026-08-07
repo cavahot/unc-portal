@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Facultad de Medicina | UNC",
+    "description": "Carrera de Medicina, especializaciones de posgrado, aranceles y contacto de la Facultad de Medicina de la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": { "facultades": "Facultades", "nombre": "Medicina" },
+  "hero": {
+    "badge": "Unidad Académica",
+    "nombre": "Facultad de Medicina",
+    "tagline": "Formando médicos comprometidos con la salud y el bienestar de la comunidad paraguaya."
+  },
+  "grado": {
+    "title": "Carreras de Grado",
+    "subtitle": "Programas de formación de grado acreditados por el CONES",
+    "cols": { "carrera": "Carrera", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Programas de Posgrado",
+    "subtitle": "Especializaciones y maestrías de formación avanzada",
+    "cols": { "programa": "Programa", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Aranceles",
+    "subtitle": "Valores vigentes según resolución institucional",
+    "monto": "Monto (Gs.)",
+    "grupos": {
+      "multas": "Multas y Otros Derechos No Tributarios",
+      "venta": "Venta de Libros, Formularios y Documentos",
+      "academicos": "Aranceles Académicos",
+      "clinicos": "Servicios Clínicos y Hospitalarios"
+    }
+  },
+  "contacto": {
+    "title": "Contacto",
+    "direccion": "Ruta Py05, Km 210 – Predio Hospital Regional Prof. Guillermo Cabral y Dr. Marcial Royg Bernal, Concepción",
+    "telefono": "(595 331) 242591 / 241022",
+    "emails": ["fm-secretariageneral@unc.edu.py"],
+    "web": "www.fmedicina-unc.edu.py",
+    "sitio": "Ir al sitio web de la Facultad"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Marco Legal — Universidad Nacional de Concepción",
+    "description": "UNC rehegua léi ñemombyky: ñembokatú léi, estatuto universitario ha reglamentos."
+  },
+  "breadcrumb": {
+    "home": "Ñepyrũ",
+    "institutional": "Mba'apohára"
+  },
+  "hero": {
+    "eyebrow": "Léi ñemombyky",
+    "title": "Marco Legal",
+    "description": "Universidad Nacional de Concepción rehegua léi ñemombyky.",
+    "softwareNote": "Recomendamos software ojeiporu haguã PDF, DOCS ha XLS kuatia rehegua."
+  },
+  "docs": {
+    "eyebrow": "Kuatia léi rehegua",
+    "heading": "Léi kuatia ojurujáva",
+    "description": "Universidad Nacional de Concepción oñemombyky léi kuatia reheguápe omboñepyrũva imba'apohára ñe'ẽ ñemombe'u ha tetã rehe ñemomba'e ndive.",
+    "totalLabel": "kuatia",
+    "downloadLabel": "Emono'õ",
+    "empty": "Ko'ã momento kuatia ndaipóri.",
+    "fallbackNote": "Referencia kuatia ohechauka. Servidor ndive oñemomba'e..."
+  },
+  "info": {
+    "eyebrow": "Marandu ambuégui",
+    "title": "Mbo'ehao ñe'ẽ ñemombe'u",
+    "description": "Léi ñemombyky marandu ambuégui térã kuatia kopia ñemomba'e haguã, eho Secretaría General del Rectorado UNC pegua.",
+    "ctaTramites": "Ehecha trámite oĩva",
+    "ctaInstitutional": "Eguerujey Mba'apohárape"
+  }
+}

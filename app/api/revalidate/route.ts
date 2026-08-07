@@ -37,6 +37,9 @@ export async function POST(request: NextRequest) {
       'enlaces-externos',
       'facultades',
       'carreras',
+      'convenios',
+      'tribunal-miembros',
+      'tribunal-documentos',
     ]);
 
     if (tag && !ALLOWED_TAGS.has(tag) && !tag.startsWith('noticias:')) {

@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Mba'ekuaapyrã — Universidad Nacional de Concepción",
+    "description": "UNC rehegua mba'ekuaapyrã tembiaponguéra, grupo ha líneas eikuaa haguã."
+  },
+  "hero": {
+    "label": "Jekuaa ha mba'ekuaapyrã",
+    "title": "Mba'ekuaapyrã",
+    "description": "UNC ombokatupyry mba'ekuaapyrã Concepción ha Paraguái yvate ñemombarete haguã."
+  },
+  "lines": {
+    "title": "Mba'ekuaapyrã ñemombyky",
+    "description": "Mba'ekuaapyrã área iporãitéva mbo'ehao pytyvõrãnguéra rupi"
+  },
+  "areas": {
+    "a1": {
+      "area": "Tesãi Mba'ekuaapyrã",
+      "p1": "Paraguái yvate pegua mba'eaĩ oñembyatýva rehegua epidemiología",
+      "p2": "Concepción ñu-pe ko'ãva tesãi bucal rehegua",
+      "p3": "Tembi'u rehe mbo'e porã rehegua pytyvõ"
+    },
+    "a2": {
+      "area": "Yvy ha Ka'aguy Mba'ekuaapyrã",
+      "p1": "Yvy tembiapo ojurujáva ha yvype ñangareko",
+      "p2": "Paraguái Chaco rehegua mba'e ñangareko ha ñemokuái",
+      "p3": "Ka'aty oñemomba'ekuáava tembiapo agropecuario rehegua"
+    },
+    "a3": {
+      "area": "Tecnología ha Ingeniería",
+      "p1": "Energía ojurujáva ñu-pe oĩva rehegua",
+      "p2": "Tetã yvate ñangareko rehegua",
+      "p3": "Tetã ñemombyky rehegua información sistema"
+    },
+    "a4": {
+      "area": "Tetã Rembiasa ha Humanidades",
+      "p1": "Concepción rehegua tembiasakue ha jekuaa ñangareko",
+      "p2": "Tetã ñe'ẽ ha mbo'e intercultural ñemomba'e",
+      "p3": "Tetã ñemombarete ha tembiapo ñepyrũ"
+    }
+  },
+  "cta": {
+    "title": "¿Remomba'e haguã térã reñomongeta?",
+    "description": "Eñomongeta Dirección de Investigación ndive tembiapo rehegua.",
+    "link": "Eñomongeta"
+  }
+}

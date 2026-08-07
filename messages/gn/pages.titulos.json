@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "title": "Mbo'ehao Títuloguéra — Universidad Nacional de Concepción",
+    "description": "Marandu UNC omboguejy haguã títuloguéra rehegua: ñemomba'e, mba'e oñeikotevẽva, aravo ha título ñemomba'e."
+  },
+  "breadcrumb": { "home": "Ñepyrũ", "page": "Títuloguéra" },
+  "hero": {
+    "label": "Secretaría General",
+    "title": "Mbo'ehao Títuloguéra",
+    "description": "Marandu UNC omboguejy haguã títuloguéra rehegua"
+  },
+  "infoCards": {
+    "c1": { "label": "Aravo rehegua", "value": "Eñemomba'e ventanillape", "note": "Aravo ojejavy haguéicha ko'ẽ rupi ha mba'apohára rehe." },
+    "c2": { "label": "Kuatia oñeikotevẽva", "description": "Ehecha lista opa rehegua", "note": "Ñembokatú kuatia, CI ojurujáva, mbo'e kuatia ha viru rombo'u kuatia." },
+    "c3": { "label": "Arancel ojurujáva", "value": "Eñemomba'e ventanillape", "note": "Viru oñemboarandúva ára jave. Eheka aravo ojurujáva ventanillape." }
+  },
+  "graduates": {
+    "label": "Graduadonguérape",
+    "title": "Título ñemomba'e",
+    "description": "Mba'éicha oñemomba'e título mbo'ehávarã ojejavy haguéicha oñemboguapyva mbo'e rehe.",
+    "s1": { "title": "Ejerurea mbo'e ñeikotevẽva", "description": "Ejerurea omboguapyva asignatura, mbo'e práctica ha tembiapo ipahague oñeikotevẽva rembo'epyrã rehe." },
+    "s2": { "title": "Emoñe'ẽ ñemomba'e", "description": "Emboguapy título ñemomba'e rehegua Dirección General Académica-pe ha eñomongeta kuatia oñeikotevẽva ndive." },
+    "s3": { "title": "Arancel rembo'u", "description": "Emoĩ viru oñeikotevẽva ojurujáva haguéicha. Eñemomba'e ventanillape viru mbaretépe." },
+    "s4": { "title": "Título emono'õ", "description": "Oñemboavyva ñemomba'e rire, emoñe'ẽ Secretaría General-pe título emono'õ haguã." }
+  },
+  "graduatesCta": "Emoñepyrũ título ñemomba'e",
+  "recognition": {
+    "label": "Trámite ykeguáva",
+    "title": "Título ñemomba'e tetã ambuégui",
+    "body1": "Tetã ambuégui oú título ñemomba'e, térã UNC título ñemomba'e tetã ha tetã ambuépe oĩva rehegua, oñemba'apo Dirección General Académica ndive Ministerio de Educación y Ciencias reheve.",
+    "body2": "Ko tembiapo ñepyrũ haguã, oñeikotevẽ kuatia teete apostillado térã legalizado haguéicha, ha español ñe'ẽme traducción oficial mba'eve ambuépe oĩva reheve.",
+    "linkLegalizaciones": "Ehecha legalizaciones",
+    "linkTramites": "Ehecha trámite opavave"
+  }
+}

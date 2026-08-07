@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Pesquisa | Universidad Nacional de Concepción",
+    "description": "Conheça os projetos, grupos e linhas de pesquisa da Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Ciência e conhecimento",
+    "title": "Pesquisa",
+    "description": "A UNC promove a geração de conhecimento científico orientado ao desenvolvimento sustentável de Concepción e do norte do Paraguai."
+  },
+  "lines": {
+    "title": "Linhas de pesquisa",
+    "description": "Áreas prioritárias de produção científica por faculdade"
+  },
+  "areas": {
+    "a1": {
+      "area": "Ciências da Saúde",
+      "p1": "Epidemiologia de doenças tropicais no norte do Paraguai",
+      "p2": "Saúde bucal comunitária em zonas rurais de Concepción",
+      "p3": "Impacto nutricional no desempenho escolar"
+    },
+    "a2": {
+      "area": "Ciências Agrárias e Meio Ambiente",
+      "p1": "Agricultura sustentável e gestão de recursos hídricos",
+      "p2": "Biodiversidade e conservação do Chaco paraguaio",
+      "p3": "Impacto das mudanças climáticas na produção agropecuária regional"
+    },
+    "a3": {
+      "area": "Tecnologia e Engenharia",
+      "p1": "Energias renováveis aplicadas a comunidades rurais",
+      "p2": "Infraestrutura viária e gestão de obras no norte do país",
+      "p3": "Sistemas de informação geográfica para planejamento territorial"
+    },
+    "a4": {
+      "area": "Ciências Sociais e Humanidades",
+      "p1": "História e patrimônio cultural da região de Concepción",
+      "p2": "Educação intercultural bilíngue em comunidades indígenas",
+      "p3": "Desenvolvimento econômico local e empreendedorismo regional"
+    }
+  },
+  "cta": {
+    "title": "Quer publicar ou colaborar?",
+    "description": "Entre em contato com a Diretoria de Pesquisa para participar de projetos ou apresentar propostas.",
+    "link": "Contato"
+  }
+}

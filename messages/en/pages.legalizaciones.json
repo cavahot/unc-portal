@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "title": "Legalizations | Universidad Nacional de Concepción",
+    "description": "Document authentication and legalization service from UNC: diplomas, academic certificates and transcripts."
+  },
+  "breadcrumb": { "home": "Home", "page": "Legalizations" },
+  "hero": {
+    "label": "General Secretariat",
+    "title": "Legalizations",
+    "description": "Authentication and legalization of university documents"
+  },
+  "services": {
+    "label": "Available services",
+    "title": "Which documents can I have legalized?",
+    "description": "The General Secretariat of UNC offers a legalization service for documents issued by the institution for official use nationally and internationally.",
+    "s1": {
+      "eyebrow": "Service 01",
+      "title": "Diploma Legalization",
+      "description": "Official authentication of undergraduate or postgraduate diplomas issued by UNC, for use with public bodies, employers and foreign institutions.",
+      "req1": "Original diploma issued by UNC",
+      "req2": "Valid national ID of the holder",
+      "req3": "Plain photocopy of the diploma",
+      "req4": "Completed application form",
+      "req5": "Proof of payment of the applicable fee",
+      "reqsLabel": "Requirements"
+    },
+    "s2": {
+      "eyebrow": "Service 02",
+      "title": "Academic Certificate Legalization",
+      "description": "Official certification of the student's academic record, with the seal and signature of the competent institutional authority.",
+      "req1": "Original academic certificate issued by UNC",
+      "req2": "Valid national ID",
+      "req3": "Completed application form",
+      "req4": "Proof of payment of the applicable fee",
+      "reqsLabel": "Requirements"
+    },
+    "s3": {
+      "eyebrow": "Service 03",
+      "title": "Transcript Legalization",
+      "description": "Authentication of the official academic transcript for use in admission processes, scholarships or recognition of studies abroad.",
+      "req1": "Original official academic transcript",
+      "req2": "Valid national ID",
+      "req3": "Completed application form",
+      "req4": "Proof of payment of the applicable fee",
+      "reqsLabel": "Requirements"
+    },
+    "requestBtn": "Apply"
+  },
+  "contact": {
+    "label": "Contact",
+    "title": "Service information",
+    "description": "For inquiries about the document legalization process, please visit in person:",
+    "office": "General Secretariat",
+    "address1": "Rectorate — Universidad Nacional de Concepción",
+    "address2": "Concepción, Paraguay",
+    "hours": "Office hours: Monday to Friday, 07:00 to 13:00.",
+    "link": "View all procedures"
+  }
+}

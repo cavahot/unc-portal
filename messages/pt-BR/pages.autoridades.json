@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Autoridades | Universidad Nacional de Concepción",
+    "description": "Equipe de gestão institucional da Universidad Nacional de Concepción: Reitor, Vice-Reitores, Secretaria Geral e Diretorias."
+  },
+  "breadcrumb": { "home": "Início", "page": "Autoridades" },
+  "hero": {
+    "label": "Gestão institucional",
+    "title": "Autoridades",
+    "description": "Equipe de gestão institucional comprometida com a excelência universitária"
+  },
+  "section": {
+    "label": "Estrutura de governo",
+    "title": "Equipe diretiva",
+    "description": "As autoridades da Universidad Nacional de Concepción são eleitas democraticamente de acordo com o Estatuto Universitário, garantindo uma gestão participativa e transparente."
+  },
+  "authorities": {
+    "a1": { "role": "Reitor", "description": "Autoridade máxima da Universidad Nacional de Concepción. Representa a instituição perante organismos nacionais e internacionais." },
+    "a2": { "role": "Vice-Reitor Acadêmico", "description": "Responsável pelo planejamento, supervisão e avaliação dos processos acadêmicos e de pesquisa da universidade." },
+    "a3": { "role": "Vice-Reitor Administrativo", "description": "Supervisiona a gestão administrativa, financeira e patrimonial da instituição." },
+    "a4": { "role": "Secretário-Geral", "description": "Responsável pela gestão documental, atos administrativos e coordenação dos órgãos colegiados de governo." },
+    "a5": { "role": "Diretoria Geral Acadêmica", "description": "Coordena os programas acadêmicos, admissões, registro e tudo relacionado à trajetória estudantil." },
+    "a6": { "role": "Diretoria Administrativa e Financeira", "description": "Gerencia os recursos econômicos, orçamento institucional, contratações e serviços gerais." }
+  },
+  "note": "Para informações atualizadas sobre as autoridades, entre em contato com a Secretaria Geral do Rectorado da Universidad Nacional de Concepción, localizada na cidade de Concepción, Paraguai.",
+  "organigrama": {
+    "label": "Estrutura completa",
+    "title": "Quer ver a estrutura organizacional completa?",
+    "description": "Consulte o organograma institucional com todos os departamentos e áreas da universidade.",
+    "link": "Ver organograma institucional"
+  }
+}

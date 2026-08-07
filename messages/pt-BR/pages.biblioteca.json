@@ -1,17 +1,17 @@
 {
-  "pageTitleDefault": "Biblioteca Digital — Universidad Nacional de Concepción",
+  "pageTitleDefault": "Biblioteca Digital — Universidade Nacional de Concepción",
   "pageTitleQuery": "Biblioteca: \"{q}\" — UNC",
-  "pageDescription": "Repositorio de tesis y trabajos académicos de la Universidad Nacional de Concepción.",
+  "pageDescription": "Repositório de teses e trabalhos acadêmicos da Universidade Nacional de Concepción.",
   "portalLabel": "Portal UNC",
   "headingDefault": "Biblioteca Digital",
   "headingResults": "Resultados para",
-  "subheading": "Explora nuestra biblioteca digital — repositorio de tesis y trabajos académicos.",
+  "subheading": "Explore nossa biblioteca digital — repositório de teses e trabalhos acadêmicos.",
   "resultsSingular": "resultado",
   "resultsPlural": "resultados",
-  "searchPlaceholder": "Buscar por título o autor...",
-  "searchAriaLabel": "Buscar tesis en la biblioteca",
-  "searchButton": "Buscar",
-  "emptyPrompt": "Ingresá un término para buscar en la biblioteca digital.",
-  "noResults": "No encontramos resultados para \"{query}\"",
-  "noResultsHint": "Intentá con otras palabras o consultá la biblioteca directamente."
+  "searchPlaceholder": "Pesquisar por título ou autor...",
+  "searchAriaLabel": "Pesquisar teses na biblioteca",
+  "searchButton": "Pesquisar",
+  "emptyPrompt": "Digite um termo para pesquisar na biblioteca digital.",
+  "noResults": "Não encontramos resultados para \"{query}\"",
+  "noResultsHint": "Tente com outras palavras ou consulte a biblioteca diretamente."
 }

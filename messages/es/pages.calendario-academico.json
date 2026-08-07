@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "title": "Calendario Académico | Universidad Nacional de Concepción",
+    "description": "Calendario académico oficial de la Universidad Nacional de Concepción: inscripciones, parciales, finales y fechas clave."
+  },
+  "hero": {
+    "label": "Gestión académica",
+    "title": "Calendario académico",
+    "description": "Fechas clave del año académico 2026 de la Universidad Nacional de Concepción."
+  },
+  "semesters": {
+    "s1": {
+      "label": "1er Semestre 2026",
+      "e1": { "fecha": "2 mar", "descripcion": "Inicio de clases" },
+      "e2": { "fecha": "16–27 mar", "descripcion": "Período de inscripción tardía" },
+      "e3": { "fecha": "5–16 may", "descripcion": "Parciales 1er turno" },
+      "e4": { "fecha": "23 jun – 4 jul", "descripcion": "Parciales 2do turno" },
+      "e5": { "fecha": "11 jul", "descripcion": "Cierre del semestre" }
+    },
+    "s2": {
+      "label": "2do Semestre 2026",
+      "e1": { "fecha": "3 ago", "descripcion": "Inicio de clases" },
+      "e2": { "fecha": "17–28 ago", "descripcion": "Período de inscripción tardía" },
+      "e3": { "fecha": "5–16 oct", "descripcion": "Parciales 1er turno" },
+      "e4": { "fecha": "23 nov – 4 dic", "descripcion": "Parciales 2do turno" },
+      "e5": { "fecha": "11 dic", "descripcion": "Cierre del semestre" }
+    }
+  },
+  "finals": {
+    "title": "Mesas de exámenes finales",
+    "headerPeriod": "Período",
+    "headerDates": "Fechas",
+    "f1": { "periodo": "Diciembre 2025", "fechas": "1 – 19 dic" },
+    "f2": { "periodo": "Febrero 2026", "fechas": "2 – 20 feb" },
+    "f3": { "periodo": "Julio 2026", "fechas": "14 jul – 1 ago" },
+    "f4": { "periodo": "Diciembre 2026", "fechas": "1 – 19 dic" }
+  },
+  "note": {
+    "label": "Nota: ",
+    "body": "Las fechas son orientativas y pueden modificarse por resolución del Consejo Superior. Verificá siempre con tu facultad antes de inscribirte a exámenes."
+  }
+}

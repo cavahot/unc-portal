@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Faculty of Agricultural Sciences | UNC",
+    "description": "Degree programs, postgraduate programs, fees and contact of the Faculty of Agricultural Sciences at the National University of Concepción."
+  },
+  "breadcrumb": { "facultades": "Faculties", "nombre": "Agricultural Sciences" },
+  "hero": {
+    "badge": "Academic Unit",
+    "nombre": "Faculty of Agricultural Sciences",
+    "tagline": "Training professionals for the sustainable agricultural development of Paraguay."
+  },
+  "grado": {
+    "title": "Undergraduate Programs",
+    "subtitle": "Undergraduate programs accredited by CONES",
+    "cols": { "carrera": "Program", "sede": "Campus", "resolucion": "CONES Res." }
+  },
+  "posgrado": {
+    "title": "Postgraduate Programs",
+    "subtitle": "Master's and specialization programs",
+    "cols": { "programa": "Program", "sede": "Campus", "resolucion": "CONES Res." }
+  },
+  "aranceles": {
+    "title": "Tuition & Fees",
+    "subtitle": "Current rates per institutional resolution",
+    "monto": "Amount (Gs.)",
+    "grupos": {
+      "multas": "Fines and Non-Tax Rights",
+      "venta": "Books, Forms and Documents",
+      "academicos": "Academic Fees",
+      "campo": "Field and Laboratory Practices"
+    }
+  },
+  "contacto": {
+    "title": "Contact",
+    "direccion": "University Campus: Ruta Py05, Km 210, Concepción, Paraguay",
+    "telefono": "(595 331) 241813 / 241069 / 240883",
+    "emails": ["secgralfcaunc@gmail.com", "fca-unc@fca-unc.edu.py"],
+    "web": "www.fca-unc.edu.py",
+    "sitio": "Visit Faculty Website"
+  }
+}

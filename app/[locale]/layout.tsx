@@ -30,15 +30,8 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var s=JSON.parse(localStorage.getItem('unc-a11y')||'{}'),h=document.documentElement,c=h.classList;if(s.grayscale)c.add('a11y-grayscale');if(s.highContrast)c.add('a11y-high-contrast');if(s.negative)c.add('a11y-negative');if(s.lightBg)c.add('a11y-light-bg');if(s.underlineLinks)c.add('a11y-underline-links');if(s.readableFont)c.add('a11y-readable-font');if(s.fontSize&&s.fontSize!==100)h.style.fontSize=s.fontSize+'%'}catch(e){}`,
-          }}
-        />
-      </head>
       <body className={`${inter.className} bg-slate-950 text-white antialiased`} suppressHydrationWarning>
-        <NextIntlClientProvider locale={locale} messages={messages} timeZone="America/Asuncion" now={new Date()}>
+<NextIntlClientProvider locale={locale} messages={messages} timeZone="America/Asuncion" now={new Date()}>
           <Header navigation={navigation} />
 
           <main id="main-content" className="min-h-screen">

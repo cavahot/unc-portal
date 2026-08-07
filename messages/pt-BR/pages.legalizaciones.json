@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "title": "Legalizações | Universidad Nacional de Concepción",
+    "description": "Serviço de autenticação e legalização de documentos universitários da UNC: diplomas, certificados de estudos e históricos."
+  },
+  "breadcrumb": { "home": "Início", "page": "Legalizações" },
+  "hero": {
+    "label": "Secretaria Geral",
+    "title": "Legalizações",
+    "description": "Autenticação e legalização de documentos universitários"
+  },
+  "services": {
+    "label": "Serviços disponíveis",
+    "title": "Quais documentos posso legalizar?",
+    "description": "A Secretaria Geral da UNC oferece o serviço de legalização dos documentos emitidos pela instituição para uso oficial em nível nacional e internacional.",
+    "s1": {
+      "eyebrow": "Serviço 01",
+      "title": "Legalização de Diplomas",
+      "description": "Autenticação oficial do diploma de graduação ou pós-graduação emitido pela UNC, para uso perante órgãos públicos, empregadores e instituições do exterior.",
+      "req1": "Diploma original emitido pela UNC",
+      "req2": "Documento de identidade vigente do titular",
+      "req3": "Fotocópia simples do diploma",
+      "req4": "Formulário de solicitação completo",
+      "req5": "Comprovante de pagamento da taxa vigente",
+      "reqsLabel": "Requisitos"
+    },
+    "s2": {
+      "eyebrow": "Serviço 02",
+      "title": "Legalização de Certificados de Estudos",
+      "description": "Certificação oficial do histórico acadêmico do estudante, com carimbo e assinatura da autoridade competente da instituição.",
+      "req1": "Certificado de estudos original emitido pela UNC",
+      "req2": "Documento de identidade vigente",
+      "req3": "Formulário de solicitação completo",
+      "req4": "Comprovante de pagamento da taxa vigente",
+      "reqsLabel": "Requisitos"
+    },
+    "s3": {
+      "eyebrow": "Serviço 03",
+      "title": "Legalização de Histórico Escolar",
+      "description": "Autenticação do histórico analítico de notas para uso em processos de admissão, bolsas ou reconhecimento de estudos no exterior.",
+      "req1": "Histórico analítico original",
+      "req2": "Documento de identidade vigente",
+      "req3": "Formulário de solicitação completo",
+      "req4": "Comprovante de pagamento da taxa vigente",
+      "reqsLabel": "Requisitos"
+    },
+    "requestBtn": "Solicitar"
+  },
+  "contact": {
+    "label": "Contato",
+    "title": "Informações de atendimento",
+    "description": "Para consultas sobre o processo de legalização de documentos, dirija-se pessoalmente a:",
+    "office": "Secretaria Geral",
+    "address1": "Rectorado — Universidad Nacional de Concepción",
+    "address2": "Concepción, Paraguai",
+    "hours": "Horário de atendimento: segunda a sexta-feira, das 07:00 às 13:00.",
+    "link": "Ver todos os procedimentos"
+  }
+}

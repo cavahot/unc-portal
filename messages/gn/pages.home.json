@@ -1,87 +1,87 @@
 {
   "hero": {
     "tagline": "Marcando el Norte",
-    "imageAlt": "Acceso principal de la Universidad Nacional de Concepción",
-    "title1": "Bienvenidos a la",
+    "imageAlt": "Universidad Nacional de Concepción ñepyrũ joaju",
+    "title1": "Teruviché",
     "title2": "Universidad Nacional",
     "title3": "de Concepción",
-    "description": "Una universidad pública que integra identidad, excelencia académica, investigación, innovación y compromiso con el desarrollo sostenible del norte del Paraguay.",
-    "ctaExplore": "Explorar carreras",
-    "ctaAbout": "Conocer la UNC",
-    "badgePublic": "Universidad pública",
-    "badgeFounded": "Fundada en 2007",
+    "description": "Mbo'ehao tetãgua ombojoajúva identidad, mbo'e porã, mba'ekuaapyrã, tembiapo pyahu ha Paraguái yvate ñemombarete rehe ñemomba'e.",
+    "ctaExplore": "Mbo'epyrã eheka",
+    "ctaAbout": "UNC eikuaa",
+    "badgePublic": "Mbo'ehao tetãgua",
+    "badgeFounded": "Oñembokatú 2007-pe",
     "badgeLocation": "Concepción · Paraguay",
-    "scrollLabel": "Desplázate para ingresar",
-    "mainAccess": "Acceso principal"
+    "scrollLabel": "Eho peve",
+    "mainAccess": "Ñepyrũ joaju"
   },
   "quickLinks": {
-    "sectionLabel": "Servicios institucionales",
-    "title": "Accesos rápidos",
-    "description": "Encuentra rápidamente los servicios académicos y administrativos más consultados.",
-    "actionConsult": "Consultar información",
-    "actionAccess": "Acceder a la plataforma",
+    "sectionLabel": "Mbo'ehao pytyvõguéra",
+    "title": "Joaju pya'e",
+    "description": "Eikuaa pya'eve mbo'e ha mba'apohára pytyvõ iporãitéva.",
+    "actionConsult": "Marandu eheka",
+    "actionAccess": "Plataformape ejoaju",
     "items": {
       "carreras": {
-        "title": "Carreras",
-        "description": "Explora la oferta académica por facultad y nivel.",
-        "label": "Oferta académica"
+        "title": "Mbo'epyrãnguéra",
+        "description": "Eheka mbo'epyrã mbo'ehao pytyvõrãnguéra rupi.",
+        "label": "Mbo'e oferta"
       },
       "calendario": {
-        "title": "Calendario Académico",
-        "description": "Consulta fechas, periodos y actividades importantes.",
-        "label": "Fechas importantes"
+        "title": "Mbo'e Aravo",
+        "description": "Eheka ára, periodo ha tembiapo iporãva.",
+        "label": "Ára iporãva"
       },
       "titulos": {
-        "title": "Títulos y Legalizaciones",
-        "description": "Información sobre trámites y documentación académica.",
-        "label": "Gestiones académicas"
+        "title": "Títuloguéra ha Legalizaciones",
+        "description": "Marandu trámite ha mbo'e kuatia rehegua.",
+        "label": "Mbo'e mba'apohára"
       },
       "aulaVirtual": {
         "title": "Aula Virtual",
-        "description": "Accede a la plataforma institucional de aprendizaje.",
-        "label": "Plataforma educativa"
+        "description": "Mbo'ehao mbo'e plataformape ejoaju.",
+        "label": "Mbo'e plataforma"
       }
     }
   },
   "news": {
-    "sectionLabel": "Actualidad universitaria",
-    "title": "Últimas noticias",
-    "description": "Información sobre actividades académicas, investigación, extensión universitaria y gestión institucional.",
-    "viewAll": "Ver todas las noticias",
-    "readNews": "Leer noticia: {title}",
+    "sectionLabel": "Mbo'ehao marandu",
+    "title": "Marandu ipyahúva",
+    "description": "Mbo'e tembiapo, mba'ekuaapyrã, mbo'e ñepyrũ ha mbo'ehao mba'apohára rehegua marandu.",
+    "viewAll": "Marandu opavave ehecha",
+    "readNews": "Marandu eñemongeta: {title}",
     "defaultCategory": "Institucional"
   },
   "stats": {
-    "sectionLabel": "UNC en números",
-    "title": "Estadísticas institucionales",
+    "sectionLabel": "UNC número rehegua",
+    "title": "Mbo'ehao estadística",
     "items": {
-      "diasActividad": "Días de actividad",
-      "estudiantes": "Estudiantes",
-      "carrerasAcreditadas": "Carreras acreditadas",
-      "docentesColaboradores": "Docentes y colaboradores",
-      "facultades": "Facultades",
-      "egresados": "Egresados"
+      "diasActividad": "Mba'apo ára",
+      "estudiantes": "Mbo'eháva",
+      "carrerasAcreditadas": "Mbo'epyrã acreditado",
+      "docentesColaboradores": "Mbo'ehára ha pytyvõhára",
+      "facultades": "Mbo'ehao pytyvõrã",
+      "egresados": "Graduado"
     }
   },
   "transparency": {
-    "sectionLabel": "Gestión pública",
-    "title": "Transparencia activa",
-    "description": "Accede a documentos, normativas e información pública de la Universidad Nacional de Concepción.",
-    "viewPortal": "Consultar el portal de transparencia",
+    "sectionLabel": "Tetãgua mba'apohára",
+    "title": "Ñe'ẽ ñemombe'u",
+    "description": "Kuatia, léi ha Universidad Nacional de Concepción rehegua tetãgua marandu ejoaju haguã.",
+    "viewPortal": "Ñe'ẽ ñemombe'u portal eheka",
     "items": {
       "ley5189": {
-        "title": "Ley 5189/14",
-        "description": "Información pública sobre remuneraciones y asignaciones."
+        "title": "Léi 5189/14",
+        "description": "Remuneración ha designación rehegua tetãgua marandu."
       },
       "ley5282": {
-        "title": "Ley 5282/14",
-        "description": "Acceso ciudadano a la información pública institucional."
+        "title": "Léi 5282/14",
+        "description": "Tetãygua marandu joaju mbo'ehao marandu rehegua."
       }
     }
   },
   "institutional": {
-    "label": "Universidad pública",
-    "title": "Excelencia académica, investigación e innovación",
-    "description": "Comprometidos con el desarrollo sostenible de Concepción y del Paraguay."
+    "label": "Mbo'ehao tetãgua",
+    "title": "Mbo'e porã, mba'ekuaapyrã ha tembiapo pyahu",
+    "description": "Concepción ha Paraguái ñemombarete rehe ñemomba'e."
   }
 }

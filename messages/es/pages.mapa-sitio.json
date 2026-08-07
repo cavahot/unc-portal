@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "title": "Mapa del sitio | Universidad Nacional de Concepción",
+    "description": "Índice completo de todas las secciones y páginas del portal de la Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Navegación",
+    "title": "Mapa del sitio",
+    "description": "Índice completo de todas las secciones del portal institucional."
+  },
+  "sections": {
+    "institucion": {
+      "title": "Institución",
+      "laInstitucion": "La Institución",
+      "historia": "Historia",
+      "misionYVision": "Misión y Visión",
+      "autoridades": "Autoridades",
+      "organigrama": "Organigrama",
+      "marcoLegal": "Marco Legal",
+      "transparencia": "Transparencia"
+    },
+    "academia": {
+      "title": "Academia",
+      "carreras": "Carreras",
+      "facultades": "Facultades",
+      "investigacion": "Investigación",
+      "extension": "Extensión universitaria",
+      "revistas": "Revistas científicas",
+      "biblioteca": "Biblioteca",
+      "calendario": "Calendario académico"
+    },
+    "servicios": {
+      "title": "Servicios",
+      "tramites": "Trámites",
+      "solicitarTitulo": "Solicitar título",
+      "informacionPublica": "Información pública",
+      "buscar": "Buscar"
+    },
+    "actualidad": {
+      "title": "Actualidad",
+      "noticias": "Noticias",
+      "contacto": "Contacto"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacidad": "Política de privacidad",
+      "accesibilidad": "Accesibilidad"
+    }
+  }
+}

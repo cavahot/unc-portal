@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "title": "Política de Privacidade | Universidad Nacional de Concepción",
+    "description": "Política de privacidade e tratamento de dados pessoais da Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Legal",
+    "title": "Política de Privacidade",
+    "lastUpdated": "Última atualização: agosto de 2026"
+  },
+  "sections": {
+    "s1": { "title": "Responsável pelo tratamento", "content": "A Universidad Nacional de Concepción (UNC), com endereço no Campus Universitário, Cidade de Concepción, República do Paraguai, é a entidade responsável pelo tratamento dos dados pessoais coletados por meio deste portal." },
+    "s2": { "title": "Dados que coletamos", "content": "Este portal pode coletar dados de navegação de caráter técnico (endereço IP, tipo de navegador, páginas visitadas) para fins estatísticos e de melhoria do serviço. Não são coletados dados pessoais identificáveis sem o consentimento expresso do usuário." },
+    "s3": { "title": "Finalidade do tratamento", "content": "Os dados coletados são utilizados exclusivamente para melhorar a experiência de navegação, gerar estatísticas de uso agregadas e garantir o correto funcionamento do portal. Não são utilizados para fins comerciais nem cedidos a terceiros." },
+    "s4": { "title": "Base legal", "content": "O tratamento de dados é realizado em cumprimento da Lei N° 1682/01 que regulamenta as informações de caráter privado e suas alterações, bem como das normas de governo digital estabelecidas pelo MITIC." },
+    "s5": { "title": "Direitos do usuário", "content": "O usuário tem o direito de acessar, retificar e cancelar seus dados pessoais, bem como de se opor ao seu tratamento, conforme a legislação paraguaia vigente. Para exercer esses direitos, entre em contato com a Secretaria Geral da UNC." },
+    "s6": { "title": "Cookies", "content": "Este portal pode utilizar cookies técnicos necessários para o funcionamento do site. Não são utilizados cookies de rastreamento nem publicidade de terceiros. Você pode configurar seu navegador para recusar cookies, embora isso possa afetar a funcionalidade do portal." },
+    "s7": { "title": "Contato", "content": "Para consultas relacionadas à privacidade e ao tratamento de dados pessoais, você pode escrever para secgral@unc.edu.py ou se dirigir pessoalmente às instalações da Secretaria Geral no Campus Universitário da UNC." }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Organograma Institucional | Universidad Nacional de Concepción",
+    "description": "Estrutura organizacional da Universidad Nacional de Concepción: Conselho Superior, Rectorado, Vice-Reitorias, Secretarias e Faculdades."
+  },
+  "breadcrumb": { "home": "Início", "page": "Organograma" },
+  "hero": {
+    "label": "Estrutura institucional",
+    "title": "Organograma Institucional",
+    "description": "Estrutura organizacional da Universidad Nacional de Concepción"
+  },
+  "chart": {
+    "label": "Diagrama organizacional",
+    "title": "Estrutura de governo",
+    "csu": "Conselho Superior Universitário",
+    "rectorado": "Rectorado",
+    "rector": "Reitor",
+    "viceAcad": "Vice-Reitoria Acadêmica",
+    "viceAcadSub": "Vice-Reitor Acadêmico",
+    "viceAdmin": "Vice-Reitoria Administrativa",
+    "viceAdminSub": "Vice-Reitor Administrativo",
+    "secGeneral": "Secretaria Geral",
+    "secGeneralSub": "Secretário/a Geral",
+    "dirAcad": "Diretoria Geral Acadêmica",
+    "dirAcadSub": "Diretor/a Acadêmico/a",
+    "dirAdmin": "Diretoria Admin. e Financeira",
+    "dirAdminSub": "Diretor/a Admin.",
+    "facultades": "Faculdades",
+    "f1": "Fac. de Odontologia",
+    "f2": "Fac. de Medicina",
+    "f3": "Fac. de Ciências Agrárias",
+    "f4": "Fac. de Ciências Exatas e Tecnológicas",
+    "f5": "Fac. de Humanidades e Cs. da Educação",
+    "f6": "Fac. de Ciências Econômicas e Administrativas"
+  },
+  "download": "Baixar organograma completo (PDF)",
+  "links": {
+    "seeAuthorities": "Ver autoridades",
+    "backToInstitucional": "Voltar a Institucional"
+  }
+}

@@ -7,6 +7,12 @@ const NAMESPACES = [
   'pages.solicitar-titulo', 'pages.informacion-publica',
   'pages.carreras', 'pages.facultades', 'pages.contacto',
   'pages.institucional',
+  'pages.historia', 'pages.mision-vision', 'pages.marco-legal', 'pages.ley-5189', 'pages.ley-5282',
+  'pages.autoridades', 'pages.organigrama', 'pages.titulos',
+  'pages.legalizaciones', 'pages.convenios', 'pages.tribunal-electoral',
+  'pages.investigacion', 'pages.extension', 'pages.calendario-academico',
+  'pages.mapa-sitio', 'pages.privacidad', 'pages.accesibilidad',
+  'pages.tramites',
 ]
 
 export async function loadMessages(locale: string): Promise<AbstractIntlMessages> {
@@ -32,9 +38,14 @@ export async function loadMessages(locale: string): Promise<AbstractIntlMessages
   return messages as AbstractIntlMessages
 }
 
-export async function getT(locale: string, namespace: string) {
+// Return type uses `string` key to avoid MessageKeys strict-typing conflicts
+// when namespace is not a precise literal. Keys are validated at runtime via JSON files.
+export async function getT(locale: string, namespace: string): Promise<(key: string, values?: Record<string, string | number | Date | undefined>) => string> {
   const messages = await loadMessages(locale)
-  return createTranslator({ locale, messages: messages as unknown as IntlMessages, namespace: namespace as Parameters<typeof createTranslator>[0]['namespace'] })
+  const t = createTranslator({ locale, messages: messages as unknown as IntlMessages, namespace: namespace as Parameters<typeof createTranslator>[0]['namespace'] })
+  return (key: string, values?: Record<string, string | number | Date | undefined>): string =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    t(key as any, values as any)
 }
 
 export async function getF(locale: string) {

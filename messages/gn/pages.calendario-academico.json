@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "title": "Mbo'e Aravo — Universidad Nacional de Concepción",
+    "description": "Universidad Nacional de Concepción rehegua mbo'e aravo teete: ñemboguapy, parciales, finales ha ára iporãva."
+  },
+  "hero": {
+    "label": "Mbo'e mba'apohára",
+    "title": "Mbo'e Aravo",
+    "description": "Universidad Nacional de Concepción rehegua 2026 mbo'e ára iporãva."
+  },
+  "semesters": {
+    "s1": {
+      "label": "2026 1er Semestre",
+      "e1": { "fecha": "Jasykõi 2", "descripcion": "Mbo'e ñepyrũ" },
+      "e2": { "fecha": "Jasykõi 16–27", "descripcion": "Ñemboguapy ipahague" },
+      "e3": { "fecha": "Jasypo 5–16", "descripcion": "1er turno parciales" },
+      "e4": { "fecha": "Jasypateĩ 23 – Jasypakõi 4", "descripcion": "2do turno parciales" },
+      "e5": { "fecha": "Jasypakõi 11", "descripcion": "Semestre ñepaha" }
+    },
+    "s2": {
+      "label": "2026 2do Semestre",
+      "e1": { "fecha": "Jasypoapy 3", "descripcion": "Mbo'e ñepyrũ" },
+      "e2": { "fecha": "Jasypoapy 17–28", "descripcion": "Ñemboguapy ipahague" },
+      "e3": { "fecha": "Jasypa'ũ 5–16", "descripcion": "1er turno parciales" },
+      "e4": { "fecha": "Jasypamokõi 23 – Jasypambohapy 4", "descripcion": "2do turno parciales" },
+      "e5": { "fecha": "Jasypambohapy 11", "descripcion": "Semestre ñepaha" }
+    }
+  },
+  "finals": {
+    "title": "Examen final ára",
+    "headerPeriod": "Ara",
+    "headerDates": "Araninguéra",
+    "f1": { "periodo": "Jasypambohapy 2025", "fechas": "Jasypambohapy 1–19" },
+    "f2": { "periodo": "Jasykõirã 2026", "fechas": "Jasykõirã 2–20" },
+    "f3": { "periodo": "Jasypakõi 2026", "fechas": "Jasypakõi 14 – Jasypoapy 1" },
+    "f4": { "periodo": "Jasypambohapy 2026", "fechas": "Jasypambohapy 1–19" }
+  },
+  "note": {
+    "label": "Ñe'ẽ: ",
+    "body": "Ko aranguéra oñemomba'e haguéicha ha ikatu oñemoambue Consejo Superior resolución ndive. Ejerurea nde mbo'ehao pytyvõrãpe examen ñemboguapy mboyve."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Extensão Universitária | Universidad Nacional de Concepción",
+    "description": "Programas de extensão universitária e vinculação com a comunidade da Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Vinculação com a sociedade",
+    "title": "Extensão universitária",
+    "description": "A UNC transcende a sala de aula para contribuir ativamente com o desenvolvimento humano, cultural e produtivo da região de Concepción."
+  },
+  "programs": {
+    "title": "Programas ativos",
+    "p1": { "titulo": "Educação continuada", "descripcion": "Cursos, oficinas e especializações abertos à comunidade para a formação permanente de profissionais e cidadãos." },
+    "p2": { "titulo": "Voluntariado universitário", "descripcion": "Programas em que estudantes e docentes levam conhecimento e serviços a comunidades rurais e indígenas do departamento." },
+    "p3": { "titulo": "Cultura e artes", "descripcion": "Atividades culturais, exposições, corais e grupos artísticos que vinculam a universidade ao tecido social de Concepción." },
+    "p4": { "titulo": "Atendimento comunitário em saúde", "descripcion": "Brigadas de saúde bucal, medicina preventiva e campanhas de vacinação coordenadas com o Ministério da Saúde Pública." },
+    "p5": { "titulo": "Consultoria jurídica gratuita", "descripcion": "Serviço de orientação jurídica para pessoas de baixa renda, realizado por estudantes de direito sob supervisão docente." },
+    "p6": { "titulo": "Assistência técnica agropecuária", "descripcion": "Apoio técnico a produtores rurais da região em boas práticas agrícolas, sanidade animal e gestão de solos." }
+  },
+  "cta": {
+    "title": "Participe da extensão",
+    "description": "Docentes, estudantes e organizações comunitárias podem propor ou participar de programas de extensão. Escreva para"
+  }
+}

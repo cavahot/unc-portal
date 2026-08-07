@@ -1,87 +1,87 @@
 {
   "hero": {
-    "tagline": "Marcando el Norte",
-    "imageAlt": "Acceso principal de la Universidad Nacional de Concepción",
-    "title1": "Bienvenidos a la",
-    "title2": "Universidad Nacional",
+    "tagline": "Marcando o Norte",
+    "imageAlt": "Acesso principal da Universidade Nacional de Concepción",
+    "title1": "Bem-vindos à",
+    "title2": "Universidade Nacional",
     "title3": "de Concepción",
-    "description": "Una universidad pública que integra identidad, excelencia académica, investigación, innovación y compromiso con el desarrollo sostenible del norte del Paraguay.",
-    "ctaExplore": "Explorar carreras",
-    "ctaAbout": "Conocer la UNC",
-    "badgePublic": "Universidad pública",
-    "badgeFounded": "Fundada en 2007",
-    "badgeLocation": "Concepción · Paraguay",
-    "scrollLabel": "Desplázate para ingresar",
-    "mainAccess": "Acceso principal"
+    "description": "Uma universidade pública que integra identidade, excelência acadêmica, pesquisa, inovação e compromisso com o desenvolvimento sustentável do norte do Paraguai.",
+    "ctaExplore": "Explorar cursos",
+    "ctaAbout": "Conhecer a UNC",
+    "badgePublic": "Universidade pública",
+    "badgeFounded": "Fundada em 2007",
+    "badgeLocation": "Concepción · Paraguai",
+    "scrollLabel": "Role para acessar",
+    "mainAccess": "Acesso principal"
   },
   "quickLinks": {
-    "sectionLabel": "Servicios institucionales",
-    "title": "Accesos rápidos",
-    "description": "Encuentra rápidamente los servicios académicos y administrativos más consultados.",
-    "actionConsult": "Consultar información",
-    "actionAccess": "Acceder a la plataforma",
+    "sectionLabel": "Serviços institucionais",
+    "title": "Acesso rápido",
+    "description": "Encontre rapidamente os serviços acadêmicos e administrativos mais consultados.",
+    "actionConsult": "Consultar informações",
+    "actionAccess": "Acessar a plataforma",
     "items": {
       "carreras": {
-        "title": "Carreras",
-        "description": "Explora la oferta académica por facultad y nivel.",
-        "label": "Oferta académica"
+        "title": "Cursos",
+        "description": "Explore a oferta acadêmica por faculdade e nível.",
+        "label": "Oferta acadêmica"
       },
       "calendario": {
-        "title": "Calendario Académico",
-        "description": "Consulta fechas, periodos y actividades importantes.",
-        "label": "Fechas importantes"
+        "title": "Calendário Acadêmico",
+        "description": "Consulte datas, períodos e atividades importantes.",
+        "label": "Datas importantes"
       },
       "titulos": {
-        "title": "Títulos y Legalizaciones",
-        "description": "Información sobre trámites y documentación académica.",
-        "label": "Gestiones académicas"
+        "title": "Diplomas e Legalizações",
+        "description": "Informações sobre solicitações e documentação acadêmica.",
+        "label": "Gestões acadêmicas"
       },
       "aulaVirtual": {
         "title": "Aula Virtual",
-        "description": "Accede a la plataforma institucional de aprendizaje.",
-        "label": "Plataforma educativa"
+        "description": "Acesse a plataforma institucional de aprendizado.",
+        "label": "Plataforma educacional"
       }
     }
   },
   "news": {
-    "sectionLabel": "Actualidad universitaria",
-    "title": "Últimas noticias",
-    "description": "Información sobre actividades académicas, investigación, extensión universitaria y gestión institucional.",
-    "viewAll": "Ver todas las noticias",
-    "readNews": "Leer noticia: {title}",
+    "sectionLabel": "Atualidades universitárias",
+    "title": "Últimas notícias",
+    "description": "Informações sobre atividades acadêmicas, pesquisa, extensão universitária e gestão institucional.",
+    "viewAll": "Ver todas as notícias",
+    "readNews": "Ler notícia: {title}",
     "defaultCategory": "Institucional"
   },
   "stats": {
-    "sectionLabel": "UNC en números",
-    "title": "Estadísticas institucionales",
+    "sectionLabel": "UNC em números",
+    "title": "Estatísticas institucionais",
     "items": {
-      "diasActividad": "Días de actividad",
-      "estudiantes": "Estudiantes",
-      "carrerasAcreditadas": "Carreras acreditadas",
-      "docentesColaboradores": "Docentes y colaboradores",
-      "facultades": "Facultades",
-      "egresados": "Egresados"
+      "diasActividad": "Dias de atividade",
+      "estudiantes": "Estudantes",
+      "carrerasAcreditadas": "Cursos acreditados",
+      "docentesColaboradores": "Docentes e colaboradores",
+      "facultades": "Faculdades",
+      "egresados": "Egressos"
     }
   },
   "transparency": {
-    "sectionLabel": "Gestión pública",
-    "title": "Transparencia activa",
-    "description": "Accede a documentos, normativas e información pública de la Universidad Nacional de Concepción.",
-    "viewPortal": "Consultar el portal de transparencia",
+    "sectionLabel": "Gestão pública",
+    "title": "Transparência ativa",
+    "description": "Acesse documentos, normas e informações públicas da Universidade Nacional de Concepción.",
+    "viewPortal": "Consultar o portal de transparência",
     "items": {
       "ley5189": {
-        "title": "Ley 5189/14",
-        "description": "Información pública sobre remuneraciones y asignaciones."
+        "title": "Lei 5189/14",
+        "description": "Informações públicas sobre remunerações e subsídios."
       },
       "ley5282": {
-        "title": "Ley 5282/14",
-        "description": "Acceso ciudadano a la información pública institucional."
+        "title": "Lei 5282/14",
+        "description": "Acesso cidadão à informação pública institucional."
       }
     }
   },
   "institutional": {
-    "label": "Universidad pública",
-    "title": "Excelencia académica, investigación e innovación",
-    "description": "Comprometidos con el desarrollo sostenible de Concepción y del Paraguay."
+    "label": "Universidade pública",
+    "title": "Excelência acadêmica, pesquisa e inovação",
+    "description": "Comprometida com o desenvolvimento sustentável de Concepción e do Paraguai."
   }
 }

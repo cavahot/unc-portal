@@ -1,19 +1,19 @@
 {
-  "triggerLabel": "Herramientas de accesibilidad",
-  "panelLabel": "Herramientas de accesibilidad",
-  "panelTitle": "Herramientas de accesibilidad",
-  "closePanel": "Cerrar panel",
-  "fontSizeLabel": "Tamaño de texto",
-  "settingsSaved": "Las preferencias se guardan automáticamente en tu navegador.",
+  "triggerLabel": "Ñembyaikuépe joaju tembiporu",
+  "panelLabel": "Ñembyaikuépe joaju tembiporu",
+  "panelTitle": "Ñembyaikuépe joaju",
+  "closePanel": "Epytũ panel",
+  "fontSizeLabel": "Kuatia tuichakue",
+  "settingsSaved": "Ereipotáva oñemombyry nde kundahára-pe.",
   "tools": {
-    "increaseFontSize": "Aumentar texto",
-    "decreaseFontSize": "Disminuir texto",
-    "grayscale": "Escala de grises",
-    "highContrast": "Alto contraste",
-    "negative": "Contr. negativo",
-    "lightBg": "Fondo claro",
-    "underlineLinks": "Subrayar enlaces",
-    "readableFont": "Fuente legible",
-    "reset": "Reiniciar"
+    "increaseFontSize": "Emopu'ã kuatia",
+    "decreaseFontSize": "Emoyvuku kuatia",
+    "grayscale": "Gris escala",
+    "highContrast": "Ohechauka tuicha",
+    "negative": "Negativo ohechauka",
+    "lightBg": "Morotĩ yvate",
+    "underlineLinks": "Joaju ñomimbyrã",
+    "readableFont": "Eñemoĩ kuatia",
+    "reset": "Emoñepyrũjey"
   }
 }

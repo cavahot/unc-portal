@@ -1,10 +1,10 @@
 {
-  "pageTitle": "Noticias - Universidad Nacional de Concepción",
-  "pageDescription": "Novedades y comunicados institucionales de la UNC.",
+  "pageTitle": "Notícias - Universidade Nacional de Concepción",
+  "pageDescription": "Novidades e comunicados institucionais da UNC.",
   "portalLabel": "Portal UNC",
-  "heading": "Noticias",
-  "subheading": "Novedades y comunicados de la Universidad Nacional de Concepción",
-  "empty": "No hay noticias disponibles en este momento.",
+  "heading": "Notícias",
+  "subheading": "Novidades e comunicados da Universidade Nacional de Concepción",
+  "empty": "Não há notícias disponíveis no momento.",
   "home": "Início",
   "gallery": "Galeria",
   "backToNews": "Ver mais notícias",
@@ -12,9 +12,9 @@
   "draftExit": "Sair da pré-visualização",
   "categories": {
     "institucional": "Institucional",
-    "academica": "Académica",
-    "investigacion": "Investigación",
-    "extension": "Extensión",
+    "academica": "Acadêmica",
+    "investigacion": "Pesquisa",
+    "extension": "Extensão",
     "eventos": "Eventos",
     "comunicados": "Comunicados"
   }

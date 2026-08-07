@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation'
 import { getNewsBySlug, getNewsBySlugDraft } from '@/lib/cms/queries/news'
 import RichText from '@/components/RichText'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
+import NewsGallery from '@/components/news/NewsGallery'
 
 export async function generateMetadata({
   params,
@@ -22,7 +23,7 @@ export async function generateMetadata({
     openGraph: {
       title: noticia.title,
       description: noticia.summary,
-      ...(noticia.featuredImage?.url ? { images: [noticia.featuredImage.url] } : {}),
+      ...(noticia.featuredImage?.url || noticia.featuredImageUrl ? { images: [noticia.featuredImage?.url || noticia.featuredImageUrl] } : {}),
     },
   }
 }
@@ -68,11 +69,11 @@ export default async function NoticiaDetailPage({
       )}
 
       {/* Hero image */}
-      {noticia.featuredImage?.url && (
+      {(noticia.featuredImage?.url || noticia.featuredImageUrl) && (
         <div className="relative h-72 w-full overflow-hidden sm:h-96 lg:h-[480px]">
           <Image
-            src={noticia.featuredImage.url}
-            alt={noticia.featuredImage.alt || noticia.title}
+            src={noticia.featuredImage?.url || noticia.featuredImageUrl!}
+            alt={noticia.featuredImage?.alt || noticia.title}
             fill
             sizes="100vw"
             className="object-cover"
@@ -84,7 +85,7 @@ export default async function NoticiaDetailPage({
         </div>
       )}
 
-      <div className={`mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 ${noticia.featuredImage?.url ? '-mt-24 relative' : 'pt-28'} pb-20`}>
+      <div className={`mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 ${(noticia.featuredImage?.url || noticia.featuredImageUrl) ? '-mt-24 relative' : 'pt-28'} pb-20`}>
 
         {/* Breadcrumb */}
         <nav className="mb-6 flex items-center gap-2 text-sm text-white/40">
@@ -154,31 +155,17 @@ export default async function NoticiaDetailPage({
 
         {/* Gallery */}
         {noticia.gallery && noticia.gallery.length > 0 && (
-          <div className="mt-10">
-            <h3 className="mb-4 text-lg font-semibold text-white">{t('gallery')}</h3>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {noticia.gallery.map((item, i) => (
-                <div key={i} className="overflow-hidden rounded-xl">
-                  {item.image.url && (
-                    <div className="relative h-40 w-full">
-                      <Image
-                        src={item.image.url}
-                        alt={item.caption || item.image.alt || ''}
-                        fill
-                        sizes="(max-width: 640px) 50vw, 33vw"
-                        className="object-cover"
-                        placeholder="blur"
-                        blurDataURL={UNC_BLUR}
-                      />
-                    </div>
-                  )}
-                  {item.caption && (
-                    <p className="mt-1 text-xs text-white/40">{item.caption}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <NewsGallery
+            images={noticia.gallery
+              .filter((item) => item.image?.url)
+              .map((item) => ({
+                url: item.image.url!,
+                alt: item.image.alt ?? null,
+                caption: item.caption ?? null,
+                blurDataURL: (item.image as any).blurDataURL ?? null,
+              }))}
+            title={noticia.title}
+          />
         )}
 
         {/* Back link */}

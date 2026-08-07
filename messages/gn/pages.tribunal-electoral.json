@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "title": "Tribunal Electoral | UNC",
+    "description": "Ehecha mba'éichapa oĩ ha mba'e marandúpe oĩva Tribunal Electoral-pe Universidad Nacional de Concepción-pe."
+  },
+  "breadcrumb": "Tribunal Electoral",
+  "hero": {
+    "badge": "Teko Teete Mbo'ehaovusu-pe",
+    "title": "Tribunal Electoral",
+    "description": "Órgano autónomo encargado de garantizar la transparencia y legalidad de los procesos electorales universitarios."
+  },
+  "members": {
+    "title": "Tribunal rehegua",
+    "subtitle": "Mbo'ehao ñemomba'e rehegua"
+  },
+  "downloads": {
+    "title": "Marandú Tuichavéva",
+    "subtitle": "Marandú ñepyrũ rehegua proceso electoral-pe",
+    "download": "Moñe'ẽ",
+    "pending": "Opyta va'erã"
+  },
+  "accordion": {
+    "title": "Marandú Electoral-gua",
+    "subtitle": "Eike marandúpe proceso electoral rembiporu rehegua",
+    "viewDoc": "Ehecha marandú",
+    "noDocuments": "Ndaipóri marandú ko teẽ-pe.",
+    "tipos": {
+      "lista-inscriptos":  "Lista de Inscriptos",
+      "formato-notas":     "Formato de Notas",
+      "padron-electoral":  "Oficialización de Padrón Electoral",
+      "candidaturas":      "Puesta de Manifiesto de Movimientos y Candidaturas",
+      "oficializacion":    "Oficialización de Candidaturas",
+      "proclamacion":      "Proclamación de Candidatos"
+    }
+  }
+}

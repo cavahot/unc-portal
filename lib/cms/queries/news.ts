@@ -68,6 +68,7 @@ export interface NewsItem {
     alt: string
     url?: string | null
   } | null
+  featuredImageUrl?: string | null
   gallery?: Array<{
     image: { id: number; alt: string; url?: string | null }
     caption?: string | null

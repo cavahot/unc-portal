@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Procedimentos | Universidad Nacional de Concepción",
+    "description": "Informações sobre procedimentos administrativos e acadêmicos da Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Secretaria Geral",
+    "title": "Procedimentos acadêmicos",
+    "description": "Informações sobre os procedimentos administrativos e acadêmicos disponíveis na Universidad Nacional de Concepción."
+  },
+  "tramites": {
+    "t1": { "nombre": "Solicitação de Diploma", "descripcion": "Inicie o processo oficial para obter seu diploma de graduação ou pós-graduação.", "duracion": "15 dias úteis" },
+    "t2": { "nombre": "Legalização de Documentos", "descripcion": "Legalização e apostila de certificados e documentos acadêmicos.", "duracion": "10 dias úteis" },
+    "t3": { "nombre": "Certificado de Estudos", "descripcion": "Comprovante oficial de disciplinas aprovadas e situação acadêmica atual.", "duracion": "5 dias úteis" },
+    "t4": { "nombre": "Declaração de Matrícula", "descripcion": "Documento que comprova sua condição de estudante ativo na UNC.", "duracion": "3 dias úteis" },
+    "t5": { "nombre": "Histórico Escolar", "descripcion": "Histórico acadêmico completo com notas de todas as disciplinas.", "duracion": "5 dias úteis" },
+    "t6": { "nombre": "Solicitação de Bolsas", "descripcion": "Acesso a programas de bolsas nacionais e internacionais disponíveis para alunos da UNC.", "duracion": "Conforme edital" }
+  },
+  "seeMore": "Ver mais",
+  "help": {
+    "title": "Precisa de ajuda?",
+    "description": "Para consultas sobre procedimentos, dirija-se à Secretaria Geral da UNC no campus universitário ou escreva para"
+  }
+}

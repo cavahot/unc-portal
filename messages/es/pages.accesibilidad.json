@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Accesibilidad | Universidad Nacional de Concepción",
+    "description": "Declaración de accesibilidad del portal de la Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Inclusión digital",
+    "title": "Declaración de accesibilidad",
+    "description": "La Universidad Nacional de Concepción está comprometida con la accesibilidad digital conforme a las normas del MITIC y las WCAG 2.1 nivel AA."
+  },
+  "features": {
+    "title": "Características de accesibilidad",
+    "description": "Este portal incluye las siguientes herramientas para mejorar la experiencia de todos los usuarios:",
+    "f1": { "title": "Tamaño de texto ajustable", "description": "Podés aumentar o reducir el tamaño del texto del portal usando el panel de accesibilidad ubicado en la esquina inferior de la pantalla." },
+    "f2": { "title": "Modos de contraste", "description": "El portal ofrece modos de alto contraste y escala de grises para mejorar la legibilidad para personas con baja visión o daltonismo." },
+    "f3": { "title": "Subrayado de enlaces", "description": "Podés activar el subrayado de todos los enlaces del portal para identificarlos más fácilmente." },
+    "f4": { "title": "Fuente de lectura", "description": "Opción para cambiar a una tipografía de mayor legibilidad, especialmente útil para personas con dislexia." },
+    "f5": { "title": "Navegación por teclado", "description": "Todo el portal es navegable mediante teclado. Usá Tab para moverte entre elementos y Enter para activarlos." },
+    "f6": { "title": "Diseño responsivo", "description": "El portal se adapta a todos los tamaños de pantalla, desde dispositivos móviles hasta monitores de escritorio." }
+  },
+  "cta": {
+    "title": "Reportar un problema de accesibilidad",
+    "description": "Si encontrás alguna barrera de accesibilidad en este portal, escribinos a",
+    "subject": "con el asunto \"Accesibilidad\". Nos comprometemos a responder en un plazo de 5 días hábiles."
+  }
+}

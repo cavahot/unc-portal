@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Faculty of Dentistry | UNC",
+    "description": "Undergraduate and postgraduate programs, fees, and contact details for the Faculty of Dentistry at the National University of Concepción."
+  },
+  "breadcrumb": { "facultades": "Faculties", "nombre": "Dentistry" },
+  "hero": {
+    "badge": "Academic Unit",
+    "nombre": "Faculty of Dentistry",
+    "tagline": "Training professionals committed to oral health and community well-being."
+  },
+  "grado": {
+    "title": "Undergraduate Programs",
+    "subtitle": "Degree programs accredited by CONES",
+    "cols": { "carrera": "Program", "sede": "Campus", "resolucion": "CONES Res." }
+  },
+  "posgrado": {
+    "title": "Postgraduate Programs",
+    "subtitle": "Specializations and advanced training programs",
+    "cols": { "programa": "Program", "sede": "Campus", "resolucion": "CONES Res." }
+  },
+  "aranceles": {
+    "title": "Fees",
+    "subtitle": "Current rates per institutional resolution",
+    "monto": "Amount (Gs.)",
+    "grupos": {
+      "multas": "Fines and Other Non-Tax Rights",
+      "venta": "Sale of Books, Forms and Documents",
+      "servicios": "Public Administration Services",
+      "medicos": "Medical and Hospital Services"
+    }
+  },
+  "contacto": {
+    "title": "Contact",
+    "direccion": "University Campus: Ruta Py05, Km 210, Concepción, Paraguay",
+    "telefono": "(595 331) 241680",
+    "emails": ["decanatofo@unc.edu.py", "secretariagralfo@unc.edu.py"],
+    "web": "www.founc.edu.py",
+    "sitio": "Visit Faculty website"
+  }
+}

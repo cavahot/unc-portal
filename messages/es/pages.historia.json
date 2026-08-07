@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "title": "Historia de la UNC | Universidad Nacional de Concepción",
+    "description": "Conoce la historia de la Universidad Nacional de Concepción, creada por Ley N° 3.399 el 4 de julio de 2007 en Concepción, Paraguay."
+  },
+  "breadcrumb": { "home": "Inicio", "page": "Historia" },
+  "hero": {
+    "label": "Universidad Nacional de Concepción",
+    "title": "Historia de la Universidad",
+    "description": "Más de una década de excelencia educativa en el norte paraguayo"
+  },
+  "intro": {
+    "label": "Nuestra historia",
+    "title": "Una institución al servicio del norte paraguayo",
+    "body1": "La Universidad Nacional de Concepción fue creada por Ley N° 3.399 el 4 de julio de 2007, con el propósito de brindar educación superior pública de calidad a la región norte de la República del Paraguay. Ubicada en la ciudad de Concepción, capital del Departamento de Concepción, la UNC responde a la histórica demanda de la comunidad regional de contar con una casa de estudios superiores cercana a su realidad.",
+    "body2": "Con seis facultades y una amplia oferta académica, la institución forma profesionales comprometidos con el desarrollo sostenible de la región, fomentando la investigación, la extensión universitaria y la innovación como pilares del quehacer universitario.",
+    "statFounded": "Año de fundación",
+    "statFaculties": "Facultades",
+    "statStudents": "Estudiantes activos"
+  },
+  "timeline": {
+    "label": "Hitos institucionales",
+    "title": "Línea de tiempo",
+    "description": "Los momentos más significativos en el desarrollo de la Universidad Nacional de Concepción.",
+    "m1": { "title": "Creación por Ley N° 3.399", "description": "El 4 de julio de 2007 se promulga la Ley N° 3.399, que crea la Universidad Nacional de Concepción como institución pública de educación superior en el norte paraguayo." },
+    "m2": { "title": "Inicio de actividades académicas", "description": "La Universidad abre sus puertas e inicia las primeras actividades académicas, marcando el comienzo formal de la vida universitaria en Concepción." },
+    "m3": { "title": "Primera promoción de graduados", "description": "La UNC celebra la primera graduación de profesionales formados en sus aulas, consolidando su misión educativa en la región." },
+    "m4": { "title": "Apertura de nuevas facultades", "description": "La oferta académica se amplía significativamente con la apertura de nuevas facultades, respondiendo a las necesidades del desarrollo regional." },
+    "m5": { "title": "Más de 5.000 estudiantes activos", "description": "La Universidad alcanza una matrícula histórica de más de 5.000 estudiantes, reafirmando su posición como referente educativo del norte paraguayo." }
+  },
+  "mission": {
+    "label": "Misión regional",
+    "title": "Comprometidos con el norte paraguayo",
+    "body": "La Universidad Nacional de Concepción se define como una institución pública de educación superior al servicio de la sociedad paraguaya, con especial énfasis en las necesidades del norte del país. Su misión es la formación integral de profesionales capaces de contribuir al desarrollo económico, social y cultural de la región, mediante la docencia, la investigación científica y la extensión universitaria.",
+    "cta": "Ver Misión, Visión y Valores"
+  }
+}

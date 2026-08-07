@@ -1,13 +1,13 @@
 {
-  "pageTitle": "Información Pública — UNC",
-  "pageDescription": "Acceso a la información pública de la Universidad Nacional de Concepción según la Ley N° 5.282/2014.",
+  "pageTitle": "Informação Pública — UNC",
+  "pageDescription": "Acesso à informação pública da Universidade Nacional de Concepción conforme a Lei N° 5.282/2014.",
   "portalLabel": "Portal UNC",
-  "heading": "Acceso a la Información Pública",
-  "description": "La Universidad Nacional de Concepción garantiza el acceso a la información pública en cumplimiento de la Ley N° 5.282/2014 de libre acceso ciudadano.",
-  "fallbackParagraph1": "Toda persona tiene derecho a solicitar y recibir información completa, veraz, adecuada y oportuna de cualquier institución del Estado Paraguayo, conforme a lo establecido en la Ley N° 5.282/2014.",
-  "fallbackParagraph2": "Para ejercer este derecho podés utilizar el Portal Unificado de Acceso a la Información Pública del Gobierno Nacional, disponible en el siguiente enlace.",
-  "ctaLabel": "Acceso externo",
-  "ctaHeading": "Portal de Información Pública del Paraguay",
-  "ctaNote": "Serás redirigido al portal oficial del Gobierno Nacional.",
-  "ctaButton": "Portal de Acceso de Información Pública"
+  "heading": "Acesso à Informação Pública",
+  "description": "A Universidade Nacional de Concepción garante o acesso à informação pública em cumprimento à Lei N° 5.282/2014 de livre acesso cidadão.",
+  "fallbackParagraph1": "Toda pessoa tem direito a solicitar e receber informações completas, verdadeiras, adequadas e oportunas de qualquer instituição do Estado Paraguaio, conforme estabelecido na Lei N° 5.282/2014.",
+  "fallbackParagraph2": "Para exercer esse direito, você pode utilizar o Portal Unificado de Acesso à Informação Pública do Governo Nacional, disponível no link a seguir.",
+  "ctaLabel": "Acesso externo",
+  "ctaHeading": "Portal de Informação Pública do Paraguai",
+  "ctaNote": "Você será redirecionado ao portal oficial do Governo Nacional.",
+  "ctaButton": "Portal de Acesso à Informação Pública"
 }

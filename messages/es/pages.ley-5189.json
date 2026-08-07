@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "Ley 5189/2014 — Transparencia | Universidad Nacional de Concepción",
+    "description": "Información pública en cumplimiento a la Ley 5189/2014 sobre provisión de información en el uso de recursos públicos y remuneraciones del servidor público."
+  },
+  "breadcrumb": {
+    "home": "Inicio",
+    "institutional": "Institucional",
+    "page": "Ley 5189/2014"
+  },
+  "hero": {
+    "eyebrow": "Transparencia institucional",
+    "title": "Ley 5189/2014",
+    "description": "En cumplimiento a la Ley N.° 5189/2014 «Que establece la obligatoriedad de la provisión de información en el uso de los recursos públicos sobre remuneraciones y otras retribuciones asignadas al servidor público de la República del Paraguay».",
+    "badgeLabel": "Ley vigente"
+  },
+  "docs": {
+    "eyebrow": "Documentos requeridos",
+    "heading": "Información pública disponible",
+    "description": "Accedé a los documentos exigidos por la Ley 5189/2014. Cada archivo está disponible en Google Drive para su descarga inmediata.",
+    "downloadLabel": "Abrir en Drive",
+    "totalLabel": "documentos",
+    "empty": "No hay documentos cargados aún. Volvé pronto.",
+    "noDocs": "Sin documentos cargados.",
+    "fallbackNote": "Mostrando datos del sistema. Reconectando con el servidor de contenidos..."
+  },
+  "info": {
+    "eyebrow": "Marco normativo",
+    "title": "Compromiso con la transparencia",
+    "description": "La Universidad Nacional de Concepción publica esta información en cumplimiento estricto de la Ley 5189/2014 y las disposiciones de la Contraloría General de la República del Paraguay.",
+    "ctaTransparencia": "Ver Transparencia",
+    "ctaInstitutional": "Volver a Institucional"
+  }
+}

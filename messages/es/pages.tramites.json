@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Trámites | Universidad Nacional de Concepción",
+    "description": "Información sobre trámites administrativos y académicos de la Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Secretaría General",
+    "title": "Trámites académicos",
+    "description": "Información sobre los procedimientos administrativos y académicos disponibles en la Universidad Nacional de Concepción."
+  },
+  "tramites": {
+    "t1": { "nombre": "Solicitud de Título", "descripcion": "Iniciá el proceso oficial para obtener tu diploma de grado o posgrado.", "duracion": "15 días hábiles" },
+    "t2": { "nombre": "Legalización de Documentos", "descripcion": "Legalización y apostilla de certificados y documentos académicos.", "duracion": "10 días hábiles" },
+    "t3": { "nombre": "Certificado de Estudios", "descripcion": "Constancia oficial de materias aprobadas y situación académica actual.", "duracion": "5 días hábiles" },
+    "t4": { "nombre": "Constancia de Alumno Regular", "descripcion": "Documento que acredita tu condición de estudiante activo en la UNC.", "duracion": "3 días hábiles" },
+    "t5": { "nombre": "Certificado de Notas", "descripcion": "Historial académico completo con calificaciones de todas las materias.", "duracion": "5 días hábiles" },
+    "t6": { "nombre": "Solicitud de Becas", "descripcion": "Acceso a programas de becas nacionales e internacionales disponibles para alumnos de la UNC.", "duracion": "Según convocatoria" }
+  },
+  "seeMore": "Ver más",
+  "help": {
+    "title": "¿Necesitás ayuda?",
+    "description": "Para consultas sobre trámites, dirigíte a la Secretaría General de la UNC en el campus universitario o escribí a"
+  }
+}

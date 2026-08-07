@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Legal Framework | National University of Concepción",
+    "description": "The regulatory framework governing the institutional life of the National University of Concepción: founding law, university statute, and internal regulations."
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "institutional": "Institutional"
+  },
+  "hero": {
+    "eyebrow": "Institutional regulations",
+    "title": "Legal Framework",
+    "description": "The regulatory framework governing the institutional life of the National University of Concepción.",
+    "softwareNote": "We recommend having software installed that is compatible with PDF, DOCS, and XLS documents."
+  },
+  "docs": {
+    "eyebrow": "Regulatory documents",
+    "heading": "Current legal instruments",
+    "description": "The National University of Concepción is governed by a set of normative instruments that ensure its transparent, democratic operation oriented toward the common good.",
+    "totalLabel": "documents",
+    "downloadLabel": "Download",
+    "empty": "No documents are currently available.",
+    "fallbackNote": "Showing reference documents. Connecting to server..."
+  },
+  "info": {
+    "eyebrow": "Additional information",
+    "title": "Institutional transparency",
+    "description": "To access additional information about institutional regulations or to request copies of legal documents, please contact the General Secretariat of the UNC Rector's Office.",
+    "ctaTramites": "View available procedures",
+    "ctaInstitutional": "Back to Institutional"
+  }
+}

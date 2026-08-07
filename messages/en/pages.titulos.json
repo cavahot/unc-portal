@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "title": "University Degrees | Universidad Nacional de Concepción",
+    "description": "Information about official degrees issued by the Universidad Nacional de Concepción: application process, requirements, timelines and degree recognition."
+  },
+  "breadcrumb": { "home": "Home", "page": "Degrees" },
+  "hero": {
+    "label": "General Secretariat",
+    "title": "University Degrees",
+    "description": "Information about official degrees issued by UNC"
+  },
+  "infoCards": {
+    "c1": { "label": "Processing time", "value": "Inquire at the office", "note": "The timeframe may vary depending on the time of year and administrative workload." },
+    "c2": { "label": "Document requirements", "value": "View full list", "note": "Birth certificate, valid national ID, academic documentation and proof of payment." },
+    "c3": { "label": "Current fee", "value": "Inquire at the office", "note": "Amounts are updated periodically. Always check the current rate." }
+  },
+  "graduates": {
+    "label": "For graduates",
+    "title": "Degree application",
+    "description": "Steps to apply for your graduation diploma once all academic requirements have been met.",
+    "s1": { "title": "Verify academic requirements", "description": "Ensure you have completed all courses, practical work and the final project required by your degree program." },
+    "s2": { "title": "Submit formal application", "description": "Complete the degree application form at the General Academic Directorate and attach the required documentation." },
+    "s3": { "title": "Pay processing fee", "description": "Make the payment of the applicable fee according to the current schedule. Check the updated amount at the office." },
+    "s4": { "title": "Collect your degree certificate", "description": "Once your application has been processed, you will receive a notification to collect your diploma at the General Secretariat." }
+  },
+  "graduatesCta": "Start degree application",
+  "recognition": {
+    "label": "Special procedure",
+    "title": "Degree recognition",
+    "body1": "The recognition of degrees issued by foreign universities, or the validation of UNC degrees before national and international bodies, is processed through the General Academic Directorate in coordination with the Ministry of Education and Science of the Republic of Paraguay.",
+    "body2": "To initiate this process, applicants must submit the original documentation duly apostilled or legalized as appropriate, along with an official Spanish translation when documents are in another language.",
+    "linkLegalizaciones": "View legalizations",
+    "linkTramites": "View all procedures"
+  }
+}

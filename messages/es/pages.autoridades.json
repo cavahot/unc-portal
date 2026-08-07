@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Autoridades | Universidad Nacional de Concepción",
+    "description": "Equipo de gestión institucional de la Universidad Nacional de Concepción: Rector, Vicerrectores, Secretaría General y Direcciones."
+  },
+  "breadcrumb": { "home": "Inicio", "page": "Autoridades" },
+  "hero": {
+    "label": "Gestión institucional",
+    "title": "Autoridades",
+    "description": "Equipo de gestión institucional comprometido con la excelencia universitaria"
+  },
+  "section": {
+    "label": "Estructura de gobierno",
+    "title": "Equipo directivo",
+    "description": "Las autoridades de la Universidad Nacional de Concepción son elegidas democráticamente conforme al Estatuto Universitario, garantizando una gestión participativa y transparente."
+  },
+  "authorities": {
+    "a1": { "role": "Rector", "description": "Autoridad máxima de la Universidad Nacional de Concepción. Representa a la institución ante organismos nacionales e internacionales." },
+    "a2": { "role": "Vicerrector Académico", "description": "Responsable de la planificación, supervisión y evaluación de los procesos académicos e investigativos de la universidad." },
+    "a3": { "role": "Vicerrector Administrativo", "description": "Supervisa la gestión administrativa, financiera y patrimonial de la institución." },
+    "a4": { "role": "Secretario General", "description": "Responsable de la gestión documental, actos administrativos y coordinación de los órganos colegiados de gobierno." },
+    "a5": { "role": "Dirección General Académica", "description": "Coordina los programas académicos, admisión, registro y todo lo relacionado con la trayectoria estudiantil." },
+    "a6": { "role": "Dirección Administrativa y Financiera", "description": "Gestiona los recursos económicos, presupuesto institucional, contrataciones y servicios generales." }
+  },
+  "note": "Para información actualizada de las autoridades, comuníquese con la Secretaría General del Rectorado de la Universidad Nacional de Concepción, ubicado en la ciudad de Concepción, Paraguay.",
+  "organigrama": {
+    "label": "Estructura completa",
+    "title": "¿Querés ver la estructura organizacional completa?",
+    "description": "Consultá el organigrama institucional con todas las dependencias y áreas de la universidad.",
+    "link": "Ver organigrama institucional"
+  }
+}

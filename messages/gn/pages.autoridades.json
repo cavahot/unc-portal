@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Mba'epohãnguéra — Universidad Nacional de Concepción",
+    "description": "Universidad Nacional de Concepción rehegua mba'epohãnguéra: Rector, Vicerrectores, Secretaría General ha Mba'apohárãnguéra."
+  },
+  "breadcrumb": { "home": "Ñepyrũ", "page": "Mba'epohãnguéra" },
+  "hero": {
+    "label": "Mbo'ehao mba'apohára",
+    "title": "Mba'epohãnguéra",
+    "description": "Mbo'ehao mba'apohára oñemomba'eva mbo'e porã rehegua"
+  },
+  "section": {
+    "label": "Mba'apohára ñemombyky",
+    "title": "Mba'epohã ra'ãnguéra",
+    "description": "Universidad Nacional de Concepción rehegua mba'epohãnguéra oñeporavo tetã rembiapo ndive Estatuto Universitario reheve, omboñepyrũva mba'apohára ha ñe'ẽ ñemombe'u rehe ñemomba'e."
+  },
+  "authorities": {
+    "a1": { "role": "Rector", "description": "Mbo'ehao mba'epohã tuichaitéva. Oñemomba'e mbo'ehao rehe tetã ha tetã ambuépe oĩva rehegua." },
+    "a2": { "role": "Vicerrector Académico", "description": "Omba'apo mbo'e ha mba'ekuaapyrã tembiaponguéra rehegua ñemombyky, jehecha ha ñeporandu rehegua." },
+    "a3": { "role": "Vicerrector Administrativo", "description": "Ohecha mba'apohára, viru ha mbo'ehao mba'e rehegua tembiapo." },
+    "a4": { "role": "Secretario General", "description": "Omba'apo kuatia mba'apohára, tembiapo rekovéva ha mbo'ehao mba'apohára ñemombyky rehegua." },
+    "a5": { "role": "Dirección General Académica", "description": "Ombojoaju mbo'epyrãnguéra, ñemboguapy, ñemboguapy ñemombyky ha mbo'eháva tembiapo reheguáva opavave." },
+    "a6": { "role": "Dirección Administrativa y Financiera", "description": "Omba'apo mbo'ehao viru, presupuesto, ñemomba'e ha pytyvõ rehegua." }
+  },
+  "note": "Mba'epohãnguéra marandu pyahúpe, eñomongeta Secretaría General del Rectorado, Universidad Nacional de Concepción pegua, Concepción táva, Paraguái-pe.",
+  "organigrama": {
+    "label": "Ñemombyky opa",
+    "title": "¿Remomba'e porã haguã mbo'ehao ñemombyky opa rehegua?",
+    "description": "Ehecha mbo'ehao ñemombyky opavave mba'apohárãnguéra ha tembi'u ndive.",
+    "link": "Ehecha organigrama institucional"
+  }
+}

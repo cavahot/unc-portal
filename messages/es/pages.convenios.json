@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "Convenios | Universidad Nacional de Concepción",
+    "description": "Convenios de cooperación nacionales e internacionales firmados por la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": "Convenios",
+  "hero": {
+    "badge": "Relaciones Institucionales",
+    "title": "Convenios Institucionales",
+    "description": "La Universidad Nacional de Concepción mantiene acuerdos de cooperación con instituciones nacionales e internacionales para fortalecer la educación, la investigación y el intercambio académico."
+  },
+  "stats": {
+    "total": "convenios firmados",
+    "nacional": "nacionales",
+    "internacional": "internacionales"
+  },
+  "tabs": {
+    "all": "Todos",
+    "nacional": "Nacionales",
+    "internacional": "Internacionales"
+  },
+  "card": {
+    "duration": "Duración",
+    "signed": "Firmado en",
+    "objective": "Finalidad",
+    "viewDocument": "Ver documento",
+    "noDocument": "Sin documento disponible"
+  },
+  "empty": {
+    "title": "Sin convenios registrados",
+    "description": "No hay convenios registrados en esta categoría."
+  }
+}

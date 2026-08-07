@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Institutional Org Chart | Universidad Nacional de Concepción",
+    "description": "Organizational structure of the Universidad Nacional de Concepción: Superior Council, Rectorate, Vice-Rectorates, Secretariats and Faculties."
+  },
+  "breadcrumb": { "home": "Home", "page": "Org Chart" },
+  "hero": {
+    "label": "Institutional structure",
+    "title": "Institutional Org Chart",
+    "description": "Organizational structure of the Universidad Nacional de Concepción"
+  },
+  "chart": {
+    "label": "Organizational diagram",
+    "title": "Governance structure",
+    "csu": "Superior University Council",
+    "rectorado": "Rectorate",
+    "rector": "Rector",
+    "viceAcad": "Academic Vice-Rectorate",
+    "viceAcadSub": "Academic Vice-Rector",
+    "viceAdmin": "Administrative Vice-Rectorate",
+    "viceAdminSub": "Administrative Vice-Rector",
+    "secGeneral": "General Secretariat",
+    "secGeneralSub": "General Secretary",
+    "dirAcad": "General Academic Directorate",
+    "dirAcadSub": "Academic Director",
+    "dirAdmin": "Admin. & Financial Directorate",
+    "dirAdminSub": "Admin. Director",
+    "facultades": "Faculties",
+    "f1": "Faculty of Dentistry",
+    "f2": "Faculty of Medicine",
+    "f3": "Faculty of Agricultural Sciences",
+    "f4": "Faculty of Exact Sciences and Technology",
+    "f5": "Faculty of Humanities and Education",
+    "f6": "Faculty of Economic and Administrative Sciences"
+  },
+  "download": "Download full org chart (PDF)",
+  "links": {
+    "seeAuthorities": "View authorities",
+    "backToInstitucional": "Back to Institutional"
+  }
+}

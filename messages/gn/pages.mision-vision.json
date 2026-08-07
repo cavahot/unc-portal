@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "title": "Mba'aporã, Ohecha haguépe ha Mba'e iporãva — Universidad Nacional de Concepción",
+    "description": "Eikuaa Universidad Nacional de Concepción rehegua mba'aporã, ohecha haguépe ha mba'e iporãva, oñemomba'eva mbo'e tembiapo ha tetã rehe."
+  },
+  "breadcrumb": { "home": "Ñepyrũ", "page": "Mba'aporã, Ohecha haguépe ha Mba'e iporãva" },
+  "hero": {
+    "label": "Mbo'ehao ñemigua",
+    "title": "Mba'aporã, Ohecha haguépe\nha Mba'e iporãva",
+    "description": "Mba'e oñemomba'e rehegua, mba'épe oho haguépe ha mba'éicha oikova mbo'ehao remimbiokuépe"
+  },
+  "mission": {
+    "label": "Mba'aporã",
+    "quote": "Ha'e ore mbo'ehao omoha'ãnga ñeha'ã porã rehe, ñepyrũ pyahu rehe, ñemomba'e rehe, opavavépe oñemomba'e ha mba'aporã porã rehe, ombojoajúva mbo'e, mba'ekuaapyrã ha mbo'e ñepyrũ, tembiapo pyahu, jekuaa pyahu ha mbo'ehára rembiasa ndive."
+  },
+  "vision": {
+    "label": "Ohecha haguépe",
+    "quote": "Oĩ haguã mbo'ehao ikatupyrýva, iporãva ha tetãme oñeha'ã, opavavépe joaju rehe, mba'aporã rehegua ñemomba'e porãitévape, ñepyrũ pyahu ha mbo'e mba'aporã rehegua, opavapy rehegua ñemomba'e porã, Paraguái ha tetã ambuépe oñeikuaavapa haguã."
+  },
+  "values": {
+    "eyebrow": "Mba'aporã ñemombyky",
+    "title": "Ore mba'e iporãva",
+    "description": "Mbo'ehao mba'e iporãva oñemomba'eva UNC remimbiokuépe opavave rehe.",
+    "v1":  { "name": "Ñeha'ã porã",     "description": "Tembiapo ha mbo'e rehe ñeha'ã porã opavavépe." },
+    "v2":  { "name": "Ñe'ẽ ñemombe'u",  "description": "Marandu oñemombe'u ha mba'aporã ñemombyky mbo'ehao remimbiokuépe." },
+    "v3":  { "name": "Mba'aporã porã",  "description": "Mbo'eháva, tetã ha tetã remimbiokuépe oñemomba'e porãve haguã." },
+    "v4":  { "name": "Pytyvõ",          "description": "Mbo'ehao remimbiokuépe ha tetãme pytyvõ rehe oñemomba'e." },
+    "v5":  { "name": "Ñeha'ã teete",   "description": "Mba'aporã porã ha ñeha'ã teete mbo'ehao tembiapo rehegua." },
+    "v6":  { "name": "Ñemomba'e",      "description": "Opavave mbo'ehao remimbiokuépe tekove rehegua ñemomba'e." },
+    "v7":  { "name": "Pytyvõ hama'e",  "description": "Pytyvõ ha ñemomba'e mbo'ehao remimbiokuépe opavave peve." },
+    "v8":  { "name": "Ñemomba'e",      "description": "Mbo'e mba'aporã ha mbo'ehao ñemombarete rehe ñemomba'e porã." },
+    "v9":  { "name": "Ñemboguapy",     "description": "Opavave mbo'ehao remimbiokuépe oikuave'ẽva tembiapo ñemombyky rehe." },
+    "v10": { "name": "Ñepytyvõ",       "description": "Joaju ha trato porã opavavépe, mba'épa oñembokatúva ani haguã." }
+  },
+  "cta": {
+    "label": "Eikuaa hetave",
+    "title": "Eikuaa ore tembiasakue ha ñemombyky",
+    "description": "Eheka Universidad Nacional de Concepción rehegua mba'aporã ñemombyky.",
+    "linkHistory": "Ehecha tembiasakue",
+    "linkAuthorities": "Ehecha mba'epohãnguéra"
+  }
+}

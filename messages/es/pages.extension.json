@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Extensión Universitaria | Universidad Nacional de Concepción",
+    "description": "Programas de extensión universitaria y vinculación con la comunidad de la Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Vinculación con la sociedad",
+    "title": "Extensión universitaria",
+    "description": "La UNC trasciende el aula para contribuir activamente al desarrollo humano, cultural y productivo de la región de Concepción."
+  },
+  "programs": {
+    "title": "Programas activos",
+    "p1": { "titulo": "Educación continua", "descripcion": "Cursos, talleres y diplomaturas abiertos a la comunidad para la formación permanente de profesionales y ciudadanos." },
+    "p2": { "titulo": "Voluntariado universitario", "descripcion": "Programas donde estudiantes y docentes llevan conocimiento y servicios a comunidades rurales e indígenas del departamento." },
+    "p3": { "titulo": "Cultura y arte", "descripcion": "Actividades culturales, exposiciones, coros y grupos artísticos que vinculan la universidad con el tejido social de Concepción." },
+    "p4": { "titulo": "Atención comunitaria en salud", "descripcion": "Brigadas de salud bucal, medicina preventiva y campañas de vacunación coordinadas con el Ministerio de Salud Pública." },
+    "p5": { "titulo": "Consultoría jurídica gratuita", "descripcion": "Servicio de orientación legal para personas de bajos recursos, a cargo de estudiantes de derecho bajo supervisión docente." },
+    "p6": { "titulo": "Asistencia técnica agropecuaria", "descripcion": "Apoyo técnico a productores rurales de la región en buenas prácticas agrícolas, sanidad animal y gestión de suelos." }
+  },
+  "cta": {
+    "title": "Participá en extensión",
+    "description": "Docentes, estudiantes y organizaciones de la comunidad pueden proponer o sumarse a programas de extensión. Escribinos a"
+  }
+}

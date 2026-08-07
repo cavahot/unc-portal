@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "University Outreach | Universidad Nacional de Concepción",
+    "description": "University outreach programs and community engagement of the Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Engagement with society",
+    "title": "University outreach",
+    "description": "UNC goes beyond the classroom to actively contribute to the human, cultural and productive development of the Concepción region."
+  },
+  "programs": {
+    "title": "Active programs",
+    "p1": { "titulo": "Continuing education", "descripcion": "Courses, workshops and diploma programs open to the community for the ongoing training of professionals and citizens." },
+    "p2": { "titulo": "University volunteering", "descripcion": "Programs where students and faculty bring knowledge and services to rural and indigenous communities in the department." },
+    "p3": { "titulo": "Culture and arts", "descripcion": "Cultural activities, exhibitions, choirs and artistic groups that connect the university with the social fabric of Concepción." },
+    "p4": { "titulo": "Community health services", "descripcion": "Oral health brigades, preventive medicine and vaccination campaigns coordinated with the Ministry of Public Health." },
+    "p5": { "titulo": "Free legal advice", "descripcion": "Legal guidance service for low-income individuals, delivered by law students under faculty supervision." },
+    "p6": { "titulo": "Agricultural technical assistance", "descripcion": "Technical support for rural producers in the region on good agricultural practices, animal health and soil management." }
+  },
+  "cta": {
+    "title": "Participate in outreach",
+    "description": "Faculty, students and community organizations can propose or join outreach programs. Contact us at"
+  }
+}

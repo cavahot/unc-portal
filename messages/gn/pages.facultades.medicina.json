@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Medicina Mbo'ehao | UNC",
+    "description": "Medicina mbo'éhao, posgrado, tembiasakue ha ñomongeta Medicina Mbo'ehaógui UNC-pe."
+  },
+  "breadcrumb": { "facultades": "Mbo'ehaovéva", "nombre": "Medicina" },
+  "hero": {
+    "badge": "Mbo'ehao",
+    "nombre": "Medicina Mbo'ehao",
+    "tagline": "Ojapo médico Paraguay tetã rembiapykuéra ndive."
+  },
+  "grado": {
+    "title": "Mbo'éhao Tuichakue",
+    "subtitle": "CONES oñemoĩva'ekue mbo'éhao",
+    "cols": { "carrera": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Posgrado Mbo'éhao",
+    "subtitle": "Especialización ha maestría",
+    "cols": { "programa": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Mboimba",
+    "subtitle": "Mba'e jeporu tee",
+    "monto": "Viru (Gs.)",
+    "grupos": {
+      "multas": "Mba'e jepysore",
+      "venta": "Kuatiapyrã ñemoña",
+      "academicos": "Mbo'éhao mboimba",
+      "clinicos": "Terapéutico mba'e"
+    }
+  },
+  "contacto": {
+    "title": "Ñomongeta",
+    "direccion": "Ruta Py05, Km 210 – Hospital Regional, Concepción",
+    "telefono": "(595 331) 242591 / 241022",
+    "emails": ["fm-secretariageneral@unc.edu.py"],
+    "web": "www.fmedicina-unc.edu.py",
+    "sitio": "Mbo'ehao rendápe jaho"
+  }
+}

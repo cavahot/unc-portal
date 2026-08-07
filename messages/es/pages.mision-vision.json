@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "title": "Misión, Visión y Valores | Universidad Nacional de Concepción",
+    "description": "Conocé la misión, visión y valores institucionales de la Universidad Nacional de Concepción, principios que guían su quehacer académico y su compromiso con la sociedad."
+  },
+  "breadcrumb": { "home": "Inicio", "page": "Misión, Visión y Valores" },
+  "hero": {
+    "label": "Identidad institucional",
+    "title": "Misión, Visión\ny Valores",
+    "description": "Los principios que definen quiénes somos, hacia dónde vamos y cómo actuamos como comunidad universitaria"
+  },
+  "mission": {
+    "label": "Misión",
+    "quote": "Somos una universidad formadora de profesionales íntegros, innovadores, críticos, humanistas, socialmente responsables y con principios democráticos, que articula la docencia, la investigación y la extensión del conocimiento científico y tecnológico, el fomento de la cultura, el arte, el deporte, el desarrollo sostenible y el espíritu emprendedor."
+  },
+  "vision": {
+    "label": "Visión",
+    "quote": "Ser una universidad de prestigio, distinguida por la calidad y pertinencia del servicio educativo, incluyente, con alto liderazgo en la formación integral de la persona, con innovación permanente y responsabilidad universitaria para la transformación social sostenible, con visibilidad nacional e internacional."
+  },
+  "values": {
+    "eyebrow": "Principios rectores",
+    "title": "Nuestros valores",
+    "description": "Los valores institucionales que orientan la conducta de toda la comunidad universitaria de la UNC.",
+    "v1":  { "name": "Integridad",     "description": "Actuación ética y coherente en todas las dimensiones del quehacer universitario." },
+    "v2":  { "name": "Transparencia",  "description": "Apertura informativa y rendición de cuentas ante la comunidad universitaria y la sociedad." },
+    "v3":  { "name": "Responsabilidad","description": "Cumplimiento riguroso de los compromisos con los estudiantes, el Estado y la sociedad." },
+    "v4":  { "name": "Servicio",       "description": "Vocación de atención y contribución al bienestar de la comunidad universitaria y regional." },
+    "v5":  { "name": "Honradez",       "description": "Actuación recta y justa en el manejo de recursos y en las relaciones institucionales." },
+    "v6":  { "name": "Respeto",        "description": "Reconocimiento de la dignidad de cada persona y de la diversidad en la comunidad universitaria." },
+    "v7":  { "name": "Solidaridad",    "description": "Apoyo mutuo y cooperación entre todos los miembros de la comunidad universitaria." },
+    "v8":  { "name": "Compromiso",     "description": "Dedicación y responsabilidad con la misión educativa y el desarrollo de la institución." },
+    "v9":  { "name": "Participación",  "description": "Involucramiento activo de toda la comunidad en los procesos de toma de decisiones." },
+    "v10": { "name": "Igualdad",       "description": "Garantía de acceso y trato equitativo sin distinción de origen, género o condición social." }
+  },
+  "cta": {
+    "label": "Conocé más",
+    "title": "Descubrí nuestra historia y estructura",
+    "description": "Explorá los fundamentos institucionales de la Universidad Nacional de Concepción.",
+    "linkHistory": "Ver historia",
+    "linkAuthorities": "Ver autoridades"
+  }
+}

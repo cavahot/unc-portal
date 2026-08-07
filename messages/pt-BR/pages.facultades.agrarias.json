@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Faculdade de Ciências Agrárias | UNC",
+    "description": "Cursos de graduação, pós-graduação, anuidades e contato da Faculdade de Ciências Agrárias da Universidade Nacional de Concepción."
+  },
+  "breadcrumb": { "facultades": "Faculdades", "nombre": "Ciências Agrárias" },
+  "hero": {
+    "badge": "Unidade Acadêmica",
+    "nombre": "Faculdade de Ciências Agrárias",
+    "tagline": "Formando profissionais para o desenvolvimento agropecuário sustentável do Paraguai."
+  },
+  "grado": {
+    "title": "Cursos de Graduação",
+    "subtitle": "Programas de graduação credenciados pelo CONES",
+    "cols": { "carrera": "Curso", "sede": "Câmpus", "resolucion": "Res. CONES" }
+  },
+  "posgrado": {
+    "title": "Programas de Pós-Graduação",
+    "subtitle": "Mestrados e especializações de formação avançada",
+    "cols": { "programa": "Programa", "sede": "Câmpus", "resolucion": "Res. CONES" }
+  },
+  "aranceles": {
+    "title": "Anuidades e Taxas",
+    "subtitle": "Valores vigentes conforme resolução institucional",
+    "monto": "Valor (Gs.)",
+    "grupos": {
+      "multas": "Multas e Outros Direitos Não Tributários",
+      "venta": "Livros, Formulários e Documentos",
+      "academicos": "Taxas Acadêmicas",
+      "campo": "Práticas de Campo e Laboratório"
+    }
+  },
+  "contacto": {
+    "title": "Contato",
+    "direccion": "Câmpus Universitário: Ruta Py05, Km 210, Concepción, Paraguai",
+    "telefono": "(595 331) 241813 / 241069 / 240883",
+    "emails": ["secgralfcaunc@gmail.com", "fca-unc@fca-unc.edu.py"],
+    "web": "www.fca-unc.edu.py",
+    "sitio": "Acessar site da Faculdade"
+  }
+}

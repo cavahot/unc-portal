@@ -1,0 +1,286 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import Reveal from '@/components/motion/Reveal'
+import { getT } from '@/lib/i18n/server'
+import {
+  getLey5282Documents,
+  CATEGORY_LABELS,
+  ALL_CATEGORIES,
+  type CategoryGroup,
+  type Ley5282Category,
+} from '@/lib/cms/queries/ley5282'
+
+/* ── generateMetadata ─────────────────────────────────────────────────────── */
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.ley-5282')
+  return {
+    title: t('meta.title'),
+    description: t('meta.description'),
+  }
+}
+
+/* ── Icons ────────────────────────────────────────────────────────────────── */
+
+function IconDownload() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  )
+}
+
+function IconFolder() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+    </svg>
+  )
+}
+
+function IconDrive() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 shrink-0" aria-hidden="true">
+      <path d="M22.6 19l-9.1-15.8L8.7 9.6l4.8 8.3L8.7 19h13.9zm-15-3.2l-4-6.9L0 19h8.7l-1.1-3.2zm4-6.9L7.7 4.1 3.7 4.1 8.6 12.6l3-3.7z" />
+    </svg>
+  )
+}
+
+/* ── Category section ─────────────────────────────────────────────────────── */
+
+function CategorySection({
+  group,
+  downloadLabel,
+  noDocs,
+}: {
+  group: CategoryGroup
+  downloadLabel: string
+  noDocs: string
+}) {
+  const itemNumber = parseInt(group.category.replace('item-', ''), 10)
+
+  return (
+    <Reveal>
+      <div className="mb-8">
+        {/* Category header */}
+        <div className="mb-3 flex items-center gap-2.5">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#004700] text-[0.6rem] font-extrabold text-white">
+            {itemNumber}
+          </span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#004700]/10 text-[#004700]">
+            <IconFolder />
+          </span>
+          <h2 className="text-base font-bold tracking-tight text-[#09231D]">
+            {CATEGORY_LABELS[group.category as Ley5282Category]}
+          </h2>
+          <span className="ml-auto text-xs font-medium text-[#6C7B76]">
+            {group.docs.length} {group.docs.length === 1 ? 'doc.' : 'docs.'}
+          </span>
+        </div>
+
+        {/* Document list */}
+        <div className="overflow-hidden rounded-xl border border-[#D7E0DB] bg-white">
+          {group.docs.length === 0 ? (
+            <div className="flex items-center gap-4 px-5 py-4 text-sm text-[#B0BDB7] italic">
+              <span className="w-5 shrink-0 text-center text-xs font-bold">—</span>
+              <span>{noDocs}</span>
+            </div>
+          ) : (
+            group.docs.map((doc, idx) => (
+              <div
+                key={doc.id}
+                className={`flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[#F4F7F5] ${
+                  idx > 0 ? 'border-t border-[#D7E0DB]/60' : ''
+                }`}
+              >
+                {/* Row number */}
+                <span className="w-5 shrink-0 text-center text-xs font-bold text-[#B0BDB7]">
+                  {idx + 1}
+                </span>
+
+                {/* Period badge + description */}
+                <div className="flex flex-1 flex-wrap items-center gap-2.5">
+                  <span className="shrink-0 rounded-full bg-[#004700]/10 px-2.5 py-0.5 text-[0.65rem] font-bold text-[#004700]">
+                    {doc.period}
+                  </span>
+                  {doc.description && (
+                    <span className="text-sm leading-snug text-[#6C7B76]">{doc.description}</span>
+                  )}
+                </div>
+
+                {/* Drive download button */}
+                <a
+                  href={doc.driveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#D7E0DB] bg-[#F4F7F5] px-3 py-1.5 text-xs font-bold text-[#004700] transition-colors hover:border-[#008000]/30 hover:bg-[#E6FFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
+                >
+                  <IconDrive />
+                  <IconDownload />
+                  {downloadLabel}
+                </a>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </Reveal>
+  )
+}
+
+/* ── Page ─────────────────────────────────────────────────────────────────── */
+
+export default async function Ley5282Page({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.ley-5282')
+
+  let groups: CategoryGroup[] = []
+  let cmsAvailable = true
+
+  try {
+    groups = await getLey5282Documents()
+  } catch {
+    cmsAvailable = false
+    // Show all 17 categories empty when CMS is unavailable
+    groups = ALL_CATEGORIES.map((cat) => ({ category: cat, docs: [] }))
+  }
+
+  const totalDocs = groups.reduce((sum, g) => sum + g.docs.length, 0)
+
+  return (
+    <>
+      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300] pb-20 pt-28 text-white sm:pt-32">
+        <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-0 h-[28rem] w-[28rem] rounded-full bg-[#001A00]/40 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-24 bottom-0 h-[22rem] w-[22rem] rounded-full bg-[#5CFF5C]/10 blur-3xl" />
+
+        <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <nav aria-label="Breadcrumb" className="mb-8">
+            <ol className="flex items-center gap-2 text-xs text-white/60">
+              <li>
+                <Link href={`/${locale === 'es' ? '' : locale}`} className="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5CFF5C]">
+                  {t('breadcrumb.home')}
+                </Link>
+              </li>
+              <li aria-hidden="true" className="select-none">/</li>
+              <li>
+                <Link href={`/${locale === 'es' ? '' : locale + '/'}institucional`} className="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5CFF5C]">
+                  {t('breadcrumb.institutional')}
+                </Link>
+              </li>
+              <li aria-hidden="true" className="select-none">/</li>
+              <li className="font-semibold text-white" aria-current="page">{t('breadcrumb.page')}</li>
+            </ol>
+          </nav>
+
+          <Reveal>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-[#B8FFB8]">
+              {t('hero.badgeLabel')}
+            </div>
+            <span className="block text-xs font-extrabold uppercase tracking-[0.23em] text-[#B8FFB8]">
+              {t('hero.eyebrow')}
+            </span>
+            <h1 className="mt-4 font-serif text-4xl font-bold leading-[0.95] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl">
+              {t('hero.title')}
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">
+              {t('hero.description')}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── DOCUMENTS ────────────────────────────────────────────────────── */}
+      <section className="relative z-10 -mt-8 bg-[#F4F7F5] pb-20 pt-12 sm:pb-24">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+
+          {/* Section header */}
+          <Reveal>
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
+                  {t('docs.eyebrow')}
+                </span>
+                <h2 className="mt-3 font-serif text-3xl font-bold tracking-[-0.03em] text-[#09231D] sm:text-4xl">
+                  {t('docs.heading')}
+                </h2>
+                <p className="mt-3 max-w-2xl text-base leading-7 text-[#6C7B76]">
+                  {t('docs.description')}
+                </p>
+              </div>
+              {totalDocs > 0 && (
+                <span className="rounded-full border border-[#D7E0DB] bg-white px-4 py-1.5 text-sm font-semibold text-[#004700]">
+                  {totalDocs} {t('docs.totalLabel')}
+                </span>
+              )}
+            </div>
+          </Reveal>
+
+          {/* Category groups — always render all 17 items */}
+          {groups.map((group) => (
+            <CategorySection
+              key={group.category}
+              group={group}
+              downloadLabel={t('docs.downloadLabel')}
+              noDocs={t('docs.noDocs')}
+            />
+          ))}
+
+          {!cmsAvailable && (
+            <Reveal>
+              <p className="mt-2 text-center text-xs text-[#B0BDB7]">{t('docs.fallbackNote')}</p>
+            </Reveal>
+          )}
+        </div>
+      </section>
+
+      {/* ── INFO STRIP ───────────────────────────────────────────────────── */}
+      <section className="bg-white py-20 sm:py-24">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="rounded-[1.5rem] border border-[#D7E0DB] bg-[#F4F7F5] p-8 lg:p-12">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-12">
+                <div className="flex-1">
+                  <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
+                    {t('info.eyebrow')}
+                  </span>
+                  <h2 className="mt-4 font-serif text-2xl font-bold tracking-[-0.03em] text-[#09231D]">
+                    {t('info.title')}
+                  </h2>
+                  <p className="mt-3 text-base leading-7 text-[#6C7B76]">
+                    {t('info.description')}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3 lg:shrink-0">
+                  <Link
+                    href={`/${locale === 'es' ? '' : locale + '/'}transparencia`}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#004700] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#005c00] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
+                  >
+                    {t('info.ctaTransparencia')}
+                  </Link>
+                  <Link
+                    href={`/${locale === 'es' ? '' : locale + '/'}institucional`}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D7E0DB] bg-white px-6 py-3 text-sm font-bold text-[#09231D] transition-colors hover:border-[#008000]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
+                  >
+                    {t('info.ctaInstitutional')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </>
+  )
+}

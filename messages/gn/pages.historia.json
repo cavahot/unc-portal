@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "title": "Tembiasakue — Universidad Nacional de Concepción",
+    "description": "Eikuaa Universidad Nacional de Concepción rehegua tembiasakue, oñembokatúva Léi N° 3.399 ndive 2007 año Concepción pegua."
+  },
+  "breadcrumb": { "home": "Ñepyrũ", "page": "Tembiasakue" },
+  "hero": {
+    "label": "Universidad Nacional de Concepción",
+    "title": "Mbo'ehao Tembiasakue",
+    "description": "Araha hetave Paraguái yvate pegua mbo'e porã rehegua ñemombarete"
+  },
+  "intro": {
+    "label": "Ore tembiasakue",
+    "title": "Mbo'ehao oñemomba'e Paraguái yvate rehe",
+    "body1": "Universidad Nacional de Concepción oñembokatú Léi N° 3.399 ndive 2007 jasypoteĩ 4-pe, oñemomba'e haguã mbo'e porã tetãgua Paraguái yvate pegua. Concepción táva-pe guivegua, Concepción Departamento óga tuicha-pe, UNC oñemomba'e Paraguái yvate pegua ñepyrũhaguéicha mbo'e porã rehegua.",
+    "body2": "Mbo'ehao mokõipavẽ (6) ndive ha mbo'epyrã heta ndive, mbo'ehao omoha'ãnga ñeporandu, mbo'e ñepyrũ ha tembiapo pyahu rehegua mba'aporãnguéra Paraguái yvate ñemombarete haguã.",
+    "statFounded": "Ára oñembokatúva",
+    "statFaculties": "Mbo'ehao pytyvõrãnguéra",
+    "statStudents": "Mbo'eháva oñemoarandu hagua"
+  },
+  "timeline": {
+    "label": "Mbo'ehao ára iporãva",
+    "title": "Ára rehegua ñemombyky",
+    "description": "Universidad Nacional de Concepción rehegua ára iporãitéva.",
+    "m1": { "title": "Ñembokatú Léi N° 3.399 ndive", "description": "2007 jasypoteĩ 4-pe oñembokatú Léi N° 3.399, oñemoheñóiva Universidad Nacional de Concepción tetãgua mbo'ehao peguáicha Paraguái yvate-pe." },
+    "m2": { "title": "Mbo'e tembiapo ñepyrũ", "description": "Mbo'ehao ohechakuaa iñopytyrõ ha oñepyrũ ypy mbo'e tembiaponguéra, oñembokatúva mbo'e arambýre Concepción-pe." },
+    "m3": { "title": "Ñepyrũ graduadonguéra", "description": "UNC oñemboaje ypy oñemboha'ãngáva iñopytyrõ rehegua, omboñepyrũva mbo'e mba'aporã ko'ã tetãguápe." },
+    "m4": { "title": "Mbo'ehao pytyvõrã pyahu", "description": "Mbo'epyrã omohu'ã hetave mbo'ehao pytyvõrã ñembokatú ndive, oñemomba'e Paraguái yvate ñemombarete rehe." },
+    "m5": { "title": "5.000-upéva mbo'eháva oñemoarandu", "description": "Mbo'ehao ohupyty 5.000-upéva mbo'eháva ñemboguapy, omboñepyrũva iñopytyrõ Paraguái yvate pegua mbo'e rehegua." }
+  },
+  "mission": {
+    "label": "Tetã mba'aporã",
+    "title": "Oñemomba'e Paraguái yvate rehe",
+    "body": "Universidad Nacional de Concepción oñemoñe'ẽ tetãgua mbo'ehao peguáicha, oñemomba'eva tetã rehe, Paraguái yvate rehegua mba'aporãrã. Imba'aporã ha'e ñeha'ã, mba'ekuaapyrã ha mbo'e ñepyrũ ndive.",
+    "cta": "Ehecha Mba'aporã, Ohecha haguépe ha Mba'e iporãva"
+  }
+}

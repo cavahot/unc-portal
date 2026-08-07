@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "title": "History of UNC | Universidad Nacional de Concepción",
+    "description": "Learn about the history of the Universidad Nacional de Concepción, established by Law No. 3,399 on July 4, 2007 in Concepción, Paraguay."
+  },
+  "breadcrumb": { "home": "Home", "page": "History" },
+  "hero": {
+    "label": "Universidad Nacional de Concepción",
+    "title": "University History",
+    "description": "Over a decade of educational excellence in northern Paraguay"
+  },
+  "intro": {
+    "label": "Our history",
+    "title": "An institution serving northern Paraguay",
+    "body1": "The Universidad Nacional de Concepción was established by Law No. 3,399 on July 4, 2007, with the purpose of providing quality public higher education to the northern region of the Republic of Paraguay. Located in the city of Concepción, capital of the Concepción Department, UNC responds to the community's long-standing demand for higher education close to its reality.",
+    "body2": "With six faculties and a broad academic offering, the institution trains professionals committed to the region's sustainable development, fostering research, university outreach, and innovation as pillars of academic life.",
+    "statFounded": "Year founded",
+    "statFaculties": "Faculties",
+    "statStudents": "Active students"
+  },
+  "timeline": {
+    "label": "Institutional milestones",
+    "title": "Timeline",
+    "description": "The most significant moments in the development of the Universidad Nacional de Concepción.",
+    "m1": { "title": "Established by Law No. 3,399", "description": "On July 4, 2007, Law No. 3,399 was enacted, creating the Universidad Nacional de Concepción as a public higher education institution in northern Paraguay." },
+    "m2": { "title": "Start of academic activities", "description": "The University opened its doors and began its first academic activities, marking the formal start of university life in Concepción." },
+    "m3": { "title": "First graduating class", "description": "UNC celebrated the graduation of the first class of professionals trained in its classrooms, consolidating its educational mission in the region." },
+    "m4": { "title": "Opening of new faculties", "description": "The academic offering expanded significantly with the creation of new faculties, responding to the needs of regional development." },
+    "m5": { "title": "Over 5,000 active students", "description": "The University reached a historic enrollment of over 5,000 students, reaffirming its position as an educational benchmark in northern Paraguay." }
+  },
+  "mission": {
+    "label": "Regional mission",
+    "title": "Committed to northern Paraguay",
+    "body": "The Universidad Nacional de Concepción defines itself as a public higher education institution at the service of Paraguayan society, with special emphasis on the needs of the northern region. Its mission is the comprehensive training of professionals capable of contributing to the economic, social, and cultural development of the region, through teaching, scientific research, and university outreach.",
+    "cta": "View Mission, Vision & Values"
+  }
+}

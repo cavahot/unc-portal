@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
 /* ─── State ─────────────────────────────────────────────── */
@@ -43,8 +43,8 @@ function readStorage(): A11yState {
 function useA11y() {
   const [state, setState] = useState<A11yState>(DEFAULT_STATE)
 
-  // Init from localStorage on mount
-  useEffect(() => {
+  // Init from localStorage synchronously before paint (no FOUC)
+  useLayoutEffect(() => {
     setState(readStorage())
   }, [])
 

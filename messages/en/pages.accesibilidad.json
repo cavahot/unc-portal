@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Accessibility | Universidad Nacional de Concepción",
+    "description": "Accessibility declaration for the Universidad Nacional de Concepción portal."
+  },
+  "hero": {
+    "label": "Digital inclusion",
+    "title": "Accessibility statement",
+    "description": "The Universidad Nacional de Concepción is committed to digital accessibility in accordance with MITIC standards and WCAG 2.1 Level AA."
+  },
+  "features": {
+    "title": "Accessibility features",
+    "description": "This portal includes the following tools to improve the experience for all users:",
+    "f1": { "title": "Adjustable text size", "description": "You can increase or decrease the text size of the portal using the accessibility panel located in the bottom corner of the screen." },
+    "f2": { "title": "Contrast modes", "description": "The portal offers high contrast and grayscale modes to improve readability for people with low vision or color blindness." },
+    "f3": { "title": "Link underline", "description": "You can enable underlines on all portal links to identify them more easily." },
+    "f4": { "title": "Readable font", "description": "Option to switch to a more readable typeface, especially useful for people with dyslexia." },
+    "f5": { "title": "Keyboard navigation", "description": "The entire portal is navigable by keyboard. Use Tab to move between elements and Enter to activate them." },
+    "f6": { "title": "Responsive design", "description": "The portal adapts to all screen sizes, from mobile devices to desktop monitors." }
+  },
+  "cta": {
+    "title": "Report an accessibility issue",
+    "description": "If you encounter an accessibility barrier on this portal, please write to us at",
+    "subject": "with the subject \"Accessibility\". We are committed to responding within 5 business days."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Acessibilidade | Universidad Nacional de Concepción",
+    "description": "Declaração de acessibilidade do portal da Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Inclusão digital",
+    "title": "Declaração de acessibilidade",
+    "description": "A Universidad Nacional de Concepción está comprometida com a acessibilidade digital conforme as normas do MITIC e as WCAG 2.1 nível AA."
+  },
+  "features": {
+    "title": "Características de acessibilidade",
+    "description": "Este portal inclui as seguintes ferramentas para melhorar a experiência de todos os usuários:",
+    "f1": { "title": "Tamanho de texto ajustável", "description": "Você pode aumentar ou reduzir o tamanho do texto do portal usando o painel de acessibilidade localizado no canto inferior da tela." },
+    "f2": { "title": "Modos de contraste", "description": "O portal oferece modos de alto contraste e escala de cinza para melhorar a legibilidade para pessoas com baixa visão ou daltonismo." },
+    "f3": { "title": "Sublinhado de links", "description": "Você pode ativar o sublinhado de todos os links do portal para identificá-los com mais facilidade." },
+    "f4": { "title": "Fonte de leitura", "description": "Opção para mudar para uma tipografia de maior legibilidade, especialmente útil para pessoas com dislexia." },
+    "f5": { "title": "Navegação por teclado", "description": "Todo o portal é navegável por teclado. Use Tab para mover entre elementos e Enter para ativá-los." },
+    "f6": { "title": "Design responsivo", "description": "O portal se adapta a todos os tamanhos de tela, de dispositivos móveis a monitores de desktop." }
+  },
+  "cta": {
+    "title": "Reportar um problema de acessibilidade",
+    "description": "Se você encontrar alguma barreira de acessibilidade neste portal, escreva para",
+    "subject": "com o assunto \"Acessibilidade\". Comprometemo-nos a responder em até 5 dias úteis."
+  }
+}

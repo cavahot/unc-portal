@@ -1,0 +1,8 @@
+[
+  {
+    "collection": "noticias",
+    "title": "CONVOCATORIA PROCESO DE CONCURSO PARA ACCESO A LA CATEGORÍA DE “PROFESOR ASISTENTE” EN LA FACULTAD DE CIENCIAS AGRARIAS DE LA UNC",
+    "slug": "convocatoria-proceso-de-concurso-para-acceso-a-la-categoria-de-profesor-asistente-en-la-facultad-de-",
+    "error": "[{\"name\":\"ValidationError\",\"data\":{\"collection\":\"noticias\",\"errors\":[{\"message\":\"El valor debe ser único\",\"path\":\"slug\","
+  }
+]

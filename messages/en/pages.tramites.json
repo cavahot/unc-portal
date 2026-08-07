@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Administrative Procedures | Universidad Nacional de Concepción",
+    "description": "Information about administrative and academic procedures at the Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "General Secretariat",
+    "title": "Academic procedures",
+    "description": "Information about the administrative and academic procedures available at the Universidad Nacional de Concepción."
+  },
+  "tramites": {
+    "t1": { "nombre": "Degree Application", "descripcion": "Start the official process to obtain your undergraduate or postgraduate diploma.", "duracion": "15 business days" },
+    "t2": { "nombre": "Document Legalization", "descripcion": "Legalization and apostille of academic certificates and documents.", "duracion": "10 business days" },
+    "t3": { "nombre": "Academic Certificate", "descripcion": "Official record of completed courses and current academic status.", "duracion": "5 business days" },
+    "t4": { "nombre": "Enrollment Certificate", "descripcion": "Document certifying your status as an active student at UNC.", "duracion": "3 business days" },
+    "t5": { "nombre": "Transcript", "descripcion": "Full academic history with grades for all completed courses.", "duracion": "5 business days" },
+    "t6": { "nombre": "Scholarship Application", "descripcion": "Access to national and international scholarship programs available for UNC students.", "duracion": "Per call" }
+  },
+  "seeMore": "See more",
+  "help": {
+    "title": "Need help?",
+    "description": "For inquiries about procedures, visit the UNC General Secretariat on the university campus or write to"
+  }
+}

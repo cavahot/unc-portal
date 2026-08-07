@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Organigrama Institucional — Universidad Nacional de Concepción",
+    "description": "Universidad Nacional de Concepción rehegua ñemombyky: Consejo Superior, Rectorado, Vicerrectorados, Secretarías ha Mbo'ehao pytyvõrãnguéra."
+  },
+  "breadcrumb": { "home": "Ñepyrũ", "page": "Organigrama" },
+  "hero": {
+    "label": "Mbo'ehao ñemombyky",
+    "title": "Organigrama Institucional",
+    "description": "Universidad Nacional de Concepción rehegua mba'apohára ñemombyky"
+  },
+  "chart": {
+    "label": "Mba'apohára ñemombyky",
+    "title": "Mba'apohára ñemombyky",
+    "csu": "Consejo Superior Universitario",
+    "rectorado": "Rectorado",
+    "rector": "Rector",
+    "viceAcad": "Vicerrectorado Académico",
+    "viceAcadSub": "Vicerrector Académico",
+    "viceAdmin": "Vicerrectorado Administrativo",
+    "viceAdminSub": "Vicerrector Administrativo",
+    "secGeneral": "Secretaría General",
+    "secGeneralSub": "Secretario/a General",
+    "dirAcad": "Dirección General Académica",
+    "dirAcadSub": "Director/a Académico/a",
+    "dirAdmin": "Dirección Admin. ha Financiera",
+    "dirAdminSub": "Director/a Admin.",
+    "facultades": "Mbo'ehao pytyvõrãnguéra",
+    "f1": "Fac. de Odontología",
+    "f2": "Fac. de Medicina",
+    "f3": "Fac. de Ciencias Agrarias",
+    "f4": "Fac. de Ciencias Exactas y Tecnológicas",
+    "f5": "Fac. de Humanidades y Cs. de la Educación",
+    "f6": "Fac. de Ciencias Económicas y Administrativas"
+  },
+  "download": "Emono'õ organigrama opa (PDF)",
+  "links": {
+    "seeAuthorities": "Ehecha mba'epohãnguéra",
+    "backToInstitucional": "Eguerujey Mba'apohárape"
+  }
+}

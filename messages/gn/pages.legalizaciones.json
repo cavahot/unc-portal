@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "title": "Legalizaciones — Universidad Nacional de Concepción",
+    "description": "UNC kuatia ñemomba'e ha legalización: diplomas, mbo'e kuatia ha calificaciones."
+  },
+  "breadcrumb": { "home": "Ñepyrũ", "page": "Legalizaciones" },
+  "hero": {
+    "label": "Secretaría General",
+    "title": "Legalizaciones",
+    "description": "Mbo'ehao kuatia ñemomba'e ha legalización"
+  },
+  "services": {
+    "label": "Pytyvõ oĩva",
+    "title": "¿Mba'e kuatia ikatumi oñelegalizáva?",
+    "description": "Secretaría General UNC pegua omboguejy mbo'ehao kuatia legalización pytyvõ, tetã ha tetã ambuépe oñemongu'e haguã.",
+    "s1": {
+      "eyebrow": "Pytyvõ 01",
+      "title": "Diploma Legalización",
+      "description": "UNC omboguejyva grado térã posgrado diploma ñemomba'e teete, tetãgua ha ñangarekohára rehegua.",
+      "req1": "UNC omboguejyva diploma teete",
+      "req2": "Titular CI ojurujáva",
+      "req3": "Diploma kopia",
+      "req4": "Ñemomba'e formulario ojuepéva",
+      "req5": "Arancel ojurujáva viru rombo'u kuatia",
+      "reqsLabel": "Mba'e oñeikotevẽva"
+    },
+    "s2": {
+      "eyebrow": "Pytyvõ 02",
+      "title": "Mbo'e Kuatia Legalización",
+      "description": "Mbo'eháva mbo'e tembiasakue ñemomba'e teete, mbo'ehao mba'epohã ra'ãre ha ñemomba'e ndive.",
+      "req1": "UNC omboguejyva mbo'e kuatia teete",
+      "req2": "CI ojurujáva",
+      "req3": "Ñemomba'e formulario ojuepéva",
+      "req4": "Arancel ojurujáva viru rombo'u kuatia",
+      "reqsLabel": "Mba'e oñeikotevẽva"
+    },
+    "s3": {
+      "eyebrow": "Pytyvõ 03",
+      "title": "Calificaciones Legalización",
+      "description": "Calificaciones kuatia ñemomba'e ñemboguapy, beca térã mbo'e ñemomba'e tetã ambuépe haguã.",
+      "req1": "Calificaciones kuatia analítico teete",
+      "req2": "CI ojurujáva",
+      "req3": "Ñemomba'e formulario ojuepéva",
+      "req4": "Arancel ojurujáva viru rombo'u kuatia",
+      "reqsLabel": "Mba'e oñeikotevẽva"
+    },
+    "requestBtn": "Eñomongeta"
+  },
+  "contact": {
+    "label": "Ñomongeta",
+    "title": "Ñemongu'e marandu",
+    "description": "Legalización tembiapo rehegua ñeporandu haguã, eho:",
+    "office": "Secretaría General",
+    "address1": "Rectorado — Universidad Nacional de Concepción",
+    "address2": "Concepción, Paraguay",
+    "hours": "Ñemongu'e aravo: arakõi ha arapoteĩ, 07:00 guive 13:00 peve.",
+    "link": "Ehecha trámite opavave"
+  }
+}

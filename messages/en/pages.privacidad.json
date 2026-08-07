@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "title": "Privacy Policy | Universidad Nacional de Concepción",
+    "description": "Privacy policy and personal data processing of the Universidad Nacional de Concepción."
+  },
+  "hero": {
+    "label": "Legal",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: August 2026"
+  },
+  "sections": {
+    "s1": { "title": "Data controller", "content": "The Universidad Nacional de Concepción (UNC), headquartered at the University Campus, City of Concepción, Republic of Paraguay, is the entity responsible for processing the personal data collected through this portal." },
+    "s2": { "title": "Data we collect", "content": "This portal may collect technical browsing data (IP address, browser type, pages visited) for statistical purposes and service improvement. No personally identifiable data is collected without the user's explicit consent." },
+    "s3": { "title": "Purpose of processing", "content": "The data collected is used solely to improve the browsing experience, generate aggregate usage statistics, and ensure the proper functioning of the portal. It is not used for commercial purposes and is not shared with third parties." },
+    "s4": { "title": "Legal basis", "content": "Data processing is carried out in compliance with Law No. 1682/01 regulating private information and its amendments, as well as the digital government standards established by MITIC." },
+    "s5": { "title": "User rights", "content": "Users have the right to access, correct and delete their personal data, as well as to object to its processing, in accordance with applicable Paraguayan legislation. To exercise these rights, please contact the UNC General Secretariat." },
+    "s6": { "title": "Cookies", "content": "This portal may use technical cookies necessary for the site's operation. No tracking or third-party advertising cookies are used. You may configure your browser to reject cookies, although this may affect the portal's functionality." },
+    "s7": { "title": "Contact", "content": "For inquiries related to privacy and personal data processing, you may write to secgral@unc.edu.py or visit the General Secretariat offices at the UNC University Campus." }
+  }
+}
