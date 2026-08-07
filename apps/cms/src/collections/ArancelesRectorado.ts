@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { hasRole } from '../access/roles'
 
 export const ArancelesRectorado: CollectionConfig = {
   slug: 'aranceles-rectorado',
@@ -13,10 +14,10 @@ export const ArancelesRectorado: CollectionConfig = {
     description:    'Aranceles, multas y servicios cobrados directamente por el Rectorado.',
   },
   access: {
-    read:   async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    read:   () => true,
+    create: ({ req }) => hasRole(req.user, ['superadmin', 'web-admin', 'publisher', 'editor']),
+    update: ({ req }) => hasRole(req.user, ['superadmin', 'web-admin', 'publisher', 'editor']),
+    delete: ({ req }) => hasRole(req.user, ['superadmin', 'web-admin']),
   },
   fields: [
     {

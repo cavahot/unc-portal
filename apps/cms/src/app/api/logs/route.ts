@@ -1,3 +1,5 @@
+import { getPayload } from 'payload'
+import config from '../../../payload.config'
 import { logger, LogCategory } from '../../../../../lib/monitoring/logger'
 
 export const dynamic = 'force-dynamic'
@@ -11,6 +13,12 @@ export async function GET(request: Request) {
   const hours = parseInt(searchParams.get('hours') || '24')
 
   try {
+    const payload = await getPayload({ config })
+    const { user } = await payload.auth({ headers: request.headers })
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     let logs = logger.getLogs(category, limit)
 
     // Filtrar por nivel si se proporciona

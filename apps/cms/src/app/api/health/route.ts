@@ -37,6 +37,12 @@ interface HealthStatus {
 }
 
 export async function GET(request: Request) {
+  const payload = await getPayload({ config })
+  const { user } = await payload.auth({ headers: request.headers })
+  if (!user) {
+    return Response.json({ status: 'ok' })
+  }
+
   const startTime = Date.now()
   const health: HealthStatus = {
     status: 'healthy',

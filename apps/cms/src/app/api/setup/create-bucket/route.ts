@@ -1,9 +1,20 @@
+import { getPayload } from 'payload'
+import config from '../../../../payload.config'
 import { S3Client, CreateBucketCommand } from '@aws-sdk/client-s3'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
   try {
+    const payload = await getPayload({ config })
+    const { user } = await payload.auth({ headers: request.headers })
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if ((user as any).role !== 'superadmin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     const s3Client = new S3Client({
       endpoint: process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',
       region: process.env.S3_REGION || 'us-east-1',

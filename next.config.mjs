@@ -28,6 +28,7 @@ const nextConfig = {
   },
   images: {
     formats: ['image/webp'],
+    qualities: [75, 92],
     remotePatterns: [
       // MinIO local (dev)
       { protocol: 'http', hostname: 'localhost', port: '9100', pathname: '/**' },

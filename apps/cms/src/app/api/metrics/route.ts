@@ -7,6 +7,11 @@ export async function GET(request: Request) {
   try {
     const payload = await getPayload({ config })
 
+    const { user } = await payload.auth({ headers: request.headers })
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // Noticias por estado
     const borrador = await payload.find({
       collection: 'noticias',
