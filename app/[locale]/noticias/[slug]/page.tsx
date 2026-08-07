@@ -78,7 +78,7 @@ export default async function NoticiaDetailPage({
             sizes="100vw"
             className="object-cover"
             placeholder="blur"
-            blurDataURL={UNC_BLUR}
+            blurDataURL={(noticia.featuredImage as any)?.blurDataURL ?? UNC_BLUR}
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />

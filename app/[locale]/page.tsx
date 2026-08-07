@@ -11,6 +11,7 @@ import StatsBlock from '@/components/stats/StatsBlock';
 import { getNews } from '@/lib/cms/queries/news';
 import { getStatsGlobal } from '@/lib/cms/queries/stats';
 import { Link } from '@/i18n/navigation';
+import { UNC_BLUR } from '@/lib/imagePlaceholder';
 
 /* =========================================================
    ICONOS
@@ -380,6 +381,8 @@ export default async function Home({
                         alt={n.featuredImage?.alt ?? n.title}
                         fill
                         sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
+                        placeholder="blur"
+                        blurDataURL={(n.featuredImage as any)?.blurDataURL ?? UNC_BLUR}
                         className="
                           object-cover
                           transition-transform
