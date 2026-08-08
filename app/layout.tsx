@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { headers } from 'next/headers'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
@@ -23,12 +22,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const headersList = await headers()
-  const locale = headersList.get('x-locale') ?? 'es'
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${inter.className} bg-slate-950 text-white antialiased`}
         suppressHydrationWarning
