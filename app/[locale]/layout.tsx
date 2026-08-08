@@ -3,7 +3,6 @@ import { headers } from 'next/headers'
 import { draftMode } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import { notFound } from 'next/navigation'
-import { Inter } from 'next/font/google'
 import { routing } from '@/i18n/routing'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -12,8 +11,6 @@ import PreviewBanner from '@/components/preview/PreviewBanner'
 import { getNavigation, FALLBACK_NAVIGATION } from '@/lib/cms/queries/navigation'
 import { loadMessages } from '@/lib/i18n/server'
 import { baseOg } from '@/lib/seo/og'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export async function generateMetadata({
   params,
@@ -55,21 +52,17 @@ export default async function LocaleLayout({
   ])
 
   return (
-    <html lang={locale}>
-      <body className={`${inter.className} bg-slate-950 text-white antialiased`} suppressHydrationWarning>
-        <NextIntlClientProvider locale={locale} messages={messages} timeZone="America/Asuncion" now={new Date()}>
-          {isDraft && <PreviewBanner />}
-          <Header navigation={navigation} />
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="America/Asuncion" now={new Date()}>
+      {isDraft && <PreviewBanner />}
+      <Header navigation={navigation} />
 
-          <main id="main-content" className="min-h-screen">
-            {children}
-          </main>
+      <main id="main-content" className="min-h-screen">
+        {children}
+      </main>
 
-          <Footer locale={locale} />
+      <Footer locale={locale} />
 
-          <AccessibilityPanel />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+      <AccessibilityPanel />
+    </NextIntlClientProvider>
   )
 }

@@ -71,9 +71,14 @@ export function proxy(request: NextRequest) {
   const csp   = buildCSP(nonce)
   const isDev = process.env.NODE_ENV === 'development'
 
-  // Build modified request headers that server components will see (via x-nonce)
+  // Build modified request headers that server components will see (via x-nonce, x-locale)
+  const SUPPORTED_LOCALES = ['es', 'en', 'pt-BR', 'gn']
+  const pathSegment = pathname.split('/')[1] ?? ''
+  const locale = SUPPORTED_LOCALES.includes(pathSegment) ? pathSegment : 'es'
+
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-nonce', nonce)
+  requestHeaders.set('x-locale', locale)
 
   // Rate-limit response headers (applied to every non-429 response)
   function applyRateLimitHeaders(res: NextResponse): void {
