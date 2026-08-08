@@ -48,9 +48,15 @@ function isIntlHeader(key: string): boolean {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-           ?? request.headers.get('x-real-ip')
-           ?? '127.0.0.1'
+  // X-Forwarded-For is a comma-separated chain: "client, proxy1, proxy2".
+  // The client controls entries to the LEFT — take the RIGHTMOST entry instead,
+  // which is appended by the immediate trusted proxy and cannot be spoofed.
+  // Prefer request.ip (Vercel/edge native) and X-Real-IP (nginx) over XFF entirely.
+  const ip =
+    request.ip ??
+    request.headers.get('x-real-ip') ??
+    request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() ??
+    '127.0.0.1'
 
   const rl = checkRateLimit(ip)
 
