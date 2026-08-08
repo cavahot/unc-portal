@@ -246,7 +246,10 @@ export interface Noticia {
   featured?: boolean | null;
   publishedAt?: string | null;
   category: 'institucional' | 'academica' | 'investigacion' | 'extension' | 'eventos' | 'comunicados';
-  faculty?: string | null;
+  /**
+   * Facultad responsable de la noticia (opcional)
+   */
+  faculty?: (number | null) | Facultade;
   author?: string | null;
   title: string;
   /**
@@ -314,6 +317,26 @@ export interface Noticia {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facultades".
+ */
+export interface Facultade {
+  id: number;
+  nombre: string;
+  /**
+   * Generado automáticamente desde el nombre.
+   */
+  slug: string;
+  descripcion?: string | null;
+  decano?: string | null;
+  email?: string | null;
+  telefono?: string | null;
+  imagen?: (number | null) | Media;
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -453,7 +476,7 @@ export interface Pagina {
    */
   approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
   /**
-   * Historial de aprobaciones y rechazos
+   * Registro automático de cambios de estado de aprobación.
    */
   approvalHistory?:
     | {
@@ -497,29 +520,8 @@ export interface Tesis {
   autor: string;
   anio: number;
   resumen?: string | null;
-  facultad:
-    'odontologia' | 'medicina' | 'ciencias-agrarias' | 'ciencias-exactas' | 'humanidades' | 'ciencias-economicas';
+  facultad: number | Facultade;
   urlPdf: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "facultades".
- */
-export interface Facultade {
-  id: number;
-  nombre: string;
-  /**
-   * Generado automáticamente desde el nombre.
-   */
-  slug: string;
-  descripcion?: string | null;
-  decano?: string | null;
-  email?: string | null;
-  telefono?: string | null;
-  imagen?: (number | null) | Media;
-  activa?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -675,9 +677,9 @@ export interface Autoridade {
   role: string;
   type: 'rector' | 'vicerrector' | 'decano' | 'secretario' | 'director';
   /**
-   * Nombre de la facultad que dirige
+   * Facultad que dirige este/a Decano/a
    */
-  faculty?: string | null;
+  faculty?: (number | null) | Facultade;
   photo?: (number | null) | Media;
   /**
    * Suba el CV en formato PDF o Word (.doc, .docx)

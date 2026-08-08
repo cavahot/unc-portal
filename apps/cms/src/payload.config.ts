@@ -173,24 +173,36 @@ export default buildConfig({
     ...(process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY
       ? [
           s3Storage({
-            collections: { media: true },
             bucket: process.env.S3_BUCKET || 'unc-media',
-            // S3_PUBLIC_URL: public base URL for serving files.
-            // Local dev:  http://127.0.0.1:9100 (MinIO path-style)
-            // Production: https://files.unc.edu.py  (CDN or public MinIO)
-            generateFileURL: ({ filename }) => {
-              const base   = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || 'http://127.0.0.1:9100'
-              const bucket = process.env.S3_BUCKET || 'unc-media'
-              return `${base}/${bucket}/${filename}`
+            collections: {
+              media: {
+                // Serve files directly from MinIO/CDN — bypass Payload's auth proxy.
+                // The bucket policy already enforces public read; no extra gate needed.
+                disablePayloadAccessControl: true,
+
+                // Build the public URL that gets stored in the DB and returned to the portal.
+                // S3_PUBLIC_URL:  https://files.unc.edu.py    (production — nginx → MinIO)
+                // S3_ENDPOINT:    http://127.0.0.1:9100       (local dev — MinIO path-style)
+                generateFileURL: ({ filename, prefix }) => {
+                  const base   = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || 'http://127.0.0.1:9100'
+                  const bucket = process.env.S3_BUCKET || 'unc-media'
+                  // Encode only the filename, keep prefix path segments intact.
+                  // Mirrors what the default generateURL.js does internally.
+                  const encodedFile = encodeURIComponent(filename)
+                  const key = prefix ? `${prefix}/${encodedFile}` : encodedFile
+                  return `${base}/${bucket}/${key}`
+                },
+              },
             },
             config: {
               credentials: {
-                accessKeyId: process.env.S3_ACCESS_KEY_ID,
+                accessKeyId:     process.env.S3_ACCESS_KEY_ID,
                 secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
               },
-              endpoint: process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',
+              // Always the internal/direct MinIO endpoint for uploads (not the public URL).
+              endpoint:      process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',
               forcePathStyle: true,
-              region: process.env.S3_REGION || 'us-east-1',
+              region:         process.env.S3_REGION || 'us-east-1',
             },
           }),
         ]
