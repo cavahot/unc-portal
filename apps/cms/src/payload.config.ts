@@ -25,6 +25,7 @@ import Convenios from './collections/Convenios'
 import TribunalMiembros from './collections/TribunalMiembros'
 import TribunalDocumentos from './collections/TribunalDocumentos'
 import ArancelesRectorado from './collections/ArancelesRectorado'
+import { FAQs } from './collections/FAQs'
 import { Navegacion } from './globals/Navegacion'
 import { Transparencia } from './globals/Transparencia'
 import { EnlacesExternos } from './globals/EnlacesExternos'
@@ -116,6 +117,7 @@ export default buildConfig({
     TribunalMiembros,
     TribunalDocumentos,
     ArancelesRectorado,
+    FAQs,
   ],
 
   globals: [Navegacion, Transparencia, EnlacesExternos, Estadisticas],
