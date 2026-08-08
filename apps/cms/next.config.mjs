@@ -16,6 +16,9 @@ const monorepoRoot = path.resolve(__dirname, '../..')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Required by apps/cms/Dockerfile for the production Docker image.
+  output: 'standalone',
+
   turbopack: {
     root: monorepoRoot,
   },

@@ -96,24 +96,24 @@ const fallbackMenuData: MenuItem[] = [
   },
   {
     label: 'Preguntas Frecuentes',
-    href: 'https://www.unc.edu.py/preguntas-frecuentes/',
+    href: '/preguntas-frecuentes',
   },
   {
     label: 'Contactos',
     href: '/contacto',
     children: [
-      { label: 'Contactos por dependencia', href: '/contacto#dependencias' },
+      { label: 'Contactos por dependencia', href: '/contacto/dependencias' },
     ],
   },
   {
     label: 'Academia',
     href: '#',
     children: [
-      { label: 'Dirección General Académica', href: 'https://www.unc.edu.py/direccion-general-academica/' },
-      { label: 'Aseguramiento de la Calidad', href: 'https://www.unc.edu.py/aseguramiento-de-la-calidad/' },
-      { label: 'Investigación', href: 'https://www.unc.edu.py/investigacion/' },
-      { label: 'Extensión y Vinculación', href: 'https://www.unc.edu.py/extension-y-vinculacion/' },
-      { label: 'Bienestar Institucional', href: 'https://www.unc.edu.py/bienestar-institucional/' },
+      { label: 'Dirección General Académica', href: '/direccion-general-academica' },
+      { label: 'Aseguramiento de la Calidad', href: '/aseguramiento-calidad' },
+      { label: 'Investigación', href: '/investigacion' },
+      { label: 'Extensión y Vinculación', href: '/extension' },
+      { label: 'Bienestar Institucional', href: '/bienestar-institucional' },
       { label: 'Revistas Académicas', href: '/revistas' },
       { label: 'Biblioteca Digital', href: '/biblioteca' },
     ],
