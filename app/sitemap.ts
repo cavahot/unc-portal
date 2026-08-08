@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { getNews } from '@/lib/cms/queries/news'
 import { getCarreras } from '@/lib/cms/queries/carreras'
 import { getFacultades } from '@/lib/cms/queries/facultades'
+import { getPageSlugs } from '@/lib/cms/queries/pages'
 
 export const revalidate = 3600
 
@@ -56,10 +57,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: { languages: localeAlternates(path) },
   }))
 
-  const [newsResult, carreras, facultades] = await Promise.all([
+  const [newsResult, carreras, facultades, pageSlugs] = await Promise.all([
     getNews({ limit: 500, depth: 0 }).catch(() => ({ docs: [] as Awaited<ReturnType<typeof getNews>>['docs'] })),
     getCarreras().catch(() => [] as Awaited<ReturnType<typeof getCarreras>>),
     getFacultades().catch(() => [] as Awaited<ReturnType<typeof getFacultades>>),
+    getPageSlugs().catch(() => [] as string[]),
   ])
 
   const newsEntries: MetadataRoute.Sitemap = newsResult.docs.map((item) => ({
@@ -86,5 +88,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: { languages: localeAlternates(`/facultades/${f.slug}`) },
   }))
 
-  return [...staticEntries, ...newsEntries, ...carreraEntries, ...facultadEntries]
+  const pageEntries: MetadataRoute.Sitemap = pageSlugs.map((slug) => ({
+    url: `${BASE_URL}/${slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.5,
+    alternates: { languages: localeAlternates(`/${slug}`) },
+  }))
+
+  return [...staticEntries, ...newsEntries, ...carreraEntries, ...facultadEntries, ...pageEntries]
 }
