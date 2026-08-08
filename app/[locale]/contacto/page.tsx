@@ -289,7 +289,7 @@ export default async function ContactoPage({
                 </p>
 
                 <div className="mt-8">
-                  <ContactForm t={t as (key: string) => string} />
+                  <ContactForm />
                 </div>
               </div>
             </Reveal>

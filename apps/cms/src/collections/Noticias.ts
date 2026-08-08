@@ -19,139 +19,7 @@ export const Noticias: CollectionConfig = {
     delete: async ({ req }) => !!req.user,
   },
   fields: [
-    {
-      name: 'title',
-      label: 'Título',
-      type: 'text',
-      required: true,
-      minLength: 5,
-      maxLength: 150,
-    },
-    {
-      name: 'slug',
-      label: 'Slug (URL)',
-      type: 'text',
-      required: true,
-      unique: true,
-      index: true,
-      admin: {
-        description: 'Generado automáticamente desde el título. Puedes editarlo manualmente.',
-      },
-    },
-    {
-      name: 'summary',
-      label: 'Resumen',
-      type: 'textarea',
-      required: true,
-      minLength: 20,
-      maxLength: 300,
-    },
-    {
-      name: 'content',
-      label: 'Contenido',
-      type: 'richText',
-      required: true,
-    },
-    {
-      name: 'featuredImage',
-      label: 'Imagen destacada',
-      type: 'relationship',
-      relationTo: 'media',
-      required: false,
-    },
-    {
-      name: 'featuredImageUrl',
-      label: 'URL imagen destacada (externa)',
-      type: 'text',
-      required: false,
-      admin: {
-        description: 'URL directa de imagen cuando no hay archivo en Media (ej: imágenes migradas de WordPress).',
-      },
-    },
-    {
-      name: 'gallery',
-      label: 'Galería de imágenes',
-      type: 'array',
-      fields: [
-        {
-          name: 'image',
-          label: 'Imagen',
-          type: 'relationship',
-          relationTo: 'media',
-          required: true,
-        },
-        {
-          name: 'caption',
-          label: 'Epígrafe',
-          type: 'text',
-          required: false,
-        },
-      ],
-      maxRows: 10,
-    },
-    {
-      name: 'category',
-      label: 'Categoría',
-      type: 'select',
-      options: [
-        { label: 'Institucional', value: 'institucional' },
-        { label: 'Académica', value: 'academica' },
-        { label: 'Investigación', value: 'investigacion' },
-        { label: 'Extensión', value: 'extension' },
-        { label: 'Eventos', value: 'eventos' },
-        { label: 'Comunicados', value: 'comunicados' },
-      ],
-      required: true,
-      index: true,
-    },
-    {
-      name: 'tags',
-      label: 'Etiquetas',
-      type: 'array',
-      fields: [
-        {
-          name: 'tag',
-          label: 'Etiqueta',
-          type: 'text',
-          required: true,
-        },
-      ],
-      maxRows: 10,
-    },
-    {
-      name: 'faculty',
-      label: 'Facultad',
-      type: 'text',
-      required: false,
-      admin: {
-        placeholder: 'Facultad responsable',
-      },
-    },
-    {
-      name: 'author',
-      label: 'Autor',
-      type: 'text',
-      required: false,
-      admin: {
-        placeholder: 'Autor de la noticia',
-      },
-    },
-    {
-      name: 'featured',
-      label: '¿Destacar en portada?',
-      type: 'checkbox',
-      defaultValue: false,
-      admin: {
-        description: 'Mostrar en la sección destacada del portal',
-      },
-    },
-    {
-      name: 'publishedAt',
-      label: 'Fecha de publicación',
-      type: 'date',
-      required: false,
-      index: true,
-    },
+    // ── Sidebar fields (always visible) ───────────────────────────────────────
     {
       name: 'approvalStatus',
       label: 'Estado editorial',
@@ -171,45 +39,230 @@ export const Noticias: CollectionConfig = {
       },
     },
     {
-      name: 'approvalHistory',
-      label: 'Historial de aprobaciones',
-      type: 'array',
-      fields: [
+      name: 'featured',
+      label: '¿Destacar en portada?',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Mostrar en la sección destacada del portal',
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'publishedAt',
+      label: 'Fecha de publicación',
+      type: 'date',
+      required: false,
+      index: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'category',
+      label: 'Categoría',
+      type: 'select',
+      options: [
+        { label: 'Institucional', value: 'institucional' },
+        { label: 'Académica', value: 'academica' },
+        { label: 'Investigación', value: 'investigacion' },
+        { label: 'Extensión', value: 'extension' },
+        { label: 'Eventos', value: 'eventos' },
+        { label: 'Comunicados', value: 'comunicados' },
+      ],
+      required: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'faculty',
+      label: 'Facultad',
+      type: 'text',
+      required: false,
+      admin: {
+        placeholder: 'Facultad responsable (opcional)',
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'author',
+      label: 'Autor',
+      type: 'text',
+      required: false,
+      admin: {
+        placeholder: 'Nombre del autor',
+        position: 'sidebar',
+      },
+    },
+    // ── Tabs (main body) ──────────────────────────────────────────────────────
+    {
+      type: 'tabs',
+      tabs: [
+        // ── Tab 1: Contenido ────────────────────────────────────────────────
         {
-          name: 'revisor',
-          label: 'Revisor',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'accion',
-          label: 'Acción',
-          type: 'select',
-          options: [
-            { label: 'Enviado a revisión', value: 'sent_to_review' },
-            { label: 'Revisado', value: 'reviewed' },
-            { label: 'Aprobado', value: 'approved' },
-            { label: 'Rechazado', value: 'rejected' },
+          label: 'Contenido',
+          fields: [
+            {
+              name: 'title',
+              label: 'Título',
+              type: 'text',
+              required: true,
+              minLength: 5,
+              maxLength: 150,
+            },
+            {
+              name: 'slug',
+              label: 'Slug (URL)',
+              type: 'text',
+              required: true,
+              unique: true,
+              index: true,
+              admin: {
+                description: 'Generado automáticamente desde el título. Podés editarlo manualmente.',
+              },
+            },
+            {
+              name: 'summary',
+              label: 'Copete / Resumen',
+              type: 'textarea',
+              required: true,
+              minLength: 20,
+              maxLength: 300,
+              admin: {
+                description: 'Aparece debajo del título en el listado y como subtítulo en el detalle. Máximo 300 caracteres.',
+              },
+            },
+            {
+              name: 'content',
+              label: 'Cuerpo de la noticia',
+              type: 'richText',
+              required: true,
+            },
+            {
+              name: 'tags',
+              label: 'Etiquetas',
+              type: 'array',
+              fields: [
+                {
+                  name: 'tag',
+                  label: 'Etiqueta',
+                  type: 'text',
+                  required: true,
+                },
+              ],
+              maxRows: 15,
+              admin: {
+                description: 'Palabras clave para búsqueda y filtrado.',
+              },
+            },
           ],
-          required: true,
         },
+        // ── Tab 2: Imágenes ─────────────────────────────────────────────────
         {
-          name: 'comentario',
-          label: 'Comentario',
-          type: 'textarea',
-          required: false,
+          label: '📷 Imágenes',
+          fields: [
+            {
+              name: 'featuredImage',
+              label: 'Imagen destacada',
+              type: 'relationship',
+              relationTo: 'media',
+              required: false,
+              admin: {
+                description:
+                  'Imagen principal de la noticia. Aparece en el hero del artículo y como primera foto del carrusel al pie de página. Recomendado: 1280×720 px o superior.',
+              },
+            },
+            {
+              name: 'featuredImageUrl',
+              label: 'URL imagen destacada (externa)',
+              type: 'text',
+              required: false,
+              admin: {
+                description:
+                  'Alternativa cuando la imagen no está en Media (ej: migradas de WordPress). Si existe "Imagen destacada" de Media, ese campo tiene prioridad.',
+              },
+            },
+            {
+              name: 'gallery',
+              label: 'Carrusel de fotos',
+              type: 'array',
+              fields: [
+                {
+                  name: 'image',
+                  label: 'Foto',
+                  type: 'relationship',
+                  relationTo: 'media',
+                  required: true,
+                },
+                {
+                  name: 'caption',
+                  label: 'Epígrafe (pie de foto)',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    placeholder: 'Descripción breve que aparece en el carrusel',
+                  },
+                },
+              ],
+              maxRows: 30,
+              admin: {
+                description:
+                  'Fotos adicionales de la noticia. Junto con la imagen destacada, forman el carrusel interactivo que aparece al final del artículo. Podés agregar hasta 30 fotos.',
+                initCollapsed: false,
+              },
+            },
+          ],
         },
+        // ── Tab 3: Historial editorial ──────────────────────────────────────
         {
-          name: 'fecha',
-          label: 'Fecha',
-          type: 'date',
-          required: true,
-          defaultValue: () => new Date().toISOString(),
+          label: 'Historial editorial',
+          fields: [
+            {
+              name: 'approvalHistory',
+              label: 'Historial de aprobaciones',
+              type: 'array',
+              fields: [
+                {
+                  name: 'revisor',
+                  label: 'Revisor',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'accion',
+                  label: 'Acción',
+                  type: 'select',
+                  options: [
+                    { label: 'Enviado a revisión', value: 'sent_to_review' },
+                    { label: 'Revisado', value: 'reviewed' },
+                    { label: 'Aprobado', value: 'approved' },
+                    { label: 'Rechazado', value: 'rejected' },
+                  ],
+                  required: true,
+                },
+                {
+                  name: 'comentario',
+                  label: 'Comentario',
+                  type: 'textarea',
+                  required: false,
+                },
+                {
+                  name: 'fecha',
+                  label: 'Fecha',
+                  type: 'date',
+                  required: true,
+                },
+              ],
+              admin: {
+                description: 'Registro automático de cambios de estado de aprobación.',
+                initCollapsed: true,
+              },
+            },
+          ],
         },
       ],
-      admin: {
-        description: 'Historial de aprobaciones y rechazos',
-      },
     },
   ],
   timestamps: true,

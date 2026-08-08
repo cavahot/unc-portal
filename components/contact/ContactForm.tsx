@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 
 interface Fields {
@@ -50,11 +51,8 @@ const inputClass =
 
 const labelClass = 'mb-1.5 block text-sm font-semibold text-[#09231D]'
 
-export default function ContactForm({
-  t,
-}: {
-  t: (key: string) => string
-}) {
+export default function ContactForm() {
+  const t = useTranslations('pages.contacto')
   const [fields, setFields] = useState<Fields>(EMPTY)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')

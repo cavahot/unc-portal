@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
@@ -11,7 +12,8 @@ import StatsBlock from '@/components/stats/StatsBlock';
 import { getNews } from '@/lib/cms/queries/news';
 import { getStatsGlobal } from '@/lib/cms/queries/stats';
 import { Link } from '@/i18n/navigation';
-import { UNC_BLUR } from '@/lib/imagePlaceholder';
+import { UNC_BLUR } from '@/lib/imagePlaceholder'
+import { baseOg } from '@/lib/seo/og';
 
 /* =========================================================
    ICONOS
@@ -79,6 +81,46 @@ function DocumentIcon() {
 }
 
 /* =========================================================
+   METADATA
+   ========================================================= */
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.home')
+
+  // Default locale (es) has no prefix; others use /{locale}/
+  const canonicalPath = locale === 'es' ? '/' : `/${locale}/`
+
+  return {
+    // absolute bypasses the parent template ('%s — UNC') — homepage shows the full name only
+    title: { absolute: 'Universidad Nacional de Concepción' },
+    description: t('hero.description'),
+    alternates: {
+      canonical: canonicalPath,
+      languages: {
+        es: BASE_URL,
+        en: `${BASE_URL}/en`,
+        'pt-BR': `${BASE_URL}/pt-BR`,
+        gn: `${BASE_URL}/gn`,
+        'x-default': BASE_URL,
+      },
+    },
+    openGraph: {
+      ...baseOg(locale),
+      title: { absolute: 'Universidad Nacional de Concepción' },
+      description: t('hero.description'),
+      url: `${BASE_URL}${canonicalPath}`,
+    },
+  }
+}
+
+/* =========================================================
    PÁGINA PRINCIPAL
    ========================================================= */
 
@@ -131,7 +173,7 @@ export default async function Home({
     {
       title: t('quickLinks.items.aulaVirtual.title'),
       description: t('quickLinks.items.aulaVirtual.description'),
-      href: 'https://aula.unc.edu.py',
+      href: 'https://aula-virtual-posgrado-unc.edu.py/login/index.php',
       label: t('quickLinks.items.aulaVirtual.label'),
       action: t('quickLinks.actionAccess'),
       external: true,

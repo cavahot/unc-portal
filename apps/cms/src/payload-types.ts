@@ -84,6 +84,7 @@ export interface Config {
     'tribunal-miembros': TribunalMiembro;
     'tribunal-documentos': TribunalDocumento;
     'aranceles-rectorado': ArancelesRectorado;
+    faqs: Faq;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -108,6 +109,7 @@ export interface Config {
     'tribunal-miembros': TribunalMiembrosSelect<false> | TribunalMiembrosSelect<true>;
     'tribunal-documentos': TribunalDocumentosSelect<false> | TribunalDocumentosSelect<true>;
     'aranceles-rectorado': ArancelesRectoradoSelect<false> | ArancelesRectoradoSelect<true>;
+    faqs: FaqsSelect<false> | FaqsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -234,11 +236,26 @@ export interface Media {
  */
 export interface Noticia {
   id: number;
+  /**
+   * Estado del flujo de aprobación editorial
+   */
+  approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
+  /**
+   * Mostrar en la sección destacada del portal
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  category: 'institucional' | 'academica' | 'investigacion' | 'extension' | 'eventos' | 'comunicados';
+  faculty?: string | null;
+  author?: string | null;
   title: string;
   /**
-   * Generado automáticamente desde el título. Puedes editarlo manualmente.
+   * Generado automáticamente desde el título. Podés editarlo manualmente.
    */
   slug: string;
+  /**
+   * Aparece debajo del título en el listado y como subtítulo en el detalle. Máximo 300 caracteres.
+   */
   summary: string;
   content: {
     root: {
@@ -255,11 +272,26 @@ export interface Noticia {
     };
     [k: string]: unknown;
   };
+  /**
+   * Palabras clave para búsqueda y filtrado.
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Imagen principal de la noticia. Aparece en el hero del artículo y como primera foto del carrusel al pie de página. Recomendado: 1280×720 px o superior.
+   */
   featuredImage?: (number | null) | Media;
   /**
-   * URL directa de imagen cuando no hay archivo en Media (ej: imágenes migradas de WordPress).
+   * Alternativa cuando la imagen no está en Media (ej: migradas de WordPress). Si existe "Imagen destacada" de Media, ese campo tiene prioridad.
    */
   featuredImageUrl?: string | null;
+  /**
+   * Fotos adicionales de la noticia. Junto con la imagen destacada, forman el carrusel interactivo que aparece al final del artículo. Podés agregar hasta 30 fotos.
+   */
   gallery?:
     | {
         image: number | Media;
@@ -267,26 +299,8 @@ export interface Noticia {
         id?: string | null;
       }[]
     | null;
-  category: 'institucional' | 'academica' | 'investigacion' | 'extension' | 'eventos' | 'comunicados';
-  tags?:
-    | {
-        tag: string;
-        id?: string | null;
-      }[]
-    | null;
-  faculty?: string | null;
-  author?: string | null;
   /**
-   * Mostrar en la sección destacada del portal
-   */
-  featured?: boolean | null;
-  publishedAt?: string | null;
-  /**
-   * Estado del flujo de aprobación editorial
-   */
-  approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
-  /**
-   * Historial de aprobaciones y rechazos
+   * Registro automático de cambios de estado de aprobación.
    */
   approvalHistory?:
     | {
@@ -868,6 +882,51 @@ export interface ArancelesRectorado {
   createdAt: string;
 }
 /**
+ * Preguntas frecuentes que aparecen en la página /preguntas-frecuentes del portal.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  /**
+   * Podés incluir negritas, listas, links y más.
+   */
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  category: 'horarios' | 'admision' | 'tramites' | 'servicios' | 'transparencia' | 'rrhh' | 'titulos';
+  /**
+   * Número menor = aparece primero dentro de la categoría.
+   */
+  order?: number | null;
+  active?: boolean | null;
+  /**
+   * Palabras clave para mejorar la búsqueda interna.
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -958,6 +1017,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'aranceles-rectorado';
         value: number | ArancelesRectorado;
+      } | null)
+    | ({
+        relationTo: 'faqs';
+        value: number | Faq;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1050,10 +1113,22 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "noticias_select".
  */
 export interface NoticiasSelect<T extends boolean = true> {
+  approvalStatus?: T;
+  featured?: T;
+  publishedAt?: T;
+  category?: T;
+  faculty?: T;
+  author?: T;
   title?: T;
   slug?: T;
   summary?: T;
   content?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   featuredImage?: T;
   featuredImageUrl?: T;
   gallery?:
@@ -1063,18 +1138,6 @@ export interface NoticiasSelect<T extends boolean = true> {
         caption?: T;
         id?: T;
       };
-  category?: T;
-  tags?:
-    | T
-    | {
-        tag?: T;
-        id?: T;
-      };
-  faculty?: T;
-  author?: T;
-  featured?: T;
-  publishedAt?: T;
-  approvalStatus?: T;
   approvalHistory?:
     | T
     | {
@@ -1394,6 +1457,25 @@ export interface ArancelesRectoradoSelect<T extends boolean = true> {
   grupo?: T;
   orden?: T;
   activo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  active?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

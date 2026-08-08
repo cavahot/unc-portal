@@ -5,6 +5,23 @@ import { getFacultades } from '@/lib/cms/queries/facultades'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
 
+const LOCALES = ['es', 'en', 'pt-BR', 'gn'] as const
+
+/**
+ * Build hreflang alternates for a given path.
+ * The default locale (es) uses no prefix: /path
+ * Other locales use /{locale}/path
+ */
+function localeAlternates(path: string): Record<string, string> {
+  const base = path === '' ? '' : path
+  return Object.fromEntries(
+    LOCALES.map((locale) => [
+      locale,
+      locale === 'es' ? `${BASE_URL}${base || '/'}` : `${BASE_URL}/${locale}${base || ''}`,
+    ]),
+  )
+}
+
 const STATIC_ROUTES = [
   { path: '', priority: 1.0, changeFrequency: 'daily' as const },
   { path: '/noticias', priority: 0.9, changeFrequency: 'daily' as const },
@@ -27,10 +44,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map(({ path, priority, changeFrequency }) => ({
-    url: `${BASE_URL}${path}`,
+    url: `${BASE_URL}${path || '/'}`,
     lastModified: now,
     changeFrequency,
     priority,
+    alternates: { languages: localeAlternates(path) },
   }))
 
   const [newsResult, carreras, facultades] = await Promise.all([
@@ -44,6 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: item.publishedAt ? new Date(item.publishedAt) : now,
     changeFrequency: 'monthly' as const,
     priority: 0.6,
+    alternates: { languages: localeAlternates(`/noticias/${item.slug}`) },
   }))
 
   const carreraEntries: MetadataRoute.Sitemap = carreras.map((c) => ({
@@ -51,6 +70,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
+    alternates: { languages: localeAlternates(`/carreras/${c.slug}`) },
   }))
 
   const facultadEntries: MetadataRoute.Sitemap = facultades.map((f) => ({
@@ -58,6 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
+    alternates: { languages: localeAlternates(`/facultades/${f.slug}`) },
   }))
 
   return [...staticEntries, ...newsEntries, ...carreraEntries, ...facultadEntries]
