@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Reveal from '@/components/motion/Reveal'

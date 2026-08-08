@@ -42,7 +42,8 @@ export async function loadMessages(locale: string): Promise<AbstractIntlMessages
 // when namespace is not a precise literal. Keys are validated at runtime via JSON files.
 export async function getT(locale: string, namespace: string): Promise<(key: string, values?: Record<string, string | number | Date | undefined>) => string> {
   const messages = await loadMessages(locale)
-  const t = createTranslator({ locale, messages: messages as unknown as IntlMessages, namespace: namespace as Parameters<typeof createTranslator>[0]['namespace'] })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = createTranslator({ locale, messages: messages as unknown as IntlMessages, namespace: namespace as any }) as any
   return (key: string, values?: Record<string, string | number | Date | undefined>): string =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     t(key as any, values as any)

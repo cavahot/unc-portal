@@ -30,12 +30,13 @@
     "seed:tribunal": "node scripts/seed-tribunal.mjs",
     "seed:odontologia": "node scripts/seed-odontologia.mjs",
     "seed:medicina": "node scripts/seed-medicina.mjs",
-    "seed:agrarias": "node scripts/seed-agrarias.mjs"
+    "seed:agrarias": "node scripts/seed-agrarias.mjs",
+    "seed:faqs": "node scripts/seed-faqs.mjs"
   },
   "dependencies": {
     "@unc/cms-types": "*",
     "next": "^16.2.12",
-    "next-intl": "^3.26.0",
+    "next-intl": "^4.13.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "zod": "^3.23.8"
