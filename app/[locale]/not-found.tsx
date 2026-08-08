@@ -1,48 +1,72 @@
 'use client'
 
-import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 
 export default function NotFound() {
   return (
     <>
       <style>{`
-        @keyframes unc-radar {
-          0%   { transform: scale(0.55); opacity: 0.75; }
-          100% { transform: scale(2.4);  opacity: 0; }
+        /* ---- Animations ---- */
+        @keyframes unc404-pulse {
+          0%   { transform: scale(1);   opacity: 0.75; }
+          100% { transform: scale(3.2); opacity: 0; }
         }
-        @keyframes unc-glow {
-          0%, 100% { opacity: 0.3; }
-          50%       { opacity: 0.6; }
+        @keyframes unc404-pin-drop {
+          0%   { transform: translateY(-18px) scale(0.9); opacity: 0; }
+          55%  { transform: translateY(4px)   scale(1.02); opacity: 1; }
+          75%  { transform: translateY(-3px)  scale(0.99); opacity: 1; }
+          100% { transform: translateY(0)     scale(1);    opacity: 1; }
         }
-        .unc-ring {
+        @keyframes unc404-fade-up {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---- Pulse ring on pin dot ---- */
+        .unc404-pulse {
           position: absolute;
-          inset: 0;
           border-radius: 50%;
           border: 1px solid #5CFF5C;
-          animation: unc-radar 3.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          animation: unc404-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
           pointer-events: none;
           will-change: transform, opacity;
         }
-        .unc-ring:nth-child(2) { animation-delay: 1.07s; }
-        .unc-ring:nth-child(3) { animation-delay: 2.13s; }
-        .unc-glow-bg {
-          position: absolute;
-          inset: -20%;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(92,255,92,0.14) 0%, transparent 65%);
-          animation: unc-glow 3.2s ease-in-out infinite;
-          pointer-events: none;
+
+        /* ---- Pin entrance ---- */
+        .unc404-pin {
+          opacity: 0;
+          animation: unc404-pin-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
         }
-        @media (prefers-reduced-motion: reduce) {
-          .unc-ring, .unc-glow-bg { animation: none; }
+
+        /* ---- Content stagger (delay overridden inline per element) ---- */
+        .unc404-up {
+          opacity: 0;
+          animation: unc404-fade-up 0.45s ease 0.55s forwards;
         }
-        .unc-cta-primary:hover  { background-color: #8AFF8A !important; }
-        .unc-cta-ghost:hover    { border-color: rgba(92,255,92,0.45) !important; color: #ffffff !important; }
-        .unc-cta-primary:focus-visible,
-        .unc-cta-ghost:focus-visible {
+
+        /* ---- CTA interactions ---- */
+        .unc404-cta-primary { transition: background 0.15s ease; }
+        .unc404-cta-primary:hover  { background: #8AFF8A !important; }
+        .unc404-cta-ghost   { transition: border-color 0.15s ease, color 0.15s ease; }
+        .unc404-cta-ghost:hover    {
+          border-color: rgba(92, 255, 92, 0.42) !important;
+          color: #e8eaf0 !important;
+        }
+        .unc404-cta-primary:focus-visible,
+        .unc404-cta-ghost:focus-visible {
           outline: 2px solid #5CFF5C;
           outline-offset: 3px;
+        }
+
+        /* ---- Reduced motion ---- */
+        @media (prefers-reduced-motion: reduce) {
+          .unc404-pulse,
+          .unc404-pin,
+          .unc404-up {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
         }
       `}</style>
 
@@ -54,28 +78,75 @@ export default function NotFound() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '72vh',
+          minHeight: '80vh',
           overflow: 'hidden',
-          background:
-            'radial-gradient(ellipse 640px 480px at 50% 38%, rgba(0,60,0,0.22) 0%, #020817 68%), #020817',
+          background: '#060d1a',
           padding: '5rem 1.5rem',
         }}
       >
-        {/* Subtle dot-grid backdrop */}
-        <div
+        {/* ── Topographic contour backdrop ── */}
+        <svg
           aria-hidden="true"
+          viewBox="0 0 900 600"
+          preserveAspectRatio="xMidYMid slice"
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage:
-              'radial-gradient(rgba(92,255,92,0.12) 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-            maskImage: 'radial-gradient(ellipse 700px 500px at 50% 50%, black 30%, transparent 80%)',
-            WebkitMaskImage:
-              'radial-gradient(ellipse 700px 500px at 50% 50%, black 30%, transparent 80%)',
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
           }}
-        />
+        >
+          {/* North-east cluster */}
+          {[70, 130, 195, 270, 360, 460].map((r, i) => (
+            <ellipse
+              key={`ne${i}`}
+              cx={680}
+              cy={170}
+              rx={r}
+              ry={r * 0.58}
+              fill="none"
+              stroke="rgba(92,255,92,0.032)"
+              strokeWidth="1"
+              transform="rotate(-14 680 170)"
+            />
+          ))}
+          {/* South-west cluster */}
+          {[55, 100, 155, 215].map((r, i) => (
+            <ellipse
+              key={`sw${i}`}
+              cx={190}
+              cy={490}
+              rx={r}
+              ry={r * 0.72}
+              fill="none"
+              stroke="rgba(92,255,92,0.025)"
+              strokeWidth="1"
+              transform="rotate(8 190 490)"
+            />
+          ))}
+          {/* Graticule lines */}
+          {[120, 240, 360, 480].map((y, i) => (
+            <line
+              key={`h${i}`}
+              x1="0" y1={y} x2="900" y2={y}
+              stroke="rgba(92,255,92,0.018)"
+              strokeWidth="1"
+              strokeDasharray="3 14"
+            />
+          ))}
+          {[200, 450, 700].map((x, i) => (
+            <line
+              key={`v${i}`}
+              x1={x} y1="0" x2={x} y2="600"
+              stroke="rgba(92,255,92,0.012)"
+              strokeWidth="1"
+              strokeDasharray="2 18"
+            />
+          ))}
+        </svg>
 
+        {/* ── Main content ── */}
         <div
           style={{
             position: 'relative',
@@ -86,132 +157,141 @@ export default function NotFound() {
             textAlign: 'center',
           }}
         >
-          {/* UNC logotype */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '3.5rem',
-            }}
-          >
-            <Image
-              src="/images/logo.png"
-              alt="Universidad Nacional de Concepción"
-              width={52}
-              height={52}
-              priority
-              style={{ opacity: 0.88 }}
-            />
-            <span
-              style={{
-                fontSize: '0.625rem',
-                fontWeight: 700,
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: '#5CFF5C',
-              }}
-            >
-              Universidad Nacional de Concepción
-            </span>
-          </div>
 
-          {/* Radar + 404 */}
+          {/* Location pin */}
           <div
-            aria-label="Error 404"
+            aria-label="Ubicación no encontrada"
+            className="unc404-pin"
             style={{
               position: 'relative',
-              width: '210px',
-              height: '210px',
-              marginBottom: '2.75rem',
+              marginBottom: '2rem',
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
             }}
           >
-            <div className="unc-glow-bg" />
-            <div className="unc-ring" />
-            <div className="unc-ring" />
-            <div className="unc-ring" />
-
-            {/* Center crosshair lines */}
+            {/* Pulse ring behind the pin's base dot */}
             <div
               aria-hidden="true"
               style={{
                 position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                bottom: '8px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '10px',
+                height: '10px',
+                zIndex: 0,
               }}
             >
               <div
-                style={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '1px',
-                  background: 'linear-gradient(90deg, transparent, rgba(92,255,92,0.18), transparent)',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  width: '1px',
-                  height: '100%',
-                  background: 'linear-gradient(transparent, rgba(92,255,92,0.18), transparent)',
-                }}
+                className="unc404-pulse"
+                style={{ inset: '-8px', animationDelay: '0s' }}
               />
             </div>
 
-            {/* The 404 numeral */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+            {/* Pin SVG */}
+            <svg
+              viewBox="0 0 44 56"
+              fill="none"
+              width="44"
+              height="56"
+              aria-hidden="true"
+              style={{ position: 'relative', zIndex: 1 }}
             >
-              <span
-                style={{
-                  fontSize: '4.75rem',
-                  fontWeight: 900,
-                  lineHeight: 1,
-                  letterSpacing: '-0.05em',
-                  color: '#ffffff',
-                  fontVariantNumeric: 'tabular-nums',
-                  textShadow:
-                    '0 0 24px rgba(92,255,92,0.4), 0 0 60px rgba(92,255,92,0.12)',
-                  fontFamily:
-                    '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
-                }}
-              >
-                404
-              </span>
-            </div>
+              {/* Teardrop body */}
+              <path
+                d="M22 2C12.61 2 5 9.61 5 19c0 12.38 17 35 17 35s17-22.62 17-35C39 9.61 31.39 2 22 2z"
+                fill="rgba(92,255,92,0.1)"
+                stroke="#5CFF5C"
+                strokeWidth="1.4"
+                strokeLinejoin="round"
+              />
+              {/* Centre dot */}
+              <circle cx="22" cy="19" r="4.5" fill="#5CFF5C" />
+              {/* Crosshair ticks */}
+              <line x1="22" y1="12.5" x2="22" y2="15.5" stroke="#5CFF5C" strokeWidth="1" opacity="0.55" />
+              <line x1="22" y1="22.5" x2="22" y2="25.5" stroke="#5CFF5C" strokeWidth="1" opacity="0.55" />
+              <line x1="15.5" y1="19" x2="18.5" y2="19" stroke="#5CFF5C" strokeWidth="1" opacity="0.55" />
+              <line x1="25.5" y1="19" x2="28.5" y2="19" stroke="#5CFF5C" strokeWidth="1" opacity="0.55" />
+            </svg>
           </div>
 
-          {/* Heading + body */}
-          <h1
+          {/* Eyebrow */}
+          <span
+            className="unc404-up"
             style={{
-              fontSize: '1.375rem',
+              display: 'block',
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontSize: '0.6rem',
+              fontWeight: 500,
+              letterSpacing: '0.24em',
+              textTransform: 'uppercase',
+              color: '#5CFF5C',
+              marginBottom: '0.875rem',
+              animationDelay: '0.55s',
+            }}
+          >
+            destino no encontrado
+          </span>
+
+          {/* 404 numeral */}
+          <div
+            className="unc404-up"
+            style={{
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+              fontSize: 'clamp(5.5rem, 20vw, 9.5rem)',
+              fontWeight: 800,
+              lineHeight: 0.88,
+              letterSpacing: '-0.04em',
+              color: '#e8eaf0',
+              fontVariantNumeric: 'tabular-nums',
+              marginBottom: '1.5rem',
+              animationDelay: '0.62s',
+            }}
+          >
+            404
+          </div>
+
+          {/* Green rule */}
+          <div
+            className="unc404-up"
+            style={{
+              width: '36px',
+              height: '1px',
+              background: 'rgba(92,255,92,0.45)',
+              marginBottom: '1.375rem',
+              animationDelay: '0.68s',
+            }}
+          />
+
+          {/* Heading */}
+          <h1
+            className="unc404-up"
+            style={{
+              fontSize: '1.25rem',
               fontWeight: 700,
-              color: '#ffffff',
-              marginBottom: '0.625rem',
+              color: '#e8eaf0',
+              marginBottom: '0.6rem',
               textWrap: 'balance' as React.CSSProperties['textWrap'],
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+              animationDelay: '0.72s',
             }}
           >
             Página no encontrada
           </h1>
+
+          {/* Description */}
           <p
+            className="unc404-up"
             style={{
               maxWidth: '34ch',
               fontSize: '0.9375rem',
               lineHeight: 1.7,
-              color: 'rgba(255,255,255,0.44)',
-              marginBottom: '2.5rem',
+              color: 'rgba(232,234,240,0.44)',
+              marginBottom: '2.25rem',
               textWrap: 'balance' as React.CSSProperties['textWrap'],
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+              animationDelay: '0.76s',
             }}
           >
             La dirección que ingresaste no existe en el portal.
@@ -220,28 +300,30 @@ export default function NotFound() {
 
           {/* CTAs */}
           <div
+            className="unc404-up"
             style={{
               display: 'flex',
               gap: '0.625rem',
               flexWrap: 'wrap',
               justifyContent: 'center',
+              marginBottom: '3.5rem',
+              animationDelay: '0.8s',
             }}
           >
             <Link
               href="/"
-              className="unc-cta-primary"
+              className="unc404-cta-primary"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.375rem',
                 backgroundColor: '#5CFF5C',
-                color: '#020817',
+                color: '#060d1a',
                 padding: '0.5625rem 1.25rem',
                 borderRadius: '9999px',
                 fontSize: '0.875rem',
                 fontWeight: 700,
                 textDecoration: 'none',
-                transition: 'background-color 0.15s ease',
                 border: '1px solid transparent',
               }}
             >
@@ -259,34 +341,34 @@ export default function NotFound() {
 
             <Link
               href="/noticias"
-              className="unc-cta-ghost"
+              className="unc404-cta-ghost"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.375rem',
-                border: '1px solid rgba(255,255,255,0.14)',
-                color: 'rgba(255,255,255,0.6)',
+                border: '1px solid rgba(232,234,240,0.14)',
+                color: 'rgba(232,234,240,0.6)',
                 padding: '0.5625rem 1.25rem',
                 borderRadius: '9999px',
                 fontSize: '0.875rem',
                 fontWeight: 500,
                 textDecoration: 'none',
-                transition: 'border-color 0.15s ease, color 0.15s ease',
               }}
             >
               Ver noticias
             </Link>
           </div>
 
-          {/* Debug line */}
+          {/* Status footer */}
           <p
+            className="unc404-up"
             style={{
-              marginTop: '3.5rem',
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSize: '0.625rem',
-              color: 'rgba(255,255,255,0.16)',
+              fontSize: '0.6rem',
+              color: 'rgba(232,234,240,0.16)',
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
+              animationDelay: '0.85s',
             }}
           >
             ERR_ROUTE_NOT_FOUND · portal.unc.edu.py

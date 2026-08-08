@@ -87,7 +87,7 @@ export async function getNavigation(): Promise<Navegacion> {
     }
     return nav;
   } catch (error) {
-    console.error('[Navigation] Falling back to hardcoded navigation:', error);
+    console.warn('[Navigation] CMS unavailable, using hardcoded navigation.');
     return FALLBACK_NAVIGATION;
   }
 }
