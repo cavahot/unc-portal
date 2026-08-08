@@ -1,4 +1,5 @@
 import createNextIntlPlugin from 'next-intl/plugin'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
@@ -49,4 +50,29 @@ const nextConfig = {
   },
 }
 
-export default withNextIntl(nextConfig)
+const sentryConfig = {
+  // Build-time source-map upload — requires SENTRY_AUTH_TOKEN in CI/CD.
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Suppress CLI output locally; show it in CI.
+  silent: !process.env.CI,
+
+  // Route browser events through /api/monitoring to bypass ad-blockers.
+  tunnelRoute: '/api/monitoring',
+
+  // Keep source maps private — never expose them to the browser.
+  hideSourceMaps: true,
+
+  // Tree-shake the Sentry logger from production bundles.
+  disableLogger: true,
+
+  // Annotate React components in the bundle for better error context.
+  reactComponentAnnotation: { enabled: true },
+
+  // We don't use Vercel Cron Monitors.
+  automaticVercelMonitors: false,
+}
+
+export default withSentryConfig(withNextIntl(nextConfig), sentryConfig)

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 
@@ -11,8 +12,7 @@ interface ErrorPageProps {
 
 export default function Error({ error, reset }: ErrorPageProps) {
   useEffect(() => {
-    // Log to error reporting service when available
-    console.error('[Portal Error]', error)
+    Sentry.captureException(error)
   }, [error])
 
   return (

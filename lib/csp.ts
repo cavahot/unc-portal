@@ -49,6 +49,8 @@ export function buildCSP(nonce: string): string {
       `object-src 'none'`,
       `base-uri   'self'`,
       `form-action 'self'`,
+      // Sentry Session Replay uses an inline Web Worker (blob: URL)
+      `worker-src blob:`,
       // Google Maps embed on /contacto
       `frame-src  https://www.google.com`,
       `frame-ancestors 'none'`,
@@ -74,6 +76,8 @@ export function buildCSP(nonce: string): string {
     `object-src  'none'`,
     `base-uri    'self'`,
     `form-action 'self'`,
+    // Sentry Session Replay uses an inline Web Worker (blob: URL)
+    `worker-src  blob:`,
     // Google Maps embed on /contacto
     `frame-src   https://www.google.com`,
     `frame-ancestors 'none'`,
