@@ -49,6 +49,8 @@ export function buildCSP(nonce: string): string {
       `object-src 'none'`,
       `base-uri   'self'`,
       `form-action 'self'`,
+      // Google Maps embed on /contacto
+      `frame-src  https://www.google.com`,
       `frame-ancestors 'none'`,
     ]
       .join('; ')
@@ -68,6 +70,8 @@ export function buildCSP(nonce: string): string {
     `object-src  'none'`,
     `base-uri    'self'`,
     `form-action 'self'`,
+    // Google Maps embed on /contacto
+    `frame-src   https://www.google.com`,
     `frame-ancestors 'none'`,
     `upgrade-insecure-requests`,
   ]
