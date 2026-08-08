@@ -174,7 +174,7 @@ export default async function NoticiasPage({
         ) : (
           <>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {noticias.map((n) => (
+            {noticias.map((n, i) => (
               <Link
                 key={n.id}
                 href={`/noticias/${n.slug}`}
@@ -190,6 +190,7 @@ export default async function NoticiasPage({
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       placeholder="blur"
                       blurDataURL={(n.featuredImage as any)?.blurDataURL ?? UNC_BLUR}
+                      priority={i < 3}
                     />
                   </div>
                 ) : (

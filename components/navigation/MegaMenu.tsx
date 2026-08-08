@@ -702,7 +702,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
 
                 <div className="mb-5 grid grid-cols-2 gap-2">
                   <a
-                    href="https://aula.unc.edu.py"
+                    href="https://aula-virtual-posgrado-unc.edu.py/login/index.php"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={t('aulaVirtualAriaLabel')}

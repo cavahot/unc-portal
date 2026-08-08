@@ -7,6 +7,7 @@ import { getNewsBySlug, getNewsBySlugDraft } from '@/lib/cms/queries/news'
 import RichText from '@/components/RichText'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 import NewsGallery from '@/components/news/NewsGallery'
+import { baseOg } from '@/lib/seo/og'
 
 export async function generateMetadata({
   params,
@@ -21,6 +22,7 @@ export async function generateMetadata({
     title: `${noticia.title} — UNC`,
     description: noticia.summary,
     openGraph: {
+      ...baseOg(locale),
       title: noticia.title,
       description: noticia.summary,
       ...(noticia.featuredImage?.url || noticia.featuredImageUrl ? { images: [noticia.featuredImage?.url || noticia.featuredImageUrl] } : {}),
@@ -153,20 +155,29 @@ export default async function NoticiaDetailPage({
           </div>
         )}
 
-        {/* Gallery */}
-        {noticia.gallery && noticia.gallery.length > 0 && (
-          <NewsGallery
-            images={noticia.gallery
-              .filter((item) => item.image?.url)
-              .map((item) => ({
-                url: item.image.url!,
-                alt: item.image.alt ?? null,
-                caption: item.caption ?? null,
-                blurDataURL: (item.image as any).blurDataURL ?? null,
-              }))}
-            title={noticia.title}
-          />
-        )}
+        {/* Gallery — featured image + gallery images combined into coverflow */}
+        {(() => {
+          const featuredUrl = noticia.featuredImage?.url || noticia.featuredImageUrl
+          const featuredItem = featuredUrl
+            ? [{
+                url: featuredUrl,
+                alt: noticia.featuredImage?.alt ?? noticia.title,
+                caption: null,
+                blurDataURL: (noticia.featuredImage as any)?.blurDataURL ?? null,
+              }]
+            : []
+          const galleryItems = (noticia.gallery ?? [])
+            .filter((item) => item.image?.url)
+            .map((item) => ({
+              url: item.image.url!,
+              alt: item.image.alt ?? null,
+              caption: item.caption ?? null,
+              blurDataURL: (item.image as any).blurDataURL ?? null,
+            }))
+          const allImages = [...featuredItem, ...galleryItems]
+          if (allImages.length === 0) return null
+          return <NewsGallery images={allImages} title={noticia.title} />
+        })()}
 
         {/* Back link */}
         <div className="mt-16 border-t border-white/10 pt-8">

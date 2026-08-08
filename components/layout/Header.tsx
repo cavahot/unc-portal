@@ -117,7 +117,7 @@ export default function Header({ navigation }: HeaderProps) {
             </Link>
 
             <a
-              href="https://aula.unc.edu.py"
+              href="https://aula-virtual-posgrado-unc.edu.py/login/index.php"
               target="_blank"
               rel="noopener noreferrer"
               aria-label={t('aulaVirtualAriaLabel')}
