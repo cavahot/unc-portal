@@ -3,6 +3,7 @@ import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
 import { notifyApprovalStateChange } from '../utilities/notifications'
 import { revalidatePortalTag } from '../utilities/revalidation'
 import { PageBuilderBlocks } from '../blocks'
+import { approvalHistoryField } from '../fields/approvalHistory'
 import { canWriteEditorial, canDeleteEditorial } from '../access/roles'
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/
@@ -61,42 +62,7 @@ export const Paginas: CollectionConfig = {
         position: 'sidebar',
       },
     },
-    {
-      name: 'approvalHistory',
-      type: 'array',
-      fields: [
-        {
-          name: 'revisor',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'accion',
-          type: 'select',
-          options: [
-            { label: 'Enviado a revisión', value: 'sent_to_review' },
-            { label: 'Revisado', value: 'reviewed' },
-            { label: 'Aprobado', value: 'approved' },
-            { label: 'Rechazado', value: 'rejected' },
-          ],
-          required: true,
-        },
-        {
-          name: 'comentario',
-          type: 'textarea',
-          required: false,
-        },
-        {
-          name: 'fecha',
-          type: 'date',
-          required: true,
-          defaultValue: () => new Date().toISOString(),
-        },
-      ],
-      admin: {
-        description: 'Historial de aprobaciones y rechazos',
-      },
-    },
+    approvalHistoryField,
   ],
   timestamps: true,
   versions: {
