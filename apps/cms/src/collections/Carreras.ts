@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
 import { canWriteInstitutional } from '../access/roles'
+import { slugify } from '../utilities/slugify'
 
 export const Carreras: CollectionConfig = {
   slug: 'carreras',
@@ -109,14 +110,7 @@ export const Carreras: CollectionConfig = {
     beforeValidate: [
       ({ data }) => {
         if (data && !data.slug && data.nombre) {
-          data.slug = data.nombre
-            .toString()
-            .normalize('NFD')
-            .replace(/[̀-ͯ]/g, '')
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '')
+          data.slug = slugify(data.nombre)
         }
         return data
       },

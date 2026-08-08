@@ -4,6 +4,7 @@ import config from '../payload.config'
 import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
 import { notifyApprovalStateChange } from '../utilities/notifications'
 import { notifyN8N } from '../utilities/notifications'
+import { slugify } from '../utilities/slugify'
 import { revalidatePortalTag } from '../utilities/revalidation'
 import { canWriteEditorial, canDeleteEditorial } from '../access/roles'
 
@@ -274,14 +275,7 @@ export const Noticias: CollectionConfig = {
     beforeValidate: [
       ({ data }) => {
         if (data && !data.slug && data.title) {
-          data.slug = data.title
-            .toString()
-            .normalize('NFD')
-            .replace(/[̀-ͯ]/g, '')
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '')
+          data.slug = slugify(data.title)
         }
         return data
       },
