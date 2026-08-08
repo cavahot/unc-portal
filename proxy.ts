@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware'
 import { NextRequest, NextResponse } from 'next/server'
 import { routing } from './i18n/routing'
+import { buildCSP, generateNonce } from './lib/csp'
 
 const intlMiddleware = createMiddleware(routing)
 
@@ -38,6 +39,12 @@ if (typeof setInterval !== 'undefined') {
   }, 300_000)
 }
 
+/** Headers to propagate from the intl response to our own */
+const INTL_HEADER_PREFIXES = ['x-', 'link', 'vary', 'cache-control']
+function isIntlHeader(key: string): boolean {
+  return INTL_HEADER_PREFIXES.some((p) => key.toLowerCase().startsWith(p))
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -59,31 +66,76 @@ export function proxy(request: NextRequest) {
     })
   }
 
-  // API routes: apply CORS + rate-limit, skip locale processing
+  // ── Generate nonce for this request ────────────────────────────────────────
+  const nonce = generateNonce()
+  const csp   = buildCSP(nonce)
+  const isDev = process.env.NODE_ENV === 'development'
+
+  // Build modified request headers that server components will see (via x-nonce)
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-nonce', nonce)
+
+  // Rate-limit response headers (applied to every non-429 response)
+  function applyRateLimitHeaders(res: NextResponse): void {
+    res.headers.set('X-RateLimit-Limit', String(RATE_LIMIT))
+    res.headers.set('X-RateLimit-Remaining', String(rl.remaining))
+    res.headers.set('X-RateLimit-Reset', new Date(rl.reset).toISOString())
+  }
+
+  // ── API routes ──────────────────────────────────────────────────────────────
   if (pathname.startsWith('/api/')) {
-    const response = NextResponse.next()
     const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:3002'
+    const response = NextResponse.next({ request: { headers: requestHeaders } })
     response.headers.set('Access-Control-Allow-Origin', cmsUrl)
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
     response.headers.set('Access-Control-Allow-Credentials', 'true')
     response.headers.set('Access-Control-Max-Age', '86400')
-    response.headers.set('X-RateLimit-Limit', String(RATE_LIMIT))
-    response.headers.set('X-RateLimit-Remaining', String(rl.remaining))
-    response.headers.set('X-RateLimit-Reset', new Date(rl.reset).toISOString())
+    // In dev use report-only so we can catch API-route violations without blocking
+    if (isDev) {
+      response.headers.set('Content-Security-Policy-Report-Only', csp)
+    } else {
+      response.headers.set('Content-Security-Policy', csp)
+    }
+    applyRateLimitHeaders(response)
     return response
   }
 
-  // All other routes: locale middleware + rate-limit headers
-  const response = intlMiddleware(request)
-  response.headers.set('X-RateLimit-Limit', String(RATE_LIMIT))
-  response.headers.set('X-RateLimit-Remaining', String(rl.remaining))
-  response.headers.set('X-RateLimit-Reset', new Date(rl.reset).toISOString())
+  // ── Locale routes ───────────────────────────────────────────────────────────
+  // Step 1: let intl middleware decide routing (redirect / rewrite / next)
+  const intlResponse = intlMiddleware(request)
+
+  // Step 2: for redirects, CSP is irrelevant — just forward them
+  if (intlResponse.status >= 300 && intlResponse.status < 400) {
+    applyRateLimitHeaders(intlResponse)
+    return intlResponse
+  }
+
+  // Step 3: for next/rewrite — replace with a response that forwards x-nonce
+  // to server components, and carry over any intl-specific response headers.
+  const response = NextResponse.next({ request: { headers: requestHeaders } })
+
+  // Copy intl headers (locale cookie, middleware rewrites, vary, etc.)
+  intlResponse.headers.forEach((value, key) => {
+    if (isIntlHeader(key)) {
+      response.headers.set(key, value)
+    }
+  })
+
+  // Set CSP — report-only in dev so nothing breaks while we audit violations
+  if (isDev) {
+    response.headers.set('Content-Security-Policy-Report-Only', csp)
+  } else {
+    response.headers.set('Content-Security-Policy', csp)
+  }
+
+  applyRateLimitHeaders(response)
   return response
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon\\.ico|api/|images/|fonts/|icons/|assets/).*)',
+    // Exclude Next.js internals, static assets, API routes, and special metadata routes
+    '/((?!_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|api/|images/|fonts/|icons/|assets/).*)',
   ],
 }

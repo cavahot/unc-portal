@@ -1,3 +1,6 @@
+import type { Metadata } from 'next'
+import { headers } from 'next/headers'
+import { draftMode } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { Inter } from 'next/font/google'
@@ -5,10 +8,25 @@ import { routing } from '@/i18n/routing'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import AccessibilityPanel from '@/components/accessibility/AccessibilityPanel'
+import PreviewBanner from '@/components/preview/PreviewBanner'
 import { getNavigation, FALLBACK_NAVIGATION } from '@/lib/cms/queries/navigation'
 import { loadMessages } from '@/lib/i18n/server'
+import { baseOg } from '@/lib/seo/og'
 
 const inter = Inter({ subsets: ['latin'] })
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  return {
+    openGraph: {
+      ...baseOg(locale),
+    },
+  }
+}
 
 export default async function LocaleLayout({
   children,
@@ -23,6 +41,14 @@ export default async function LocaleLayout({
     notFound()
   }
 
+  // Read the nonce that the middleware (proxy.ts) injected into the request headers.
+  // Server Components see it via headers() because the middleware used
+  // NextResponse.next({ request: { headers: { 'x-nonce': nonce } } }).
+  const headersList = await headers()
+  const nonce = headersList.get('x-nonce') ?? ''
+
+  const { isEnabled: isDraft } = await draftMode()
+
   const [messages, navigation] = await Promise.all([
     loadMessages(locale),
     getNavigation().catch(() => FALLBACK_NAVIGATION),
@@ -31,7 +57,8 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body className={`${inter.className} bg-slate-950 text-white antialiased`} suppressHydrationWarning>
-<NextIntlClientProvider locale={locale} messages={messages} timeZone="America/Asuncion" now={new Date()}>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone="America/Asuncion" now={new Date()}>
+          {isDraft && <PreviewBanner />}
           <Header navigation={navigation} />
 
           <main id="main-content" className="min-h-screen">
