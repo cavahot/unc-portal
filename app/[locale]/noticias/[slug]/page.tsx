@@ -9,6 +9,7 @@ import { UNC_BLUR } from '@/lib/imagePlaceholder'
 import NewsGallery from '@/components/news/NewsGallery'
 import { baseOg } from '@/lib/seo/og'
 import { routing } from '@/i18n/routing'
+import { buildNewsArticleSchema, buildBreadcrumbSchema } from '@/lib/seo/jsonld'
 
 // ISR: revalidate every hour. On-demand slugs (published after build) are
 // generated at first request and then cached for `revalidate` seconds.
@@ -96,7 +97,26 @@ export default async function NoticiaDetailPage({
         : noticia.category)
     : null
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+  const newsArticleSchema = buildNewsArticleSchema({
+    title: noticia.title,
+    description: noticia.summary,
+    slug,
+    publishedAt: noticia.publishedAt,
+    author: noticia.author,
+    imageUrl: noticia.featuredImage?.url ?? noticia.featuredImageUrl ?? null,
+    locale,
+  })
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: 'Inicio', url: SITE_URL },
+    { name: 'Noticias', url: `${SITE_URL}/noticias` },
+    { name: noticia.title, url: `${SITE_URL}/noticias/${slug}` },
+  ])
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <div className="min-h-screen bg-slate-950">
       {isDraft && (
         <div className="fixed inset-x-0 top-0 z-[200] flex items-center justify-between bg-amber-500 px-4 py-2 text-white">
@@ -233,5 +253,6 @@ export default async function NoticiaDetailPage({
         </div>
       </div>
     </div>
+    </>
   )
 }

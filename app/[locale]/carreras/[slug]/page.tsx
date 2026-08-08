@@ -3,6 +3,7 @@ import { getT } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
 import { getCarreraBySlug } from '@/lib/cms/queries/carreras'
 import Reveal from '@/components/motion/Reveal'
+import { buildCourseSchema, buildBreadcrumbSchema } from '@/lib/seo/jsonld'
 
 export async function generateStaticParams() {
   return []
@@ -45,7 +46,25 @@ export default async function CarreraDetailPage({
     ? (modalidadColors[carrera.modalidad] ?? 'bg-white/5 text-white/50 border-white/10')
     : ''
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+  const courseSchema = buildCourseSchema({
+    name: carrera.nombre,
+    description: carrera.descripcion ?? null,
+    slug,
+    provider: carrera.facultad?.nombre ?? null,
+    duration: (carrera as any).duracion ?? null,
+    mode: carrera.modalidad ?? null,
+  })
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: 'Inicio', url: SITE_URL },
+    { name: 'Carreras', url: `${SITE_URL}/carreras` },
+    { name: carrera.nombre, url: `${SITE_URL}/carreras/${slug}` },
+  ])
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <div className="min-h-screen bg-slate-950 pt-28 pb-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
 
@@ -165,5 +184,6 @@ export default async function CarreraDetailPage({
 
       </div>
     </div>
+    </>
   )
 }
