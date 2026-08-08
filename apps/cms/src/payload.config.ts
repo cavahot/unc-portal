@@ -47,6 +47,9 @@ const smtpPassword = process.env.SMTP_PASSWORD
 export default buildConfig({
   admin: {
     user: Users.slug,
+    routes: {
+      admin: '/accesoSeguro',
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

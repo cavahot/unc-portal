@@ -91,7 +91,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
       <p><strong>Estado:</strong> Borrador</p>
       <hr>
       <p>La noticia está lista para ser enviada a revisión.</p>
-      <p><a href="http://localhost:3002/admin/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
+      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
     `,
   }),
 
@@ -105,7 +105,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
       <hr>
       <p>Hola ${data.revisorEmail},</p>
       <p>Una noticia ha sido enviada para tu revisión. Por favor, revísala y aprueba o rechaza según sea necesario.</p>
-      <p><a href="http://localhost:3002/admin/collections/noticias/${data.noticiaId}">Revisar noticia →</a></p>
+      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Revisar noticia →</a></p>
     `,
   }),
 
@@ -117,7 +117,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
       <p><strong>Estado:</strong> Aprobada</p>
       <hr>
       <p>Tu noticia ha sido aprobada y está lista para publicación.</p>
-      <p><a href="http://localhost:3002/admin/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
+      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
     `,
   }),
 
@@ -133,7 +133,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
         ${data.comentario || 'Sin comentarios'}
       </blockquote>
       <p>Por favor, revisa y vuelve a enviar cuando esté lista.</p>
-      <p><a href="http://localhost:3002/admin/collections/noticias/${data.noticiaId}">Editar noticia →</a></p>
+      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Editar noticia →</a></p>
     `,
   }),
 
