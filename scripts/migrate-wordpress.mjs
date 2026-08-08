@@ -401,13 +401,20 @@ async function migratePosts(xml, token) {
 
   let ok = 0, skipped = 0, failed = 0
   const errors = []
+  const seenSlugs = new Set() // track slugs within this run to detect in-run duplicates
 
   for (const [i, post] of posts.entries()) {
     const wpCategories = postCategories[post.ID] || []
     const title = (post.post_title || 'Sin título').slice(0, 150)
-    const slug = post.post_name
+    let slug = post.post_name
       ? post.post_name.slice(0, 100)
       : slugify(title) + '-' + post.ID
+
+    // Resolve slug collision within this migration run: append post ID as suffix
+    if (seenSlugs.has(slug)) {
+      slug = slug.slice(0, 94) + '-' + post.ID
+    }
+    seenSlugs.add(slug)
 
     const summaryRaw = post.post_excerpt?.trim()
     const summary = summaryRaw && summaryRaw.length >= 20
@@ -448,6 +455,23 @@ async function migratePosts(xml, token) {
       ok++
       if (i % 10 === 9) await new Promise(r => setTimeout(r, 200))
     } catch (err) {
+      // Retry once with ID suffix when the DB reports a slug uniqueness violation
+      const isSlugConflict = err.message.includes('único') || err.message.includes('unique') || err.message.includes('slug')
+      if (isSlugConflict && !payload.slug.endsWith('-' + post.ID)) {
+        const retrySlug = payload.slug.slice(0, 94) + '-' + post.ID
+        try {
+          await cmsPost(token, 'noticias', { ...payload, slug: retrySlug })
+          console.log(`  ✅ [${i + 1}/${posts.length}] ${title.slice(0, 60)} (slug: ${retrySlug})`)
+          ok++
+          continue
+        } catch (retryErr) {
+          const retryMsg = retryErr.message.slice(0, 120)
+          console.log(`  ❌ [${i + 1}/${posts.length}] FAIL (retry): ${title.slice(0, 50)} — ${retryMsg}`)
+          errors.push({ collection: 'noticias', title, slug: retrySlug, error: retryMsg })
+          failed++
+          continue
+        }
+      }
       const msg = err.message.slice(0, 120)
       console.log(`  ❌ [${i + 1}/${posts.length}] FAIL: ${title.slice(0, 50)} — ${msg}`)
       errors.push({ collection: 'noticias', title, slug, error: msg })
