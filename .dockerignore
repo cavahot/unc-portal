@@ -1,0 +1,43 @@
+# ── Build artifacts ───────────────────────────────────────────
+.next/
+apps/cms/.next/
+out/
+
+# ── Dependencies (rebuilt inside Docker) ─────────────────────
+node_modules/
+apps/*/node_modules/
+packages/*/node_modules/
+
+# ── Dev / local environment ───────────────────────────────────
+.env
+.env.*
+!.env.example
+infrastructure/docker/.env
+infrastructure/docker/.env.prod
+
+# ── Git / IDE / OS ────────────────────────────────────────────
+.git/
+.gitignore
+.claude/
+.atl/
+.vscode/
+.idea/
+*.log
+*.DS_Store
+Thumbs.db
+
+# ── Tests & coverage ──────────────────────────────────────────
+coverage/
+__tests__/
+*.test.ts
+*.spec.ts
+playwright-report/
+
+# ── CI / docs ─────────────────────────────────────────────────
+.github/
+*.md
+!README.md
+
+# ── Backups / temp ────────────────────────────────────────────
+backups/
+scratch/

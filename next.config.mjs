@@ -50,6 +50,10 @@ const nextConfig = {
   },
 }
 
+// Required for Docker production image (see Dockerfile at repo root).
+// The Sentry plugin is fully compatible with standalone output.
+nextConfig.output = 'standalone'
+
 const sentryConfig = {
   // Build-time source-map upload — requires SENTRY_AUTH_TOKEN in CI/CD.
   org: process.env.SENTRY_ORG,

@@ -1,0 +1,183 @@
+# ============================================================
+# Portal UNC — Production Docker Compose
+# ============================================================
+# Usage:
+#   docker compose -f infrastructure/docker/compose.prod.yaml \
+#     --env-file infrastructure/docker/.env.prod up -d
+#
+# Prerequisites:
+#   1. Copy .env.prod.example → .env.prod and fill secrets
+#   2. Place SSL certificates in infrastructure/nginx/certs/
+#      (Let's Encrypt: run certbot standalone first, then map volumes)
+#   3. Build images:
+#      docker compose -f infrastructure/docker/compose.prod.yaml build
+# ============================================================
+
+name: unc-prod
+
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: unc-postgres-prod
+    restart: unless-stopped
+    networks: [internal]
+
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout:  5s
+      retries:  10
+      start_period: 20s
+
+    stop_grace_period: 30s
+
+  # ── MinIO S3 ─────────────────────────────────────────────────────────────────
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: unc-minio-prod
+    restart: unless-stopped
+    networks: [internal]
+
+    command:
+      - server
+      - /data
+      - --address
+      - ":9000"
+      - --console-address
+      - ":9001"
+
+    environment:
+      MINIO_ROOT_USER:     ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+
+    volumes:
+      - minio_data:/data
+
+    healthcheck:
+      test:         ["CMD", "mc", "ready", "local"]
+      interval:     10s
+      timeout:      5s
+      retries:      10
+      start_period: 15s
+
+  # ── Payload CMS ──────────────────────────────────────────────────────────────
+  cms:
+    # In production: CI builds and pushes this image to ghcr.io.
+    # The server just does `docker compose pull` — no source code needed.
+    image: ghcr.io/cavahot/unc-portal-cms:latest
+    build:
+      context:    ../../apps/cms
+      dockerfile: Dockerfile
+    container_name: unc-cms-prod
+    restart: unless-stopped
+    networks: [internal]
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+    environment:
+      NODE_ENV:               production
+      PAYLOAD_SECRET:         ${PAYLOAD_SECRET}
+      DATABASE_URI:           postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      NEXT_PUBLIC_SERVER_URL: ${CMS_PUBLIC_URL}
+
+      # S3 / MinIO
+      S3_BUCKET:       ${S3_BUCKET}
+      S3_ACCESS_KEY:   ${MINIO_ROOT_USER}
+      S3_SECRET_KEY:   ${MINIO_ROOT_PASSWORD}
+      S3_ENDPOINT:     http://minio:9000
+      S3_REGION:       us-east-1
+
+      # Email — configure your real SMTP host for production
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_FROM: ${SMTP_FROM}
+
+      PREVIEW_SECRET: ${PREVIEW_SECRET}
+
+    healthcheck:
+      test:         ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval:     15s
+      timeout:      5s
+      retries:      6
+      start_period: 30s
+
+  # ── Next.js Portal ───────────────────────────────────────────────────────────
+  portal:
+    # In production: CI builds and pushes this image to ghcr.io.
+    image: ghcr.io/cavahot/unc-portal:latest
+    build:
+      context:    ../../
+      dockerfile: Dockerfile
+    container_name: unc-portal-prod
+    restart: unless-stopped
+    networks: [internal]
+
+    depends_on:
+      cms:
+        condition: service_healthy
+
+    environment:
+      NODE_ENV:               production
+      NEXT_PUBLIC_CMS_URL:    ${CMS_PUBLIC_URL}
+      NEXT_PUBLIC_SITE_URL:   ${PORTAL_PUBLIC_URL}
+      REVALIDATION_SECRET:    ${REVALIDATION_SECRET}
+      MEDIA_HOSTNAME:         ${MEDIA_HOSTNAME}
+
+      # Sentry — only DSN needed at runtime; ORG/PROJECT/AUTH_TOKEN are build-time
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+
+    healthcheck:
+      test:         ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval:     15s
+      timeout:      5s
+      retries:      6
+      start_period: 30s
+
+  # ── Nginx reverse proxy ──────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: unc-nginx-prod
+    restart: unless-stopped
+    networks: [internal]
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    depends_on:
+      portal:
+        condition: service_healthy
+      cms:
+        condition: service_healthy
+
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/certs:/etc/nginx/certs:ro
+      - nginx_logs:/var/log/nginx
+
+volumes:
+  postgres_data:
+    name: unc_postgres_data_prod
+  minio_data:
+    name: unc_minio_data_prod
+  nginx_logs:
+    name: unc_nginx_logs_prod
+
+networks:
+  internal:
+    name: unc-internal
+    driver: bridge
