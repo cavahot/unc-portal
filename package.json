@@ -31,7 +31,8 @@
     "seed:odontologia": "node scripts/seed-odontologia.mjs",
     "seed:medicina": "node scripts/seed-medicina.mjs",
     "seed:agrarias": "node scripts/seed-agrarias.mjs",
-    "seed:faqs": "node scripts/seed-faqs.mjs"
+    "seed:faqs": "node scripts/seed-faqs.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@unc/cms-types": "*",
@@ -52,6 +53,8 @@
     "concurrently": "^10.0.4",
     "eslint": "^8",
     "eslint-config-next": "^15.4.11",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
     "postcss": "^8.5.26",
     "tailwindcss": "^3.4.17",
     "typescript": "^5",
@@ -76,5 +79,10 @@
     "sharp@0.35.3": true,
     "unrs-resolver@1.12.2": true,
     "esbuild@0.25.12": true
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs}": [
+      "eslint --fix --max-warnings=0"
+    ]
   }
 }
