@@ -1,0 +1,55 @@
+name: Backup
+
+on:
+  # Run daily at 02:00 Paraguay time (UTC-4 → 06:00 UTC)
+  schedule:
+    - cron: '0 6 * * *'
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual backup'
+        required: false
+        default: 'manual'
+
+jobs:
+  database:
+    name: PostgreSQL dump
+    runs-on: ubuntu-latest
+    # Only run on the main repository (not forks)
+    if: github.repository_owner == 'cavahot'
+
+    steps:
+      - name: Install PostgreSQL client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Dump database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          DUMP_FILE="unc_portal_${TIMESTAMP}.dump"
+          pg_dump "$DATABASE_URL" \
+            --format=custom \
+            --compress=9 \
+            --no-owner \
+            --no-acl \
+            --file="$DUMP_FILE"
+          echo "DUMP_FILE=$DUMP_FILE" >> "$GITHUB_ENV"
+          SIZE=$(du -sh "$DUMP_FILE" | cut -f1)
+          echo "✅ Dump completed: $DUMP_FILE ($SIZE)"
+
+      - name: Upload dump as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: ${{ env.DUMP_FILE }}
+          # Keep backups for 30 days (GitHub free tier limit for private repos)
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Daily backup FAILED at $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "Check the Actions log and verify DATABASE_URL secret is set correctly."

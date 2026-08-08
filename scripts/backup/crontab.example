@@ -1,0 +1,23 @@
+# UNC Portal — Crontab template for production server
+#
+# Installation:
+#   1. Copy this file to your server
+#   2. Edit the PROJECT_DIR variable below
+#   3. Run: crontab -e  and paste the entries
+#   4. Verify: crontab -l
+#
+# Logs are written to /var/log/unc-backup.log
+# Backups are stored in $PROJECT_DIR/backups/
+
+PROJECT_DIR=/opt/unc-portal
+
+# ─── Daily full backup at 02:00 Paraguay time (server must be in UTC-4) ──────
+0 2 * * * cd $PROJECT_DIR && bash scripts/backup/backup.sh >> /var/log/unc-backup.log 2>&1
+
+# ─── Weekly cleanup: keep only last 14 backups ───────────────────────────────
+0 3 * * 0 find $PROJECT_DIR/backups -maxdepth 1 -type d -mtime +14 -exec rm -rf {} + >> /var/log/unc-backup.log 2>&1
+
+# ─── Alert if last backup is older than 26 hours (backup missed) ─────────────
+# Requires: mailutils or similar for mail command
+0 4 * * * find $PROJECT_DIR/backups -maxdepth 2 -name "metadata.txt" -mtime -1 | grep -q . || \
+  echo "⚠ UNC backup missed at $(date)" | mail -s "ALERT: UNC backup missing" admin@unc.edu.py
