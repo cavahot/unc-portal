@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { headers } from 'next/headers'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -22,9 +23,15 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Read the nonce injected by proxy.ts middleware so Next.js can propagate
+  // it to all its RSC inline scripts (self.__next_f.push) automatically.
+  // This is required for strict-dynamic CSP to work in production.
+  const headersList = await headers()
+  const nonce = headersList.get('x-nonce') ?? ''
+
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" nonce={nonce} suppressHydrationWarning>
       <body
         className={`${inter.className} bg-slate-950 text-white antialiased`}
         suppressHydrationWarning

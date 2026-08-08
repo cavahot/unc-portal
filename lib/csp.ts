@@ -58,10 +58,14 @@ export function buildCSP(nonce: string): string {
       .trim()
   }
 
-  // Production: strict nonce-based policy
+  // Production: same-origin + inline policy.
+  // strict-dynamic is intentionally omitted: it would ignore 'self', blocking
+  // Next.js App Router external script chunks (_next/static/...). The RSC
+  // streaming payload (self.__next_f.push) requires 'unsafe-inline'.
+  // The nonce is kept for any explicitly nonce'd scripts we add in the future.
   return [
     "default-src 'none'",
-    `script-src  'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `script-src  'self' 'unsafe-inline' 'nonce-${nonce}'`,
     `style-src   'self' 'unsafe-inline'`,   // Tailwind / inline style props
     `img-src     'self' data: blob: ${IMG_HOSTS}`,
     `font-src    'self' data:`,
