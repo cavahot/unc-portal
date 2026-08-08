@@ -56,6 +56,7 @@ export const FAQs: CollectionConfig = {
       label: 'Orden',
       type: 'number',
       defaultValue: 99,
+      index: true,
       admin: {
         description: 'Número menor = aparece primero dentro de la categoría.',
         position: 'sidebar',
@@ -66,6 +67,7 @@ export const FAQs: CollectionConfig = {
       label: '¿Visible en el portal?',
       type: 'checkbox',
       defaultValue: true,
+      index: true,
       admin: {
         position: 'sidebar',
       },

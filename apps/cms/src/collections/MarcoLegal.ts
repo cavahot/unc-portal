@@ -79,6 +79,7 @@ export const MarcoLegal: CollectionConfig = {
       type: 'number',
       label: 'Orden de visualización',
       defaultValue: 99,
+      index: true,
       admin: {
         description: 'Menor número = aparece primero dentro de su categoría',
       },
@@ -88,6 +89,7 @@ export const MarcoLegal: CollectionConfig = {
       type: 'checkbox',
       label: 'Publicado',
       defaultValue: true,
+      index: true,
       admin: {
         description: 'Solo los documentos publicados se muestran en el portal',
       },

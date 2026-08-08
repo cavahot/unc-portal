@@ -91,6 +91,7 @@ export const Autoridades: CollectionConfig = {
       type: 'number',
       label: 'Orden',
       defaultValue: 99,
+      index: true,
       admin: { description: 'Número menor = aparece primero' },
     },
     {
@@ -98,6 +99,7 @@ export const Autoridades: CollectionConfig = {
       type: 'checkbox',
       label: 'Activo',
       defaultValue: true,
+      index: true,
     },
   ],
 }

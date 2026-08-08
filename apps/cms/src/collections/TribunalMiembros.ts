@@ -59,6 +59,7 @@ const TribunalMiembros: CollectionConfig = {
       type:         'number',
       label:        'Orden de aparición',
       defaultValue: 0,
+      index:        true,
       admin: {
         description: 'Número menor aparece primero',
       },
@@ -68,6 +69,7 @@ const TribunalMiembros: CollectionConfig = {
       type:         'checkbox',
       label:        'Activo',
       defaultValue: true,
+      index:        true,
     },
   ],
 }
