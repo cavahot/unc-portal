@@ -3,11 +3,27 @@ import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getT, getF } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
-import { getNewsBySlug, getNewsBySlugDraft } from '@/lib/cms/queries/news'
+import { getNewsBySlug, getNewsBySlugDraft, getNewsSlugs } from '@/lib/cms/queries/news'
 import RichText from '@/components/RichText'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 import NewsGallery from '@/components/news/NewsGallery'
 import { baseOg } from '@/lib/seo/og'
+import { routing } from '@/i18n/routing'
+
+// ISR: revalidate every hour. On-demand slugs (published after build) are
+// generated at first request and then cached for `revalidate` seconds.
+export const revalidate = 3600
+
+// Allow slugs not returned by generateStaticParams to be rendered on-demand.
+export const dynamicParams = true
+
+export async function generateStaticParams() {
+  const slugs = await getNewsSlugs(200)
+  // Generate one entry per locale × slug so Next.js pre-renders all combinations.
+  return routing.locales.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug })),
+  )
+}
 
 export async function generateMetadata({
   params,

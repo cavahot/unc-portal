@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (tag) {
-      revalidateTag(tag);
+      revalidateTag(tag, {});
       console.log(`[Revalidate] Success for tag: ${tag}`);
     }
 

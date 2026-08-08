@@ -142,6 +142,29 @@ export async function getNewsBySlugDraft(slug: string): Promise<NewsItem | null>
   return res.docs[0] || null
 }
 
+/**
+ * Lightweight slug-only fetch used by generateStaticParams.
+ * Uses `select[slug]=true` and `depth=0` to minimize payload size.
+ */
+export async function getNewsSlugs(limit = 200): Promise<string[]> {
+  try {
+    const params = new URLSearchParams()
+    params.append('where[_status][equals]', 'published')
+    params.append('sort', '-publishedAt')
+    params.append('limit', String(limit))
+    params.append('depth', '0')
+    params.append('select[slug]', 'true')
+
+    const res = await cmsFetch<PayloadResponse<{ slug: string }>>(
+      `/noticias?${params.toString()}`,
+      { tags: ['noticias-slugs'] },
+    )
+    return res.docs.map((d) => d.slug).filter(Boolean)
+  } catch {
+    return DEMO_NEWS.map((n) => n.slug)
+  }
+}
+
 export async function getNewsByQuery(
   q: string,
   options: { limit?: number } = {}
