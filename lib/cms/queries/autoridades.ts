@@ -17,12 +17,19 @@ export interface Authority {
   order: number
 }
 
+interface FacultadRef {
+  id: number
+  nombre: string
+  slug: string
+}
+
 interface PayloadAuthority {
   id: string | number
   name: string
   role: string
   type: string
-  faculty?: string
+  /** Populated when depth >= 1; may be a bare ID when depth=0. */
+  faculty?: FacultadRef | number | null
   photo?: { url?: string; alt?: string; blurDataURL?: string } | null
   cvFile?: { url?: string } | null
   cvUrl?: string
@@ -46,7 +53,10 @@ export async function getAuthorities(): Promise<Authority[]> {
     name: doc.name,
     role: doc.role,
     type: doc.type as AuthorityType,
-    faculty: doc.faculty ?? null,
+    faculty:
+      typeof doc.faculty === 'object' && doc.faculty !== null
+        ? doc.faculty.nombre
+        : null,
     photoUrl: doc.photo?.url ?? null,
     photoAlt: doc.photo?.alt ?? null,
     photoBlur: doc.photo?.blurDataURL ?? null,

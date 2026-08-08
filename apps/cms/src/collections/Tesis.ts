@@ -46,16 +46,9 @@ export const Tesis: CollectionConfig = {
     {
       name: 'facultad',
       label: 'Facultad',
-      type: 'select',
+      type: 'relationship',
+      relationTo: 'facultades',
       required: true,
-      options: [
-        { label: 'Facultad de Odontología', value: 'odontologia' },
-        { label: 'Facultad de Medicina', value: 'medicina' },
-        { label: 'Facultad de Ciencias Agrarias', value: 'ciencias-agrarias' },
-        { label: 'Facultad de Ciencias Exactas y Tecnológicas', value: 'ciencias-exactas' },
-        { label: 'Facultad de Humanidades y Ciencias de la Educación', value: 'humanidades' },
-        { label: 'Facultad de Ciencias Económicas y Administrativas', value: 'ciencias-economicas' },
-      ],
     },
     {
       name: 'urlPdf',

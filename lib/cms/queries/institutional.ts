@@ -41,14 +41,30 @@ export interface Tesis {
   autor: string
   anio: number
   resumen?: string | null
-  facultad:
-    | 'odontologia'
-    | 'medicina'
-    | 'ciencias-agrarias'
-    | 'ciencias-exactas'
-    | 'humanidades'
-    | 'ciencias-economicas'
+  /** Nombre de la facultad, extraído de la relación con `depth=1`. */
+  facultad: string
   urlPdf: string
+}
+
+/** Raw shape returned by the Payload API before population is extracted. */
+interface TesisRaw {
+  id: number
+  titulo: string
+  autor: string
+  anio: number
+  resumen?: string | null
+  facultad?: { nombre: string; slug: string } | number | null
+  urlPdf: string
+}
+
+function normalizeTesis(raw: TesisRaw): Tesis {
+  return {
+    ...raw,
+    facultad:
+      typeof raw.facultad === 'object' && raw.facultad !== null
+        ? raw.facultad.nombre
+        : String(raw.facultad ?? ''),
+  }
 }
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
@@ -119,9 +135,11 @@ export async function getTesisByQuery(
     params.append('sort', '-anio')
     params.append('limit', String(limit))
 
-    return await cmsFetch<PayloadResponse<Tesis>>(`/tesis?${params.toString()}`, {
-      tags: ['tesis'],
-    })
+    const raw = await cmsFetch<PayloadResponse<TesisRaw>>(
+      `/tesis?${params.toString()}&depth=1`,
+      { tags: ['tesis'] },
+    )
+    return { ...raw, docs: raw.docs.map(normalizeTesis) }
   } catch {
     const lower = q.toLowerCase()
     const docs = DEMO_TESIS.filter(

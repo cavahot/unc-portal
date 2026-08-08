@@ -46,11 +46,12 @@ export const Autoridades: CollectionConfig = {
     },
     {
       name: 'faculty',
-      type: 'text',
+      type: 'relationship',
       label: 'Facultad',
+      relationTo: 'facultades',
       admin: {
         condition: (data) => data.type === 'decano',
-        description: 'Nombre de la facultad que dirige',
+        description: 'Facultad que dirige este/a Decano/a',
       },
     },
     {

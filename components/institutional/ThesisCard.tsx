@@ -1,16 +1,8 @@
-const FACULTY_LABELS: Record<string, string> = {
-  odontologia: 'Odontología',
-  medicina: 'Medicina',
-  'ciencias-agrarias': 'Ciencias Agrarias',
-  'ciencias-exactas': 'Ciencias Exactas y Tecnológicas',
-  humanidades: 'Humanidades y Cs. de la Educación',
-  'ciencias-economicas': 'Ciencias Económicas y Administrativas',
-}
-
 interface ThesisCardProps {
   titulo: string
   autor: string
   anio: number
+  /** Nombre completo de la facultad, proveniente de la relación con la colección Facultades. */
   facultad: string
   urlPdf: string
   resumen?: string | null
@@ -24,13 +16,11 @@ export default function ThesisCard({
   urlPdf,
   resumen,
 }: ThesisCardProps) {
-  const facultadLabel = FACULTY_LABELS[facultad] ?? facultad
-
   return (
     <div className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-all duration-200 hover:border-[#5CFF5C]/30 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_-12px_rgba(0,200,0,0.18)]">
       {/* Faculty badge */}
       <span className="mb-3 inline-block w-fit rounded-full border border-[#5CFF5C]/25 bg-[#5CFF5C]/8 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-wide text-[#5CFF5C]">
-        {facultadLabel}
+        {facultad}
       </span>
 
       <h3 className="mb-1 font-semibold leading-snug text-white group-hover:text-[#8AFF8A] transition-colors">

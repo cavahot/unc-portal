@@ -81,11 +81,12 @@ export const Noticias: CollectionConfig = {
     {
       name: 'faculty',
       label: 'Facultad',
-      type: 'text',
+      type: 'relationship',
+      relationTo: 'facultades',
       required: false,
       admin: {
-        placeholder: 'Facultad responsable (opcional)',
         position: 'sidebar',
+        description: 'Facultad responsable de la noticia (opcional)',
       },
     },
     {
