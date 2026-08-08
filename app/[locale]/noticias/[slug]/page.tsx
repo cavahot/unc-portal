@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { draftMode } from 'next/headers'
+import { cookies, draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getT, getF } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
@@ -59,9 +59,33 @@ export default async function NoticiaDetailPage({
 
   const { isEnabled: isDraft } = await draftMode()
 
-  const noticia = isDraft
-    ? await getNewsBySlugDraft(slug).catch(() => null)
-    : await getNewsBySlug(slug).catch(() => null)
+  // When draft mode is active, verify the viewer still holds a valid Payload
+  // CMS session. The draftMode cookie alone persists after logout — this check
+  // ensures an unauthenticated viewer falls through to published content rather
+  // than seeing unreleased drafts.
+  let noticia = null
+  if (isDraft) {
+    const cookieStore = await cookies()
+    const payloadToken = cookieStore.get('payload-token')?.value
+    if (payloadToken) {
+      try {
+        const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3002'
+        const me = await fetch(`${cmsUrl}/api/users/me`, {
+          headers: { Authorization: `JWT ${payloadToken}` },
+          cache: 'no-store',
+        })
+        if (me.ok) {
+          noticia = await getNewsBySlugDraft(slug).catch(() => null)
+        }
+      } catch {
+        // CMS unreachable — fall through to published below
+      }
+    }
+  }
+  // Fall back to published content when not in draft, or when CMS auth check fails
+  if (!noticia) {
+    noticia = await getNewsBySlug(slug).catch(() => null)
+  }
 
   if (!noticia) notFound()
 
