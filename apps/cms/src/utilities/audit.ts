@@ -1,4 +1,4 @@
-import type { PayloadRequest } from 'payload'
+import type { PayloadRequest, Payload } from 'payload'
 import { getPayload } from 'payload'
 import config from '../payload.config'
 
@@ -27,12 +27,12 @@ export interface AuditLogData {
   ip?: string
   resultado: AuditResult
   mensaje?: string
-  cambiosRelevantes?: Record<string, any>
+  cambiosRelevantes?: Record<string, unknown>
 }
 
-export async function logAudit(data: AuditLogData): Promise<void> {
+export async function logAudit(data: AuditLogData, payloadInstance?: Payload): Promise<void> {
   try {
-    const payload = await getPayload({ config })
+    const payload = payloadInstance ?? await getPayload({ config })
 
     await payload.create({
       collection: 'auditoria',
@@ -64,11 +64,14 @@ export function getClientIP(req: PayloadRequest | undefined): string {
   return ip || 'unknown'
 }
 
-export function extractChanges(before: any, after: any): Record<string, any> {
-  const changes: Record<string, any> = {}
+export function extractChanges(
+  before: Record<string, unknown>,
+  after: Record<string, unknown>
+): Record<string, { antes: unknown; despues: unknown }> {
+  const changes: Record<string, { antes: unknown; despues: unknown }> = {}
 
   for (const key in after) {
-    if (before[key] !== after[key]) {
+    if (JSON.stringify(before[key]) !== JSON.stringify(after[key])) {
       changes[key] = {
         antes: before[key],
         despues: after[key],

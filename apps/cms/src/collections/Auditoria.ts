@@ -14,7 +14,7 @@ export const Auditoria: CollectionConfig = {
   },
   access: {
     read: async ({ req }) => !!req.user,
-    create: async () => true,
+    create: ({ req }) => Boolean(req.user),
     update: async ({ req }) => !!req.user && req.user?.role === 'superadmin',
     delete: async ({ req }) => !!req.user && req.user?.role === 'superadmin',
   },

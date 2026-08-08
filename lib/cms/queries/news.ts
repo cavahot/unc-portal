@@ -8,22 +8,22 @@ function lexical(text: string) {
 export const DEMO_NEWS: NewsItem[] = [
   {
     id: 1,
-    slug: 'rector-unc-participo-jornadas-investigadores-innovadores',
-    title: 'Rector de la UNC participó en las XX Jornadas de Jóvenes Investigadores e Innovadores',
-    summary: 'El Prof. Dr. Clarito Rojas Marín, Rector de la Universidad Nacional de Concepción UNC, participó en la apertura de las XX Jornadas de Jóvenes Investigadores e Innovadores de la UNA 2026.',
-    content: lexical('El Prof. Dr. Clarito Rojas Marín, Rector de la Universidad Nacional de Concepción UNC, participó en la apertura de las XX Jornadas de Jóvenes Investigadores e Innovadores de la UNA 2026. El evento reunió a investigadores de las principales universidades del país para compartir avances científicos y tecnológicos. La UNC presentó proyectos destacados en biotecnología, energías renovables y tecnologías de la información.'),
+    slug: 'unc-avanza-en-programas-de-investigacion',
+    title: 'La UNC avanza en sus programas de investigación e innovación',
+    summary: 'La Universidad Nacional de Concepción participó en jornadas nacionales de investigación e innovación, presentando proyectos destacados en biotecnología, energías renovables y tecnologías de la información.',
+    content: lexical('La Universidad Nacional de Concepción participó en jornadas nacionales de investigación e innovación. El evento reunió a investigadores de las principales universidades del país para compartir avances científicos y tecnológicos. La UNC presentó proyectos destacados en biotecnología, energías renovables y tecnologías de la información.'),
     publishedAt: '2026-07-24T00:00:00.000Z',
     category: 'investigacion',
     featured: true,
     author: 'Comunicación Institucional',
-    tags: [{ tag: 'investigación' }, { tag: 'innovación' }, { tag: 'rector' }],
+    tags: [{ tag: 'investigación' }, { tag: 'innovación' }],
   },
   {
     id: 2,
     slug: 'unc-mecanismo-piloto-evaluacion-resultados-medicina',
     title: 'UNC participó en la presentación del Mecanismo Piloto para la Evaluación de Resultados en Medicina',
-    summary: 'El Rector de la Universidad Nacional de Concepción UNC, Prof. Dr. Clarito Rojas Marín, participó en la presentación del Mecanismo Piloto para la Evaluación de Resultados en Medicina.',
-    content: lexical('El Rector de la Universidad Nacional de Concepción UNC, Prof. Dr. Clarito Rojas Marín, participó en la presentación del Mecanismo Piloto para la Evaluación de Resultados en Medicina. Este mecanismo busca establecer estándares de calidad en la formación médica a nivel nacional, garantizando que los egresados cuenten con las competencias necesarias para el ejercicio profesional.'),
+    summary: 'La Universidad Nacional de Concepción participó en la presentación del Mecanismo Piloto para la Evaluación de Resultados en Medicina, iniciativa que busca establecer estándares nacionales de calidad en la formación médica.',
+    content: lexical('La Universidad Nacional de Concepción participó en la presentación del Mecanismo Piloto para la Evaluación de Resultados en Medicina. Este mecanismo busca establecer estándares de calidad en la formación médica a nivel nacional, garantizando que los egresados cuenten con las competencias necesarias para el ejercicio profesional.'),
     publishedAt: '2026-07-24T00:00:00.000Z',
     category: 'academica',
     featured: true,
@@ -83,11 +83,13 @@ export async function getNews(options: {
   page?: number
   limit?: number
   featured?: boolean
+  depth?: number
 } = {}): Promise<PayloadResponse<NewsItem>> {
   try {
     const params = new URLSearchParams()
     if (options.page) params.append('page', options.page.toString())
     if (options.limit) params.append('limit', (options.limit || 10).toString())
+    if (options.depth !== undefined) params.append('depth', options.depth.toString())
     if (options.featured !== undefined) {
       params.append('where[featured][equals]', options.featured.toString())
     }

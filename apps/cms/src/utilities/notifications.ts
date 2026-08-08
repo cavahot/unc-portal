@@ -1,5 +1,9 @@
 import { getPayload } from 'payload'
 import config from '../payload.config'
+import type { Payload } from 'payload'
+
+const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3002'
+const PORTAL_URL = process.env.PORTAL_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export type NotificationType =
   | 'noticia_creada'
@@ -21,9 +25,9 @@ export interface NotificationData {
   comentario?: string
 }
 
-async function getEditorialEmails(): Promise<string[]> {
+async function getEditorialEmails(payloadInstance?: Payload): Promise<string[]> {
   try {
-    const payload = await getPayload({ config })
+    const payload = payloadInstance ?? await getPayload({ config })
     const usuarios = await payload.find({
       collection: 'users',
       where: {
@@ -43,8 +47,13 @@ async function getEditorialEmails(): Promise<string[]> {
 
 export async function notifyN8N(data: NotificationData): Promise<void> {
   try {
-    const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/8df0f003-3588-4cc5-8801-eb2ec116f209'
-    const payload = {
+    const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL
+    if (!n8nWebhookUrl) {
+      console.warn('[N8N] N8N_WEBHOOK_URL not configured — skipping webhook notification')
+      return
+    }
+
+    const webhookPayload = {
       noticiaId: data.noticiaId,
       noticiaTitulo: data.noticiaTitulo,
       noticiaSlug: data.noticiaSlug,
@@ -54,21 +63,19 @@ export async function notifyN8N(data: NotificationData): Promise<void> {
       type: data.type,
     }
 
-    console.log(`Sending to N8N: ${n8nWebhookUrl}`, payload)
+    console.log(`[N8N] Enviando notificación: ${data.type} / noticia ${data.noticiaId}`)
 
     const response = await fetch(n8nWebhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ...payload,
+        ...webhookPayload,
         revisorTelefono: data.revisorTelefono,
         revisorTelegramId: data.revisorTelegramId,
       }),
     })
 
     console.log(`N8N response: ${response.status} ${response.statusText}`)
-    const responseBody = await response.text()
-    console.log(`N8N body: ${responseBody}`)
 
     if (!response.ok) {
       console.error(`N8N error: ${response.status} ${response.statusText}`)
@@ -91,7 +98,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
       <p><strong>Estado:</strong> Borrador</p>
       <hr>
       <p>La noticia está lista para ser enviada a revisión.</p>
-      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
+      <p><a href="${CMS_URL}/accesoSeguro/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
     `,
   }),
 
@@ -105,7 +112,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
       <hr>
       <p>Hola ${data.revisorEmail},</p>
       <p>Una noticia ha sido enviada para tu revisión. Por favor, revísala y aprueba o rechaza según sea necesario.</p>
-      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Revisar noticia →</a></p>
+      <p><a href="${CMS_URL}/accesoSeguro/collections/noticias/${data.noticiaId}">Revisar noticia →</a></p>
     `,
   }),
 
@@ -117,7 +124,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
       <p><strong>Estado:</strong> Aprobada</p>
       <hr>
       <p>Tu noticia ha sido aprobada y está lista para publicación.</p>
-      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
+      <p><a href="${CMS_URL}/accesoSeguro/collections/noticias/${data.noticiaId}">Ver en CMS →</a></p>
     `,
   }),
 
@@ -133,7 +140,7 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
         ${data.comentario || 'Sin comentarios'}
       </blockquote>
       <p>Por favor, revisa y vuelve a enviar cuando esté lista.</p>
-      <p><a href="http://localhost:3002/accesoSeguro/collections/noticias/${data.noticiaId}">Editar noticia →</a></p>
+      <p><a href="${CMS_URL}/accesoSeguro/collections/noticias/${data.noticiaId}">Editar noticia →</a></p>
     `,
   }),
 
@@ -145,14 +152,14 @@ const emailTemplates: Record<NotificationType, (data: NotificationData) => { sub
       <p><strong>Estado:</strong> Publicada</p>
       <hr>
       <p>¡Felicidades! Tu noticia ha sido publicada en el portal.</p>
-      <p><a href="http://localhost:3000/noticias/${data.noticiaSlug}">Ver en portal →</a></p>
+      <p><a href="${PORTAL_URL}/noticias/${data.noticiaSlug}">Ver en portal →</a></p>
     `,
   }),
 }
 
-export async function sendNotification(data: NotificationData): Promise<void> {
+export async function sendNotification(data: NotificationData, payloadInstance?: Payload): Promise<void> {
   try {
-    const payload = await getPayload({ config })
+    const payload = payloadInstance ?? await getPayload({ config })
     const template = emailTemplates[data.type]
 
     if (!template) {
@@ -167,11 +174,11 @@ export async function sendNotification(data: NotificationData): Promise<void> {
     switch (data.type) {
       case 'noticia_creada':
         // Notificar a editores
-        recipients = await getEditorialEmails()
+        recipients = await getEditorialEmails(payload)
         break
       case 'envio_revision':
         // Notificar al revisor específico
-        recipients = data.revisorEmail ? [data.revisorEmail] : await getEditorialEmails()
+        recipients = data.revisorEmail ? [data.revisorEmail] : await getEditorialEmails(payload)
         break
       case 'noticia_aprobada':
       case 'noticia_rechazada':
@@ -189,9 +196,9 @@ export async function sendNotification(data: NotificationData): Promise<void> {
           subject,
           html,
         })
-        console.log(`✓ Email sent to ${email}`)
+        console.log(`[Mail] Email enviado para ${data.type}`)
       } catch (error) {
-        console.error(`Error sending email to ${email}:`, error)
+        console.error(`Error sending email for ${data.type}:`, error)
       }
     }
   } catch (error) {

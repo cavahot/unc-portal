@@ -27,7 +27,7 @@ const nextConfig = {
     ]
   },
   images: {
-    formats: ['image/webp'],
+    formats: ['image/avif', 'image/webp'],
     qualities: [75, 92],
     remotePatterns: [
       // MinIO local (dev)

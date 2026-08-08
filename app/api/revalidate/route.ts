@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag, revalidatePath } from 'next/cache';
 
@@ -12,7 +13,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (authHeader !== `Bearer ${secret}`) {
+  const expected = `Bearer ${secret}`
+  if (authHeader === null || !timingSafeEqual(Buffer.from(authHeader), Buffer.from(expected))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (tag) {
-      revalidateTag(tag, { expire: 0 });
+      revalidateTag(tag);
       console.log(`[Revalidate] Success for tag: ${tag}`);
     }
 

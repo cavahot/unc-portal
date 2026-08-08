@@ -22,7 +22,7 @@ const Convenios: CollectionConfig = {
     afterChange: [
       async () => {
         try {
-          const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
+          const baseUrl = process.env.PORTAL_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
           const secret  = process.env.REVALIDATION_SECRET ?? ''
           await fetch(`${baseUrl}/api/revalidate`, {
             method:  'POST',

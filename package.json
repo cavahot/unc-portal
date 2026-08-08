@@ -70,7 +70,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=24.18.0 <25"
+    "node": ">=20.9.0"
   },
   "allowScripts": {
     "sharp@0.35.3": true,

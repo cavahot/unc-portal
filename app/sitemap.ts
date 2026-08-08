@@ -3,6 +3,8 @@ import { getNews } from '@/lib/cms/queries/news'
 import { getCarreras } from '@/lib/cms/queries/carreras'
 import { getFacultades } from '@/lib/cms/queries/facultades'
 
+export const revalidate = 3600
+
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
 
 const LOCALES = ['es', 'en', 'pt-BR', 'gn'] as const
@@ -11,15 +13,18 @@ const LOCALES = ['es', 'en', 'pt-BR', 'gn'] as const
  * Build hreflang alternates for a given path.
  * The default locale (es) uses no prefix: /path
  * Other locales use /{locale}/path
+ * x-default points to the canonical (es) URL.
  */
 function localeAlternates(path: string): Record<string, string> {
   const base = path === '' ? '' : path
-  return Object.fromEntries(
-    LOCALES.map((locale) => [
+  const entries: [string, string][] = [
+    ['x-default', `${BASE_URL}${base || '/'}`],
+    ...LOCALES.map((locale): [string, string] => [
       locale,
       locale === 'es' ? `${BASE_URL}${base || '/'}` : `${BASE_URL}/${locale}${base || ''}`,
     ]),
-  )
+  ]
+  return Object.fromEntries(entries)
 }
 
 const STATIC_ROUTES = [
@@ -52,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   const [newsResult, carreras, facultades] = await Promise.all([
-    getNews({ limit: 1000 }).catch(() => ({ docs: [] as Awaited<ReturnType<typeof getNews>>['docs'] })),
+    getNews({ limit: 500, depth: 0 }).catch(() => ({ docs: [] as Awaited<ReturnType<typeof getNews>>['docs'] })),
     getCarreras().catch(() => [] as Awaited<ReturnType<typeof getCarreras>>),
     getFacultades().catch(() => [] as Awaited<ReturnType<typeof getFacultades>>),
   ])
