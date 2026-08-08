@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { canWriteInstitutional } from '../access/roles'
 
 export const Facultades: CollectionConfig = {
   slug: 'facultades',
@@ -12,10 +13,10 @@ export const Facultades: CollectionConfig = {
     defaultColumns: ['nombre', 'decano', 'email', 'activa'],
   },
   access: {
-    read: async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    read: () => true,
+    create: canWriteInstitutional,
+    update: canWriteInstitutional,
+    delete: canWriteInstitutional,
   },
   fields: [
     {

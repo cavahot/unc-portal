@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { canWriteInstitutional } from '../access/roles'
 
 const TribunalMiembros: CollectionConfig = {
   slug: 'tribunal-miembros',
@@ -13,9 +14,9 @@ const TribunalMiembros: CollectionConfig = {
   },
   access: {
     read:   () => true,
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user,
+    create: canWriteInstitutional,
+    update: canWriteInstitutional,
+    delete: canWriteInstitutional,
   },
   hooks: {
     afterChange: [

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { canWriteInstitutional } from '../access/roles'
 
 const CATEGORIES = [
   { label: 'Su estructura orgánica',                                                                                             value: 'item-1' },
@@ -34,9 +35,9 @@ export const Ley5282: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user,
+    create: canWriteInstitutional,
+    update: canWriteInstitutional,
+    delete: canWriteInstitutional,
   },
   fields: [
     {

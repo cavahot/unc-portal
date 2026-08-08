@@ -122,3 +122,32 @@ export const isSameUser = (
 ): boolean =>
   normalizeID(authenticatedUserID) !== '' &&
   normalizeID(authenticatedUserID) === normalizeID(targetUserID)
+
+// Editorial collections (Noticias, Paginas)
+export const canWriteEditorial: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin', 'publisher', 'editor', 'correspondent'])
+
+export const canDeleteEditorial: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin', 'publisher'])
+
+// Institutional collections (Facultades, Carreras, Autoridades, etc.)
+export const canWriteInstitutional: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin'])
+
+// Media collection
+export const canWriteMedia: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin', 'publisher', 'editor', 'correspondent', 'media-manager'])
+
+export const canDeleteMedia: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin', 'media-manager'])
+
+// FAQs
+export const canWriteFAQs: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin', 'publisher', 'editor'])
+
+export const canDeleteFAQs: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin'])
+
+// Globals
+export const canUpdateGlobal: Access = ({ req }) =>
+  hasRole(req.user, ['superadmin', 'web-admin'])

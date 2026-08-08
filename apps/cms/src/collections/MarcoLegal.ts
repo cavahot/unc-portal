@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { canWriteInstitutional } from '../access/roles'
 
 const CATEGORIES = [
   { label: 'Ley de Creación',         value: 'ley-creacion' },
@@ -27,9 +28,9 @@ export const MarcoLegal: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user,
+    create: canWriteInstitutional,
+    update: canWriteInstitutional,
+    delete: canWriteInstitutional,
   },
   fields: [
     {

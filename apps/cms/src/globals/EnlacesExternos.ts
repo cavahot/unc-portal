@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { canUpdateGlobal } from '../access/roles'
 
 export const EnlacesExternos: GlobalConfig = {
   slug: 'enlaces-externos',
@@ -8,8 +9,8 @@ export const EnlacesExternos: GlobalConfig = {
     description: 'Enlaces externos institucionales y contenido de información pública',
   },
   access: {
-    read: async () => true,
-    update: async ({ req }) => !!req.user,
+    read: () => true,
+    update: canUpdateGlobal,
   },
   fields: [
     {

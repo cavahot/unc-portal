@@ -1,5 +1,6 @@
 import type { Field, GlobalConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { canUpdateGlobal } from '../access/roles'
 
 function linkFields(depth: 0 | 1): Field[] {
   const fields: Field[] = [
@@ -62,8 +63,8 @@ export const Navegacion: GlobalConfig = {
     description: 'Estructura de navegación principal del portal (hasta 2 niveles)',
   },
   access: {
-    read: async () => true,
-    update: async ({ req }) => !!req.user,
+    read: () => true,
+    update: canUpdateGlobal,
   },
   fields: [
     {

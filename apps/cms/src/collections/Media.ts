@@ -1,10 +1,14 @@
 import type { CollectionConfig } from 'payload'
 import sharp from 'sharp'
+import { canWriteMedia, canDeleteMedia } from '../access/roles'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
     read: () => true,
+    create: canWriteMedia,
+    update: canWriteMedia,
+    delete: canDeleteMedia,
   },
   fields: [
     {

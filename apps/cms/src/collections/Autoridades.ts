@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { canWriteInstitutional } from '../access/roles'
 
 const AUTHORITY_TYPES = [
   { label: 'Rector/a', value: 'rector' },
@@ -18,9 +19,9 @@ export const Autoridades: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user,
+    create: canWriteInstitutional,
+    update: canWriteInstitutional,
+    delete: canWriteInstitutional,
   },
   fields: [
     {

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { canWriteFAQs, canDeleteFAQs } from '../access/roles'
 
 export const FAQs: CollectionConfig = {
   slug: 'faqs',
@@ -10,9 +11,9 @@ export const FAQs: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user,
+    create: canWriteFAQs,
+    update: canWriteFAQs,
+    delete: canDeleteFAQs,
   },
   fields: [
     {

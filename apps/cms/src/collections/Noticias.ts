@@ -5,6 +5,7 @@ import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
 import { notifyApprovalStateChange } from '../utilities/notifications'
 import { notifyN8N } from '../utilities/notifications'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { canWriteEditorial, canDeleteEditorial } from '../access/roles'
 
 export const Noticias: CollectionConfig = {
   slug: 'noticias',
@@ -13,10 +14,10 @@ export const Noticias: CollectionConfig = {
     defaultColumns: ['title', 'featured', '_status', 'category', 'publishedAt'],
   },
   access: {
-    read: async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    read: () => true,
+    create: canWriteEditorial,
+    update: canWriteEditorial,
+    delete: canDeleteEditorial,
   },
   fields: [
     // ── Sidebar fields (always visible) ───────────────────────────────────────

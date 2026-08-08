@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { canUpdateGlobal } from '../access/roles'
 
 export const Estadisticas: GlobalConfig = {
   slug: 'estadisticas',
@@ -7,8 +8,8 @@ export const Estadisticas: GlobalConfig = {
     description: 'Estadísticas institucionales de la Universidad Nacional de Concepción',
   },
   access: {
-    read: async () => true,
-    update: async ({ req }) => !!req.user,
+    read: () => true,
+    update: canUpdateGlobal,
   },
   fields: [
     {

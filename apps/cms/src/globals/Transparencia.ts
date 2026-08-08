@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { canUpdateGlobal } from '../access/roles'
 
 export const Transparencia: GlobalConfig = {
   slug: 'transparencia',
@@ -7,8 +8,8 @@ export const Transparencia: GlobalConfig = {
     description: 'Documentos de transparencia institucional (Ley 5189 y Ley 5282)',
   },
   access: {
-    read: async () => true,
-    update: async ({ req }) => !!req.user,
+    read: () => true,
+    update: canUpdateGlobal,
   },
   fields: [
     {

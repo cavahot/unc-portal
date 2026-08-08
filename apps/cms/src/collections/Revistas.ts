@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
+import { canWriteInstitutional } from '../access/roles'
 
 export const Revistas: CollectionConfig = {
   slug: 'revistas',
@@ -8,10 +9,10 @@ export const Revistas: CollectionConfig = {
     defaultColumns: ['nombre', 'anioInicio', 'activa'],
   },
   access: {
-    read: async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    read: () => true,
+    create: canWriteInstitutional,
+    update: canWriteInstitutional,
+    delete: canWriteInstitutional,
   },
   fields: [
     {

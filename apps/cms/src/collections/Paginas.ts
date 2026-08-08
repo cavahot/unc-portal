@@ -3,6 +3,7 @@ import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
 import { notifyApprovalStateChange } from '../utilities/notifications'
 import { revalidatePortalTag } from '../utilities/revalidation'
 import { PageBuilderBlocks } from '../blocks'
+import { canWriteEditorial, canDeleteEditorial } from '../access/roles'
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/
 
@@ -13,10 +14,10 @@ export const Paginas: CollectionConfig = {
     defaultColumns: ['title', '_status', 'slug', 'approvalStatus'],
   },
   access: {
-    read: async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    read: () => true,
+    create: canWriteEditorial,
+    update: canWriteEditorial,
+    delete: canDeleteEditorial,
   },
   fields: [
     {
