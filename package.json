@@ -32,6 +32,7 @@
     "seed:medicina": "node scripts/seed-medicina.mjs",
     "seed:agrarias": "node scripts/seed-agrarias.mjs",
     "seed:faqs": "node scripts/seed-faqs.mjs",
+    "migrate:tesis-faculty": "node scripts/migrate-tesis-faculty/2-restore.mjs",
     "prepare": "husky"
   },
   "dependencies": {
