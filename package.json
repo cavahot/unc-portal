@@ -35,6 +35,9 @@
     "migrate:tesis-faculty": "node scripts/migrate-tesis-faculty/2-restore.mjs",
     "setup:seed": "bash scripts/setup/create-seed.sh",
     "setup:db": "bash scripts/setup/restore-db.sh",
+    "setup:db:prod": "bash scripts/setup/restore-db-prod.sh",
+    "setup:minio": "bash scripts/setup/init-minio.sh",
+    "setup:certs": "bash scripts/setup/rename-certs.sh",
     "prepare": "husky"
   },
   "dependencies": {
