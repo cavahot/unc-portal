@@ -43,8 +43,8 @@ jobs:
 
           - name:       cms
             image:      ghcr.io/${{ github.repository_owner }}/unc-portal-cms
-            context:    ./apps/cms
-            dockerfile: ./apps/cms/Dockerfile
+            context:    .
+            dockerfile: apps/cms/Dockerfile
 
     steps:
       - name: Checkout

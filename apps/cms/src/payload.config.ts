@@ -159,7 +159,10 @@ export default buildConfig({
       max: 20,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 5_000,
-      ssl: process.env.NODE_ENV === 'production'
+      // Enable SSL only when explicitly configured (e.g. external managed DB).
+      // Within Docker Compose the Postgres container is on the same internal
+      // network and has no TLS certs — forcing SSL there causes connection failures.
+      ssl: process.env.POSTGRES_SSL === 'true'
         ? { rejectUnauthorized: true }
         : false,
     },

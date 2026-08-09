@@ -19,6 +19,11 @@ const nextConfig = {
   // Required by apps/cms/Dockerfile for the production Docker image.
   output: 'standalone',
 
+  // When building from the monorepo root (as the Dockerfile does), Next.js
+  // must trace files relative to the repo root so that server.js lands at the
+  // root of .next/standalone/ instead of being nested at apps/cms/server.js.
+  outputFileTracingRoot: monorepoRoot,
+
   turbopack: {
     root: monorepoRoot,
   },
