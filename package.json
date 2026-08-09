@@ -33,6 +33,8 @@
     "seed:agrarias": "node scripts/seed-agrarias.mjs",
     "seed:faqs": "node scripts/seed-faqs.mjs",
     "migrate:tesis-faculty": "node scripts/migrate-tesis-faculty/2-restore.mjs",
+    "setup:seed": "bash scripts/setup/create-seed.sh",
+    "setup:db": "bash scripts/setup/restore-db.sh",
     "prepare": "husky"
   },
   "dependencies": {
