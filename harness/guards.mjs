@@ -463,7 +463,7 @@ export function guardSecretRequired(payloadConfig) {
 /**
  * Detecta contraseñas por defecto en scripts de seed: una línea con `password` seguida de
  * `?? '<literal>'` o `|| '<literal>'`. Amenaza: credencial pública conocida en instalaciones sembradas.
- * Límite: heurística por línea sobre apps/cms/scripts; no detecta literales armados por partes ni
+ * Límite: heurística por línea sobre apps/cms/scripts y scripts/*.mjs; ignora el fallback vacío ('') por no ser una credencial; no detecta literales armados por partes ni
  * defaults en otros directorios. Los findings son archivo:línea, nunca el literal.
  */
 export function guardSeedPasswords(files) {
@@ -473,7 +473,7 @@ export function guardSeedPasswords(files) {
   for (const [file, content] of Object.entries(files)) {
     ;(content ?? '').split('\n').forEach((line, i) => {
       if (/^\s*(\*|\/\/|\/\*)/.test(line)) return
-      if (/password/i.test(line) && /(\?\?|\|\|)\s*['"`]/.test(line)) {
+      if (/password/i.test(line) && /(\?\?|\|\|)\s*['"`][^'"`]/.test(line)) {
         findings.push(`${file}:${i + 1} (password con valor por defecto literal)`)
       }
     })
@@ -547,7 +547,11 @@ export function collectInputs(root = ROOT) {
     ...['proxy.ts', 'next.config.mjs', 'sentry.client.config.ts', 'sentry.edge.config.ts', 'sentry.server.config.ts'].filter((f) => existsSync(path.join(root, f))),
   ]
   const cmsEnvFiles = walk(root, 'apps/cms/src', isRuntime)
-  const seedFiles = walk(root, 'apps/cms/scripts', (f) => /\.(ts|mjs|js)$/.test(f))
+  // SEC-08: además de apps/cms/scripts/**, los .mjs de la raíz (scripts/*.mjs) hacían login con contraseña por defecto.
+  const seedFiles = [
+    ...walk(root, 'apps/cms/scripts', (f) => /\.(ts|mjs|js)$/.test(f)),
+    ...walk(root, 'scripts', (f) => /^scripts\/[^/]+\.mjs$/.test(f)),
+  ]
 
   return {
     trackedFiles,

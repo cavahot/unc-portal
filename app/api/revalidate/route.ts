@@ -107,10 +107,10 @@ export async function POST(request: NextRequest) {
       now: Date.now(),
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown revalidation error' },
-      { status: 500 }
-    );
+    // M4: el cuerpo del 500 es fijo; el detalle (rutas, nombres de caché) queda solo en el log del servidor.
+    // Amenaza: divulgación de información interna al cliente. Límite: el log no incluye el Bearer ni el cuerpo.
+    console.error('[Revalidate] Error interno:', error instanceof Error ? error.message : 'error desconocido');
+    return NextResponse.json({ error: 'Revalidation failed' }, { status: 500 });
   }
 }
 

@@ -84,6 +84,32 @@ describe('POST /api/revalidate — comparación segura (DEP-16/C)', () => {
   })
 })
 
+// M4: el 500 no debe filtrar el mensaje interno (rutas, SQL, nombres de caché) al cliente. Amenaza: divulgación
+// de información por errores de revalidatePath/revalidateTag. Límite: cubre solo el catch final de esta ruta.
+describe('POST /api/revalidate — error interno sin detalle (M4)', () => {
+  type Mod = { POST: (r: NextRequest) => Promise<Response> }
+  it('revalidateTag lanza -> 500 con mensaje genérico y detalle solo en el log del servidor', async () => {
+    const SECRET_DETAIL = 'detalle-interno-ruta-C:/srv/cache-xyz'
+    revalidateTag.mockImplementationOnce(() => { throw new Error(SECRET_DETAIL) })
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const { POST } = await load<Mod>('@/app/api/revalidate/route')
+    const res = await POST(req('/api/revalidate', {
+      method: 'POST',
+      headers: { ...IP, authorization: `Bearer ${STRONG_REVAL}` },
+      body: JSON.stringify({ tag: 'noticias' }),
+    }))
+    expect(res.status).toBe(500)
+    const text = await res.text()
+    expect(text).not.toContain(SECRET_DETAIL)
+    expect(text).not.toContain(STRONG_REVAL)
+    // El detalle sí queda en el servidor, sin imprimir el Bearer.
+    const logged = log.mock.calls.flat().map(String).join(' ')
+    expect(logged).toContain(SECRET_DETAIL)
+    expect(logged).not.toContain(STRONG_REVAL)
+    log.mockRestore()
+  })
+})
+
 describe('GET /api/preview — token firmado, sin secreto crudo (DEP-16/B,C,D)', () => {
   type Mod = { GET: (r: NextRequest) => Promise<Response> }
   const get = async (query: string) => {

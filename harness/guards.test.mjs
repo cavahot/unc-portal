@@ -342,6 +342,16 @@ test('guard-seed-passwords: password con ?? o || y literal es rojo; el helper es
   })
   assert.equal(good.passed, true)
   assert.equal(guardSeedPasswords(null).passed, false)
+  // SEC-08: script de la raíz con `process.env.CMS_PASSWORD || 'literal'` marcado; limpio y fallback vacío no.
+  const root = guardSeedPasswords({
+    'scripts/x.mjs': "const CMS_PASSWORD = process.env.CMS_PASSWORD || 'literal-de-prueba'",
+  })
+  assert.equal(root.passed, false)
+  assert.ok(root.findings[0].startsWith('scripts/x.mjs:1'))
+  assert.equal(guardSeedPasswords({
+    'scripts/y.mjs': 'const CMS_PASSWORD = requireCmsPassword()',
+    'scripts/z.mjs': "const CMS_PASSWORD = process.env.CMS_PASSWORD || ''",
+  }).passed, true)
 })
 
 test('el plan expone los 9 guards y runGuards devuelve un resultado por guard', () => {

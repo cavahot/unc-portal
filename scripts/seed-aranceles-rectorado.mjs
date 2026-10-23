@@ -4,9 +4,13 @@
  * Idempotente: busca por concepto antes de crear.
  */
 
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
+
 const CMS_URL  = process.env.CMS_URL  || 'http://localhost:3002'
 const EMAIL    = process.env.SEED_EMAIL    || 'admin@unc.edu.py'
-const PASSWORD = process.env.SEED_PASSWORD || 'Admin1234!'
+// SEC-08: la contraseña es obligatoria (CMS_PASSWORD, mínimo 12 caracteres); falla antes de cualquier red si falta o es débil.
+// SEC-08: antes se leía SEED_PASSWORD; ahora se usa CMS_PASSWORD como en el resto de scripts de la raíz.
+const PASSWORD = requireCmsPassword()
 
 async function login() {
   const res = await fetch(`${CMS_URL}/api/users/login`, {
