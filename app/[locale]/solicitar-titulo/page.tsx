@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import { getT } from '@/lib/i18n/server'
 import { getEnlacesExternos } from '@/lib/cms/queries/institutional'
 import ExternalCTA from '@/components/institutional/ExternalCTA'
@@ -55,7 +57,7 @@ export default async function SolicitarTituloPage({
           <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('ctaLabel')}</p>
           <h2 className="mb-4 text-2xl font-bold text-white">{t('ctaHeading')}</h2>
           <p className="mb-6 text-sm text-white/40">{t('ctaNote')}</p>
-          <ExternalCTA href={formUrl} label={t('ctaButton')} />
+          <ExternalCTA href={safeHref(formUrl)} label={t('ctaButton')} />
         </div>
 
         {/* Process steps */}

@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Reveal from '@/components/motion/Reveal'
@@ -117,7 +119,7 @@ function CategorySection({
 
                 {/* Drive download button */}
                 <a
-                  href={doc.driveUrl}
+                  href={safeHref(doc.driveUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#D7E0DB] bg-[#F4F7F5] px-3 py-1.5 text-xs font-bold text-[#004700] transition-colors hover:border-[#008000]/30 hover:bg-[#E6FFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"

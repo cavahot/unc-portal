@@ -4,11 +4,48 @@
  *
  * Usage: call the builder, then render the result with:
  *   <script type="application/ld+json"
- *     dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+ *     dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }} />
  */
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
 const SITE_NAME = 'Universidad Nacional de Concepción'
+
+// ---------------------------------------------------------------------------
+// Serialización segura (DEP-05)
+// ---------------------------------------------------------------------------
+
+/** Secuencias \uXXXX para los caracteres que el helper neutraliza. */
+const JSONLD_ESCAPES: Record<string, string> = {
+  '<': '\\u003c',
+  '>': '\\u003e',
+  '&': '\\u0026',
+  '\u2028': '\\u2028',
+  '\u2029': '\\u2029',
+}
+
+/**
+ * Serializa un esquema JSON-LD para incrustarlo en un <script type="application/ld+json">.
+ * Amenaza que evita: XSS almacenado; JSON.stringify no escapa `<`, así que un título del
+ * CMS con `</script><script>…` cerraría el bloque e inyectaría HTML (también neutraliza
+ * `<!--` y `]]>`, y U+2028/2029 que rompen literales en parsers antiguos).
+ * Equivalencia: los caracteres reemplazados solo aparecen dentro de cadenas JSON, por lo que
+ * JSON.parse(salida) es igual a JSON.parse(JSON.stringify(valor)).
+ * Valores no serializables (nunca lanza, para no tumbar el render por datos de SEO):
+ * undefined/función/símbolo en la raíz -> "null"; BigInt -> cadena decimal;
+ * referencia circular u otro fallo -> "null" (oculta el error: los datos del CMS son JSON plano).
+ * Límite: solo protege el contexto <script type="application/ld+json">; NO sirve para
+ * atributos HTML ni como sanitizador general. No sustituye la CSP (SEC-10/DEP-16). Ref: DEP-05.
+ */
+export function safeJsonLd(value: unknown): string {
+  let json: string | undefined
+  try {
+    json = JSON.stringify(value, (_key, v) => (typeof v === 'bigint' ? v.toString() : v))
+  } catch {
+    return 'null'
+  }
+  if (typeof json !== 'string') return 'null'
+  return json.replace(/[<>&\u2028\u2029]/g, (c) => JSONLD_ESCAPES[c])
+}
 
 // ---------------------------------------------------------------------------
 // Organization / EducationalOrganization

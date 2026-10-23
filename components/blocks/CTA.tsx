@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import Link from 'next/link';
 
 interface CTABlockProps {
@@ -23,7 +25,7 @@ export default function CTABlock({ heading, text, buttonLabel, buttonUrl, style 
 
       {text && <p className="mt-3 text-[var(--unc-text-secondary)]">{text}</p>}
 
-      <Link href={buttonUrl} className={`pill-button ${buttonClass} mt-6 inline-flex px-6 py-3`}>
+      <Link href={safeHref(buttonUrl)} className={`pill-button ${buttonClass} mt-6 inline-flex px-6 py-3`}>
         {buttonLabel}
       </Link>
     </section>

@@ -1,5 +1,7 @@
 'use client'
 
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import { useState, useRef, useId } from 'react'
 import type { FAQItem, FAQCategory } from '@/lib/cms/queries/faqs'
 import { FAQ_CATEGORIES } from '@/lib/cms/queries/faqs'
@@ -17,7 +19,7 @@ function RichAnswer({ content }: { content: FAQItem['answer'] }) {
               if (c.bold) return <strong key={c.text} className="font-semibold text-[#09231D]">{c.text}</strong>
               if (c.italic) return <em key={c.text}>{c.text}</em>
               if (c.type === 'link') return (
-                <a key={c.text} href={c.url ?? '#'} className="font-medium text-[#008000] underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">
+                <a key={c.text} href={safeHref(c.url)} className="font-medium text-[#008000] underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">
                   {(c.children ?? []).map((lc: any) => lc.text).join('')}
                 </a>
               )
@@ -221,7 +223,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center py-16 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#E6FFE6] text-3xl">🔍</div>
-          <p className="font-semibold text-[#09231D]">No encontramos resultados para <em>"{query}"</em></p>
+          <p className="font-semibold text-[#09231D]">No encontramos resultados para <em>&quot;{query}&quot;</em></p>
           <p className="mt-1 text-sm text-[#6C7B76]">Probá con otras palabras o explorá las categorías.</p>
           <button
             type="button"
@@ -260,7 +262,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
             <div className="space-y-3">
               {query && (
                 <p className="text-sm text-[#6C7B76]">
-                  <span className="font-semibold text-[#09231D]">{filtered.length}</span> resultado{filtered.length !== 1 ? 's' : ''} para <em>"{query}"</em>
+                  <span className="font-semibold text-[#09231D]">{filtered.length}</span> resultado{filtered.length !== 1 ? 's' : ''} para <em>&quot;{query}&quot;</em>
                 </p>
               )}
               {filtered.map((item, idx) => (

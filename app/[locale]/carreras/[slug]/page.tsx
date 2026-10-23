@@ -3,8 +3,9 @@ import { getT } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
 import { getCarreraBySlug } from '@/lib/cms/queries/carreras'
 import Reveal from '@/components/motion/Reveal'
-import { buildCourseSchema, buildBreadcrumbSchema } from '@/lib/seo/jsonld'
+import { buildCourseSchema, buildBreadcrumbSchema, safeJsonLd } from '@/lib/seo/jsonld'
 
+// DEP-15: no consulta el CMS, por lo que no puede lanzar; las carreras se generan bajo demanda.
 export async function generateStaticParams() {
   return []
 }
@@ -34,7 +35,8 @@ export default async function CarreraDetailPage({
   const { locale, slug } = await params
   const t = await getT(locale, 'pages.carreras')
 
-  const carrera = await getCarreraBySlug(slug).catch(() => null)
+  // DEP-15: sin `.catch`; null = no existe (404), CmsError = CMS caído (no se cachea como 404).
+  const carrera = await getCarreraBySlug(slug)
   if (!carrera) notFound()
 
   const modalidadColors: Record<string, string> = {
@@ -63,8 +65,8 @@ export default async function CarreraDetailPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(courseSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }} />
     <div className="min-h-screen bg-slate-950 pt-28 pb-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
 

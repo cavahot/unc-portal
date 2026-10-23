@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Reveal from '@/components/motion/Reveal'
@@ -61,7 +63,7 @@ function CategorySection({ group, downloadLabel }: { group: CategoryGroup; downl
         {/* Document list */}
         <div className="overflow-hidden rounded-xl border border-[#D7E0DB] bg-white">
           {group.docs.map((doc, idx) => {
-            const href = doc.fileUrl ?? doc.externalUrl ?? '#'
+            const safeLink = safeHref(doc.fileUrl ?? doc.externalUrl)
             const isExternal = !doc.fileUrl && !!doc.externalUrl
             return (
               <div
@@ -84,9 +86,9 @@ function CategorySection({ group, downloadLabel }: { group: CategoryGroup; downl
                 </p>
 
                 {/* Download link */}
-                {href !== '#' ? (
+                {safeLink !== '#' ? (
                   <a
-                    href={href}
+                    href={safeLink}
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noopener noreferrer' : undefined}
                     className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#D7E0DB] bg-[#F4F7F5] px-3 py-1.5 text-xs font-bold text-[#004700] transition-colors hover:border-[#008000]/30 hover:bg-[#E6FFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"

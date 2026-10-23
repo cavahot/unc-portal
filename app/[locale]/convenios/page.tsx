@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { getConvenios, DEMO_CONVENIOS } from '@/lib/cms/queries/convenios'
+import { getConvenios } from '@/lib/cms/queries/convenios'
 import ConveniosTabsClient from '@/components/convenios/ConveniosTabsClient'
 
 export async function generateMetadata({
@@ -35,7 +35,9 @@ export default async function ConveniosPage({
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'pages.convenios' })
 
-  const convenios = await getConvenios().catch(() => DEMO_CONVENIOS)
+  // DEP-19b: sin `.catch` con demo. En producción una caída del CMS llega a app/[locale]/error.tsx
+  // (no se cachean convenios inventados); un CMS vacío da una lista vacía real.
+  const convenios = await getConvenios()
 
   const totalCount         = convenios.length
   const nacionalCount      = convenios.filter(c => c.type === 'nacional').length

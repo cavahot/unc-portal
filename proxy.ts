@@ -2,10 +2,11 @@ import createMiddleware from 'next-intl/middleware'
 import { NextRequest, NextResponse } from 'next/server'
 import { routing } from './i18n/routing'
 import { buildCSP, generateNonce } from './lib/csp'
+import { getClientIp } from './lib/security/clientIp'
 
 const intlMiddleware = createMiddleware(routing)
 
-// Simple in-memory sliding-window rate limiter
+// Simple in-memory rate limiter for PAGES only (not /api/*, see DEP-06)
 // Note: resets on server restart; for multi-instance deployments, use Redis/Upstash
 const rateLimitMap = new Map<string, { count: number; windowStart: number }>()
 const RATE_LIMIT = 120       // requests
@@ -48,15 +49,9 @@ function isIntlHeader(key: string): boolean {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // X-Forwarded-For is a comma-separated chain: "client, proxy1, proxy2".
-  // The client controls entries to the LEFT — take the RIGHTMOST entry instead,
-  // which is appended by the immediate trusted proxy and cannot be spoofed.
-  // Prefer request.ip (Vercel/edge native) and X-Real-IP (nginx) over XFF entirely.
-  const ip =
-    request.ip ??
-    request.headers.get('x-real-ip') ??
-    request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() ??
-    '127.0.0.1'
+  // DEP-06 / RDD-DEP-15: IP confiable = x-real-ip fijado por nginx; x-forwarded-for del cliente
+  // NO se lee (rotarlo evadía el límite) y request.ip no existe en Next 16.
+  const ip = getClientIp(request.headers)
 
   const rl = checkRateLimit(ip)
 
@@ -94,23 +89,11 @@ export function proxy(request: NextRequest) {
   }
 
   // ── API routes ──────────────────────────────────────────────────────────────
-  if (pathname.startsWith('/api/')) {
-    const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:3002'
-    const response = NextResponse.next({ request: { headers: requestHeaders } })
-    response.headers.set('Access-Control-Allow-Origin', cmsUrl)
-    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
-    response.headers.set('Access-Control-Allow-Credentials', 'true')
-    response.headers.set('Access-Control-Max-Age', '86400')
-    // In dev use report-only so we can catch API-route violations without blocking
-    if (isDev) {
-      response.headers.set('Content-Security-Policy-Report-Only', csp)
-    } else {
-      response.headers.set('Content-Security-Policy', csp)
-    }
-    applyRateLimitHeaders(response)
-    return response
-  }
+  // DEP-06 / RDD-DEP-14: /api/* NO pasa por este proxy (el matcher de abajo excluye `api/`).
+  // Antes había aquí una rama con CORS y límite que nunca se ejecutaba y daba falsa
+  // sensación de protección. El límite de tasa y el tope de cuerpo viven DENTRO de cada
+  // handler público (lib/security/*). CORS no es autenticación: protege el secreto/rol
+  // de cada ruta, no las cabeceras.
 
   // ── Locale routes ───────────────────────────────────────────────────────────
   // Step 1: let intl middleware decide routing (redirect / rewrite / next)

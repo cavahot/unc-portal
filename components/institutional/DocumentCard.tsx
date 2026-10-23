@@ -1,3 +1,6 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
+
 interface DocumentCardProps {
   label: string
   url?: string | null
@@ -46,7 +49,7 @@ export default function DocumentCard({ label, url, nota }: DocumentCardProps) {
   if (url) {
     return (
       <a
-        href={url}
+        href={safeHref(url)}
         target="_blank"
         rel="noopener noreferrer"
         className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.05] p-4 transition-all duration-200 hover:border-[#5CFF5C]/30 hover:bg-white/[0.08] hover:shadow-[0_4px_16px_-8px_rgba(0,200,0,0.15)]"

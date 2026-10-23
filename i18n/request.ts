@@ -1,5 +1,5 @@
 import { getRequestConfig } from 'next-intl/server'
-import type { AbstractIntlMessages } from 'next-intl'
+import { loadMessages } from '../lib/i18n/loadMessages'
 import { routing } from './routing'
 
 export default getRequestConfig(async ({ requestLocale }) => {
@@ -52,32 +52,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
     'pages.aranceles-rectorado',
   ]
 
-  const messages: AbstractIntlMessages = {}
-  for (const ns of namespaces) {
-    try {
-      const mod = await import(`../messages/${locale}/${ns}.json`)
-      // Nest under namespace key
-      const parts = ns.split('.')
-      let target = messages as Record<string, AbstractIntlMessages>
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!target[parts[i]]) target[parts[i]] = {}
-        target = target[parts[i]] as Record<string, AbstractIntlMessages>
-      }
-      target[parts[parts.length - 1]] = mod.default
-    } catch {
-      // fallback to es
-      try {
-        const mod = await import(`../messages/es/${ns}.json`)
-        const parts = ns.split('.')
-        let target = messages as Record<string, AbstractIntlMessages>
-        for (let i = 0; i < parts.length - 1; i++) {
-          if (!target[parts[i]]) target[parts[i]] = {}
-          target = target[parts[i]] as Record<string, AbstractIntlMessages>
-        }
-        target[parts[parts.length - 1]] = mod.default
-      } catch {}
-    }
-  }
+  // DEP-15: la carga con fallback por archivo a `es` vive en lib/i18n/loadMessages.ts (probada en
+  // tests/unit/i18n-fallback.spec.ts). El `import()` queda aquí para que el bundler vea la ruta.
+  const messages = await loadMessages(locale, namespaces, (loc, ns) => import(`../messages/${loc}/${ns}.json`))
 
   return { locale, messages }
 })

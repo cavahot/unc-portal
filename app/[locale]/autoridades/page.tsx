@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -114,7 +116,7 @@ function LeaderCard({ authority, cvLabel, delay = 0 }: { authority: Authority; c
             {hasCv && (
               <div className="pointer-events-none absolute left-0 top-full z-10 mt-1.5 translate-y-1 opacity-0 transition-all duration-200 group-hover/name:pointer-events-auto group-hover/name:translate-y-0 group-hover/name:opacity-100">
                 <a
-                  href={authority.cvUrl!}
+                  href={safeHref(authority.cvUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-full border border-[#D7E0DB] bg-white px-3 py-1.5 text-xs font-bold text-[#004700] shadow-[0_4px_12px_rgba(7,42,15,0.12)] transition-colors hover:border-[#008000]/30 hover:bg-[#E6FFE6]"
@@ -205,7 +207,7 @@ function DeanCard({ authority, cvLabel, delay = 0 }: { authority: Authority; cvL
           {hasCv && (
             <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-1.5 -translate-x-1/2 translate-y-1 whitespace-nowrap opacity-0 transition-all duration-200 group-hover/name:pointer-events-auto group-hover/name:translate-y-0 group-hover/name:opacity-100">
               <a
-                href={authority.cvUrl!}
+                href={safeHref(authority.cvUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-full border border-[#D7E0DB] bg-white px-3 py-1.5 text-xs font-bold text-[#004700] shadow-[0_4px_12px_rgba(7,42,15,0.12)] transition-colors hover:border-[#008000]/30 hover:bg-[#E6FFE6]"

@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import Image from 'next/image'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 
@@ -63,7 +65,7 @@ export default function JournalCard({
         <p className="line-clamp-2 flex-1 text-sm text-white/45">{descripcion}</p>
 
         <a
-          href={urlOjs}
+          href={safeHref(urlOjs)}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[#5CFF5C]/30 bg-[#5CFF5C]/10 px-4 py-2 text-xs font-semibold text-[#5CFF5C] transition-colors hover:bg-[#5CFF5C]/20 hover:text-white"

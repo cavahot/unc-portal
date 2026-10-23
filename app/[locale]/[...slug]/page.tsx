@@ -1,4 +1,4 @@
-import { draftMode } from 'next/headers';
+import { cookies, draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { getPageBySlug } from '@/lib/cms/queries/pages';
 import { BlockRenderer } from '@/lib/cms/blocks/renderer';
@@ -30,11 +30,20 @@ export default async function CatchAllPage({ params }: PageProps) {
 
   let pagina;
 
-  try {
-    pagina = await getPageBySlug(fullSlug, isDraft);
-  } catch (error) {
-    console.error(`[CatchAllPage] Failed to fetch page "${fullSlug}":`, error);
-    pagina = null;
+  if (isDraft) {
+    // DEP-02b: el token del editor se lee solo en la rama de preview (ISR
+    // público intacto) y solo viaja a la consulta de borrador. Si el CMS lo
+    // rechaza (401/403) se degrada a publicados.
+    const cookieStore = await cookies();
+    const payloadToken = cookieStore.get('payload-token')?.value;
+    pagina = payloadToken
+      ? await getPageBySlug(fullSlug, true, payloadToken).catch(() => null)
+      : null;
+  }
+  if (!pagina) {
+    // DEP-15: sin try/catch; null = no existe (404), CmsError = CMS caído (se
+    // propaga para que Next no cachee un 404 por una caída transitoria).
+    pagina = await getPageBySlug(fullSlug);
   }
 
   if (!pagina) {

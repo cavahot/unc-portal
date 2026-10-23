@@ -1,3 +1,6 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
+
 interface ThesisCardProps {
   titulo: string
   autor: string
@@ -40,7 +43,7 @@ export default function ThesisCard({
       )}
 
       <a
-        href={urlPdf}
+        href={safeHref(urlPdf)}
         target="_blank"
         rel="noopener noreferrer"
         className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-[#5CFF5C] transition-colors hover:text-[#8AFF8A]"

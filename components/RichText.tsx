@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import React from 'react'
 
 type TextNode = {
@@ -59,7 +61,7 @@ function renderNode(node: LexicalNode, key: number): React.ReactNode {
     case 'quote':
       return <blockquote key={key} className="my-4 border-l-4 border-[#5CFF5C] pl-4 italic text-white/60">{children}</blockquote>
     case 'link': {
-      const href = el.url || '#'
+      const href = safeHref(el.url)
       const ext = href.startsWith('http')
       return (
         <a key={key} href={href} className="text-[#5CFF5C] underline hover:text-[#8AFF8A]"

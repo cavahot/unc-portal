@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { getT } from '@/lib/i18n/server';
 import { Link } from '@/i18n/navigation';
+import { safeHref } from '@/lib/security/safeUrl'; // DEP-19b: defensa en profundidad (hoy los enlaces son literales)
 
 type FooterLinkItem = {
   label: string;
@@ -352,7 +353,7 @@ function FooterNavigationLink({
 }) {
   return (
     <Link
-      href={item.href}
+      href={safeHref(item.href)}
       className="group inline-flex items-center gap-2 rounded-md py-1 text-sm text-white/65 transition-colors duration-200 hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
     >
       <span>{item.label}</span>
@@ -499,7 +500,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 {socialLinks.map((social) => (
                   <a
                     key={social.label}
-                    href={social.href}
+                    href={safeHref(social.href)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={t('visitSocial', { network: social.label })}

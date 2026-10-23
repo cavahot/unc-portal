@@ -1,4 +1,5 @@
 import { cmsFetch } from '../client'
+import { demoFallbackAllowed } from '../errors'
 
 export type ConvenioType = 'nacional' | 'internacional'
 
@@ -368,9 +369,15 @@ export const DEMO_CONVENIOS: ConvenioItem[] = [
   },
 ]
 
+/**
+ * Convenios activos (DEP-19b). Producción: caída del CMS -> propaga `CmsError`; respuesta vacía ->
+ * `[]` real. Solo en desarrollo una caída devuelve DEMO_CONVENIOS. Corrección: la ruta llevaba
+ * `/api` duplicado (el cliente ya lo antepone) y siempre daba 404 oculto por el demo; y `next.tags`
+ * lo ignora el cliente (se usa `tags`), por lo que la revalidación por etiqueta no funcionaba.
+ */
 export async function getConvenios(type?: ConvenioType): Promise<ConvenioItem[]> {
   try {
-    const url = `/api/convenios?where[active][equals]=true&sort=-year${type ? `&where[type][equals]=${type}` : ''}&limit=100`
+    const url = `/convenios?where[active][equals]=true&sort=-year${type ? `&where[type][equals]=${type}` : ''}&limit=100`
     const res = await cmsFetch<{ docs: Array<{
       id: string
       year: number
@@ -383,7 +390,7 @@ export async function getConvenios(type?: ConvenioType): Promise<ConvenioItem[]>
       driveUrl?: string | null
       active: boolean
     }>}>(url, {
-      next: { tags: ['convenios'] },
+      tags: ['convenios'],
     })
     return res.docs.map((doc) => ({
       id: doc.id,
@@ -397,7 +404,8 @@ export async function getConvenios(type?: ConvenioType): Promise<ConvenioItem[]>
       driveUrl: doc.driveUrl ?? undefined,
       active: doc.active,
     }))
-  } catch {
-    return DEMO_CONVENIOS.filter((c) => !type || c.type === type)
+  } catch (error) {
+    if (demoFallbackAllowed()) return DEMO_CONVENIOS.filter((c) => !type || c.type === type)
+    throw error
   }
 }

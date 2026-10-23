@@ -1,5 +1,7 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import { getTranslations, getLocale } from 'next-intl/server'
-import { getTribunalMiembros, getTribunalDocumentos, DEMO_MIEMBROS, DEMO_DOCUMENTOS } from '@/lib/cms/queries/tribunal'
+import { getTribunalMiembros, getTribunalDocumentos } from '@/lib/cms/queries/tribunal'
 import TribunalAcordeonClient from '@/components/tribunal/TribunalAcordeonClient'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -28,9 +30,11 @@ export default async function TribunalElectoralPage() {
   const locale = await getLocale()
   const t      = await getTranslations('pages.tribunal-electoral')
 
+  // DEP-19b: sin `.catch` con demo. En producción una caída del CMS llega a app/[locale]/error.tsx;
+  // en desarrollo las consultas devuelven demo por sí mismas.
   const [miembros, documentos] = await Promise.all([
-    getTribunalMiembros().catch(() => DEMO_MIEMBROS),
-    getTribunalDocumentos().catch(() => DEMO_DOCUMENTOS),
+    getTribunalMiembros(),
+    getTribunalDocumentos(),
   ])
 
   const principalDocs = documentos.filter(d =>
@@ -217,7 +221,7 @@ export default async function TribunalElectoralPage() {
 
                     {doc.driveUrl ? (
                       <a
-                        href={doc.driveUrl}
+                        href={safeHref(doc.driveUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#5CFF5C] px-5 py-2.5 text-sm font-bold text-slate-950 transition-all hover:bg-[#8AFF8A] hover:shadow-lg hover:shadow-[#5CFF5C]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"

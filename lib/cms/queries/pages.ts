@@ -1,4 +1,5 @@
 import { cmsFetch } from '../client';
+import { isCmsNotFound } from '../errors';
 import { PayloadResponse } from '../types';
 import type { Pagina } from '@unc/cms-types';
 
@@ -24,22 +25,39 @@ export async function getPageSlugs(): Promise<string[]> {
   }
 }
 
-export async function getPageBySlug(slug: string, draft = false): Promise<Pagina | null> {
+/**
+ * Página por slug. Con `draft` Y `authToken` consulta el borrador reenviando
+ * el token del editor (DEP-02b, no-store). En cualquier otro caso consulta solo
+ * publicados y NUNCA envía Authorization, aunque se pase un token (evita usar
+ * el token en consultas públicas cacheables). Límite: el CMS decide el acceso.
+ * DEP-15: lista vacía o 404 -> `null`; red caída, timeout o 5xx -> propaga
+ * `CmsError` (la página no cachea un 404 por una caída del CMS).
+ */
+export async function getPageBySlug(
+  slug: string,
+  draft = false,
+  authToken?: string,
+): Promise<Pagina | null> {
+  const useDraft = draft && !!authToken;
   const params = new URLSearchParams();
   params.append('where[slug][equals]', slug);
   params.append('limit', '1');
   params.append('depth', '2');
 
-  if (draft) {
+  if (useDraft) {
     params.append('draft', 'true');
   } else {
     params.append('where[_status][equals]', 'published');
   }
 
-  const res = await cmsFetch<PayloadResponse<Pagina>>(`/paginas?${params.toString()}`, {
-    tags: [`paginas:${slug}`],
-    ...(draft ? { cache: 'no-store' as const } : {}),
-  });
-
-  return res.docs[0] || null;
+  try {
+    const res = await cmsFetch<PayloadResponse<Pagina>>(
+      `/paginas?${params.toString()}`,
+      useDraft ? { authToken } : { tags: [`paginas:${slug}`] },
+    );
+    return res.docs[0] || null;
+  } catch (error) {
+    if (isCmsNotFound(error)) return null;
+    throw error;
+  }
 }

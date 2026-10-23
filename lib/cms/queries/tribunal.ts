@@ -1,4 +1,5 @@
 import { cmsFetch } from '../client'
+import { demoFallbackAllowed } from '../errors'
 
 export interface TribunalMiembroItem {
   id:     number
@@ -61,28 +62,37 @@ export const DEMO_DOCUMENTOS: TribunalDocumentoItem[] = [
   { id: 8, titulo: 'Proclamación de Candidatos',                             tipo: 'proclamacion',                        orden: 8 },
 ]
 
+/**
+ * Miembros activos del tribunal (DEP-19b). Producción: caída del CMS -> propaga `CmsError`;
+ * colección vacía -> `[]` real (nunca nombres de demostración). Solo en desarrollo, ante caída o
+ * colección vacía (CMS sin sembrar) devuelve DEMO_MIEMBROS. Amenaza: publicar como oficiales
+ * personas que el CMS no ha confirmado. Límite: el demo contiene nombres reales; no usar fuera de dev.
+ */
 export async function getTribunalMiembros(): Promise<TribunalMiembroItem[]> {
   try {
     const data = await cmsFetch<{ docs: TribunalMiembroItem[] }>(
       '/tribunal-miembros?where[active][equals]=true&sort=orden&limit=20&depth=1',
       { tags: ['tribunal-miembros'] },
     )
-    // Fall back to demo when collection is empty (CMS not seeded yet)
-    return data.docs.length > 0 ? data.docs : DEMO_MIEMBROS
-  } catch {
-    return DEMO_MIEMBROS
+    const docs = data.docs ?? []
+    return docs.length === 0 && demoFallbackAllowed() ? DEMO_MIEMBROS : docs
+  } catch (error) {
+    if (demoFallbackAllowed()) return DEMO_MIEMBROS
+    throw error
   }
 }
 
+/** Documentos activos del tribunal (DEP-19b): misma política que `getTribunalMiembros`. */
 export async function getTribunalDocumentos(): Promise<TribunalDocumentoItem[]> {
   try {
     const data = await cmsFetch<{ docs: TribunalDocumentoItem[] }>(
       '/tribunal-documentos?where[active][equals]=true&sort=orden&limit=50',
       { tags: ['tribunal-documentos'] },
     )
-    // Fall back to demo when collection is empty (CMS not seeded yet)
-    return data.docs.length > 0 ? data.docs : DEMO_DOCUMENTOS
-  } catch {
-    return DEMO_DOCUMENTOS
+    const docs = data.docs ?? []
+    return docs.length === 0 && demoFallbackAllowed() ? DEMO_DOCUMENTOS : docs
+  } catch (error) {
+    if (demoFallbackAllowed()) return DEMO_DOCUMENTOS
+    throw error
   }
 }

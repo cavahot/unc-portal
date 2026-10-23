@@ -1,5 +1,7 @@
 'use client'
 
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import { useState } from 'react'
 import type { ConvenioItem, ConvenioType } from '@/lib/cms/queries/convenios'
 
@@ -107,7 +109,7 @@ function ConvenioCard({
       {/* Drive link */}
       {item.driveUrl ? (
         <a
-          href={item.driveUrl}
+          href={safeHref(item.driveUrl)}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${t.viewDocument}: ${item.title}`}
