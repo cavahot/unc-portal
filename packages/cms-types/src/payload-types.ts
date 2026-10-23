@@ -252,14 +252,22 @@ export interface Noticia {
   faculty?: string | null;
   author?: string | null;
   /**
+   * Lo fija el servidor al crear el contenido; no se puede cambiar.
+   */
+  createdBy?: (number | null) | User;
+  /**
    * Mostrar en la sección destacada del portal
    */
   featured?: boolean | null;
   publishedAt?: string | null;
   /**
-   * Estado del flujo de aprobación editorial
+   * Estado del flujo de aprobación editorial. El servidor valida cada cambio según su rol (DEP-03).
    */
   approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
+  /**
+   * Obligatorio al rechazar: explique qué debe corregir el autor. No se guarda como campo; queda en el historial.
+   */
+  reviewComment?: string | null;
   /**
    * Historial de aprobaciones y rechazos
    */
@@ -410,9 +418,17 @@ export interface Pagina {
       )[]
     | null;
   /**
-   * Estado del flujo de aprobación editorial
+   * Estado del flujo de aprobación editorial. El servidor valida cada cambio según su rol (DEP-03).
    */
   approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
+  /**
+   * Obligatorio al rechazar: explique qué debe corregir el autor. No se guarda como campo; queda en el historial.
+   */
+  reviewComment?: string | null;
+  /**
+   * Lo fija el servidor al crear el contenido; no se puede cambiar.
+   */
+  createdBy?: (number | null) | User;
   /**
    * Historial de aprobaciones y rechazos
    */
@@ -741,9 +757,11 @@ export interface NoticiasSelect<T extends boolean = true> {
       };
   faculty?: T;
   author?: T;
+  createdBy?: T;
   featured?: T;
   publishedAt?: T;
   approvalStatus?: T;
+  reviewComment?: T;
   approvalHistory?:
     | T
     | {
@@ -852,6 +870,8 @@ export interface PaginasSelect<T extends boolean = true> {
             };
       };
   approvalStatus?: T;
+  reviewComment?: T;
+  createdBy?: T;
   approvalHistory?:
     | T
     | {

@@ -1,16 +1,23 @@
 import { getPayload } from 'payload'
 import config from '../../../payload.config'
+import { MONITORING_ROLES } from '../../../access/roles'
+import { internalError, requireRole } from '../../../utilities/routeGuard'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * DEP-04 (RDD-DEP-11): métricas agregadas (conteos por estado, usuarios por rol, memoria) solo
+ * para superadmin y auditor. Amenaza: que cualquier sesión conozca la composición de usuarios y
+ * el estado del proceso. Límite: las consultas conservan el acceso de servidor (sin
+ * `overrideAccess:false`) a propósito: son conteos agregados y el auditor no puede leer `users`
+ * ni borradores por ACL; el control efectivo es el guard de rol de arriba. Sin rate limit (DEP-06).
+ */
 export async function GET(request: Request) {
   try {
     const payload = await getPayload({ config })
 
-    const { user } = await payload.auth({ headers: request.headers })
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const guard = await requireRole(payload, request, MONITORING_ROLES)
+    if (!guard.ok) return guard.response
 
     // Noticias por estado
     const borrador = await payload.find({
@@ -68,8 +75,8 @@ export async function GET(request: Request) {
 
     const rolesCounts: Record<string, number> = {}
     if (usuariosData.docs && Array.isArray(usuariosData.docs)) {
-      usuariosData.docs.forEach((user: any) => {
-        const rol = user.role || 'sin-rol'
+      usuariosData.docs.forEach((usuario: any) => {
+        const rol = usuario.role || 'sin-rol'
         rolesCounts[rol] = (rolesCounts[rol] || 0) + 1
       })
     }
@@ -106,13 +113,6 @@ export async function GET(request: Request) {
       },
     })
   } catch (error) {
-    console.error('Error fetching metrics:', error)
-    return Response.json(
-      {
-        error: 'Failed to fetch metrics',
-        details: error instanceof Error ? error.message : String(error)
-      },
-      { status: 500 }
-    )
+    return internalError('api/metrics', error, 'Failed to fetch metrics')
   }
 }

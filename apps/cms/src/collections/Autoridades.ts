@@ -42,7 +42,7 @@ export const Autoridades: CollectionConfig = {
       type: 'select',
       label: 'Tipo de autoridad',
       required: true,
-      options: AUTHORITY_TYPES,
+      options: [...AUTHORITY_TYPES],
     },
     {
       name: 'faculty',

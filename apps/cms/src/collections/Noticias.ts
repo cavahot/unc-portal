@@ -1,13 +1,25 @@
 import type { CollectionConfig } from 'payload'
 import { getPayload } from 'payload'
 import config from '../payload.config'
-import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
-import { notifyApprovalStateChange } from '../utilities/notifications'
-import { approvalHistoryField } from '../fields/approvalHistory'
+import { getClientIP, logAudit } from '../utilities/audit'
+import { approvalHistoryField, reviewCommentField } from '../fields/approvalHistory'
+import { createdByField } from '../fields/createdBy'
+import { auditEditorialChange, notifyEditorialChange } from '../hooks/editorial/afterTransition'
+import {
+  createEnforceEditorialTransition,
+  forceDraftSaveUnlessPublisher,
+  stripAuthorshipSort,
+} from '../hooks/editorial/enforceTransition'
 import { notifyN8N } from '../utilities/notifications'
 import { slugify } from '../utilities/slugify'
 import { revalidatePortalTag } from '../utilities/revalidation'
-import { canWriteEditorial, canDeleteEditorial } from '../access/roles'
+import {
+  canCreateEditorial,
+  canUpdateEditorial,
+  canDeleteEditorial,
+  readPublishedOrEditorial,
+  canReadEditorialVersions,
+} from '../access/roles'
 
 export const Noticias: CollectionConfig = {
   slug: 'noticias',
@@ -16,9 +28,13 @@ export const Noticias: CollectionConfig = {
     defaultColumns: ['title', 'featured', '_status', 'category', 'publishedAt'],
   },
   access: {
-    read: () => true,
-    create: canWriteEditorial,
-    update: canWriteEditorial,
+    // DEP-02: anónimo y roles sin función editorial solo leen publicados.
+    read: readPublishedOrEditorial,
+    readVersions: canReadEditorialVersions,
+    // DEP-03 (SEC-03): solo los autores crean; editan autores, Revisor y Publicador (el hook limita a
+    // estos dos últimos a campos de estado). Borrar no cambia (punto por confirmar de SEC-03).
+    create: canCreateEditorial('noticias'),
+    update: canUpdateEditorial('noticias'),
     delete: canDeleteEditorial,
   },
   fields: [
@@ -37,10 +53,12 @@ export const Noticias: CollectionConfig = {
       ],
       index: true,
       admin: {
-        description: 'Estado del flujo de aprobación editorial',
+        description: 'Estado del flujo de aprobación editorial. El servidor valida cada cambio según su rol (DEP-03).',
         position: 'sidebar',
       },
     },
+    // DEP-03: comentario obligatorio al rechazar (campo virtual: sin columna).
+    reviewCommentField,
     {
       name: 'featured',
       label: '¿Destacar en portada?',
@@ -100,6 +118,8 @@ export const Noticias: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    // DEP-03: autoría fijada por el servidor (nullable; las noticias heredadas no la tienen).
+    createdByField,
     // ── Tabs (main body) ──────────────────────────────────────────────────────
     {
       type: 'tabs',
@@ -234,6 +254,8 @@ export const Noticias: CollectionConfig = {
     drafts: true,
   },
   hooks: {
+    // DEP-03: quien no publica guarda siempre como borrador (no toca la fila principal).
+    beforeOperation: [forceDraftSaveUnlessPublisher, stripAuthorshipSort],
     beforeValidate: [
       ({ data }) => {
         if (data && !data.slug && data.title) {
@@ -242,6 +264,8 @@ export const Noticias: CollectionConfig = {
         return data
       },
     ],
+    // DEP-03: valida la transición de estado, fija el historial y el estado coherente (servidor).
+    beforeChange: [createEnforceEditorialTransition('noticias')],
     afterChange: [
       async ({ doc, previousDoc, req, operation }) => {
         // Revalidate portal cache on every change so featured/published state
@@ -249,46 +273,12 @@ export const Noticias: CollectionConfig = {
         await revalidatePortalTag('noticias')
 
         const usuario = req.user?.email || 'sistema'
-        const rol = req.user?.role || 'system'
-        const ip = getClientIP(req)
 
-        let accion: 'crear' | 'actualizar' | 'publicar' = 'crear'
-        let cambios = {}
+        // DEP-03: una fila de auditoría por guardado, con la acción de la transición.
+        await auditEditorialChange({ collection: 'noticias', operation, doc, previousDoc, req })
 
-        if (operation === 'update') {
-          accion = 'actualizar'
-          if (previousDoc._status === 'draft' && doc._status === 'published') {
-            accion = 'publicar'
-          }
-          cambios = extractChanges(previousDoc || {}, doc)
-        }
-
-        await logAudit({
-          usuario,
-          rol,
-          accion,
-          coleccion: 'noticias',
-          documento: `${doc.title} (ID: ${doc.id})`,
-          ip,
-          resultado: 'exito',
-          mensaje: `Noticia ${accion === 'crear' ? 'creada' : accion === 'publicar' ? 'publicada' : 'actualizada'}`,
-          cambiosRelevantes: Object.keys(cambios).length > 0 ? cambios : undefined,
-        })
-
-        // Notificar cambios de estado de aprobación
-        if (previousDoc?.approvalStatus !== doc.approvalStatus) {
-          await notifyApprovalStateChange(
-            doc.id,
-            doc.title,
-            doc.slug,
-            previousDoc?.approvalStatus || 'draft',
-            doc.approvalStatus,
-            usuario,
-            req.user?.email,
-            undefined,
-            undefined
-          )
-        }
+        // DEP-03: «aprobada/rechazada/publicada» se avisa al AUTOR, no al actor.
+        await notifyEditorialChange({ doc, previousDoc, req })
 
         // Obtener datos de contacto del usuario actual
         const payload = await getPayload({ config })

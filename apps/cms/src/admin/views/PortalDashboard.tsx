@@ -2,6 +2,7 @@ import React from 'react'
 import { getPayload } from 'payload'
 import config from '../../payload.config'
 import type { AdminViewProps } from 'payload'
+import { adminPath } from '../../config/adminRoute'
 
 const statusMeta: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   borrador:    { label: 'Borrador',    color: '#64748b', bg: '#f1f5f9', icon: '📝' },
@@ -97,11 +98,11 @@ export const PortalDashboard: React.FC<AdminViewProps> = async () => {
   })
 
   const statCards = [
-    { key: 'borrador',    count: stats.borrador,    href: '/admin/portal?estado=draft' },
-    { key: 'en_revision', count: stats.en_revision, href: '/admin/portal?estado=en_revision' },
-    { key: 'aprobado',    count: stats.aprobado,    href: '/admin/portal?estado=aprobado' },
-    { key: 'rechazado',   count: stats.rechazado,   href: '/admin/portal?estado=rechazado' },
-    { key: 'publicado',   count: stats.publicado,   href: '/admin/portal?estado=publicado' },
+    { key: 'borrador',    count: stats.borrador,    href: adminPath('/portal?estado=draft') },
+    { key: 'en_revision', count: stats.en_revision, href: adminPath('/portal?estado=en_revision') },
+    { key: 'aprobado',    count: stats.aprobado,    href: adminPath('/portal?estado=aprobado') },
+    { key: 'rechazado',   count: stats.rechazado,   href: adminPath('/portal?estado=rechazado') },
+    { key: 'publicado',   count: stats.publicado,   href: adminPath('/portal?estado=publicado') },
   ]
 
   return (
@@ -228,7 +229,7 @@ export const PortalDashboard: React.FC<AdminViewProps> = async () => {
                     <tr key={n.id} style={{ borderBottom: '1px solid #f8fafc' }}>
                       <td style={{ padding: '12px 16px' }}>
                         <a
-                          href={`/admin/collections/noticias/${n.id}`}
+                          href={adminPath(`/collections/noticias/${n.id}`)}
                           style={{ fontWeight: '500', fontSize: '14px', color: '#0f172a', textDecoration: 'none' }}
                         >
                           {n.title || 'Sin título'}
@@ -254,7 +255,7 @@ export const PortalDashboard: React.FC<AdminViewProps> = async () => {
             )}
           </div>
           <div style={{ padding: '12px 16px', borderTop: '1px solid #f1f5f9' }}>
-            <a href="/admin/collections/noticias" style={{
+            <a href={adminPath('/collections/noticias')} style={{
               fontSize: '13px', color: '#0052cc', textDecoration: 'none', fontWeight: '500',
             }}>
               Ver todas las noticias →
@@ -270,11 +271,11 @@ export const PortalDashboard: React.FC<AdminViewProps> = async () => {
             <SectionTitle>⚡ Acciones Rápidas</SectionTitle>
             <div style={{ padding: '12px' }}>
               {[
-                { href: '/admin/collections/noticias/create', label: '➕ Nueva Noticia', primary: true },
-                { href: '/admin/collections/media/create', label: '🖼  Subir Media', primary: false },
-                { href: '/admin/collections/users/create', label: '👤 Nuevo Usuario', primary: false },
-                { href: '/admin/portal-monitoring', label: '📊 Ver Monitoreo', primary: false },
-                { href: '/admin/portal-audit', label: '📋 Ver Auditoría', primary: false },
+                { href: adminPath('/collections/noticias/create'), label: '➕ Nueva Noticia', primary: true },
+                { href: adminPath('/collections/media/create'), label: '🖼  Subir Media', primary: false },
+                { href: adminPath('/collections/users/create'), label: '👤 Nuevo Usuario', primary: false },
+                { href: adminPath('/portal-monitoring'), label: '📊 Ver Monitoreo', primary: false },
+                { href: adminPath('/portal-audit'), label: '📋 Ver Auditoría', primary: false },
               ].map(({ href, label, primary }) => (
                 <a key={href} href={href} style={{
                   display: 'block',
@@ -322,7 +323,7 @@ export const PortalDashboard: React.FC<AdminViewProps> = async () => {
                   </span>
                 </div>
               ))}
-              <a href="/admin/portal-monitoring" style={{
+              <a href={adminPath('/portal-monitoring')} style={{
                 display: 'block', marginTop: '10px', fontSize: '12px',
                 color: '#0052cc', textDecoration: 'none',
               }}>
@@ -394,7 +395,7 @@ export const PortalDashboard: React.FC<AdminViewProps> = async () => {
           </table>
         )}
         <div style={{ padding: '12px 16px', borderTop: '1px solid #f1f5f9' }}>
-          <a href="/admin/portal-audit" style={{ fontSize: '13px', color: '#0052cc', textDecoration: 'none', fontWeight: '500' }}>
+          <a href={adminPath('/portal-audit')} style={{ fontSize: '13px', color: '#0052cc', textDecoration: 'none', fontWeight: '500' }}>
             Ver auditoría completa →
           </a>
         </div>

@@ -7,41 +7,48 @@ const ACTIONS = ['login', 'logout', 'crear', 'actualizar', 'eliminar', 'publicar
 export const AuditView: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([])
   const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [loadedKey, setLoadedKey] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [filterAction, setFilterAction] = useState('')
   const [filterResult, setFilterResult] = useState('')
 
-  const fetchLogs = async (p = 1) => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      params.set('limit', '20')
-      params.set('page', String(p))
-      if (filterAction) params.set('accion', filterAction)
-      if (filterResult) params.set('resultado', filterResult)
+  // SEC-09: `loading` se deriva de la consulta vigente (página + filtros) frente a la última cargada,
+  // así no hay setState síncrono en el efecto (react-hooks/set-state-in-effect); mismo estado de carga visible.
+  const requestKey = `${page}|${filterAction}|${filterResult}`
+  const loading = loadedKey !== requestKey
 
-      const res = await fetch(`/api/auditoria?${params}`)
-      const data = await res.json()
-      setLogs(data.docs ?? [])
-      setTotal(data.totalDocs ?? 0)
-      setTotalPages(data.totalPages ?? 1)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // SEC-09: carga de logs al cambiar página o filtros; una sola petición por cambio y descarte de respuestas obsoletas.
+  // Los manejadores de filtros reinician la página a 1 en el mismo evento (un único render, sin doble fetch).
   useEffect(() => {
-    setPage(1)
-    fetchLogs(1)
-  }, [filterAction, filterResult])
+    let cancelled = false
+    const load = async () => {
+      try {
+        const params = new URLSearchParams()
+        params.set('limit', '20')
+        params.set('page', String(page))
+        if (filterAction) params.set('accion', filterAction)
+        if (filterResult) params.set('resultado', filterResult)
 
+        const res = await fetch(`/api/auditoria?${params}`)
+        const data = await res.json()
+        if (cancelled) return
+        setLogs(data.docs ?? [])
+        setTotal(data.totalDocs ?? 0)
+        setTotalPages(data.totalPages ?? 1)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        if (!cancelled) setLoadedKey(`${page}|${filterAction}|${filterResult}`)
+      }
+    }
+    void load()
+    return () => { cancelled = true }
+  }, [page, filterAction, filterResult])
+
+  // SEC-09: solo cambia la página; el efecto se encarga de la carga.
   const handlePage = (p: number) => {
     setPage(p)
-    fetchLogs(p)
   }
 
   const actionColor = (accion: string) => {
@@ -75,7 +82,7 @@ export const AuditView: React.FC = () => {
       }}>
         <select
           value={filterAction}
-          onChange={e => setFilterAction(e.target.value)}
+          onChange={e => { setFilterAction(e.target.value); setPage(1) }}
           style={{
             padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0',
             backgroundColor: '#fff', fontSize: '13px', color: '#0f172a', cursor: 'pointer',
@@ -89,7 +96,7 @@ export const AuditView: React.FC = () => {
 
         <select
           value={filterResult}
-          onChange={e => setFilterResult(e.target.value)}
+          onChange={e => { setFilterResult(e.target.value); setPage(1) }}
           style={{
             padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0',
             backgroundColor: '#fff', fontSize: '13px', color: '#0f172a', cursor: 'pointer',
@@ -101,7 +108,7 @@ export const AuditView: React.FC = () => {
         </select>
 
         <button
-          onClick={() => { setFilterAction(''); setFilterResult('') }}
+          onClick={() => { setFilterAction(''); setFilterResult(''); setPage(1) }}
           style={{
             padding: '8px 14px', borderRadius: '8px', border: '1px solid #e2e8f0',
             backgroundColor: '#fff', fontSize: '13px', cursor: 'pointer', color: '#64748b',

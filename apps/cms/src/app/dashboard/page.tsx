@@ -53,45 +53,58 @@ export default function Dashboard() {
   const [noticias, setNoticias] = useState<Noticia[]>([])
   const [pagination, setPagination] = useState<PaginationInfo | null>(null)
   const [selectedStatus, setSelectedStatus] = useState('en_revision')
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
 
+  const [loadedKey, setLoadedKey] = useState('')
+
+  // SEC-09: `loading` se deriva de la consulta vigente (estado + página) frente a la última cargada,
+  // evitando setState síncrono en el efecto (react-hooks/set-state-in-effect); mismo estado de carga visible.
+  const requestKey = `${selectedStatus}|${page}`
+  const loading = loadedKey !== requestKey
+
+  // SEC-09: carga estadísticas y noticias al cambiar estado o página; las funciones viven dentro del efecto
+  // (sin uso antes de declarar) y la bandera `cancelled` evita setState tras desmontar o con respuestas obsoletas.
   useEffect(() => {
-    fetchStats()
-    fetchNoticias()
+    let cancelled = false
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/dashboard/stats')
+        const data = await res.json()
+        if (cancelled) return
+        setStats(data.stats)
+        setError(null)
+      } catch (err) {
+        if (cancelled) return
+        setError('Error cargando estadísticas')
+        console.error(err)
+      }
+    }
+    const fetchNoticias = async () => {
+      try {
+        const res = await fetch(`/api/dashboard/noticias?status=${selectedStatus}&page=${page}`)
+        const data = await res.json()
+        if (cancelled) return
+        setNoticias(data.noticias)
+        setPagination(data.pagination)
+        setError(null)
+      } catch (err) {
+        if (cancelled) return
+        setError('Error cargando noticias')
+        console.error(err)
+      } finally {
+        if (!cancelled) setLoadedKey(`${selectedStatus}|${page}`)
+      }
+    }
+    void fetchStats()
+    void fetchNoticias()
+    return () => { cancelled = true }
   }, [selectedStatus, page])
 
-  async function fetchStats() {
-    try {
-      const res = await fetch('/api/dashboard/stats')
-      const data = await res.json()
-      setStats(data.stats)
-      setError(null)
-    } catch (err) {
-      setError('Error cargando estadísticas')
-      console.error(err)
-    }
-  }
-
-  async function fetchNoticias() {
-    setLoading(true)
-    try {
-      const res = await fetch(`/api/dashboard/noticias?status=${selectedStatus}&page=${page}`)
-      const data = await res.json()
-      setNoticias(data.noticias)
-      setPagination(data.pagination)
-      setError(null)
-    } catch (err) {
-      setError('Error cargando noticias')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // SEC-09: navega con location.assign en lugar de asignar location.href (regla de inmutabilidad);
+  // el panel de Payload vive en routes.admin = /accesoSeguro (payload.config.ts), no en /admin.
   const openNoticia = (id: number) => {
-    window.location.href = `/admin/collections/noticias/${id}`
+    window.location.assign(`/accesoSeguro/collections/noticias/${id}`)
   }
 
   return (

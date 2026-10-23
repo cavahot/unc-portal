@@ -2,8 +2,10 @@ import { getPayload } from 'payload'
 import config from '../payload.config'
 import type { Payload } from 'payload'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3002'
-const PORTAL_URL = process.env.PORTAL_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+// DEP-10: nombres canónicos dentro del CMS. NEXT_PUBLIC_SERVER_URL = URL pública del CMS (convención de
+// Payload); PORTAL_URL = URL pública del portal. NEXT_PUBLIC_CMS_URL/NEXT_PUBLIC_SITE_URL son del portal.
+const CMS_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3002'
+const PORTAL_URL = process.env.PORTAL_URL ?? 'http://localhost:3000'
 
 export type NotificationType =
   | 'noticia_creada'

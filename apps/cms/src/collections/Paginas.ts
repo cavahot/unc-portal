@@ -1,10 +1,22 @@
 import type { CollectionConfig } from 'payload'
-import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
-import { notifyApprovalStateChange } from '../utilities/notifications'
+import { logAudit, getClientIP } from '../utilities/audit'
 import { revalidatePortalTag } from '../utilities/revalidation'
 import { PageBuilderBlocks } from '../blocks'
-import { approvalHistoryField } from '../fields/approvalHistory'
-import { canWriteEditorial, canDeleteEditorial } from '../access/roles'
+import { approvalHistoryField, reviewCommentField } from '../fields/approvalHistory'
+import { createdByField } from '../fields/createdBy'
+import { auditEditorialChange, notifyEditorialChange } from '../hooks/editorial/afterTransition'
+import {
+  createEnforceEditorialTransition,
+  forceDraftSaveUnlessPublisher,
+  stripAuthorshipSort,
+} from '../hooks/editorial/enforceTransition'
+import {
+  canCreateEditorial,
+  canUpdateEditorial,
+  canDeleteEditorial,
+  readPublishedOrEditorial,
+  canReadEditorialVersions,
+} from '../access/roles'
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/
 
@@ -15,9 +27,13 @@ export const Paginas: CollectionConfig = {
     defaultColumns: ['title', '_status', 'slug', 'approvalStatus'],
   },
   access: {
-    read: () => true,
-    create: canWriteEditorial,
-    update: canWriteEditorial,
+    // DEP-02: anónimo y roles sin función editorial solo leen publicados.
+    read: readPublishedOrEditorial,
+    readVersions: canReadEditorialVersions,
+    // DEP-03 (SEC-03, punto 2 por confirmar): las páginas siguen el mismo flujo que las noticias;
+    // `web-admin` conserva crear/editar páginas institucionales como autor (no aprueba ni publica).
+    create: canCreateEditorial('paginas'),
+    update: canUpdateEditorial('paginas'),
     delete: canDeleteEditorial,
   },
   fields: [
@@ -58,10 +74,14 @@ export const Paginas: CollectionConfig = {
       ],
       index: true,
       admin: {
-        description: 'Estado del flujo de aprobación editorial',
+        description: 'Estado del flujo de aprobación editorial. El servidor valida cada cambio según su rol (DEP-03).',
         position: 'sidebar',
       },
     },
+    // DEP-03: comentario obligatorio al rechazar (campo virtual: sin columna).
+    reviewCommentField,
+    // DEP-03: autoría fijada por el servidor (nullable).
+    createdByField,
     approvalHistoryField,
   ],
   timestamps: true,
@@ -69,6 +89,8 @@ export const Paginas: CollectionConfig = {
     drafts: true,
   },
   hooks: {
+    // DEP-03: quien no publica guarda siempre como borrador (no toca la fila principal).
+    beforeOperation: [forceDraftSaveUnlessPublisher, stripAuthorshipSort],
     beforeValidate: [
       ({ data }) => {
         if (!data) return data
@@ -88,55 +110,22 @@ export const Paginas: CollectionConfig = {
         return data
       },
     ],
+    // DEP-03: valida la transición de estado, fija el historial y el estado coherente (servidor).
+    beforeChange: [createEnforceEditorialTransition('paginas')],
     afterChange: [
       async ({ doc, previousDoc, req, operation }) => {
-        const usuario = req.user?.email || 'sistema'
-        const rol = req.user?.role || 'system'
-        const ip = getClientIP(req)
+        // DEP-03: una fila de auditoría por guardado, con la acción de la transición.
+        await auditEditorialChange({ collection: 'paginas', operation, doc, previousDoc, req })
 
-        let accion: 'crear' | 'actualizar' | 'publicar' = 'crear'
-        let cambios = {}
-
-        if (operation === 'update') {
-          accion = 'actualizar'
-          if (previousDoc?._status === 'draft' && doc._status === 'published') {
-            accion = 'publicar'
-          }
-          cambios = extractChanges(previousDoc || {}, doc)
-        }
-
-        await logAudit({
-          usuario,
-          rol,
-          accion,
-          coleccion: 'paginas',
-          documento: `${doc.title} (ID: ${doc.id})`,
-          ip,
-          resultado: 'exito',
-          mensaje: `Página ${accion === 'crear' ? 'creada' : accion === 'publicar' ? 'publicada' : 'actualizada'}`,
-          cambiosRelevantes: Object.keys(cambios).length > 0 ? cambios : undefined,
-        })
-
-        if (previousDoc?.approvalStatus !== doc.approvalStatus) {
-          await notifyApprovalStateChange(
-            doc.id,
-            doc.title,
-            doc.slug,
-            previousDoc?.approvalStatus || 'draft',
-            doc.approvalStatus,
-            usuario,
-            req.user?.email,
-            undefined,
-            undefined,
-          )
-        }
+        // DEP-03: «aprobada/rechazada/publicada» se avisa al AUTOR, no al actor.
+        await notifyEditorialChange({ doc, previousDoc, req })
 
         const isPublishTransition =
           previousDoc?._status !== doc._status && (doc._status === 'published' || previousDoc?._status === 'published')
 
         if (isPublishTransition || operation === 'create') {
           await revalidatePortalTag(`paginas:${doc.slug}`)
-          await revalidatePortalTag('paginas:list')
+          await revalidatePortalTag('paginas-slugs')
         }
       },
     ],
@@ -158,7 +147,7 @@ export const Paginas: CollectionConfig = {
         })
 
         await revalidatePortalTag(`paginas:${doc.slug}`)
-        await revalidatePortalTag('paginas:list')
+        await revalidatePortalTag('paginas-slugs')
       },
     ],
   },

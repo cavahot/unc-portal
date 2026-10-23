@@ -30,14 +30,22 @@ import { Navegacion } from './globals/Navegacion'
 import { Transparencia } from './globals/Transparencia'
 import { EnlacesExternos } from './globals/EnlacesExternos'
 import { Estadisticas } from './globals/Estadisticas'
+import { getDatabaseURL } from './config/database'
+import { hasRole } from './access/roles'
+import { resolvePayloadSecret } from './config/secrets'
+import { ADMIN_ROUTE } from './config/adminRoute'
+import { signPreviewToken } from './utilities/previewToken'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const databaseURL =
-  process.env.DATABASE_URI ||
-  process.env.DATABASE_URL ||
-  ''
+// ARCH-DB-01: no permite arrancar Payload con una URI vacía o de ejemplo.
+// La conectividad real se verifica aparte en un PostgreSQL sintético.
+const databaseURL = getDatabaseURL()
+
+// DEP-16/D: roles que pueden abrir un preview firmado. Excluye auditor, consulta y gestor
+// multimedia (no editan contenido). El CMS sigue decidiendo qué borradores ve cada rol (DEP-02).
+const PREVIEW_ROLES = ['superadmin', 'web-admin', 'publisher', 'reviewer', 'editor', 'correspondent'] as const
 
 const smtpPort = Number(process.env.SMTP_PORT || 1025)
 const smtpSecure = process.env.SMTP_SECURE === 'true'
@@ -45,8 +53,15 @@ const smtpUser = process.env.SMTP_USER
 const smtpPassword = process.env.SMTP_PASSWORD
 
 export default buildConfig({
+  // DEP-03 D2 / SEC-03: GraphQL desactivado. El portal no lo consume (solo usa REST/Local API) y el
+  // esquema no se construye (tipo `Faq` duplicado). Amenaza que evita: superficie extra de consulta
+  // (introspección, consultas anidadas) con las mismas ACL a vigilar. Límite: /api/graphql responde 404;
+  // para reactivarlo hay que renombrar el tipo duplicado y repetir las pruebas GraphQL de DEP-03.
+  graphQL: {
+    disable: true,
+  },
   routes: {
-    admin: '/accesoSeguro',
+    admin: ADMIN_ROUTE,
   },
   admin: {
     user: Users.slug,
@@ -54,11 +69,25 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     livePreview: {
-      url: ({ data, collectionConfig }) => {
-        const portalUrl = process.env.PORTAL_URL || 'http://localhost:3000'
-        const secret = process.env.PREVIEW_SECRET || ''
-        const type = collectionConfig?.slug === 'paginas' ? 'page' : 'noticia'
-        return `${portalUrl}/api/preview?secret=${secret}&slug=${data.slug}&type=${type}`
+      // DEP-16/D (RDD-DEP-40): genera el enlace de preview con un token HMAC de 5 min, NO con el
+      // secreto crudo. Esta función corre SOLO en el servidor: handleLivePreview (@payloadcms/ui
+      // dist/utilities/handleLivePreview.js:73-85) la invoca desde el RSC de Document y desde la
+      // acción de servidor buildFormState, y la config de cliente descarta `url`
+      // (payload dist/config/client.js:92-102). Amenaza: secreto en historial/logs/Referer. Solo
+      // firma para sesiones con rol editorial (req.user); sin sesión, sin rol, con secreto débil o
+      // sin slug devuelve '' (no hay preview) y no registra el valor. Límite: el token es un bearer
+      // de 5 min atado a slug y tipo; la generación real en staging sigue como hipótesis (spec §H1).
+      url: ({ data, collectionConfig, req }) => {
+        try {
+          if (!hasRole(req?.user, PREVIEW_ROLES) || typeof data?.slug !== 'string') return ''
+          const portalUrl = process.env.PORTAL_URL || 'http://localhost:3000'
+          const type = collectionConfig?.slug === 'paginas' ? 'page' : 'noticia'
+          const token = signPreviewToken({ slug: data.slug, type }, process.env.PREVIEW_SECRET)
+          return `${portalUrl}/api/preview?token=${encodeURIComponent(token)}`
+        } catch (error) {
+          console.error('[DEP-16] No se pudo firmar el enlace de preview:', error instanceof Error ? error.message : 'error')
+          return ''
+        }
       },
       collections: ['noticias', 'paginas'],
     },
@@ -147,13 +176,17 @@ export default buildConfig({
     },
   }),
 
-  secret: process.env.PAYLOAD_SECRET || '',
+  // DEP-16/A (RDD-DEP-38): falla cerrada si PAYLOAD_SECRET falta, es corto o de ejemplo (nunca vacío).
+  secret: resolvePayloadSecret(),
 
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
 
   db: postgresAdapter({
+    // ARCH-DB-02: obliga a Payload a buscar migraciones en una ruta versionable
+    // del repositorio; evita depender de autodetección o cambios manuales.
+    migrationDir: path.resolve(dirname, 'migrations'),
     pool: {
       connectionString: databaseURL,
       max: 20,

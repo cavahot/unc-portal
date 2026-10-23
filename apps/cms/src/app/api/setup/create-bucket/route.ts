@@ -1,19 +1,23 @@
 import { getPayload } from 'payload'
 import config from '../../../../payload.config'
 import { S3Client, CreateBucketCommand } from '@aws-sdk/client-s3'
+import { internalError, requireRole } from '../../../../utilities/routeGuard'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: Request) {
+/**
+ * DEP-04 (RDD-DEP-12): crea el bucket de medios. Es una mutación de infraestructura, por eso es
+ * `POST` (un GET puede dispararse por prefetch, un <img> o un enlace) y exclusivo de superadmin.
+ * Amenaza: creación de recursos por navegación o por cualquier sesión, y fuga del endpoint S3 y de
+ * la respuesta cruda del SDK. No se imprime el endpoint ni se devuelve `response`.
+ * Límite: no valida el nombre del bucket más allá de la configuración de entorno; sin rate limit.
+ */
+export async function POST(request: Request) {
   try {
     const payload = await getPayload({ config })
-    const { user } = await payload.auth({ headers: request.headers })
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-    if ((user as any).role !== 'superadmin') {
-      return Response.json({ error: 'Forbidden' }, { status: 403 })
-    }
+
+    const guard = await requireRole(payload, request, ['superadmin'])
+    if (!guard.ok) return guard.response
 
     const s3Client = new S3Client({
       endpoint: process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',
@@ -27,23 +31,15 @@ export async function GET(request: Request) {
 
     const bucketName = process.env.S3_BUCKET || 'unc-media'
 
-    console.log(`Creating bucket: ${bucketName}`)
-    console.log(`Endpoint: ${process.env.S3_ENDPOINT}`)
-
     try {
-      const command = new CreateBucketCommand({
-        Bucket: bucketName,
-      })
-
-      const response = await s3Client.send(command)
+      await s3Client.send(new CreateBucketCommand({ Bucket: bucketName }))
 
       return Response.json({
         success: true,
         message: `Bucket '${bucketName}' created successfully`,
-        response: response,
       })
     } catch (error: any) {
-      if (error.Code === 'BucketAlreadyOwnedByYou') {
+      if (error?.Code === 'BucketAlreadyOwnedByYou') {
         return Response.json({
           success: true,
           message: `Bucket '${bucketName}' already exists`,
@@ -53,14 +49,6 @@ export async function GET(request: Request) {
       throw error
     }
   } catch (error) {
-    console.error('Error creating bucket:', error)
-
-    return Response.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    )
+    return internalError('api/setup/create-bucket', error, 'Failed to create bucket')
   }
 }

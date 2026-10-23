@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { canWriteInstitutional } from '../access/roles'
+import { revalidatePortalTag } from '../utilities/revalidation'
 
 const Convenios: CollectionConfig = {
   slug: 'convenios',
@@ -20,18 +21,10 @@ const Convenios: CollectionConfig = {
   },
   hooks: {
     afterChange: [
+      // DEP-19b: avisa al portal con el helper común (timeout, reintentos, log sin secretos). Nunca lanza:
+      // la publicación del editor no depende del portal. Límite: sin cola; ver utilities/revalidation.ts.
       async () => {
-        try {
-          const baseUrl = process.env.PORTAL_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
-          const secret  = process.env.REVALIDATION_SECRET ?? ''
-          await fetch(`${baseUrl}/api/revalidate`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${secret}` },
-            body:    JSON.stringify({ tag: 'convenios' }),
-          })
-        } catch {
-          // revalidation is best-effort
-        }
+        await revalidatePortalTag('convenios', { collection: 'convenios' })
       },
     ],
   },

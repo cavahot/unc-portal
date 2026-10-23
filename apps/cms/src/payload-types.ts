@@ -237,9 +237,13 @@ export interface Media {
 export interface Noticia {
   id: number;
   /**
-   * Estado del flujo de aprobación editorial
+   * Estado del flujo de aprobación editorial. El servidor valida cada cambio según su rol (DEP-03).
    */
   approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
+  /**
+   * Obligatorio al rechazar: explique qué debe corregir el autor. No se guarda como campo; queda en el historial.
+   */
+  reviewComment?: string | null;
   /**
    * Mostrar en la sección destacada del portal
    */
@@ -251,6 +255,10 @@ export interface Noticia {
    */
   faculty?: (number | null) | Facultade;
   author?: string | null;
+  /**
+   * Lo fija el servidor al crear el contenido; no se puede cambiar.
+   */
+  createdBy?: (number | null) | User;
   title: string;
   /**
    * Generado automáticamente desde el título. Podés editarlo manualmente.
@@ -472,9 +480,17 @@ export interface Pagina {
       )[]
     | null;
   /**
-   * Estado del flujo de aprobación editorial
+   * Estado del flujo de aprobación editorial. El servidor valida cada cambio según su rol (DEP-03).
    */
   approvalStatus?: ('draft' | 'en_revision' | 'rechazado' | 'aprobado' | 'publicado') | null;
+  /**
+   * Obligatorio al rechazar: explique qué debe corregir el autor. No se guarda como campo; queda en el historial.
+   */
+  reviewComment?: string | null;
+  /**
+   * Lo fija el servidor al crear el contenido; no se puede cambiar.
+   */
+  createdBy?: (number | null) | User;
   /**
    * Registro automático de cambios de estado de aprobación.
    */
@@ -1116,11 +1132,13 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface NoticiasSelect<T extends boolean = true> {
   approvalStatus?: T;
+  reviewComment?: T;
   featured?: T;
   publishedAt?: T;
   category?: T;
   faculty?: T;
   author?: T;
+  createdBy?: T;
   title?: T;
   slug?: T;
   summary?: T;
@@ -1248,6 +1266,8 @@ export interface PaginasSelect<T extends boolean = true> {
             };
       };
   approvalStatus?: T;
+  reviewComment?: T;
+  createdBy?: T;
   approvalHistory?:
     | T
     | {
