@@ -8,6 +8,15 @@ on:
     branches:  [main]
     types:     [completed]
 
+# DEP-19a (3): un solo deploy a producción a la vez. `cancel-in-progress: false` NUNCA corta un deploy
+# que ya está migrando; a nivel de workflow (no de job) los runs se encolan en orden de disparo, de modo
+# que un commit viejo no despliega después de uno nuevo. Límite: GitHub conserva un único run pendiente
+# por grupo (el más reciente reemplaza al pendiente anterior); eso es aceptable porque el último commit
+# gana. No sustituye al `flock` del servidor (cubre ejecuciones manuales y sesiones SSH huérfanas).
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
 # Needed to push to ghcr.io with GITHUB_TOKEN
 permissions:
   contents: read
@@ -23,7 +32,16 @@ jobs:
   check-ci:
     name: CI gate
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    # DEP-19a (2): `branches: [main]` de workflow_run filtra por el NOMBRE de la rama de cabeza, y un PR
+    # desde un fork puede llamarse `main`. Amenaza: ejecutar build/deploy con secretos a partir de código
+    # de un fork. Se exige que el run de CI sea un `push`, de ESTE repositorio, en `main` y verde. Si el
+    # gate se omite, build-images y deploy (`needs`) se omiten. Límite: confía en que CI solo corre en
+    # push a main/develop del propio repositorio; no valida que el commit esté protegido por rama.
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch == 'main'
     steps:
       - run: echo "CI passed — proceeding to build and deploy"
 
@@ -40,11 +58,20 @@ jobs:
             image:      ghcr.io/${{ github.repository_owner }}/unc-portal
             context:    .
             dockerfile: Dockerfile
+            target:     ""
 
           - name:       cms
             image:      ghcr.io/${{ github.repository_owner }}/unc-portal-cms
             context:    .
             dockerfile: apps/cms/Dockerfile
+            target:     ""
+
+          # DEP-07: imagen de un solo uso con el CLI de payload y las migraciones (servicio cms-migrate)
+          - name:       cms-migrator
+            image:      ghcr.io/${{ github.repository_owner }}/unc-portal-cms-migrator
+            context:    .
+            dockerfile: apps/cms/Dockerfile
+            target:     migrator
 
     steps:
       - name: Checkout
@@ -52,6 +79,16 @@ jobs:
         with:
           # Fetch the commit that triggered the CI run
           ref: ${{ github.event.workflow_run.head_sha }}
+
+      # DEP-09: tag inmutable `sha-<7 primeros de head_sha>`, el commit que CI validó y que se
+      # construye aquí. No se usa `type=sha` de metadata-action porque toma GITHUB_SHA, que en
+      # `workflow_run` es el último commit de la rama por defecto y puede diferir de head_sha.
+      # El job `deploy` calcula el MISMO valor con la misma fórmula (RDD-DEP-28).
+      - name: Compute image tag
+        id: tag
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: echo "image_tag=sha-${HEAD_SHA:0:7}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -68,15 +105,19 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ matrix.image }}
+          # DEP-09: `latest` solo como alias de publicación; el despliegue usa el tag sha-xxxxxxx.
           tags: |
             type=raw,value=latest
-            type=sha,prefix=sha-,format=short
+            type=raw,value=${{ steps.tag.outputs.image_tag }}
 
       - name: Build and push ${{ matrix.name }}
         uses: docker/build-push-action@v6
         with:
           context:    ${{ matrix.context }}
-          dockerfile: ${{ matrix.dockerfile }}
+          # DEP-07: el input valido de build-push-action es `file` (no `dockerfile`); sin el se
+          # construiria ./Dockerfile (el del portal) tambien para el CMS y no existiria `migrator`.
+          file:       ${{ matrix.dockerfile }}
+          target:     ${{ matrix.target }}
           push:       true
           tags:       ${{ steps.meta.outputs.tags }}
           labels:     ${{ steps.meta.outputs.labels }}
@@ -102,6 +143,13 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
+      # DEP-09: misma fórmula que en build-images; es el tag que se despliega (nunca `latest`).
+      - name: Compute image tag
+        id: tag
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: echo "image_tag=sha-${HEAD_SHA:0:7}" >> "$GITHUB_OUTPUT"
+
       - name: Copy compose + nginx config to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -115,18 +163,107 @@ jobs:
 
       - name: Pull images and restart services
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          IMAGE_TAG: ${{ steps.tag.outputs.image_tag }}
+          # DEP-19a (4): el token de solo lectura y el actor NO se interpolan en el texto del script
+          # (`${{ }}` se expande ANTES de enviarlo: quedaría en el texto del script y un valor con
+          # comillas o `$(...)` se ejecutaría como shell). Viajan como variables de entorno.
+          GHCR_USER:  ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
         with:
           host:     ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key:      ${{ secrets.SSH_PRIVATE_KEY }}
           port:     ${{ secrets.SSH_PORT || 22 }}
+          envs:     IMAGE_TAG,GHCR_USER,GHCR_TOKEN
+          # DEP-19a (3): tope de la sesión SSH (por defecto de la acción: 10 m, que cortaría un migrate
+          # legítimo). Cota de peor caso en segundos (valores por defecto del script):
+          #   pull + backup (supuesto)            600
+          #   migrate: timeout 600 + kill-after 30  630
+          #   up -d (supuesto)                    120
+          #   gate: 12 intentos x (5 s + 2x3 s wget) 132
+          #   rollback: up -d 120 + 2.º gate 132
+          #   TOTAL                              1734 s ≈ 29 min  ->  35 m (2100 s, ~20 % de margen)
+          # Si se cambian DEP07_MIGRATE_TIMEOUT / DEP09_READY_* hay que recalcular (lo vigila
+          # tests/deploy/dep19a-deploy-fixes.test.mjs). Límite: si la acción corta la sesión, el script
+          # remoto puede seguir huérfano; por eso existe el flock y el trap del script.
+          command_timeout: 35m
           script: |
             set -euo pipefail
+
+            # DEP-09 (C): el tag a desplegar es OBLIGATORIO y debe ser un sha (sha-xxxxxxx). Se valida
+            # ANTES de cualquier llamada a docker: un valor vacío, `latest` o con metacaracteres haría
+            # que Compose resuelva una imagen no reproducible o que el valor llegue a un archivo/comando.
+            if [[ ! "${IMAGE_TAG:-}" =~ ^sha-[0-9a-f]{7,40}$ ]]; then
+              echo "::error::IMAGE_TAG ausente o inválido (se espera sha-<hex 7 a 40>). Deploy abortado antes de tocar nada."
+              exit 1
+            fi
+            export IMAGE_TAG
+
+            # DEP-19a (4): credenciales de ghcr.io por entorno (envs del ssh-action). Faltar alguna aborta
+            # ANTES de tocar docker, con un mensaje que no incluye su valor.
+            if [ -z "${GHCR_USER:-}" ] || [ -z "${GHCR_TOKEN:-}" ]; then
+              echo "::error::GHCR_USER o GHCR_TOKEN ausente (secret GHCR_READ_TOKEN / envs del ssh-action). Deploy abortado antes de tocar nada."
+              exit 1
+            fi
+
             cd /opt/unc-portal
 
-            # Authenticate to ghcr.io on the server (uses a read-only PAT)
-            echo "${{ secrets.GHCR_READ_TOKEN }}" | \
-              docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            # DEP-19a (3): exclusión mutua en el HOST. Amenaza: dos deploys simultáneos (dos runs, uno
+            # manual, o una sesión huérfana tras cortar la acción) pisando migrate, `up` y el estado.
+            # `flock -n` no espera: si hay otro deploy en curso falla claro. El bloqueo lo suelta el
+            # kernel al terminar el proceso (también tras kill -9). Si falta `flock` falla cerrado.
+            # Límite: protege solo entre scripts que usan este lockfile (no frente a `docker compose` a mano).
+            LOCK_FILE=.deploy.lock
+            if ! command -v flock > /dev/null 2>&1; then
+              echo "::error::Falta el binario flock en el servidor (paquete util-linux): no se despliega sin exclusión mutua."
+              exit 1
+            fi
+            exec 9>"$LOCK_FILE"
+            if ! flock -n 9; then
+              echo "::error::Hay otro deploy en curso (lock $LOCK_FILE tomado). Este deploy se aborta sin tocar nada."
+              exit 1
+            fi
+
+            # DEP-19a (3): ante cualquier salida != 0 (set -e, exit explícito, SIGTERM/INT/HUP) deja un
+            # registro `.deploy-last-failure` (hora, tag, código) para que la causa sobreviva a la sesión
+            # SSH. NUNCA toca `.deploy-previous-tag` (solo el camino sano lo escribe). Se arma DESPUÉS del
+            # lock para que un deploy rechazado no pise el registro del que sí está corriendo.
+            # Límite: SIGKILL no ejecuta trap; en ese caso queda el lock liberado y el estado intacto.
+            STATE_FILE=.deploy-previous-tag
+            FAILURE_FILE=.deploy-last-failure
+            dep19a_on_exit() {
+              local rc=$?
+              if [ "$rc" -ne 0 ]; then
+                { printf '%s tag=%s rc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${IMAGE_TAG:-?}" "$rc" > "$FAILURE_FILE.tmp" \
+                    && mv -f "$FAILURE_FILE.tmp" "$FAILURE_FILE"; } 2> /dev/null || true
+                echo "::error::Deploy terminado de forma anormal (rc=$rc). Registro en /opt/unc-portal/$FAILURE_FILE; $STATE_FILE no se modificó."
+              fi
+            }
+            trap dep19a_on_exit EXIT
+            trap 'exit 143' TERM
+            trap 'exit 130' INT
+            trap 'exit 129' HUP
+
+            # DEP-09 (D): `.deploy-previous-tag` guarda el ÚLTIMO tag que pasó el gate de readiness
+            # (se escribe solo al final de un deploy sano) y es el destino del rollback. Sin él no hay
+            # a dónde volver: falla cerrado ANTES de hacer pull, backup o migrar. Límite: el archivo es
+            # el único registro; si se borra, el siguiente deploy aborta hasta que se vuelva a sembrar.
+            if [ ! -f "$STATE_FILE" ]; then
+              echo "::error::No existe $STATE_FILE: no hay tag previo, por lo tanto no hay rollback posible. Deploy abortado antes de tocar nada. Tras el primer arranque manual (DEPLOY.md), siembre el tag sano con: echo sha-xxxxxxx > /opt/unc-portal/$STATE_FILE"
+              exit 1
+            fi
+            PREV_TAG="$(tr -d '[:space:]' < "$STATE_FILE")"
+            if [[ ! "$PREV_TAG" =~ ^sha-[0-9a-f]{7,40}$ ]]; then
+              echo "::error::$STATE_FILE no contiene un tag válido (sha-xxxxxxx). Deploy abortado: corrija el archivo a mano."
+              exit 1
+            fi
+            echo "Deploy de $IMAGE_TAG; tag previo sano (destino de rollback): $PREV_TAG"
+
+            # Authenticate to ghcr.io on the server (uses a read-only PAT).
+            # DEP-19a (4): token por stdin desde la variable de entorno (no aparece en `ps` ni en el
+            # texto del script) y usuario citado.
+            printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
 
             # Pull new images before stopping the running containers
             docker compose \
@@ -134,17 +271,203 @@ jobs:
               --env-file infrastructure/docker/.env.prod \
               pull
 
+            # DEP-07 (C1/C2): backup verificado ANTES de tocar el esquema. Si falla, el deploy
+            # aborta sin migrar ni levantar la versión nueva. Límite: respaldo local en el mismo
+            # host (sin cifrar ni copia externa: DEP-08); contiene PII y no se versiona.
+            ENV_FILE=infrastructure/docker/.env.prod
+            DB_NAME=$(grep -E '^POSTGRES_DB=' "$ENV_FILE" | cut -d= -f2- | tr -d '\r' | tr -d '"' | tr -d "'")
+            DB_USER=$(grep -E '^POSTGRES_USER=' "$ENV_FILE" | cut -d= -f2- | tr -d '\r' | tr -d '"' | tr -d "'")
+            PG=unc-postgres-prod
+            umask 077
+            RUNNING="$(docker ps --format '{{.Names}}')"
+            if grep -qx "$PG" <<< "$RUNNING"; then
+              TABLE_COUNT=$(docker exec "$PG" psql -U "$DB_USER" -d "$DB_NAME" -tAc \
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';" | tr -d '[:space:]')
+              if [[ ! "$TABLE_COUNT" =~ ^[0-9]+$ ]]; then
+                echo "::error::No se pudo contar las tablas (respuesta: '$TABLE_COUNT'). Deploy abortado."
+                exit 1
+              fi
+              if [ "$TABLE_COUNT" -gt 0 ]; then
+                mkdir -p backups
+                chmod 700 backups
+                BACKUP_FILE="backups/pre-deploy-$(date -u +%Y%m%dT%H%M%SZ).dump"
+                (umask 077; : > "$BACKUP_FILE")
+                chmod 600 "$BACKUP_FILE"
+                if ! docker exec "$PG" pg_dump -U "$DB_USER" -d "$DB_NAME" -Fc > "$BACKUP_FILE"; then
+                  rm -f "$BACKUP_FILE"
+                  echo "::error::pg_dump falló. Deploy abortado antes de tocar el esquema."
+                  exit 1
+                fi
+                if [ ! -s "$BACKUP_FILE" ]; then
+                  echo "::error::El backup $BACKUP_FILE está vacío. Deploy abortado."
+                  exit 1
+                fi
+                if ! docker exec -i "$PG" pg_restore --list < "$BACKUP_FILE" > /dev/null; then
+                  echo "::error::El backup $BACKUP_FILE no es legible (pg_restore --list falló). Deploy abortado."
+                  exit 1
+                fi
+                echo "Backup verificado: $BACKUP_FILE (ruta de restauración manual si el lote no es retrocompatible)"
+
+                # DEP-07 (C5): una fila batch = -1 (esquema creado por push en dev) hace que el CLI
+                # pida confirmación interactiva y, sin TTY, quede COLGADO sin aplicar nada (corrección D4:
+            # se había supuesto «sale con 0»; ver docs/evidence/dep-07-validation.md). Se rechaza antes.
+                HAS_MIG_TABLE=$(docker exec "$PG" psql -U "$DB_USER" -d "$DB_NAME" -tAc \
+                  "SELECT to_regclass('public.payload_migrations') IS NOT NULL;" | tr -d '[:space:]')
+                if [ "$HAS_MIG_TABLE" = "t" ]; then
+                  DEV_ROWS=$(docker exec "$PG" psql -U "$DB_USER" -d "$DB_NAME" -tAc \
+                    "SELECT COUNT(*) FROM payload_migrations WHERE batch = -1;" | tr -d '[:space:]')
+                  if [ "$DEV_ROWS" != "0" ]; then
+                    echo "::error::payload_migrations contiene filas batch = -1 (esquema de dev). Deploy abortado; requiere intervención manual."
+                    exit 1
+                  fi
+                fi
+              else
+                echo "Base sin tablas: no se requiere backup (primer deploy)."
+              fi
+            else
+              # Postgres no corre. Sin volumen = primer deploy (nada que respaldar). Con volumen =
+              # estado ambiguo: no se continúa a ciegas.
+              if docker volume inspect unc_postgres_data_prod > /dev/null 2>&1; then
+                echo "::error::Existe el volumen de datos pero $PG no corre: no se puede verificar un backup. Deploy abortado."
+                exit 1
+              fi
+              echo "Primer deploy (sin volumen de Postgres): no se requiere backup."
+            fi
+
+            # DEP-07 (C3): paso explícito de esquema, solo hacia adelante. Un fallo aborta el deploy
+            # (exit != 0) y NO se levanta la versión nueva. `run` arranca Postgres si hace falta.
+            # NUNCA se invoca down/reset/refresh/fresh desde el deploy.
+            # DEP-07/D4: con una fila batch = -1 `payload migrate` se CUELGA esperando el prompt (medido,
+            # no sale con 0). `timeout` lo corta y el código 124 aborta el deploy ANTES del `up -d`.
+            # DEP-07/D7: `docker compose run` IGNORA `container_name` del servicio; sin `--name` el migrador
+            # colgado sobrevive al `timeout` (solo muere el cliente) como `<proyecto>-cms-migrate-run-<hash>`,
+            # con la conexión a la BD abierta, y `docker rm -f unc-cms-migrate-prod` no lo tocaría y saldría
+            # con 0 sin avisar (docs/evidence/dep-07-revalidation.md). Por eso se fuerza `--name` y además se
+            # limpia por etiqueta de compose. Límite: la rama 137 (SIGKILL tras --kill-after) no se ha ejercitado.
+            MIGRATE_TIMEOUT="${DEP07_MIGRATE_TIMEOUT:-600}"
+
+            # DEP-19a (1): `compose.prod.yaml` fija `container_name: unc-cms-migrate-prod`; un `up` previo
+            # (deploy anterior sin --no-deps o arranque manual) lo deja en estado Exited y el
+            # `run --name unc-cms-migrate-prod` siguiente falla con «name already in use». Se elimina
+            # cualquier contenedor residual del migrador (por nombre exacto y por etiqueta de compose)
+            # ANTES del run. Si hay residuo y no se puede borrar, el run fallaría igual: se aborta claro.
+            # Límite: borra solo contenedores del servicio cms-migrate; no toca volúmenes ni la BD.
+            if ! docker ps -aq --filter 'name=^unc-cms-migrate-prod$' | xargs -r docker rm -f > /dev/null; then
+              echo "::error::No se pudo eliminar el contenedor residual unc-cms-migrate-prod. Deploy abortado antes de migrar."
+              exit 1
+            fi
+            if ! docker ps -aq --filter label=com.docker.compose.service=cms-migrate | xargs -r docker rm -f > /dev/null; then
+              echo "::error::No se pudieron eliminar los contenedores residuales de cms-migrate. Deploy abortado antes de migrar."
+              exit 1
+            fi
+
+            MIGRATE_RC=0
+            timeout --kill-after=30 "$MIGRATE_TIMEOUT" docker compose \
+              -f infrastructure/docker/compose.prod.yaml \
+              --env-file infrastructure/docker/.env.prod \
+              run --rm -T --name unc-cms-migrate-prod cms-migrate < /dev/null || MIGRATE_RC=$?
+            if [ "$MIGRATE_RC" -eq 124 ] || [ "$MIGRATE_RC" -eq 137 ]; then
+              if ! docker rm -f unc-cms-migrate-prod > /dev/null 2>&1; then
+                echo "Aviso: no se pudo eliminar el contenedor del migrador por nombre; revisar a mano."
+              fi
+              # Defensa adicional (D7): cualquier contenedor del servicio por etiqueta, aunque el nombre difiera.
+              if ! docker ps -aq --filter label=com.docker.compose.service=cms-migrate | xargs -r docker rm -f > /dev/null; then
+                echo "Aviso: no se pudo limpiar por etiqueta los contenedores cms-migrate; revisar a mano."
+              fi
+              echo "::error::cms-migrate excedió el timeout de ${MIGRATE_TIMEOUT}s (¿fila batch = -1 esperando confirmación?). Deploy abortado: la versión nueva NO se levantó."
+              exit 1
+            fi
+            if [ "$MIGRATE_RC" -ne 0 ]; then
+              echo "::error::cms-migrate falló (código $MIGRATE_RC). Deploy abortado: la versión nueva NO se levantó."
+              exit 1
+            fi
+
+            # Comprobación anti falso verde: tras el paso de esquema debe existir al menos una
+            # migración aplicada (batch > 0) y ninguna fila de dev.
+            APPLIED=$(docker exec "$PG" psql -U "$DB_USER" -d "$DB_NAME" -tAc \
+              "SELECT COUNT(*) FROM payload_migrations WHERE batch > 0;" | tr -d '[:space:]') || APPLIED=0
+            DEV_AFTER=$(docker exec "$PG" psql -U "$DB_USER" -d "$DB_NAME" -tAc \
+              "SELECT COUNT(*) FROM payload_migrations WHERE batch = -1;" | tr -d '[:space:]') || DEV_AFTER=1
+            if [ "${APPLIED:-0}" -lt 1 ] || [ "${DEV_AFTER:-1}" != "0" ]; then
+              echo "::error::payload_migrations no refleja migraciones aplicadas. Deploy abortado."
+              exit 1
+            fi
+
+            # DEP-09 (D): gate de readiness por la red INTERNA (docker exec contra cada contenedor), no por
+            # la URL pública: así no depende de DNS, TLS ni nginx. El CMS se comprueba por /api/health/ready
+            # (SELECT 1 a Postgres); el portal por su liveness. `wget` sale != 0 ante 503/429/sin conexión.
+            # Reintentos configurables: DEP09_READY_RETRIES (12) x DEP09_READY_INTERVAL (5 s) ≈ 60 s.
+            # Amenaza: dejar en producción una versión que no responde o sin BD. Límite: prueba conectividad
+            # a Postgres, no el esquema ni MinIO; no se ha ejercitado con Docker real (busybox wget).
+            READY_RETRIES="${DEP09_READY_RETRIES:-12}"
+            READY_INTERVAL="${DEP09_READY_INTERVAL:-5}"
+            dep09_ready() {
+              docker exec unc-cms-prod wget -q -O /dev/null -T 3 http://localhost:3000/api/health/ready &&
+                docker exec unc-portal-prod wget -q -O /dev/null -T 3 http://localhost:3000/api/health
+            }
+            dep09_wait_ready() {
+              local attempt=1
+              while [ "$attempt" -le "$READY_RETRIES" ]; do
+                if dep09_ready > /dev/null 2>&1; then
+                  return 0
+                fi
+                echo "Readiness sin respuesta ($attempt/$READY_RETRIES)"
+                if [ "$attempt" -lt "$READY_RETRIES" ]; then
+                  sleep "$READY_INTERVAL"
+                fi
+                attempt=$((attempt + 1))
+              done
+              return 1
+            }
+
             # Zero-downtime restart: bring up new containers, then clean old ones
+            # DEP-19a (1): `cms` depende de `cms-migrate` (service_completed_successfully); un `up -d`
+            # normal volvería a lanzar el migrador SIN timeout y lo dejaría Exited con nombre fijo (el
+            # siguiente deploy chocaría). Con `--no-deps` y la lista explícita de los demás servicios,
+            # el esquema solo se toca en el paso de arriba (con timeout y backup previo). Se listan
+            # también postgres y minio para que un cambio de su configuración en el compose siga
+            # aplicándose. Si se añade un servicio al compose, hay que añadirlo aquí (lo vigila
+            # tests/deploy/dep19a-deploy-fixes.test.mjs). Límite: con --no-deps Compose no espera los
+            # `depends_on: service_healthy` de los servicios no listados; postgres ya está sano (el
+            # `run` lo esperó) y el gate de readiness de abajo cubre el resto.
+            UP_RC=0
             docker compose \
               -f infrastructure/docker/compose.prod.yaml \
               --env-file infrastructure/docker/.env.prod \
-              up -d --remove-orphans
+              up -d --no-deps --remove-orphans postgres minio cms portal nginx || UP_RC=$?
+
+            if [ "$UP_RC" -ne 0 ] || ! dep09_wait_ready; then
+              echo "::error::La versión $IMAGE_TAG no pasó el gate de readiness (up rc=$UP_RC). Rollback de imagen a $PREV_TAG."
+              # DEP-09 (D): vuelve al tag previo SOLO para cms y portal, sin dependencias (no relanza
+              # cms-migrate ni toca Postgres/MinIO/nginx). NUNCA se ejecuta `down` ni se revierten migraciones.
+              ROLLBACK_RC=0
+              IMAGE_TAG="$PREV_TAG" docker compose \
+                -f infrastructure/docker/compose.prod.yaml \
+                --env-file infrastructure/docker/.env.prod \
+                up -d --no-deps cms portal || ROLLBACK_RC=$?
+              if [ "$ROLLBACK_RC" -eq 0 ] && dep09_wait_ready; then
+                echo "Rollback de imagen a $PREV_TAG completado: cms y portal responden. El deploy se reporta como FALLIDO."
+              else
+                echo "::error::El rollback a $PREV_TAG NO se recuperó (rc=$ROLLBACK_RC o readiness sin respuesta). Se requiere intervención manual."
+              fi
+              # Límites que se declaran siempre: el rollback es solo de IMAGEN.
+              echo "::warning::Las migraciones aplicadas NO se revirtieron: volver al tag previo solo es seguro si fueron retrocompatibles. Si no lo fueron, la restauración de datos es MANUAL con aprobación humana desde backups/pre-deploy-*.dump (DEP-01/DEP-08); se pierden las escrituras posteriores al dump."
+              exit 1
+            fi
+
+            # DEP-09 (D): solo tras pasar el gate se registra el tag como «último sano» (archivo temporal + mv).
+            printf '%s\n' "$IMAGE_TAG" > "$STATE_FILE.tmp"
+            mv -f "$STATE_FILE.tmp" "$STATE_FILE"
+            # DEP-19a (3): un deploy sano invalida el registro de fallo anterior (ya no describe el estado).
+            rm -f "$FAILURE_FILE"
 
             # Remove dangling images to keep disk clean
             docker image prune -f
 
-            echo "✅ Deploy complete — $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo "✅ Deploy complete — $IMAGE_TAG — $(date -u '+%Y-%m-%d %H:%M UTC')"
 
+      # DEP-09: comprobación EXTERNA posterior (DNS, TLS, nginx). El gate con rollback ya ocurrió en el
+      # paso anterior por la red interna; este paso solo avisa si la ruta pública falla (sin rollback).
       - name: Health check
         uses: appleboy/ssh-action@v1.2.0
         with:

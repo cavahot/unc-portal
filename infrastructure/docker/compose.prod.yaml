@@ -2,8 +2,9 @@
 # Portal UNC — Production Docker Compose
 # ============================================================
 # Usage:
-#   docker compose -f infrastructure/docker/compose.prod.yaml \
+#   IMAGE_TAG=sha-xxxxxxx docker compose -f infrastructure/docker/compose.prod.yaml \
 #     --env-file infrastructure/docker/.env.prod up -d
+#   (DEP-09: IMAGE_TAG es obligatorio; en CI/CD lo pasa deploy.yml)
 #
 # Prerequisites:
 #   1. Copy .env.prod.example → .env.prod and fill secrets
@@ -14,6 +15,50 @@
 # ============================================================
 
 name: unc-prod
+
+# DEP-07: entorno del CMS compartido con `cms-migrate` (mismo DATABASE_URI/getDatabaseURL y
+# misma config de payload.config.ts) para que ambos vean exactamente la misma BD y secretos.
+x-cms-env: &cms-env
+    NODE_ENV:               production
+    PAYLOAD_SECRET:         ${PAYLOAD_SECRET}
+    # ARCH-DB-01: la URI completa llega desde .env.prod/Docker secrets;
+    # nunca se construye con una contraseña literal dentro de este archivo.
+    DATABASE_URI:           ${DATABASE_URI}
+    # DEP-10: TLS hacia Postgres solo para una BD gestionada externa; `false` dentro de la red de Compose.
+    POSTGRES_SSL:           ${POSTGRES_SSL:-false}
+    # DEP-10: NEXT_PUBLIC_SERVER_URL = URL pública del CMS (convención de Payload); PORTAL_URL = URL pública
+    # del portal (CORS, enlaces de preview y destino de /api/revalidate). Ambas salen de una sola variable de
+    # .env.prod (CMS_PUBLIC_URL / PORTAL_PUBLIC_URL); el compose solo proyecta el nombre que lee cada código.
+    NEXT_PUBLIC_SERVER_URL: ${CMS_PUBLIC_URL}
+    PORTAL_URL:             ${PORTAL_PUBLIC_URL}
+
+    # S3 / MinIO — var names must match what payload.config.ts reads
+    S3_BUCKET:          ${S3_BUCKET}
+    S3_ACCESS_KEY_ID:   ${MINIO_ROOT_USER}
+    S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+    # Internal endpoint for uploads (container-to-container)
+    S3_ENDPOINT:        http://minio:9000
+    S3_REGION:          us-east-1
+    # Public-facing URL used by generateFileURL — what browsers actually load
+    S3_PUBLIC_URL:      ${S3_PUBLIC_URL}
+
+    # Email (recuperación de contraseña de Payload). DEP-10: mismos nombres que usa el portal para el
+    # formulario de contacto; SMTP_FROM (nombre obsoleto) lo sustituyen SMTP_FROM_ADDRESS y SMTP_FROM_NAME.
+    SMTP_HOST:         ${SMTP_HOST}
+    SMTP_PORT:         ${SMTP_PORT}
+    SMTP_SECURE:       ${SMTP_SECURE}
+    SMTP_USER:         ${SMTP_USER}
+    SMTP_PASSWORD:     ${SMTP_PASSWORD}
+    SMTP_FROM_ADDRESS: ${SMTP_FROM_ADDRESS}
+    SMTP_FROM_NAME:    ${SMTP_FROM_NAME}
+
+    # DEP-10: los dos extremos de preview y revalidación ISR deben compartir el mismo secreto (portal y CMS).
+    PREVIEW_SECRET:      ${PREVIEW_SECRET}
+    REVALIDATION_SECRET: ${REVALIDATION_SECRET}
+
+    # DEP-10: webhook opcional de notificaciones editoriales; vacío = desactivado (el código lo omite).
+    N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL:-}
+
 
 services:
 
@@ -74,7 +119,10 @@ services:
   cms:
     # In production: CI builds and pushes this image to ghcr.io.
     # The server just does `docker compose pull` — no source code needed.
-    image: ghcr.io/cavahot/unc-portal-cms:latest
+    # DEP-09: despliegue por sha inmutable (`sha-xxxxxxx`), nunca `latest`. IMAGE_TAG es OBLIGATORIO:
+    # sin él, cualquier `docker compose` sobre este archivo falla (no hay «latest implícito») y no
+    # existe destino de rollback. Lo fija deploy.yml; a mano: `export IMAGE_TAG=sha-xxxxxxx`.
+    image: ghcr.io/cavahot/unc-portal-cms:${IMAGE_TAG:?IMAGE_TAG obligatorio (sha-xxxxxxx)}
     build:
       context:    ../../
       dockerfile: apps/cms/Dockerfile
@@ -87,41 +135,50 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      # DEP-07 (C8): el CMS no arranca (no sirve tráfico) si la migración no terminó con éxito.
+      cms-migrate:
+        condition: service_completed_successfully
 
-    environment:
-      NODE_ENV:               production
-      PAYLOAD_SECRET:         ${PAYLOAD_SECRET}
-      DATABASE_URI:           postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      NEXT_PUBLIC_SERVER_URL: ${CMS_PUBLIC_URL}
+    environment: *cms-env
 
-      # S3 / MinIO — var names must match what payload.config.ts reads
-      S3_BUCKET:          ${S3_BUCKET}
-      S3_ACCESS_KEY_ID:   ${MINIO_ROOT_USER}
-      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
-      # Internal endpoint for uploads (container-to-container)
-      S3_ENDPOINT:        http://minio:9000
-      S3_REGION:          us-east-1
-      # Public-facing URL used by generateFileURL — what browsers actually load
-      S3_PUBLIC_URL:      ${S3_PUBLIC_URL}
-
-      # Email — configure your real SMTP host for production
-      SMTP_HOST: ${SMTP_HOST}
-      SMTP_PORT: ${SMTP_PORT}
-      SMTP_FROM: ${SMTP_FROM}
-
-      PREVIEW_SECRET: ${PREVIEW_SECRET}
-
+    # DEP-09: readiness real (SELECT 1 a Postgres), no la liveness `{status:'ok'}`. Si la BD cae el
+    # contenedor pasa a `unhealthy` (Docker no lo reinicia por eso) y `depends_on: service_healthy`
+    # de portal/nginx lo respeta al arrancar. 4 llamadas/min desde localhost: bajo el límite de 30/min.
     healthcheck:
-      test:         ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      test:         ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health/ready || exit 1"]
       interval:     15s
       timeout:      5s
       retries:      6
       start_period: 30s
 
+  # ── Migraciones Payload (one-shot, DEP-07) ──────────────────────────────────
+  # Ejecuta `payload migrate` (solo hacia adelante, idempotente) contra la misma BD que el CMS.
+  # Se invoca explícitamente en deploy.yml (`run --rm cms-migrate`) DESPUÉS del pg_dump verificado
+  # y ANTES de `up -d`; un código de salida != 0 aborta el deploy. NUNCA ejecuta down/reset/fresh.
+  # Imagen: etapa `migrator` de apps/cms/Dockerfile (el runner no trae el CLI ni las migraciones).
+  # DEP-09: mismo IMAGE_TAG obligatorio que cms y portal (antes CMS_IMAGE_TAG con default `latest`):
+  # migrator y cms deben ser de la misma versión del código.
+  cms-migrate:
+    image: ghcr.io/cavahot/unc-portal-cms-migrator:${IMAGE_TAG:?IMAGE_TAG obligatorio (sha-xxxxxxx)}
+    build:
+      context:    ../../
+      dockerfile: apps/cms/Dockerfile
+      target:     migrator
+    container_name: unc-cms-migrate-prod
+    restart: "no"
+    networks: [internal]
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment: *cms-env
+
   # ── Next.js Portal ───────────────────────────────────────────────────────────
   portal:
     # In production: CI builds and pushes this image to ghcr.io.
-    image: ghcr.io/cavahot/unc-portal:latest
+    # DEP-09: sha inmutable obligatorio (ver nota en `cms`).
+    image: ghcr.io/cavahot/unc-portal:${IMAGE_TAG:?IMAGE_TAG obligatorio (sha-xxxxxxx)}
     build:
       context:    ../../
       dockerfile: Dockerfile
@@ -140,9 +197,25 @@ services:
       REVALIDATION_SECRET:    ${REVALIDATION_SECRET}
       MEDIA_HOSTNAME:         ${MEDIA_HOSTNAME}
 
+      # DEP-10: URL INTERNA del CMS para las consultas servidor-a-servidor (lib/cms/client.ts); sin ella el
+      # portal caería a http://localhost:3002 dentro de su propio contenedor. El CMS escucha en el puerto 3000.
+      CMS_URL:                http://cms:3000
+      # DEP-10: secreto de /api/preview (mismo valor que el CMS usa al generar el enlace de preview).
+      PREVIEW_SECRET:         ${PREVIEW_SECRET}
+
+      # DEP-10: formulario de contacto (app/api/contact/route.ts); mismos nombres SMTP que el CMS.
+      SMTP_HOST:              ${SMTP_HOST}
+      SMTP_PORT:              ${SMTP_PORT}
+      SMTP_SECURE:            ${SMTP_SECURE}
+      SMTP_USER:              ${SMTP_USER}
+      SMTP_PASSWORD:          ${SMTP_PASSWORD}
+      SMTP_FROM_ADDRESS:      ${SMTP_FROM_ADDRESS}
+      CONTACT_TO:             ${CONTACT_TO}
+
       # Sentry — only DSN needed at runtime; ORG/PROJECT/AUTH_TOKEN are build-time
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
 
+    # DEP-09: liveness propia del portal (200 aunque el CMS esté caído; ver app/api/health/route.ts).
     healthcheck:
       test:         ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval:     15s

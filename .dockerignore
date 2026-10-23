@@ -41,3 +41,7 @@ playwright-report/
 # ── Backups / temp ────────────────────────────────────────────
 backups/
 scratch/
+
+# DEP-01: dumps de BD (posible PII) fuera del contexto de build
+setup/*.dump
+setup/*.dump.gz

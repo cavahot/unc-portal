@@ -1,0 +1,25 @@
+# DEP-07 (vía C) — Tablas CUYOS DATOS no se cargan desde el dump (una por línea).
+# Lo lee scripts/setup/restore-data-prod.sh para filtrar la lista `pg_restore -L`.
+# Se excluye también la secuencia `<tabla>_id_seq` de cada una (SEQUENCE SET).
+# Líneas vacías y las que empiezan con # se ignoran. Solo nombres de tabla en public: [a-z0-9_].
+#
+# payload_migrations : la escribe `payload migrate`. Cargar la del dump traería la fila `dev`
+#                      (batch = -1, esquema por push) o un registro de otra época, y haría que
+#                      migrate pregunte de forma interactiva o crea que hay migraciones ya aplicadas.
+# users_sessions     : sesiones/tokens activos del entorno de origen (dev). Cargarlos validaría
+#                      sesiones ajenas en producción (amenaza de suplantación).
+# payload_locked_documents      : bloqueos de edición de documentos del origen; quedarían bloqueados
+# payload_locked_documents_rels : para siempre sin una sesión que los libere.
+# payload_preferences       : preferencias de UI por usuario/sesión del origen (estado desechable).
+# payload_preferences_rels  : vínculos de las preferencias (dependen de users).
+# payload_kv         : almacén clave-valor/caché interno de Payload; se regenera.
+#
+# NO se excluye `users`: sin las cuentas del dump no habría administrador. Arrastra hashes y datos
+# personales (ver DEP-01): decisión de privacidad pendiente, fuera de este script.
+payload_migrations
+users_sessions
+payload_locked_documents
+payload_locked_documents_rels
+payload_preferences
+payload_preferences_rels
+payload_kv
