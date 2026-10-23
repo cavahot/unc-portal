@@ -72,7 +72,7 @@ export async function scrapeUNCNews(): Promise<ScrapedItem[]> {
       const $el = $(el)
       const titleEl = $el.find('h2, h3, .title').first()
       const title = titleEl.text().trim() || $el.text().trim().substring(0, 150)
-      let link = $el.find('a').first().attr('href') || ''
+      const link = $el.find('a').first().attr('href') || ''
 
       if (title.length > 10 && title.length < 200 && !seen.has(title)) {
         const url = link.startsWith('http') ? link : `https://www.unc.edu.py${link}`
@@ -102,7 +102,7 @@ export async function scrapeUNCNews(): Promise<ScrapedItem[]> {
 
       const $el = $(el)
       const title = $el.text().trim()
-      let link = $el.closest('a').attr('href') || $el.find('a').first().attr('href') || ''
+      const link = $el.closest('a').attr('href') || $el.find('a').first().attr('href') || ''
 
       if (title.length > 10 && title.length < 200 && !seen.has(title)) {
         const url = link.startsWith('http') ? link : `https://www.unc.edu.py${link}`
