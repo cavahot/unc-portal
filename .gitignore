@@ -56,3 +56,24 @@ apps/cms/.env.before-db-fix
 apps/cms/.env.pre-mailpit.backup
 apps/cms/*.backup
 apps/cms/test.env
+
+# DEP-01: dumps de BD y backups pre-restore pueden contener PII; no versionar ni copiar a imágenes.
+# Ojo: ignorar NO desversiona archivos ya trackeados (setup/seed.dump.gz requiere decisión humana).
+setup/*.dump
+setup/*.dump.gz
+backups/
+
+# DEP-17: respaldos, restos de edición y artefactos locales que no se versionan (ignorar no desversiona lo ya trackeado).
+*.bak
+*.backup*
+test_write.txt
+package.before-*.json
+package.*.before-*.json
+package-lock.before-*.json
+package.backup.json
+migration-errors.json
+test-results/
+tsconfig*.tsbuildinfo
+
+# SEC/DEP-17: volcado de datos (posible PII); no versionar. Ya existe en el historial publico: decision aparte.
+setup/seed.dump.gz
