@@ -94,6 +94,17 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   CREATE INDEX IF NOT EXISTS "aranceles_facultad_active_idx" ON "aranceles_facultad" USING btree ("active");
   CREATE INDEX IF NOT EXISTS "aranceles_facultad_updated_at_idx" ON "aranceles_facultad" USING btree ("updated_at");
   CREATE INDEX IF NOT EXISTS "aranceles_facultad_created_at_idx" ON "aranceles_facultad" USING btree ("created_at");
+  -- FAC-01 (SEC-REVIEW): pre-chequeo de duplicados. Amenaza: el CREATE UNIQUE INDEX fallaría con un error críptico a
+  -- mitad del despliegue si la tabla ya tiene filas repetidas. Solo corre si el índice aún no existe y la tabla y
+  -- las columnas existen; el mensaje nombra tabla e índice y nunca incluye valores de filas (pueden ser datos del PO).
+  DO $$ BEGIN
+    IF to_regclass('public."facultad_grupo_concepto_idx"') IS NULL
+       AND (SELECT count(*) FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'aranceles_facultad' AND column_name IN ('facultad_id', 'grupo', 'concepto')) = 3 THEN
+      IF EXISTS (SELECT 1 FROM (SELECT 1 FROM "aranceles_facultad" WHERE "facultad_id" IS NOT NULL AND "grupo" IS NOT NULL AND "concepto" IS NOT NULL GROUP BY "facultad_id","grupo","concepto" HAVING count(*) > 1 LIMIT 1) AS dup) THEN
+        RAISE EXCEPTION 'FAC-01: la tabla aranceles_facultad tiene filas duplicadas en (facultad_id, grupo, concepto) y no se puede crear el indice unico facultad_grupo_concepto_idx. Deduplique esas filas antes de migrar.';
+      END IF;
+    END IF;
+  END $$;
   CREATE UNIQUE INDEX IF NOT EXISTS "facultad_grupo_concepto_idx" ON "aranceles_facultad" USING btree ("facultad_id","grupo","concepto");
   CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_aranceles_facultad_id_idx" ON "payload_locked_documents_rels" USING btree ("aranceles_facultad_id");`)
 }

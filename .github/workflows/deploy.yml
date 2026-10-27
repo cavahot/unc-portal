@@ -260,6 +260,23 @@ jobs:
             fi
             echo "Deploy de $IMAGE_TAG; tag previo sano (destino de rollback): $PREV_TAG"
 
+            # MIN-01 (guard): un entorno que usaba S3/MinIO (MINIO_ROOT_USER definido) pero no fija MEDIA_STORAGE
+            # cambiaría EN SILENCIO al volumen local (el valor por defecto del compose es `local`). Amenaza: subidas
+            # nuevas al disco mientras el catálogo apunta a objetos en MinIO. Aborta ANTES de pull/migrate/up y no
+            # imprime ningún valor del archivo. Límite: solo mira el archivo de entorno; no valida que S3 responda.
+            media_storage_guard() {
+              local f="$1" minio media
+              # `|| true` dentro del grupo: sin coincidencia grep sale 1 y con `set -e -o pipefail` abortaría.
+              minio="$({ grep -E '^MINIO_ROOT_USER=' "$f" || true; } | tail -n1 | cut -d= -f2- | tr -d "\r\"' ")"
+              media="$({ grep -E '^MEDIA_STORAGE=' "$f" || true; } | tail -n1 | cut -d= -f2- | tr -d "\r\"' ")"
+              if [ -n "$minio" ] && [ -z "$media" ]; then
+                echo "::error::MINIO_ROOT_USER está definido pero MEDIA_STORAGE no: el deploy cambiaría de S3 al volumen local sin avisar. Fije MEDIA_STORAGE=s3 (o local, de forma explícita) en $f. Deploy abortado antes de tocar nada."
+                return 1
+              fi
+              return 0
+            }
+            media_storage_guard infrastructure/docker/.env.prod
+
             # Authenticate to ghcr.io on the server (uses a read-only PAT).
             # DEP-19a (4): token por stdin desde la variable de entorno (no aparece en `ps` ni en el
             # texto del script) y usuario citado.
@@ -495,3 +512,37 @@ jobs:
             fi
 
             echo "✅ Both services healthy"
+
+      # ISR (R4): calienta la caché del portal tras el deploy. Amenaza: el build corre sin CMS alcanzable y
+      # las páginas prerenderizadas pueden quedar en «no disponible»/«vacío»; se invalidan las etiquetas
+      # institucionales (POST /api/revalidate con Bearer, el cuerpo es {"tag": "..."} según la ruta) y se
+      # visitan páginas públicas para regenerarlas. NO FATAL: el sitio ya está en vivo (continue-on-error y
+      # solo ::warning::). El secreto se lee del .env.prod del servidor y viaja por stdin de curl (-K -): ni se
+      # imprime ni queda en la lista de procesos. Límite: depende de que nginx exponga /api/revalidate.
+      - name: Warm-up (revalidate + prime pages)
+        continue-on-error: true
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host:     ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key:      ${{ secrets.SSH_PRIVATE_KEY }}
+          port:     ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd /opt/unc-portal || { echo "::warning::warm-up: no existe /opt/unc-portal"; exit 0; }
+            BASE="https://portal.unc.edu.py"
+            SECRET="$(grep -E '^REVALIDATION_SECRET=' infrastructure/docker/.env.prod | tail -n1 | cut -d= -f2- | tr -d "\r\"' ")"
+            WARM_TAGS="autoridades convenios marco-legal linea-tiempo aranceles-rectorado aranceles-facultad facultades carreras acreditaciones reconocimientos transparencia-items ley5189 ley5282 noticias"
+            if [ -z "$SECRET" ]; then
+              echo "::warning::warm-up: REVALIDATION_SECRET ausente en .env.prod; se omite la revalidación."
+            else
+              for t in $WARM_TAGS; do
+                code=$(printf 'header = "Authorization: Bearer %s"\n' "$SECRET" | curl -s -o /dev/null -w "%{http_code}" --max-time 10 \
+                  -K - -X POST -H "Content-Type: application/json" -d "{\"tag\":\"$t\"}" "$BASE/api/revalidate" || echo "000")
+                [ "$code" = "200" ] || echo "::warning::warm-up: revalidate '$t' devolvió $code"
+              done
+            fi
+            for p in / /es/autoridades /es/convenios; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "$BASE$p" || echo "000")
+              [ "$code" = "200" ] || echo "::warning::warm-up: GET $p devolvió $code"
+            done
+            echo "Warm-up terminado"

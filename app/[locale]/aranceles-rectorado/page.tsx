@@ -9,6 +9,10 @@ import { getT } from '@/lib/i18n/server'
 import { formatGuaranies, formatMonto, grupoId, type ArancelGroup } from '@/lib/cms/aranceles'
 import { getArancelesRectorado } from '@/lib/cms/queries/aranceles'
 
+// ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible»/«vacío» cuando el build
+// corre sin CMS alcanzable. Límite: la página puede mostrar datos hasta 60 s viejos (las etiquetas lo acortan).
+export const revalidate = 60
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   const t = await getT(locale, 'pages.aranceles-rectorado')

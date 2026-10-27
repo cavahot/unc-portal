@@ -69,7 +69,6 @@ export async function cmsFetch<T>(
 
   try {
     const res = await fetch(url, fetchOptions);
-    clearTimeout(timeoutId);
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
@@ -81,7 +80,6 @@ export async function cmsFetch<T>(
 
     return (await res.json()) as T;
   } catch (error) {
-    clearTimeout(timeoutId);
     if (error instanceof CmsError) {
       throw error;
     }
@@ -89,5 +87,8 @@ export async function cmsFetch<T>(
       error instanceof Error ? error.message : 'Unknown CMS connection error',
       500
     );
+  } finally {
+    // Se cancela solo tras terminar la lectura del cuerpo: un cuerpo colgado también queda acotado por el timeout.
+    clearTimeout(timeoutId);
   }
 }

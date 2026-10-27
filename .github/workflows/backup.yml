@@ -29,6 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     # Only run on the main repository (not forks)
     if: github.repository_owner == 'cavahot'
+    # Mínimo necesario: leer el código y abrir/comentar el issue de alerta (paso final). No escribe en el repo.
+    permissions:
+      contents: read
+      issues: write
 
     steps:
       - name: Checkout (scripts/backup only)
@@ -94,3 +98,23 @@ jobs:
         run: |
           echo "::error::Daily backup FAILED at $(date -u '+%Y-%m-%d %H:%M UTC')"
           echo "Check the Actions log: DATABASE_URL and BACKUP_ENCRYPTION_PASSPHRASE (>= 20 chars) secrets must be set and the database reachable from the runner."
+
+      # Un respaldo diario que falla en silencio es una copia que no existe: se abre (o comenta) un issue para
+      # que alguien lo vea. Sin duplicados: si ya hay uno abierto con el mismo título, se añade un comentario.
+      # El cuerpo solo lleva la fecha y la URL de la ejecución: nunca secretos ni datos de la base.
+      - name: Open or update failure issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE='Backup diario falló'
+          BODY="El respaldo diario cifrado falló el $(date -u '+%Y-%m-%d %H:%M UTC'). Revisar la ejecución: $RUN_URL"
+          EXISTING=$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")][0].number // empty")
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi

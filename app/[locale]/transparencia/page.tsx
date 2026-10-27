@@ -9,6 +9,10 @@ import { getT } from '@/lib/i18n/server'
 // TRANS-01: hub de transparencia. Antes leía el global `transparencia` (una segunda fuente que nadie alimentaba y
 // que siempre salía vacía); ahora resume las colecciones `ley5189` y `ley5282` y enlaza a cada ley. Muestra cuántas
 // categorías ya tienen documentos, sin enlaces de relleno. Spec: docs/specs/portal/TRANSPARENCIA-LEYES.md §5.
+// ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible»/«vacío» cuando el build
+// corre sin CMS alcanzable. Límite: la página puede mostrar datos hasta 60 s viejos (las etiquetas lo acortan).
+export const revalidate = 60
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const t = await getT(locale, 'pages.transparencia')

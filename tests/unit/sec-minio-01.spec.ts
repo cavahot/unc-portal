@@ -50,9 +50,13 @@ describe('SEC-MINIO-01 B: sin secretos de MinIO en archivos versionados', () => 
     .stdout.split('\n').filter(Boolean)
     .filter((f) => !f.startsWith('node_modules/') && /\.(sh|ps1|md|ya?ml|json|ts|tsx|mjs|js|env|example|conf)$/.test(f))
 
-  it('ningún archivo versionado contiene el valor filtrado', () => {
+  // SEC-REVIEW: antes, sin valor conocido el test hacía `return` y pasaba en vacío (falso verde). Ahora se OMITE con
+  // motivo explícito y solo cuando no hay ninguna fuente (ni el commit c331a50 en el clon ni apps/cms/.env). La
+  // garantía determinista sin fuentes la da el test siguiente (sin literales largos asignados a la clave).
+  const secretsAvailable = leakedSecrets().length > 0
+  it.skipIf(!secretsAvailable)('ningún archivo versionado contiene el valor filtrado (OMITIDO si no hay commit c331a50 ni apps/cms/.env: sin valor conocido no hay qué buscar)', () => {
     const secrets = leakedSecrets()
-    if (secrets.length === 0) return // sin valor conocido no hay qué buscar
+    expect(secrets.length).toBeGreaterThan(0)
     const hits = tracked.filter((f) => {
       const full = path.join(ROOT, f)
       if (!existsSync(full)) return false

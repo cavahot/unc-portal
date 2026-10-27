@@ -81,6 +81,17 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   CREATE INDEX IF NOT EXISTS "glosario_guarani_revisado_idx" ON "glosario_guarani" USING btree ("revisado");
   CREATE INDEX IF NOT EXISTS "glosario_guarani_updated_at_idx" ON "glosario_guarani" USING btree ("updated_at");
   CREATE INDEX IF NOT EXISTS "glosario_guarani_created_at_idx" ON "glosario_guarani" USING btree ("created_at");
+  -- GLO-GN-01 (SEC-REVIEW): pre-chequeo de duplicados. Amenaza: el CREATE UNIQUE INDEX fallaría con un error críptico a
+  -- mitad del despliegue si la tabla ya tiene filas repetidas. Solo corre si el índice aún no existe y la tabla y
+  -- las columnas existen; el mensaje nombra tabla e índice y nunca incluye valores de filas (pueden ser datos del PO).
+  DO $$ BEGIN
+    IF to_regclass('public."terminoEs_fuente_idx"') IS NULL
+       AND (SELECT count(*) FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'glosario_guarani' AND column_name IN ('termino_es', 'fuente')) = 2 THEN
+      IF EXISTS (SELECT 1 FROM (SELECT 1 FROM "glosario_guarani" WHERE "termino_es" IS NOT NULL AND "fuente" IS NOT NULL GROUP BY "termino_es","fuente" HAVING count(*) > 1 LIMIT 1) AS dup) THEN
+        RAISE EXCEPTION 'GLO-GN-01: la tabla glosario_guarani tiene filas duplicadas en (termino_es, fuente) y no se puede crear el indice unico terminoEs_fuente_idx. Deduplique esas filas antes de migrar.';
+      END IF;
+    END IF;
+  END $$;
   CREATE UNIQUE INDEX IF NOT EXISTS "terminoEs_fuente_idx" ON "glosario_guarani" USING btree ("termino_es","fuente");
   CREATE INDEX IF NOT EXISTS "glosario_guarani_variantes_gn_order_idx" ON "glosario_guarani_variantes_gn" USING btree ("_order");
   CREATE INDEX IF NOT EXISTS "glosario_guarani_variantes_gn_parent_id_idx" ON "glosario_guarani_variantes_gn" USING btree ("_parent_id");

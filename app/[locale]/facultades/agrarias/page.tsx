@@ -4,6 +4,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
+// ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible»/«vacío» cuando el build
+// corre sin CMS alcanzable. Límite: la página puede mostrar datos hasta 60 s viejos (las etiquetas lo acortan).
+export const revalidate = 60
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('pages.facultades.agrarias.meta')
   return { title: t('title'), description: t('description') }
