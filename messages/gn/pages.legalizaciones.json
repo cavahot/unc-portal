@@ -3,7 +3,10 @@
     "title": "Legalizaciones — Universidad Nacional de Concepción",
     "description": "UNC kuatia ñemomba'e ha legalización: diplomas, mbo'e kuatia ha calificaciones."
   },
-  "breadcrumb": { "home": "Ñepyrũ", "page": "Legalizaciones" },
+  "breadcrumb": {
+    "home": "Ñepyrũ",
+    "page": "Legalizaciones"
+  },
   "hero": {
     "label": "Secretaría General",
     "title": "Legalizaciones",
@@ -12,7 +15,7 @@
   "services": {
     "label": "Pytyvõ oĩva",
     "title": "¿Mba'e kuatia ikatumi oñelegalizáva?",
-    "description": "Secretaría General UNC pegua omboguejy mbo'ehao kuatia legalización pytyvõ, tetã ha tetã ambuépe oñemongu'e haguã.",
+    "description": "Secretaría General UNC pegua omboguejy mbo'ehao kuatia legalización pytyvõ, tetã ha tetã ambuépe oñemongu'e hag̃ua.",
     "s1": {
       "eyebrow": "Pytyvõ 01",
       "title": "Diploma Legalización",
@@ -37,7 +40,7 @@
     "s3": {
       "eyebrow": "Pytyvõ 03",
       "title": "Calificaciones Legalización",
-      "description": "Calificaciones kuatia ñemomba'e ñemboguapy, beca térã mbo'e ñemomba'e tetã ambuépe haguã.",
+      "description": "Calificaciones kuatia ñemomba'e ñemboguapy, beca térã mbo'e ñemomba'e tetã ambuépe hag̃ua.",
       "req1": "Calificaciones kuatia analítico teete",
       "req2": "CI ojurujáva",
       "req3": "Ñemomba'e formulario ojuepéva",
@@ -49,7 +52,7 @@
   "contact": {
     "label": "Ñomongeta",
     "title": "Ñemongu'e marandu",
-    "description": "Legalización tembiapo rehegua ñeporandu haguã, eho:",
+    "description": "Legalización tembiapo rehegua ñeporandu hag̃ua, eho:",
     "office": "Secretaría General",
     "address1": "Rectorado — Universidad Nacional de Concepción",
     "address2": "Concepción, Paraguay",

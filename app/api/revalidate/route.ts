@@ -59,6 +59,8 @@ export async function POST(request: NextRequest) {
     const ALLOWED_TAGS = new Set([
       'noticias',
       'noticias-search',
+      // PERF-DB: lista de slugs que consume getNewsSlugs (generateStaticParams).
+      'noticias-slugs',
       'navegacion',
       'transparencia',
       'revistas',
@@ -70,7 +72,23 @@ export async function POST(request: NextRequest) {
       'tribunal-miembros',
       'tribunal-documentos',
       'aranceles-rectorado',
+      // FAC-01: aranceles de cada facultad (el CMS la envía al guardar/borrar un arancel de facultad).
+      'aranceles-facultad',
       'estadisticas',
+      // PRA-01: premios y acreditaciones (el CMS las envía al guardar/borrar; sin prefijos libres).
+      'reconocimientos',
+      'acreditaciones',
+      // AUT-01: autoridades de /autoridades (el CMS la envía al guardar/borrar una autoridad).
+      'autoridades',
+      // MLG-01: documentos de /marco-legal (el CMS la envía al guardar/borrar/retirar un documento).
+      'marco-legal',
+      // LT-01: hitos de la línea de tiempo de /historia (el CMS la envía al guardar/borrar/retirar un hito).
+      'linea-tiempo',
+      // TRANS-01: documentos de /ley-5189 y /ley-5282 (el CMS envía la etiqueta de su colección al guardar/borrar/retirar).
+      'ley5189',
+      'ley5282',
+      // TRANS-02: ítems (categorías) de las leyes; el CMS envía la etiqueta al guardar/borrar/retirar un ítem.
+      'transparencia-items',
       // DEP-19b: lista de slugs de Páginas (la consume getPageSlugs); antes el CMS enviaba `paginas:list`.
       'paginas-slugs',
     ]);

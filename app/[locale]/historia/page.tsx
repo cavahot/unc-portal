@@ -1,7 +1,11 @@
+// LT-01: la sección «Línea de tiempo» lee el CMS (docs/specs/portal/LINEA-TIEMPO.md); el resto de la página sigue en i18n.
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Reveal from '@/components/motion/Reveal'
+import HistoriaTimeline from '@/components/institutional/HistoriaTimeline'
 import { getT } from '@/lib/i18n/server'
+import { yearSpan } from '@/lib/cms/lineaTiempo'
+import { getTimeline } from '@/lib/cms/queries/lineaTiempo'
 
 export async function generateMetadata({
   params,
@@ -17,21 +21,6 @@ export async function generateMetadata({
 }
 
 /* =========================================================
-   ICONS
-   ========================================================= */
-
-function IconCalendar() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-      <line x1="16" y1="2" x2="16" y2="6" />
-      <line x1="8" y1="2" x2="8" y2="6" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-    </svg>
-  )
-}
-
-/* =========================================================
    PAGE
    ========================================================= */
 
@@ -43,13 +32,11 @@ export default async function HistoriaPage({
   const { locale } = await params
   const t = await getT(locale, 'pages.historia')
 
-  const milestones = [
-    { year: '2007', title: t('timeline.m1.title'), description: t('timeline.m1.description') },
-    { year: '2008', title: t('timeline.m2.title'), description: t('timeline.m2.description') },
-    { year: '2010', title: t('timeline.m3.title'), description: t('timeline.m3.description') },
-    { year: '2015', title: t('timeline.m4.title'), description: t('timeline.m4.description') },
-    { year: '2024', title: t('timeline.m5.title'), description: t('timeline.m5.description') },
-  ]
+  // LT-01: los hitos vienen del CMS (colección `linea-tiempo`); nunca lanza (ok / empty / unavailable).
+  const timeline = await getTimeline(locale)
+  const span = timeline.status === 'ok' ? yearSpan(timeline.milestones) : null
+  const count = timeline.status === 'ok' ? timeline.milestones.length : 0
+  const countLabel = count === 1 ? t('timeline.countOne') : t('timeline.countOther', { count })
 
   return (
     <>
@@ -138,58 +125,51 @@ export default async function HistoriaPage({
       {/* =====================================================
           TIMELINE
           ===================================================== */}
-      <section aria-labelledby="timeline-title" className="bg-white py-20 sm:py-24">
-        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="mx-auto max-w-2xl text-center">
+      {/* LT-01: hitos desde el CMS. `empty` oculta la sección (retiro deliberado del PO); `unavailable` deja el
+          encabezado y un aviso neutro (caída temporal). Nunca hitos escritos en el código. */}
+      {timeline.status !== 'empty' && (
+        <section aria-labelledby="timeline-title" className="bg-white py-20 sm:py-28 print:py-8">
+          <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:grid lg:grid-cols-12 lg:gap-x-12 lg:px-8">
+            {/* Encabezado fijo al desplazar en pantallas anchas: el título y el rango de años acompañan la lectura.
+                Sin <Reveal>: no debe quedar oculto sin JS (RDD-MLG-05). */}
+            <header className="lg:sticky lg:top-28 lg:col-span-4 lg:self-start print:static">
               <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
                 {t('timeline.label')}
               </span>
               <h2
                 id="timeline-title"
-                className="mt-4 font-serif text-3xl font-bold tracking-[-0.03em] text-[#09231D] sm:text-4xl"
+                className="mt-4 font-serif text-4xl font-bold leading-[1.02] tracking-[-0.035em] text-[#09231D] sm:text-5xl"
               >
                 {t('timeline.title')}
               </h2>
-              <p className="mt-4 text-base leading-7 text-[#6C7B76]">
+              <p className="mt-5 max-w-md text-base leading-7 text-[#33413A] sm:text-lg sm:leading-8">
                 {t('timeline.description')}
               </p>
+              {span && (
+                <p className="mt-8 border-t-[3px] border-[#004700] pt-4 sm:mt-10">
+                  <span className="block font-serif text-3xl font-bold tracking-[-0.03em] text-[#004700] [font-variant-numeric:lining-nums_tabular-nums] sm:text-4xl">
+                    {span.from === span.to ? span.from : `${span.from}–${span.to}`}
+                  </span>
+                  <span className="mt-1 block text-sm font-semibold text-[#2F5F3A]">{countLabel}</span>
+                </p>
+              )}
+            </header>
+
+            <div className="mt-14 lg:col-span-8 lg:mt-2">
+              {timeline.status === 'ok' ? (
+                <HistoriaTimeline
+                  milestones={timeline.milestones}
+                  labels={{ moreInfo: t('timeline.moreInfo'), newTab: t('timeline.newTab') }}
+                />
+              ) : (
+                <p role="status" className="rounded-2xl bg-[#F4F7F5] p-6 text-base leading-7 text-[#33413A] sm:p-8">
+                  {t('timeline.unavailable')}
+                </p>
+              )}
             </div>
-          </Reveal>
-
-          <div className="mt-14 relative">
-            <div aria-hidden="true" className="absolute left-5 top-0 h-full w-px bg-[#D7E0DB] lg:left-1/2" />
-
-            <ol className="space-y-12">
-              {milestones.map((milestone, i) => (
-                <li key={milestone.year} className={`relative flex gap-8 ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}>
-                  <Reveal delay={i * 80}>
-                    <div aria-hidden="true" className="absolute left-5 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border-2 border-[#008000] bg-white shadow-[0_0_0_4px_#E6FFE6] lg:left-1/2">
-                      <span className="text-[#008000]">
-                        <IconCalendar />
-                      </span>
-                    </div>
-
-                    <div className={`ml-12 w-full lg:ml-0 lg:w-[calc(50%-2.5rem)] ${i % 2 === 0 ? 'lg:pr-10 lg:text-right' : 'lg:pl-10 lg:text-left'}`}>
-                      <div className="rounded-[1.25rem] border border-[#D7E0DB] bg-white p-6 shadow-[0_12px_36px_rgba(7,42,15,0.07)]">
-                        <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#008000]">
-                          {milestone.year}
-                        </p>
-                        <h3 className="mt-2 font-serif text-xl font-bold text-[#09231D]">
-                          {milestone.title}
-                        </h3>
-                        <p className="mt-2 text-sm leading-6 text-[#6C7B76]">
-                          {milestone.description}
-                        </p>
-                      </div>
-                    </div>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* =====================================================
           MISSION STRIP

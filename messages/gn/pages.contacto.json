@@ -21,7 +21,7 @@
     "phone": {
       "label": "Telefono",
       "value": "(595 331) 241069\n(595 331) 240883",
-      "action": "Eñe'ẽ ko'ãga"
+      "action": "Eñe'ẽ ko'ág̃a"
     },
     "email": {
       "label": "Ñanduti tee",
@@ -29,8 +29,8 @@
       "action": "Emondo ñanduti"
     },
     "hours": {
-      "label": "Mba'apohaguã aravo",
-      "value": "Arambotÿ – Arambokõi\n07:00 – 13:00",
+      "label": "Ñepytyvõ aravo",
+      "value": "Arateĩ guive Arapo peve\n07:00 – 13:00 hs",
       "action": "Ehecha tembiasakue"
     }
   },

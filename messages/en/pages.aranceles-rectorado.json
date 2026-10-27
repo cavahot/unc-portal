@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "Rectorate Fees | UNC",
+    "description": "Official amounts charged by the Rectorate of the Universidad Nacional de Concepción for fines, documents, services and graduate programs."
+  },
+  "breadcrumb": { "inicio": "Home", "facultades": "Faculties", "nombre": "Rectorate Fees" },
+  "hero": {
+    "badge": "Rectorate",
+    "titulo": "Rectorate Fees",
+    "subtitulo": "What the Rectorate charges for fines, documents and administrative services, and for its graduate programs.",
+    "currencyNote": "Amounts in guaraníes. They may change by institutional resolution: confirm the amount at the Rectorate before paying."
+  },
+  "updated": "Last updated: {date}",
+  "summary": "{count} items in {groups} groups",
+  "index": {
+    "label": "Fee groups",
+    "range": "From {min} to {max}",
+    "countOne": "1 item",
+    "countOther": "{count} items"
+  },
+  "grupos": {
+    "multas": { "title": "Fines", "short": "Fines" },
+    "venta": { "title": "Sale of public administration goods and services", "short": "Goods and services" },
+    "educativos": { "title": "Educational fees", "short": "Educational" }
+  },
+  "table": {
+    "caption": "{group}: item and amount in guaraníes",
+    "concept": "Item",
+    "amount": "Amount",
+    "currencyName": "guaraníes"
+  },
+  "search": {
+    "label": "Search for a fee",
+    "placeholder": "e.g. título, maestría or 50000",
+    "clear": "Clear search",
+    "statusAll": "{total} items in {groups} groups",
+    "statusOne": "1 item matches “{query}”",
+    "statusOther": "{count} items match “{query}”",
+    "statusNone": "No items match “{query}”",
+    "emptyTitle": "No results for “{query}”",
+    "emptyHint": "Try another word (item names are in Spanish) or type the amount without dots.",
+    "showAll": "Show all fees"
+  },
+  "states": {
+    "empty": "No fees have been published yet. To find out an amount, ask at the Rectorate.",
+    "unavailable": "The fees could not be loaded right now. Please try again in a few minutes."
+  },
+  "info": {
+    "title": "Procedures that carry a fee",
+    "description": "Document legalization and degree registration are on this list. Each procedure explains its steps and when the payment is made.",
+    "ctaLegalizaciones": "See legalizations",
+    "ctaTitulos": "See degree registration"
+  }
+}

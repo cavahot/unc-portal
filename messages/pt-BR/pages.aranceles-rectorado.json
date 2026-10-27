@@ -1,30 +1,54 @@
 {
   "meta": {
-    "title": "Anuidades da Reitoria | UNC",
-    "description": "Anuidades e taxas oficiais da Reitoria da Universidade Nacional de Concepción vigentes conforme resolução institucional."
+    "title": "Taxas da Reitoria | UNC",
+    "description": "Valores oficiais cobrados pela Reitoria da Universidade Nacional de Concepción por multas, documentos, serviços e programas de pós-graduação."
   },
-  "breadcrumb": { "inicio": "Início", "nombre": "Anuidades da Reitoria" },
+  "breadcrumb": { "inicio": "Início", "facultades": "Faculdades", "nombre": "Taxas da Reitoria" },
   "hero": {
     "badge": "Reitoria",
-    "titulo": "Anuidades da Reitoria",
-    "subtitulo": "Valores vigentes conforme resolução institucional da Universidade Nacional de Concepción."
+    "titulo": "Taxas da Reitoria",
+    "subtitulo": "O que a Reitoria cobra por multas, documentos e serviços administrativos, e por seus programas de pós-graduação.",
+    "currencyNote": "Valores em guaranis. Podem mudar por resolução institucional: confirme o valor na Reitoria antes de pagar."
+  },
+  "updated": "Última atualização: {date}",
+  "summary": "{count} itens em {groups} grupos",
+  "index": {
+    "label": "Grupos de taxas",
+    "range": "De {min} a {max}",
+    "countOne": "1 item",
+    "countOther": "{count} itens"
   },
   "grupos": {
-    "multas": {
-      "title": "Multas e Direitos Não Tributários",
-      "concepto": "Conceito",
-      "monto": "Valor (Gs.)"
-    },
-    "venta": {
-      "title": "Venda de Bens e Serviços",
-      "concepto": "Conceito",
-      "monto": "Valor (Gs.)"
-    },
-    "educativos": {
-      "title": "Taxas Educacionais",
-      "concepto": "Conceito",
-      "monto": "Valor (Gs.)"
-    }
+    "multas": { "title": "Multas", "short": "Multas" },
+    "venta": { "title": "Venda de bens e serviços da administração pública", "short": "Bens e serviços" },
+    "educativos": { "title": "Taxas educacionais", "short": "Educacionais" }
   },
-  "nota": "Os valores correspondem às anuidades oficiais publicadas pela Reitoria da UNC. Para consultas específicas entre em contato com a Secretaria Geral."
+  "table": {
+    "caption": "{group}: item e valor em guaranis",
+    "concept": "Item",
+    "amount": "Valor",
+    "currencyName": "guaranis"
+  },
+  "search": {
+    "label": "Buscar uma taxa",
+    "placeholder": "Ex.: título, maestría ou 50000",
+    "clear": "Limpar a busca",
+    "statusAll": "{total} itens em {groups} grupos",
+    "statusOne": "1 item corresponde a “{query}”",
+    "statusOther": "{count} itens correspondem a “{query}”",
+    "statusNone": "Nenhum item corresponde a “{query}”",
+    "emptyTitle": "Sem resultados para “{query}”",
+    "emptyHint": "Tente outra palavra (os nomes estão em espanhol) ou digite o valor sem pontos.",
+    "showAll": "Ver todas as taxas"
+  },
+  "states": {
+    "empty": "Ainda não há taxas publicadas. Para saber um valor, consulte a Reitoria.",
+    "unavailable": "Não foi possível carregar as taxas agora. Tente novamente em alguns minutos."
+  },
+  "info": {
+    "title": "Trâmites que têm taxa",
+    "description": "A legalização de documentos e o registro de diplomas estão nesta lista. Cada trâmite explica suas etapas e em que momento se paga.",
+    "ctaLegalizaciones": "Ver legalizações",
+    "ctaTitulos": "Ver registro de diplomas"
+  }
 }

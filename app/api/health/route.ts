@@ -1,6 +1,9 @@
 export const dynamic = 'force-dynamic'
 
-const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3002'
+// VERIF-DOCKER-06: URL INTERNA del CMS (red de Compose, CMS_URL) con respaldo a la pública. Por qué: sondear la URL
+// pública hacía depender el estado de DNS/TLS/nginx externos y agotaba los 3 s del gate de deploy.yml. Límite: sin
+// CMS_URL (desarrollo) se usa NEXT_PUBLIC_CMS_URL, igual que antes.
+const CMS_URL = process.env.CMS_URL || process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:3002'
 
 /**
  * DEP-09 (B): sonda INFORMATIVA del CMS (liveness `/api/health`, no readiness).

@@ -3,15 +3,46 @@
     "title": "Trámites — Universidad Nacional de Concepción",
     "description": "UNC rehegua trámite mbo'ehao pytyvõrãnguéra rupi: mba'e oñeikotevẽva ha mba'éicha oñemba'apo."
   },
-  "breadcrumb": { "home": "Ñepyrũ", "page": "Trámites" },
   "hero": {
     "label": "Pytyvõ institucional",
     "title": "Trámites",
     "description": "Mbo'ehao pytyvõrãnguéra rupi trámite mba'e oñeikotevẽva"
   },
+  "tramites": {
+    "t1": {
+      "nombre": "Título jerure",
+      "descripcion": "Emoñepyrũ proceso oficial rehupyty hag̃ua nde diploma grado térã posgrado.",
+      "duracion": "15 ára hábil"
+    },
+    "t2": {
+      "nombre": "Kuatia legalización",
+      "descripcion": "Certificado ha kuatia académico legalización ha apostilla.",
+      "duracion": "10 ára hábil"
+    },
+    "t3": {
+      "nombre": "Certificado de Estudios",
+      "descripcion": "Constancia oficial materia ojehupytýva ha situación académica ko'ag̃agua rehegua.",
+      "duracion": "5 ára hábil"
+    },
+    "t4": {
+      "nombre": "Constancia de Alumno Regular",
+      "descripcion": "Kuatia ohechaukáva ndeha'eha temimbo'e activo UNC-pe.",
+      "duracion": "3 ára hábil"
+    },
+    "t5": {
+      "nombre": "Certificado de Notas",
+      "descripcion": "Historial académico completo opaite materia calificación ndive.",
+      "duracion": "5 ára hábil"
+    },
+    "t6": {
+      "nombre": "Beca jerure",
+      "descripcion": "Jeike programa de becas nacional ha internacional UNC temimbo'ekuérape g̃uarã.",
+      "duracion": "Convocatoria he'iháicha"
+    }
+  },
+  "seeMore": "Ehecha hetave",
   "help": {
     "title": "¿Reñeporandu?",
-    "description": "Eñomongeta Secretaría General pegua:",
-    "email": "secgral@unc.edu.py"
+    "description": "Eñomongeta Secretaría General pegua:"
   }
 }

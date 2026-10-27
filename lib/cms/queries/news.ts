@@ -80,30 +80,65 @@ export interface NewsItem {
   author?: string | null
 }
 
+/** Campos de tarjeta/listado/buscador que el portal realmente usa (PERF-DB); excluye `content`. */
+const LIST_SELECT_FIELDS = [
+  'title',
+  'slug',
+  'summary',
+  'publishedAt',
+  'featuredImage',
+  'featuredImageUrl',
+  'category',
+] as const
+
+/** Listados: `content` (Lexical pesado) es opcional porque no se pide por defecto (PERF-DB). */
+export type NewsListItem = Omit<NewsItem, 'content'> & { content?: NewsItem['content'] }
+
+const DEFAULT_LIST_LIMIT = 50
+const MAX_LIST_LIMIT = 100
+
+/**
+ * Acota `limit` (PERF-DB): evita que un llamador pida un volumen sin tope al CMS/Postgres.
+ * Sin `limit` -> 50; por encima del máximo (100 o `maxLimit` explícito, p. ej. sitemap) se recorta.
+ */
+function clampLimit(limit: number | undefined, maxLimit: number = MAX_LIST_LIMIT): number {
+  const wanted = limit !== undefined && Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : DEFAULT_LIST_LIMIT
+  return Math.min(wanted, maxLimit)
+}
+
 /**
  * Lista de noticias publicadas (DEP-19b). Producción: CMS caído -> propaga `CmsError` (no se
  * cachean noticias demo); respuesta vacía -> `docs: []` real. Solo en desarrollo una caída devuelve
  * DEMO_NEWS. Límite: el llamador debe decidir cómo mostrar el error (error boundary o estado vacío).
+ * PERF-DB: un solo `depth` (1 por defecto), sin `content` salvo `includeContent`, `select`
+ * explícito opcional y `limit` acotado (50 por defecto, 100 máximo salvo `maxLimit`).
  */
 export async function getNews(options: {
   page?: number
   limit?: number
+  maxLimit?: number
   featured?: boolean
   depth?: number
-} = {}): Promise<PayloadResponse<NewsItem>> {
+  select?: readonly string[]
+  includeContent?: boolean
+} = {}): Promise<PayloadResponse<NewsListItem>> {
   try {
     const params = new URLSearchParams()
     if (options.page) params.append('page', options.page.toString())
-    if (options.limit) params.append('limit', (options.limit || 10).toString())
-    if (options.depth !== undefined) params.append('depth', options.depth.toString())
+    params.append('limit', String(clampLimit(options.limit, options.maxLimit)))
+    params.append('depth', String(options.depth ?? 1))
     if (options.featured !== undefined) {
       params.append('where[featured][equals]', options.featured.toString())
     }
     params.append('where[_status][equals]', 'published')
     params.append('sort', '-publishedAt')
-    params.append('depth', '2')
+    if (!options.includeContent) {
+      for (const field of options.select ?? LIST_SELECT_FIELDS) {
+        params.append(`select[${field}]`, 'true')
+      }
+    }
 
-    return await cmsFetch<PayloadResponse<NewsItem>>(`/noticias?${params.toString()}`, {
+    return await cmsFetch<PayloadResponse<NewsListItem>>(`/noticias?${params.toString()}`, {
       tags: ['noticias'],
     })
   } catch (error) {
@@ -193,11 +228,11 @@ export async function getNewsSlugs(limit = 200): Promise<string[]> {
   }
 }
 
-/** Búsqueda de noticias (DEP-19b): producción propaga la caída del CMS; el demo solo en desarrollo. */
+/** Búsqueda de noticias (DEP-19b): producción propaga la caída del CMS; el demo solo en desarrollo. PERF-DB: sin cuerpo y con `limit` acotado. */
 export async function getNewsByQuery(
   q: string,
   options: { limit?: number } = {}
-): Promise<PayloadResponse<NewsItem>> {
+): Promise<PayloadResponse<NewsListItem>> {
   const limit = options.limit ?? 12
   try {
     const params = new URLSearchParams()
@@ -205,10 +240,12 @@ export async function getNewsByQuery(
     params.append('where[or][1][summary][like]', q)
     params.append('where[_status][equals]', 'published')
     params.append('sort', '-publishedAt')
-    params.append('limit', String(limit))
-    params.append('depth', '2')
+    params.append('limit', String(clampLimit(limit)))
+    // PERF-DB: el buscador solo pinta tarjetas; sin `content` y con depth 1 (imagen destacada).
+    params.append('depth', '1')
+    for (const field of LIST_SELECT_FIELDS) params.append(`select[${field}]`, 'true')
 
-    return await cmsFetch<PayloadResponse<NewsItem>>(`/noticias?${params.toString()}`, {
+    return await cmsFetch<PayloadResponse<NewsListItem>>(`/noticias?${params.toString()}`, {
       tags: ['noticias-search'],
     })
   } catch (error) {

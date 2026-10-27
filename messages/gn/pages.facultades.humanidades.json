@@ -3,21 +3,32 @@
     "title": "Humanidades Mbo'ehao | UNC",
     "description": "Mbo'éhao, posgrado, tembiasakue ha ñomongeta Humanidades Mbo'ehaógui UNC-pe."
   },
-  "breadcrumb": { "facultades": "Mbo'ehaovéva", "nombre": "Humanidades" },
+  "breadcrumb": {
+    "facultades": "Mbo'ehaovéva",
+    "nombre": "Humanidades"
+  },
   "hero": {
     "badge": "Mbo'ehao",
     "nombre": "Humanidades ha Mbo'éhao Mbo'ehao",
-    "tagline": "Ojapo profesional mbo'esýva ha ava rembiasakue ndive."
+    "tagline": "Ombokatupyry profesional oñemoĩva tekombo'e, cultura ha Paraguái jekakuaa humano rehe."
   },
   "grado": {
     "title": "Mbo'éhao Tuichakue",
     "subtitle": "CONES oñemoĩva'ekue mbo'éhao",
-    "cols": { "carrera": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+    "cols": {
+      "carrera": "Mbo'éhao",
+      "sede": "Tenda",
+      "resolucion": "Res. CONES"
+    }
   },
   "posgrado": {
     "title": "Posgrado Mbo'éhao",
     "subtitle": "Maestría ha especialización",
-    "cols": { "programa": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+    "cols": {
+      "programa": "Mbo'éhao",
+      "sede": "Tenda",
+      "resolucion": "Res. CONES"
+    }
   },
   "aranceles": {
     "title": "Mboimba",
@@ -34,7 +45,10 @@
     "title": "Ñomongeta",
     "direccion": "Ruta Py05, Km 210, Concepción, Paraguay",
     "telefono": "(595 331) 243176",
-    "emails": ["secgral@fhyce.edu.py", "administracion@fhyce.edu.py"],
+    "emails": [
+      "secgral@fhyce.edu.py",
+      "administracion@fhyce.edu.py"
+    ],
     "web": "www.fhyce.edu.py",
     "sitio": "Mbo'ehao rendápe jaho"
   }

@@ -9,18 +9,81 @@
   },
   "hero": {
     "eyebrow": "Normativa institucional",
-    "title": "Marco Legal",
-    "description": "Base normativa que rege a vida institucional da Universidade Nacional de Concepción.",
-    "softwareNote": "Recomendamos ter instalado um software compatível com documentos PDF, DOCS e XLS."
+    "title": "Marco legal",
+    "description": "Leis, estatuto, regulamentos e políticas que regem a vida institucional da Universidade Nacional de Concepción, para consultar e baixar. Os documentos estão em espanhol.",
+    "softwareNote": "Para abrir os documentos é preciso um programa compatível com arquivos PDF, DOC e XLS."
+  },
+  "hierarchy": {
+    "heading": "Do marco geral à gestão",
+    "tiers": {
+      "creacion": "Norma de criação",
+      "fundamental": "Norma fundamental",
+      "general": "Regulamentação geral",
+      "especificas": "Normas específicas",
+      "gestion": "Instrumentos de gestão"
+    }
+  },
+  "search": {
+    "label": "Buscar um documento",
+    "placeholder": "Ex.: becas, posgrado, ética…",
+    "clear": "Limpar busca",
+    "statusAll": "{total} documentos em {categories} categorias",
+    "statusOne": "1 documento corresponde a «{query}»",
+    "statusOther": "{count} documentos correspondem a «{query}»",
+    "statusNone": "Nenhum documento corresponde a «{query}»",
+    "emptyTitle": "Não encontramos documentos com «{query}»",
+    "emptyHint": "Verifique a ortografia ou tente uma palavra do título em espanhol, como «reglamento» ou «posgrado».",
+    "showAll": "Ver todos os documentos"
+  },
+  "index": {
+    "label": "Categorias do marco legal"
   },
   "docs": {
-    "eyebrow": "Documentos normativos",
-    "heading": "Instrumentos legais vigentes",
-    "description": "A Universidade Nacional de Concepción é regida por um conjunto de instrumentos normativos que garantem seu funcionamento transparente, democrático e orientado ao bem comum.",
-    "totalLabel": "documentos",
-    "downloadLabel": "Baixar",
-    "empty": "Nenhum documento disponível no momento.",
-    "fallbackNote": "Exibindo documentos de referência. Conectando ao servidor..."
+    "countOne": "1 documento",
+    "countOther": "{count} documentos",
+    "download": "Baixar",
+    "downloadAria": "Baixar «{title}» ({format}). Abre em uma nova aba.",
+    "titulo": "Título {numeral}",
+    "dated": "Data: {date}"
+  },
+  "categories": {
+    "ley-creacion": "Lei de criação",
+    "estatuto": "Estatuto universitário",
+    "reglamento-general": "Regulamento Geral",
+    "reglamentos-especiales": "Regulamentos específicos",
+    "codigos": "Códigos institucionais",
+    "politicas": "Políticas institucionais",
+    "planes": "Planos",
+    "manuales": "Manuais",
+    "procedimientos": "Procedimentos",
+    "protocolos": "Protocolos"
+  },
+  "categoryDescriptions": {
+    "ley-creacion": "Lei nacional que cria a Universidade Nacional de Concepción.",
+    "estatuto": "Norma fundamental que define os fins, o governo e a organização da Universidade.",
+    "reglamento-general": "Desenvolve o Estatuto. Cada título regula um âmbito da vida universitária.",
+    "reglamentos-especiales": "Regras de órgãos, programas e serviços específicos.",
+    "codigos": "Princípios de conduta e de boa governança.",
+    "politicas": "Orientações institucionais por área de gestão.",
+    "planes": "Planos institucionais de médio prazo e seus projetos.",
+    "manuales": "Funções e boas práticas para o trabalho institucional.",
+    "procedimientos": "Etapas e circuitos administrativos da Reitoria.",
+    "protocolos": "Protocolos adotados diante de situações específicas."
+  },
+  "estado": {
+    "derogado": "Revogado",
+    "historico": "Histórico"
+  },
+  "format": {
+    "pdf": "PDF",
+    "doc": "Documento do Word",
+    "xls": "Planilha",
+    "drive": "Google Drive",
+    "link": "Link"
+  },
+  "states": {
+    "empty": "Ainda não há documentos publicados nesta seção. Volte a consultar mais tarde.",
+    "unavailable": "Os documentos não estão disponíveis no momento. Tente novamente em alguns minutos."
   },
   "info": {
     "eyebrow": "Informações adicionais",

@@ -12,5 +12,8 @@
     "heading": "Ley N° 5.282/2014",
     "description": "De libre acceso ciudadano a la información pública y gubernamental."
   },
-  "noDocuments": "No hay documentos disponibles."
+  "viewLabel": "Ver documentos",
+  "progress": "{withDocs} de {total} categorías con documentos publicados",
+  "pending": "Aún no hay documentos publicados.",
+  "unavailable": "No pudimos cargar la información. Intente de nuevo en unos minutos."
 }

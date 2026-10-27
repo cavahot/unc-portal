@@ -3,20 +3,36 @@
     "title": "Léi 5189/2014 — Universidad Nacional de Concepción",
     "description": "UNC rehegua remuneración ha designación marandu tetãygua rehe, Léi 5189/2014 reheve."
   },
-  "hero": {
-    "label": "Ñe'ẽ ñemombe'u",
-    "title": "Léi 5189/2014",
-    "description": "Tetãygua marandu remuneración ha designación rehegua"
+  "breadcrumb": {
+    "home": "Ñepyrũ",
+    "institutional": "Temimoĩmby",
+    "page": "Léi 5189/2014"
   },
-  "intro": "Léi N° 5189/2014 ombokatupyry tetãygua marandu remuneración, designación ha mba'apohára rehegua oĩhápe tetãgua mba'apohárãguápe.",
+  "hero": {
+    "eyebrow": "Transparencia institucional",
+    "title": "Léi 5189/2014",
+    "description": "Tetãygua marandu remuneración ha designación rehegua",
+    "badgeLabel": "Léi oñemboguatáva"
+  },
   "docs": {
     "eyebrow": "Kuatia oĩva",
     "heading": "Marandu oñemombe'u",
-    "empty": "Ko'ã momento kuatia ndaipóri.",
-    "downloadLabel": "Emono'õ"
+    "description": "Eike kuatia Léi 5189/2014 ojeruréva rehe. Káda kuatia ojepe'a peteĩ pestaña pyahúpe, servicio institucional ojeikuaa hendápe.",
+    "openLabel": "Ehecha kuatia",
+    "count": "{count, plural, one {# kuatia} other {# kuatia}}",
+    "summary": "{withDocs} {total}-gui categoría-pe oĩ kuatia oñemoherakuãva",
+    "indexLabel": "Eho peteĩ categoría-pe",
+    "noDocs": "Ndaipóri gueteri kuatia oñemoĩva.",
+    "emptyTitle": "Ndaipóri gueteri kuatia oñemoherakuãva",
+    "emptyText": "Universidad omoĩ hína ko léi marandu. Káda categoría ohechaukáta hembiapo ojejapo vove.",
+    "unavailableTitle": "Ndaikatúi roguerahauka marandu",
+    "unavailableText": "Servicio de contenidos ndoikói ko'ágã. Ndaipóri heseguete kuatia: eheka jey sapy'ánte."
   },
-  "contact": {
-    "title": "Ñeporandu haguã",
-    "description": "Eñomongeta Secretaría General pegua marandu hetave haguã."
+  "info": {
+    "eyebrow": "Marco normativo",
+    "title": "Compromiso transparencia ndive",
+    "description": "Universidad Nacional de Concepción omyasãi ko marandu Léi 5189/2014 ha Contraloría General de la República del Paraguay disposición-kuéra he'iháicha.",
+    "ctaTransparencia": "Ehecha Transparencia",
+    "ctaInstitutional": "Ejevy Temimoĩmby-pe"
   }
 }

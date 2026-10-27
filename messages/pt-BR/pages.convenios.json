@@ -1,33 +1,103 @@
 {
   "meta": {
-    "title": "Convênios | Universidad Nacional de Concepción",
-    "description": "Convênios de cooperação nacionais e internacionais assinados pela Universidad Nacional de Concepción."
+    "nacional": {
+      "title": "Convênios nacionais | Universidad Nacional de Concepción",
+      "description": "Convênios firmados pela Universidad Nacional de Concepción com instituições e empresas do Paraguai, com o documento de cada um."
+    },
+    "internacional": {
+      "title": "Convênios internacionais | Universidad Nacional de Concepción",
+      "description": "Convênios da Universidad Nacional de Concepción com universidades e instituições de outros países, com o documento de cada um."
+    }
   },
-  "breadcrumb": "Convênios",
+  "breadcrumb": {
+    "home": "Início",
+    "institutional": "Institucional"
+  },
   "hero": {
-    "badge": "Relações Institucionais",
-    "title": "Convênios Institucionais",
-    "description": "A Universidad Nacional de Concepción mantém acordos de cooperação com instituições nacionais e internacionais para fortalecer a educação, a pesquisa e o intercâmbio acadêmico."
+    "title": {
+      "nacional": "Convênios nacionais",
+      "internacional": "Convênios internacionais"
+    },
+    "intro": {
+      "nacional": "Acordos firmados com ministérios, universidades, municípios, associações e comércios do país. Cada linha leva ao documento assinado (em espanhol).",
+      "internacional": "Acordos com universidades e instituições de outros países para mobilidade, pesquisa e cooperação acadêmica. Cada linha leva ao documento assinado."
+    },
+    "summary": {
+      "nacional": "{count} convênios nacionais · {from}–{to}",
+      "internacional": "{count} convênios internacionais · {from}–{to}"
+    }
   },
-  "stats": {
-    "total": "convênios assinados",
-    "nacional": "nacionais",
-    "internacional": "internacionais"
-  },
-  "tabs": {
-    "all": "Todos",
+  "switch": {
+    "label": "Tipo de convênio",
     "nacional": "Nacionais",
     "internacional": "Internacionais"
   },
-  "card": {
-    "duration": "Duração",
-    "signed": "Assinado em",
-    "objective": "Finalidade",
-    "viewDocument": "Ver documento",
-    "noDocument": "Sem documento disponível"
+  "chart": {
+    "heading": "Convênios firmados por ano",
+    "yearLink": "{year}: {count} convênios",
+    "legendInstitutional": "Institucionais",
+    "legendBenefits": "Benefícios para estudantes"
   },
-  "empty": {
-    "title": "Sem convênios registrados",
-    "description": "Não há convênios registrados nesta categoria."
+  "search": {
+    "label": "Buscar convênios",
+    "placeholder": "Instituição, tema ou ano",
+    "clear": "Limpar busca",
+    "statusAll": "{total} convênios em {years} anos",
+    "statusOne": "1 convênio corresponde",
+    "statusOther": "{count} convênios correspondem",
+    "statusNone": "Nenhum convênio corresponde",
+    "emptyTitle": "Nenhum convênio corresponde à busca",
+    "emptyHint": "Tente outra palavra, remova um filtro ou escolha “Todos os anos”. Os textos dos convênios estão em espanhol.",
+    "showAll": "Ver todos os convênios"
+  },
+  "filters": {
+    "category": "Categoria",
+    "all": "Todos",
+    "year": "Ano",
+    "allYears": "Todos os anos"
+  },
+  "categories": {
+    "institucional": "Institucionais",
+    "beneficios": "Benefícios para estudantes"
+  },
+  "badge": {
+    "beneficios": "Benefício estudantil"
+  },
+  "index": {
+    "label": "Ir para o ano"
+  },
+  "columns": {
+    "title": "Denominação",
+    "parties": "Instituições participantes",
+    "signed": "Data de assinatura",
+    "duration": "Duração",
+    "objective": "Finalidade",
+    "document": "Documento"
+  },
+  "table": {
+    "caption": {
+      "nacional": "Convênios nacionais agrupados por ano de assinatura, do mais recente ao mais antigo",
+      "internacional": "Convênios internacionais agrupados por ano de assinatura, do mais recente ao mais antigo"
+    },
+    "countOne": "1 convênio",
+    "countOther": "{count} convênios",
+    "notRecorded": "Sem dado",
+    "noObjective": "Sem finalidade registrada"
+  },
+  "doc": {
+    "view": "Ver documento",
+    "aria": "Ver documento: {title} (abre em uma nova aba)",
+    "none": "Documento indisponível",
+    "drive": "Google Drive",
+    "web": "Site da UNC"
+  },
+  "states": {
+    "empty": "Ainda não há convênios publicados nesta seção.",
+    "unavailable": "Não foi possível carregar os convênios agora. Tente novamente em alguns minutos."
+  },
+  "info": {
+    "title": "Sua instituição quer firmar um convênio?",
+    "description": "Para propor um convênio de cooperação, escreva-nos com o objeto do acordo e os dados de contato da sua instituição.",
+    "cta": "Contatar a UNC"
   }
 }

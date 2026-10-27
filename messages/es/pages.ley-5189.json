@@ -17,12 +17,16 @@
   "docs": {
     "eyebrow": "Documentos requeridos",
     "heading": "Información pública disponible",
-    "description": "Accedé a los documentos exigidos por la Ley 5189/2014. Cada archivo está disponible en Google Drive para su descarga inmediata.",
-    "downloadLabel": "Abrir en Drive",
-    "totalLabel": "documentos",
-    "empty": "No hay documentos cargados aún. Volvé pronto.",
-    "noDocs": "Sin documentos cargados.",
-    "fallbackNote": "Mostrando datos del sistema. Reconectando con el servidor de contenidos..."
+    "description": "Acceda a los documentos exigidos por la Ley 5189/2014. Cada documento se abre en una pestaña nueva, en el servicio institucional donde está publicado.",
+    "openLabel": "Abrir documento",
+    "count": "{count, plural, one {# documento} other {# documentos}}",
+    "summary": "{withDocs} de {total} categorías con documentos publicados",
+    "indexLabel": "Ir a una categoría",
+    "noDocs": "Documentos aún no publicados.",
+    "emptyTitle": "Todavía no se publicaron documentos",
+    "emptyText": "La Universidad está preparando la información de esta ley. Cada categoría mostrará su documento en cuanto se publique.",
+    "unavailableTitle": "No pudimos cargar la información",
+    "unavailableText": "El servicio de contenidos no responde en este momento. Esto no significa que no existan documentos: intente de nuevo en unos minutos."
   },
   "info": {
     "eyebrow": "Marco normativo",

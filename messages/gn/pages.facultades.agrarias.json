@@ -3,21 +3,32 @@
     "title": "Agraria Mbo'ehao | UNC",
     "description": "Mbo'éhao, posgrado, tembiasakue ha ñomongeta Agraria Mbo'ehaógui UNC-pe."
   },
-  "breadcrumb": { "facultades": "Mbo'ehaovéva", "nombre": "Ciencias Agrarias" },
+  "breadcrumb": {
+    "facultades": "Mbo'ehaovéva",
+    "nombre": "Ciencias Agrarias"
+  },
   "hero": {
     "badge": "Mbo'ehao",
     "nombre": "Agraria Mbo'ehao",
-    "tagline": "Ojapo profesional Paraguay yvy ñembojoavy ndive."
+    "tagline": "Ombokatupyry profesional-kuéra Paraguái jekakuaa agropecuario sostenible rehe."
   },
   "grado": {
     "title": "Mbo'éhao Tuichakue",
     "subtitle": "CONES oñemoĩva'ekue mbo'éhao",
-    "cols": { "carrera": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+    "cols": {
+      "carrera": "Mbo'éhao",
+      "sede": "Tenda",
+      "resolucion": "Res. CONES"
+    }
   },
   "posgrado": {
     "title": "Posgrado Mbo'éhao",
     "subtitle": "Maestría ha especialización",
-    "cols": { "programa": "Mbo'éhao", "sede": "Tenda", "resolucion": "Res. CONES" }
+    "cols": {
+      "programa": "Mbo'éhao",
+      "sede": "Tenda",
+      "resolucion": "Res. CONES"
+    }
   },
   "aranceles": {
     "title": "Mboimba",
@@ -34,7 +45,10 @@
     "title": "Ñomongeta",
     "direccion": "Ruta Py05, Km 210, Concepción, Paraguay",
     "telefono": "(595 331) 241813 / 241069 / 240883",
-    "emails": ["secgralfcaunc@gmail.com", "fca-unc@fca-unc.edu.py"],
+    "emails": [
+      "secgralfcaunc@gmail.com",
+      "fca-unc@fca-unc.edu.py"
+    ],
     "web": "www.fca-unc.edu.py",
     "sitio": "Mbo'ehao rendápe jaho"
   }

@@ -9,16 +9,28 @@
  * Call buildCSP(nonce) from the middleware (proxy.ts) once per request.
  */
 
+import { buildImagesConfig, cmsPublicOrigin } from './images/nextImagesConfig.mjs'
+
 const isDev = process.env.NODE_ENV === 'development'
 
-/** Known external image/media hosts */
-const IMG_HOSTS = [
-  'https://www.unc.edu.py',
-  'https://migracion.unc.edu.py',
-  'https://flagcdn.com',
-  // Production S3 / CDN — add via env if needed
-  ...(process.env.MEDIA_HOSTNAME ? [`https://${process.env.MEDIA_HOSTNAME}`] : []),
-].join(' ')
+/**
+ * MIG-IMG fase 2a: hosts externos permitidos en `img-src`, derivados de la MISMA lista que `next/image`
+ * (lib/images/nextImagesConfig.mjs) más el origen público del CMS, para que una imagen `unoptimized` o una
+ * URL absoluta de `media` no quede bloqueada en producción. Sin `migracion.unc.edu.py` (D4: sin hotlink).
+ * Se calcula en cada llamada leyendo el objeto de entorno completo (no un acceso literal a una variable
+ * pública de Next, que el compilador reemplaza por su valor al construir). Límite: las imágenes optimizadas salen de `/_next/image` ('self'); esta lista
+ * solo importa para cargas directas. Los orígenes http/localhost solo aparecen fuera de producción.
+ */
+function imgHosts(): string {
+  const env = process.env as Record<string, string | undefined>
+  const origins = new Set<string>()
+  const cms = cmsPublicOrigin(env)
+  if (cms) origins.add(cms)
+  for (const p of buildImagesConfig(env).remotePatterns) {
+    if (p.protocol === 'https') origins.add(`https://${p.hostname}`)
+  }
+  return [...origins].join(' ')
+}
 
 /** CMS and MinIO origins for client-side fetch / WebSocket (dev HMR) */
 const CONNECT_DEV = [
@@ -42,7 +54,7 @@ export function buildCSP(nonce: string): string {
       // Turbopack + Next.js HMR needs unsafe-eval and unsafe-inline in dev
       `script-src 'self' 'unsafe-inline' 'unsafe-eval'`,
       `style-src  'self' 'unsafe-inline'`,
-      `img-src    'self' data: blob: ${IMG_HOSTS} http://localhost:* http://127.0.0.1:*`,
+      `img-src    'self' data: blob: ${imgHosts()} http://localhost:* http://127.0.0.1:*`,
       `font-src   'self' data:`,
       `connect-src 'self' ${CONNECT_DEV}`,
       `media-src  'none'`,
@@ -69,7 +81,7 @@ export function buildCSP(nonce: string): string {
     "default-src 'none'",
     `script-src  'self' 'unsafe-inline' 'nonce-${nonce}'`,
     `style-src   'self' 'unsafe-inline'`,   // Tailwind / inline style props
-    `img-src     'self' data: blob: ${IMG_HOSTS}`,
+    `img-src     'self' data: blob: ${imgHosts()}`,
     `font-src    'self' data:`,
     `connect-src 'self' ${CONNECT_PROD}`,
     `media-src   'none'`,

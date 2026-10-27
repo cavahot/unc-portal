@@ -12,5 +12,8 @@
     "heading": "Ley N° 5.282/2014",
     "description": "De libre acceso ciudadano a la información pública y gubernamental."
   },
-  "noDocuments": "No hay documentos disponibles."
+  "viewLabel": "Ehecha kuatia",
+  "progress": "{withDocs} {total}-gui categoría-pe oĩ kuatia oñemoherakuãva",
+  "pending": "Ndaipóri gueteri kuatia oñemoherakuãva.",
+  "unavailable": "Ndaikatúi roguerahauka marandu. Eheka jey sapy'ánte."
 }

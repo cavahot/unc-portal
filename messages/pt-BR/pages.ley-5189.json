@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Lei 5189/2014 — Transparência | Universidade Nacional de Concepción",
+    "description": "Informações públicas em cumprimento à Lei 5189/2014 sobre a prestação de informações no uso de recursos públicos e remunerações do servidor público."
+  },
+  "breadcrumb": {
+    "home": "Início",
+    "institutional": "Institucional",
+    "page": "Lei 5189/2014"
+  },
+  "hero": {
+    "eyebrow": "Transparência institucional",
+    "title": "Lei 5189/2014",
+    "description": "Em cumprimento à Lei N.º 5189/2014 «Que estabelece a obrigatoriedade da prestação de informações no uso dos recursos públicos sobre remunerações e outras retribuições atribuídas ao servidor público da República do Paraguai».",
+    "badgeLabel": "Lei em vigor"
+  },
+  "docs": {
+    "eyebrow": "Documentos exigidos",
+    "heading": "Informação pública disponível",
+    "description": "Acesse os documentos exigidos pela Lei 5189/2014. Cada documento abre em uma nova aba, no serviço institucional em que está publicado.",
+    "openLabel": "Abrir documento",
+    "count": "{count, plural, one {# documento} other {# documentos}}",
+    "summary": "{withDocs} de {total} categorias com documentos publicados",
+    "indexLabel": "Ir para uma categoria",
+    "noDocs": "Documentos ainda não publicados.",
+    "emptyTitle": "Ainda não foram publicados documentos",
+    "emptyText": "A Universidade está preparando as informações desta lei. Cada categoria mostrará seu documento assim que for publicado.",
+    "unavailableTitle": "Não foi possível carregar as informações",
+    "unavailableText": "O serviço de conteúdos não está respondendo neste momento. Isso não significa que os documentos não existam: tente novamente em alguns minutos."
+  },
+  "info": {
+    "eyebrow": "Marco normativo",
+    "title": "Compromisso com a transparência",
+    "description": "A Universidade Nacional de Concepción publica estas informações em estrito cumprimento da Lei 5189/2014 e das disposições da Controladoria-Geral da República do Paraguai.",
+    "ctaTransparencia": "Ver Transparência",
+    "ctaInstitutional": "Voltar a Institucional"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Lei 5282/2014 — Acesso à Informação | Universidade Nacional de Concepción",
+    "description": "Informações públicas em cumprimento à Lei 5282/2014 de Livre Acesso Cidadão à Informação Pública e Transparência Governamental."
+  },
+  "breadcrumb": {
+    "home": "Início",
+    "institutional": "Institucional",
+    "page": "Lei 5282/2014"
+  },
+  "hero": {
+    "eyebrow": "Livre acesso à informação",
+    "title": "Lei 5282/2014",
+    "description": "Em cumprimento ao Art. 8° da Lei N.º 5282/2014 «De Livre Acesso Cidadão à Informação Pública e Transparência Governamental», a Universidade Nacional de Concepción disponibiliza à cidadania as informações mínimas exigidas.",
+    "badgeLabel": "Art. 8° — 17 itens"
+  },
+  "docs": {
+    "eyebrow": "Informações mínimas exigidas",
+    "heading": "Informação pública disponível",
+    "description": "Acesse os documentos exigidos pelo Art. 8° da Lei 5282/2014. Cada documento abre em uma nova aba, no serviço institucional em que está publicado.",
+    "openLabel": "Abrir documento",
+    "count": "{count, plural, one {# documento} other {# documentos}}",
+    "summary": "{withDocs} de {total} categorias com documentos publicados",
+    "indexLabel": "Ir para uma categoria",
+    "noDocs": "Documentos ainda não publicados.",
+    "emptyTitle": "Ainda não foram publicados documentos",
+    "emptyText": "A Universidade está preparando as informações desta lei. Cada categoria mostrará seu documento assim que for publicado.",
+    "unavailableTitle": "Não foi possível carregar as informações",
+    "unavailableText": "O serviço de conteúdos não está respondendo neste momento. Isso não significa que os documentos não existam: tente novamente em alguns minutos."
+  },
+  "info": {
+    "eyebrow": "Marco normativo",
+    "title": "Compromisso com o acesso à informação",
+    "description": "A Universidade Nacional de Concepción publica estas informações em cumprimento da Lei 5282/2014 e garante o direito do cidadão de acesso à informação pública.",
+    "ctaTransparencia": "Ver Transparência",
+    "ctaInstitutional": "Voltar a Institucional"
+  }
+}

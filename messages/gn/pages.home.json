@@ -1,87 +1,119 @@
 {
   "hero": {
     "tagline": "Marcando el Norte",
-    "imageAlt": "Universidad Nacional de Concepción ñepyrũ joaju",
-    "title1": "Teruviché",
+    "imageAlt": "Universidad Nacional de Concepción jeikeha guasu",
+    "title1": "Peguahẽ porãite",
     "title2": "Universidad Nacional",
     "title3": "de Concepción",
-    "description": "Mbo'ehao tetãgua ombojoajúva identidad, mbo'e porã, mba'ekuaapyrã, tembiapo pyahu ha Paraguái yvate ñemombarete rehe ñemomba'e.",
-    "ctaExplore": "Mbo'epyrã eheka",
-    "ctaAbout": "UNC eikuaa",
-    "badgePublic": "Mbo'ehao tetãgua",
-    "badgeFounded": "Oñembokatú 2007-pe",
-    "badgeLocation": "Concepción · Paraguay",
-    "scrollLabel": "Eho peve",
-    "mainAccess": "Ñepyrũ joaju"
+    "description": "Tetã mbo'ehaovusu ombojoajúva identidad, excelencia académica, jeporekapy, innovación ha compromiso Paraguái yvate jekakuaa sostenible ndive.",
+    "ctaExplore": "Eheka carrera-kuéra",
+    "ctaAbout": "Eikuaa UNC",
+    "badgePublic": "Tetã mbo'ehaovusu",
+    "badgeFounded": "Oñemopyendáva 2007-pe",
+    "badgeLocation": "Concepción · Paraguái",
+    "scrollLabel": "Eguejy eike hag̃ua",
+    "mainAccess": "Jeikeha guasu"
   },
   "quickLinks": {
-    "sectionLabel": "Mbo'ehao pytyvõguéra",
+    "sectionLabel": "Temimoĩmby pytyvõkuéra",
     "title": "Joaju pya'e",
-    "description": "Eikuaa pya'eve mbo'e ha mba'apohára pytyvõ iporãitéva.",
+    "description": "Ejuhu pya'e pytyvõ académico ha administrativo ojeheka hetavéva.",
     "actionConsult": "Marandu eheka",
-    "actionAccess": "Plataformape ejoaju",
+    "actionAccess": "Eike plataforma-pe",
     "items": {
       "carreras": {
-        "title": "Mbo'epyrãnguéra",
-        "description": "Eheka mbo'epyrã mbo'ehao pytyvõrãnguéra rupi.",
-        "label": "Mbo'e oferta"
+        "title": "Carrera-kuéra",
+        "description": "Ehecha oferta académica facultad ha nivel rupi.",
+        "label": "Oferta académica"
       },
       "calendario": {
-        "title": "Mbo'e Aravo",
-        "description": "Eheka ára, periodo ha tembiapo iporãva.",
-        "label": "Ára iporãva"
+        "title": "Arapapaha Académico",
+        "description": "Ehecha ára, periodo ha tembiapo tuichamba'éva.",
+        "label": "Ára tuichamba'éva"
       },
       "titulos": {
-        "title": "Títuloguéra ha Legalizaciones",
-        "description": "Marandu trámite ha mbo'e kuatia rehegua.",
-        "label": "Mbo'e mba'apohára"
+        "title": "Título-kuéra ha Legalizaciones",
+        "description": "Marandu trámite ha kuatia académico rehegua.",
+        "label": "Gestiones académicas"
       },
       "aulaVirtual": {
         "title": "Aula Virtual",
-        "description": "Mbo'ehao mbo'e plataformape ejoaju.",
-        "label": "Mbo'e plataforma"
+        "description": "Eike plataforma institucional ñehekombo'e reheguápe.",
+        "label": "Plataforma tekombo'e rehegua"
       }
     }
   },
   "news": {
-    "sectionLabel": "Mbo'ehao marandu",
+    "sectionLabel": "Mbo'ehaovusu marandu",
     "title": "Marandu ipyahúva",
-    "description": "Mbo'e tembiapo, mba'ekuaapyrã, mbo'e ñepyrũ ha mbo'ehao mba'apohára rehegua marandu.",
-    "viewAll": "Marandu opavave ehecha",
-    "readNews": "Marandu eñemongeta: {title}",
-    "defaultCategory": "Institucional"
+    "description": "Marandu tembiapo académico, jeporekapy, extensión universitaria ha gestión institucional rehegua.",
+    "viewAll": "Ehecha opaite marandu",
+    "readNews": "Emoñe'ẽ marandu: {title}",
+    "defaultCategory": "Temimoĩmby"
   },
   "stats": {
-    "sectionLabel": "UNC número rehegua",
-    "title": "Mbo'ehao estadística",
+    "sectionLabel": "UNC papapýpe",
+    "title": "Estadística institucional",
     "items": {
       "diasActividad": "Mba'apo ára",
-      "estudiantes": "Mbo'eháva",
-      "carrerasAcreditadas": "Mbo'epyrã acreditado",
+      "estudiantes": "Temimbo'ekuéra",
+      "carrerasAcreditadas": "Carrera acreditada-kuéra",
       "docentesColaboradores": "Mbo'ehára ha pytyvõhára",
-      "facultades": "Mbo'ehao pytyvõrã",
-      "egresados": "Graduado"
+      "facultades": "Facultad-kuéra",
+      "egresados": "Egresado-kuéra"
     }
   },
   "transparency": {
-    "sectionLabel": "Tetãgua mba'apohára",
-    "title": "Ñe'ẽ ñemombe'u",
-    "description": "Kuatia, léi ha Universidad Nacional de Concepción rehegua tetãgua marandu ejoaju haguã.",
-    "viewPortal": "Ñe'ẽ ñemombe'u portal eheka",
+    "sectionLabel": "Gestión pública",
+    "title": "Transparencia activa",
+    "description": "Eike Universidad Nacional de Concepción kuatia, normativa ha tetãgua marandúpe.",
+    "viewPortal": "Ehecha portal de transparencia",
     "items": {
       "ley5189": {
         "title": "Léi 5189/14",
-        "description": "Remuneración ha designación rehegua tetãgua marandu."
+        "description": "Tetãgua marandu remuneración ha asignación rehegua."
       },
       "ley5282": {
         "title": "Léi 5282/14",
-        "description": "Tetãygua marandu joaju mbo'ehao marandu rehegua."
+        "description": "Tetãygua jeike temimoĩmby tetãgua marandúpe."
       }
     }
   },
+  "awards": {
+    "sectionLabel": "Calidad ojehechakuaáva",
+    "title": "Premio ha acreditación-kuéra",
+    "description": "Distinción-kuéra gestión-pe ha programa acreditado organismo nacional evaluación de la calidad rehegua rupive.",
+    "awardedBy": "Ome'ẽva: {name}",
+    "officialSite": "Tenda oficial",
+    "source": "Ypykue",
+    "externalHint": "ojepe'a tendayke pyahúpe",
+    "editionsTitle": "Edición ojehechakuaa hag̃uépe UNC",
+    "distinction": {
+      "premio": "Premio",
+      "premioCategoria": "Premio categoría rupi",
+      "mencionEspecial": "Mención especial",
+      "reconocimiento": "Jehechakuaa"
+    },
+    "accreditations": {
+      "title": "Acreditación-kuéra",
+      "body": "Agencia Nacional de Evaluación y Acreditación de la Educación Superior (ANEAES)",
+      "model": {
+        "modeloNacional": "Modelo Nacional",
+        "arcuSur": "ARCU-SUR"
+      },
+      "organism": {
+        "aneaes": "ANEAES",
+        "arcusur": "ARCU-SUR",
+        "otro": "Ambue organismo"
+      },
+      "validUntil": "{year} peve",
+      "otherPrograms": "Ambue programa acreditado"
+    },
+    "logoAlt": "{name} logo"
+  },
   "institutional": {
-    "label": "Mbo'ehao tetãgua",
-    "title": "Mbo'e porã, mba'ekuaapyrã ha tembiapo pyahu",
-    "description": "Concepción ha Paraguái ñemombarete rehe ñemomba'e."
+    "label": "Tetã mbo'ehaovusu",
+    "title": "Excelencia académica, jeporekapy ha innovación",
+    "description": "Compromiso Concepción ha Paraguái jekakuaa sostenible ndive."
   }
 }

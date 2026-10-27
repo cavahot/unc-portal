@@ -79,6 +79,38 @@
       }
     }
   },
+  "awards": {
+    "sectionLabel": "Recognized quality",
+    "title": "Awards and accreditations",
+    "description": "Distinctions for management and programs accredited by national quality-assessment bodies.",
+    "awardedBy": "Awarded by {name}",
+    "officialSite": "Official website",
+    "source": "Source",
+    "externalHint": "opens in a new tab",
+    "editionsTitle": "Editions in which we were distinguished",
+    "distinction": {
+      "premio": "Award",
+      "premioCategoria": "Category award",
+      "mencionEspecial": "Special mention",
+      "reconocimiento": "Recognition"
+    },
+    "accreditations": {
+      "title": "Accreditations",
+      "body": "National Agency for the Evaluation and Accreditation of Higher Education (ANEAES)",
+      "model": {
+        "modeloNacional": "National Model",
+        "arcuSur": "ARCU-SUR"
+      },
+      "organism": {
+        "aneaes": "ANEAES",
+        "arcusur": "ARCU-SUR",
+        "otro": "Other body"
+      },
+      "validUntil": "until {year}",
+      "otherPrograms": "Other accredited programs"
+    },
+    "logoAlt": "{name} logo"
+  },
   "institutional": {
     "label": "Public university",
     "title": "Academic excellence, research and innovation",

@@ -5,7 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Reveal from '@/components/motion/Reveal'
 import { getT } from '@/lib/i18n/server'
-import { getAuthorities, type Authority } from '@/lib/cms/queries/autoridades'
+import { getAuthoritySections, type Authority } from '@/lib/cms/queries/autoridades'
+import { getInitials } from '@/lib/cms/authorities'
 
 /* ── generateMetadata ─────────────────────────────────────────────────────── */
 
@@ -23,16 +24,6 @@ export async function generateMetadata({
 }
 
 /* ── Helpers ──────────────────────────────────────────────────────────────── */
-
-function getInitials(name: string): string {
-  return name
-    .replace(/^(Prof\.|Dr\.|Dra\.|Ing\.|Abog\.|Mg\.|Agr\.)\s*/gi, '')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0].toUpperCase())
-    .join('')
-}
 
 function Avatar({
   photoUrl, photoAlt, photoBlur, initials, size = 'lg',
@@ -235,19 +226,6 @@ function DeanCard({ authority, cvLabel, delay = 0 }: { authority: Authority; cvL
   )
 }
 
-/* ── Static fallback ──────────────────────────────────────────────────────── */
-
-const STATIC_AUTHORITIES: Authority[] = [
-  { id: '1', name: 'Prof. Dr. Clarito Rojas Marín', role: 'Rector', type: 'rector', faculty: null, photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: 'Autoridad máxima de la Universidad Nacional de Concepción. Representa a la institución ante organismos nacionales e internacionales.', email: null, order: 1 },
-  { id: '2', name: 'Prof. Dr. Arnaldo Miguel Ferreira Cabañas', role: 'Vicerrector', type: 'vicerrector', faculty: null, photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: 'Apoya y complementa la gestión rectoral en la conducción académica e institucional de la universidad.', email: null, order: 2 },
-  { id: '3', name: 'Prof. Dr. Carlos Ramón Lima De León', role: 'Decano', type: 'decano', faculty: 'Facultad de Odontología', photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: null, email: null, order: 10 },
-  { id: '4', name: 'Prof. Ing. Agr. Derlys Fernando López Avalos', role: 'Decano', type: 'decano', faculty: 'Facultad de Ciencias Agrarias', photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: null, email: null, order: 11 },
-  { id: '5', name: 'Prof. Mg. Gerardo Lang Ferri', role: 'Decano', type: 'decano', faculty: 'Facultad de Ciencias Económicas y Administrativas', photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: null, email: null, order: 12 },
-  { id: '6', name: 'Prof. Dr. Roberto Gustavo Barrios', role: 'Decano', type: 'decano', faculty: 'Facultad de Medicina', photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: null, email: null, order: 13 },
-  { id: '7', name: 'Prof. Dra. María Concepción Araujo De Benítez', role: 'Decana', type: 'decano', faculty: 'Facultad de Humanidades y Ciencias de la Educación', photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: null, email: null, order: 14 },
-  { id: '8', name: 'Prof. Dr. Jorge Daniel Mello Román', role: 'Decano', type: 'decano', faculty: 'Facultad de Ciencias Exactas y Tecnológica', photoUrl: null, photoAlt: null, photoBlur: null, cvUrl: null, bio: null, email: null, order: 15 },
-]
-
 /* ── Page ─────────────────────────────────────────────────────────────────── */
 
 export default async function AutoridadesPage({
@@ -258,22 +236,12 @@ export default async function AutoridadesPage({
   const { locale } = await params
   const t = await getT(locale, 'pages.autoridades')
 
-  let authorities: Authority[] = []
-
-  try {
-    authorities = await getAuthorities()
-  } catch {
-    authorities = STATIC_AUTHORITIES
-  }
-
-  if (authorities.length === 0) {
-    authorities = STATIC_AUTHORITIES
-  }
-
-  const leaders = authorities.filter((a) => a.type === 'rector' || a.type === 'vicerrector')
-  const deans = authorities.filter((a) => a.type === 'decano')
-  const others = authorities.filter((a) => a.type === 'secretario' || a.type === 'director')
-  const cvLabel = 'Currículum Vitae'
+  // AUT-01: el CMS es la única fuente. Con filas manda siempre; sin filas activas o con el CMS caído se
+  // muestra un aviso (nunca personas escritas a mano: un rector obsoleto en el código sería un dato falso).
+  const result = await getAuthoritySections()
+  const { leaders, deans, others } =
+    result.status === 'ok' ? result.sections : { leaders: [], deans: [], others: [] }
+  const cvLabel = t('cvLabel')
 
   return (
     <>
@@ -309,6 +277,17 @@ export default async function AutoridadesPage({
         </div>
       </section>
 
+      {/* ── ESTADO SIN DATOS (CMS vacío o no disponible) ─────────────────── */}
+      {result.status !== 'ok' && (
+        <section className="relative z-10 -mt-8 bg-[#F4F7F5] pb-16 pt-16">
+          <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+            <p role="status" className="rounded-[1.1rem] border border-[#D7E0DB] bg-white p-6 text-sm leading-6 text-[#6C7B76]">
+              {t(result.status === 'empty' ? 'states.empty' : 'states.unavailable')}
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* ── LEADERS (Rector + Vicerrector) ───────────────────────────────── */}
       {leaders.length > 0 && (
         <section className="relative z-10 -mt-8 bg-[#F4F7F5] pb-16 pt-16">
@@ -319,7 +298,7 @@ export default async function AutoridadesPage({
                   {t('hero.label')}
                 </span>
                 <h2 className="mt-3 font-serif text-3xl font-bold tracking-[-0.03em] text-[#09231D] sm:text-4xl">
-                  Rectorado
+                  {t('rectorado')}
                 </h2>
               </div>
             </Reveal>
@@ -377,10 +356,10 @@ export default async function AutoridadesPage({
             <Reveal>
               <div className="mb-10">
                 <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
-                  Gestión institucional
+                  {t('others.label')}
                 </span>
                 <h2 className="mt-3 font-serif text-2xl font-bold tracking-[-0.03em] text-[#09231D]">
-                  Otras autoridades
+                  {t('others.title')}
                 </h2>
               </div>
             </Reveal>

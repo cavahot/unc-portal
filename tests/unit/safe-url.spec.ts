@@ -200,7 +200,8 @@ describe('uso obligatorio de safeHref en href con datos del CMS', () => {
     'components/blocks/CTA.tsx',
     'components/blocks/Hero.tsx',
     'components/tribunal/TribunalAcordeonClient.tsx',
-    'components/convenios/ConveniosTabsClient.tsx',
+    // CNV-01: reemplaza a ConveniosTabsClient.tsx.
+    'components/convenios/ConveniosBrowser.tsx',
   ])('%s importa y usa safeHref', (rel) => {
     const src = readFileSync(path.join(ROOT, rel), 'utf8')
     expect(src).toMatch(/from '@\/lib\/security\/safeUrl'/)

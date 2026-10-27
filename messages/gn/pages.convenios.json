@@ -1,33 +1,103 @@
 {
   "meta": {
-    "title": "Acuerdos | Universidad Nacional de Concepción",
-    "description": "Acuerdos de cooperación firmados por la Universidad Nacional de Concepción."
+    "nacional": {
+      "title": "Convenio nacional-kuéra | Universidad Nacional de Concepción",
+      "description": "Convenios Universidad Nacional de Concepción ofirmava Paraguái instituciones ha empresas ndive, peteĩteĩ kuatia ndive."
+    },
+    "internacional": {
+      "title": "Convenio internacional-kuéra | Universidad Nacional de Concepción",
+      "description": "Convenios Universidad Nacional de Concepción oguerekóva ambue tetã universidades ha instituciones ndive."
+    }
   },
-  "breadcrumb": "Acuerdos",
+  "breadcrumb": {
+    "home": "Ñepyrũ",
+    "institutional": "Mba'apohára"
+  },
   "hero": {
-    "badge": "Mbo'ehao rape",
-    "title": "Acuerdos Institucionales",
-    "description": "La Universidad Nacional de Concepción oĩ acuerdos de cooperación con instituciones nacionales e internacionales para fortalecer la educación, la investigación y el intercambio académico."
+    "title": {
+      "nacional": "Convenio nacional-kuéra",
+      "internacional": "Convenio internacional-kuéra"
+    },
+    "intro": {
+      "nacional": "Ñe'ẽme'ẽ oñemboheraguapýva ministerio, mbo'ehaovusu, municipio, gremio ha comercio tetãmegua ndive. Fila ñavõ ojoaju kuatia oñemboheraguapývape.",
+      "internacional": "Ñe'ẽme'ẽ mbo'ehaovusu ha temimoĩmby ambue tetãmegua ndive movilidad, jeporekapy ha cooperación académica rehe. Fila ñavõ ojoaju kuatia oñemboheraguapývape."
+    },
+    "summary": {
+      "nacional": "{count} convenio nacional · {from}–{to}",
+      "internacional": "{count} convenio internacional · {from}–{to}"
+    }
   },
-  "stats": {
-    "total": "acuerdos ofirmados",
-    "nacional": "nacionales",
-    "internacional": "internacionales"
+  "switch": {
+    "label": "Convenio ñemohenda",
+    "nacional": "Nacional-kuéra",
+    "internacional": "Internacional-kuéra"
   },
-  "tabs": {
+  "chart": {
+    "heading": "Convenio oñemboheraguapýva ary rupi",
+    "yearLink": "{year}: {count} convenio",
+    "legendInstitutional": "Institucional-kuéra",
+    "legendBenefits": "Temimbo'ekuéra mba'eporã"
+  },
+  "search": {
+    "label": "Eheka convenios",
+    "placeholder": "Temimoĩmby, tema térã ary",
+    "clear": "Mboguete jeheka",
+    "statusAll": "{total} convenios, {years} años",
+    "statusOne": "1 convenio",
+    "statusOther": "{count} convenios",
+    "statusNone": "Ndaipóri convenio",
+    "emptyTitle": "Ndaipóri convenio ojojogua jeheka ndive",
+    "emptyHint": "Eha'ã ambue ñe'ẽ ndive, eipe'a peteĩ filtro térã eiporavo «Opaite ary».",
+    "showAll": "Ehecha opaite convenios"
+  },
+  "filters": {
+    "category": "Ñemohenda",
     "all": "Opavave",
-    "nacional": "Tetã rokẽ",
-    "internacional": "Tekohegua"
+    "year": "Ary",
+    "allYears": "Opaite ary"
   },
-  "card": {
-    "duration": "Ára",
-    "signed": "Ofirmaha",
-    "objective": "Mba'érepa",
-    "viewDocument": "Ehecha kuatia",
-    "noDocument": "Kuatia noñeikéiva"
+  "categories": {
+    "institucional": "Institucional-kuéra",
+    "beneficios": "Temimbo'ekuéra mba'eporã"
   },
-  "empty": {
-    "title": "Ndaipóri acuerdos",
-    "description": "Ndaipóri acuerdos oñemongeta'ỹva ko categoría-pe."
+  "badge": {
+    "beneficios": "Temimbo'e mba'eporã"
+  },
+  "index": {
+    "label": "Eho arýpe"
+  },
+  "columns": {
+    "title": "Téra",
+    "parties": "Temimoĩmby oikéva",
+    "signed": "Ñemboheraguapy ára",
+    "duration": "Ipukukue",
+    "objective": "Jehupytyrã",
+    "document": "Kuatia"
+  },
+  "table": {
+    "caption": {
+      "nacional": "Convenio nacional-kuéra ary ñemboheraguapy rupi, ipyahuvéva guive itujavéva peve",
+      "internacional": "Convenio internacional-kuéra ary ñemboheraguapy rupi, ipyahuvéva guive itujavéva peve"
+    },
+    "countOne": "1 convenio",
+    "countOther": "{count} convenio",
+    "notRecorded": "Ndaipóri marandu",
+    "noObjective": "Ndaipóri jehupytyrã oñeñongatúva"
+  },
+  "doc": {
+    "view": "Ehecha kuatia",
+    "aria": "Ehecha kuatia: {title} (ojeipe'a pestaña pyahúpe)",
+    "none": "Kuatia ndaipóri",
+    "drive": "Google Drive",
+    "web": "UNC ñanduti renda"
+  },
+  "states": {
+    "empty": "Ndaipóri gueteri convenios ko vore'ýpe.",
+    "unavailable": "Ndaikatúi rohechauka convenio-kuéra ko'ág̃a. Eha'ã jey sapy'ami rire."
+  },
+  "info": {
+    "title": "¿Nde temimoĩmby oipota oñemboheraguapy peteĩ convenio?",
+    "description": "Convenio cooperación rehegua ejerure hag̃ua, ehai oréve convenio jehupytyrã ha nde temimoĩmby ñomongeta rehegua marandu ndive.",
+    "cta": "Eñomongeta UNC ndive"
   }
 }

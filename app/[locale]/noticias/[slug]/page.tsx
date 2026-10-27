@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { getT, getF } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
 import { getNewsBySlug, getNewsBySlugDraft, getNewsSlugs } from '@/lib/cms/queries/news'
-import { safeStaticParams } from '@/lib/cms/staticParams'
+import { safeStaticParams, NEWS_PRERENDER_LIMIT } from '@/lib/cms/staticParams'
 import RichText from '@/components/RichText'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 import NewsGallery from '@/components/news/NewsGallery'
@@ -23,7 +23,8 @@ export const dynamicParams = true
 // en lugar de lanzar y abortar `next build`.
 export async function generateStaticParams() {
   return safeStaticParams(async () => {
-    const slugs = await getNewsSlugs(200)
+    // PERF-DB: solo las más recientes (getNewsSlugs ordena por -publishedAt); el resto, bajo demanda.
+    const slugs = await getNewsSlugs(NEWS_PRERENDER_LIMIT)
     // Generate one entry per locale × slug so Next.js pre-renders all combinations.
     return routing.locales.flatMap((locale) =>
       slugs.map((slug) => ({ locale, slug })),

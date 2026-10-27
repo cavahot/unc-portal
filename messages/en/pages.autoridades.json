@@ -22,6 +22,10 @@
     "a5": { "role": "General Academic Directorate", "description": "Coordinates academic programs, admissions, registration and all aspects of the student academic journey." },
     "a6": { "role": "Administrative and Financial Directorate", "description": "Manages economic resources, institutional budget, procurement and general services." }
   },
+  "rectorado": "Rectorate",
+  "cvLabel": "Curriculum Vitae",
+  "others": { "label": "Institutional management", "title": "Other authorities" },
+  "states": { "empty": "There are no published authorities at the moment. Please check back later.", "unavailable": "We could not load the authorities right now. Please try again in a few minutes." },
   "note": "For up-to-date information about the authorities, please contact the General Secretariat of the Rectorate of the Universidad Nacional de Concepción, located in the city of Concepción, Paraguay.",
   "organigrama": {
     "label": "Full structure",

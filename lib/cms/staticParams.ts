@@ -15,3 +15,10 @@ export async function safeStaticParams<T>(load: () => Promise<T[]>): Promise<T[]
     return [];
   }
 }
+
+/**
+ * Cantidad de noticias recientes que se prerenderizan en el build (PERF-DB).
+ * Amenaza que evita: 200 slugs × 5 idiomas = ~1000 páginas por build golpeando CMS/Postgres.
+ * Límite: el resto se genera bajo demanda (`dynamicParams = true`) y se cachea por ISR.
+ */
+export const NEWS_PRERENDER_LIMIT = 20;

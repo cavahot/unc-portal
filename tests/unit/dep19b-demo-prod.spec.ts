@@ -50,8 +50,8 @@ const queries: Q[] = [
   ['getNews(featured)', (m) => m.news.getNews({ featured: true }), isEmpty],
   ['getTribunalMiembros', (m) => m.tribunal.getTribunalMiembros(), isEmpty],
   ['getTribunalDocumentos', (m) => m.tribunal.getTribunalDocumentos(), isEmpty],
-  ['getConvenios', (m) => m.convenios.getConvenios(), isEmpty],
-  ['getConvenios(nacional)', (m) => m.convenios.getConvenios('nacional'), isEmpty],
+  // CNV-01: convenios ya no lanza ni usa demo; devuelve estados ok/empty/unavailable
+  // (tests/unit/convenios-queries.spec.ts cubre producción y desarrollo).
   ['getFAQs', (m) => m.faqs.getFAQs(), isEmpty],
   ['getCarreras', (m) => m.carreras.getCarreras(), isEmpty],
   ['getCarrerasByFacultad', (m) => m.carreras.getCarrerasByFacultad('medicina'), isEmpty],
@@ -98,10 +98,10 @@ describe('producción: CMS caído -> CmsError; CMS vacío -> lista vacía real',
     })
   })
 
-  it('getConvenios llama a <CMS>/api/convenios (una sola vez /api)', async () => {
+  it('getConveniosPage llama a <CMS>/api/convenios (una sola vez /api)', async () => {
     stubFetch('ok-empty')
     const m = await load()
-    await m.convenios.getConvenios()
+    await m.convenios.getConveniosPage('nacional')
     expect(urls[0]).toMatch(/^https:\/\/cms\.test\.local\/api\/convenios\?/)
     expect(urls[0]).not.toContain('/api/api/')
   })
@@ -122,7 +122,6 @@ describe('development: se permite demo', () => {
     ['getNews', (m: any) => m.news.getNews(), (r: any) => r.docs.length > 0],
     ['getTribunalMiembros', (m: any) => m.tribunal.getTribunalMiembros(), (r: any) => r.length > 0],
     ['getTribunalDocumentos', (m: any) => m.tribunal.getTribunalDocumentos(), (r: any) => r.length > 0],
-    ['getConvenios', (m: any) => m.convenios.getConvenios(), (r: any) => r.length > 0],
     ['getFAQs', (m: any) => m.faqs.getFAQs(), (r: any) => r.length > 0],
     ['getCarreras', (m: any) => m.carreras.getCarreras(), (r: any) => r.length > 0],
   ])('%s con 503 devuelve demo y no lanza', async (_n, call, hasData) => {

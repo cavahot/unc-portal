@@ -1,30 +1,54 @@
 {
   "meta": {
     "title": "Aranceles del Rectorado | UNC",
-    "description": "Aranceles y tasas oficiales del Rectorado de la Universidad Nacional de Concepción vigentes según resolución institucional."
+    "description": "Montos oficiales que cobra el Rectorado de la Universidad Nacional de Concepción por multas, documentos, servicios y programas de posgrado."
   },
-  "breadcrumb": { "inicio": "Inicio", "nombre": "Aranceles Rectorado" },
+  "breadcrumb": { "inicio": "Inicio", "facultades": "Facultades", "nombre": "Aranceles del Rectorado" },
   "hero": {
     "badge": "Rectorado",
     "titulo": "Aranceles del Rectorado",
-    "subtitulo": "Valores vigentes según resolución institucional de la Universidad Nacional de Concepción."
+    "subtitulo": "Lo que cobra el Rectorado por multas, documentos y servicios administrativos, y por sus programas de posgrado.",
+    "currencyNote": "Montos en guaraníes. Pueden cambiar por resolución institucional: confirme el monto en el Rectorado antes de pagar."
+  },
+  "updated": "Última actualización: {date}",
+  "summary": "{count} conceptos en {groups} grupos",
+  "index": {
+    "label": "Grupos de aranceles",
+    "range": "De {min} a {max}",
+    "countOne": "1 concepto",
+    "countOther": "{count} conceptos"
   },
   "grupos": {
-    "multas": {
-      "title": "Multas y Derechos No Tributarios",
-      "concepto": "Concepto",
-      "monto": "Monto (Gs.)"
-    },
-    "venta": {
-      "title": "Venta de Bienes y Servicios",
-      "concepto": "Concepto",
-      "monto": "Monto (Gs.)"
-    },
-    "educativos": {
-      "title": "Aranceles Educativos",
-      "concepto": "Concepto",
-      "monto": "Monto (Gs.)"
-    }
+    "multas": { "title": "Multas", "short": "Multas" },
+    "venta": { "title": "Venta de bienes y servicios de la administración pública", "short": "Bienes y servicios" },
+    "educativos": { "title": "Aranceles educativos", "short": "Educativos" }
   },
-  "nota": "Los valores corresponden a los aranceles oficiales publicados por el Rectorado de la UNC. Para consultas específicas comuníquese con la Secretaría General."
+  "table": {
+    "caption": "{group}: concepto y monto en guaraníes",
+    "concept": "Concepto",
+    "amount": "Monto",
+    "currencyName": "guaraníes"
+  },
+  "search": {
+    "label": "Buscar un arancel",
+    "placeholder": "Ej.: título, maestría o 50000",
+    "clear": "Borrar la búsqueda",
+    "statusAll": "{total} conceptos en {groups} grupos",
+    "statusOne": "1 concepto coincide con «{query}»",
+    "statusOther": "{count} conceptos coinciden con «{query}»",
+    "statusNone": "Ningún concepto coincide con «{query}»",
+    "emptyTitle": "Sin resultados para «{query}»",
+    "emptyHint": "Pruebe con otra palabra o escriba el monto sin puntos.",
+    "showAll": "Ver todos los aranceles"
+  },
+  "states": {
+    "empty": "Todavía no hay aranceles publicados. Para conocer un monto, consulte en el Rectorado.",
+    "unavailable": "No se pudieron cargar los aranceles en este momento. Vuelva a intentarlo en unos minutos."
+  },
+  "info": {
+    "title": "Trámites que llevan arancel",
+    "description": "La legalización de documentos y la inscripción de títulos figuran en esta lista. Cada trámite explica sus pasos y en qué momento se paga.",
+    "ctaLegalizaciones": "Ver legalizaciones",
+    "ctaTitulos": "Ver registro de títulos"
+  }
 }

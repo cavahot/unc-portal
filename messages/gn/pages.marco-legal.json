@@ -9,23 +9,86 @@
   },
   "hero": {
     "eyebrow": "Léi ñemombyky",
-    "title": "Marco Legal",
+    "title": "Marco legal",
     "description": "Universidad Nacional de Concepción rehegua léi ñemombyky.",
-    "softwareNote": "Recomendamos software ojeiporu haguã PDF, DOCS ha XLS kuatia rehegua."
+    "softwareNote": "Kuatia ojepe'a hag̃ua, eikotevẽ programa omoñe'ẽkuaáva PDF, DOC ha XLS."
+  },
+  "hierarchy": {
+    "heading": "Marco general guive gestión peve",
+    "tiers": {
+      "creacion": "Norma de creación",
+      "fundamental": "Norma fundamental",
+      "general": "Reglamentación general",
+      "especificas": "Normas específicas",
+      "gestion": "Instrumentos de gestión"
+    }
+  },
+  "search": {
+    "label": "Eheka peteĩ kuatia",
+    "placeholder": "Techapyrã: becas, posgrado, ética…",
+    "clear": "Emopotĩ jeheka",
+    "statusAll": "{total} kuatia {categories} categoría-pe",
+    "statusOne": "1 kuatia ojoja «{query}» rehe",
+    "statusOther": "{count} kuatia ojoja «{query}» rehe",
+    "statusNone": "Ndaipóri kuatia ojojáva «{query}» rehe",
+    "emptyTitle": "Ndorojuhúi kuatia «{query}» reheguáva",
+    "emptyHint": "Ehecha jey mba'éichapa ehai térã eheka peteĩ ñe'ẽ título-pegua, techapyrã «reglamento» térã «posgrado».",
+    "showAll": "Ehecha opaite kuatia"
+  },
+  "index": {
+    "label": "Marco legal categoría-kuéra"
   },
   "docs": {
-    "eyebrow": "Kuatia léi rehegua",
-    "heading": "Léi kuatia ojurujáva",
-    "description": "Universidad Nacional de Concepción oñemombyky léi kuatia reheguápe omboñepyrũva imba'apohára ñe'ẽ ñemombe'u ha tetã rehe ñemomba'e ndive.",
-    "totalLabel": "kuatia",
-    "downloadLabel": "Emono'õ",
-    "empty": "Ko'ã momento kuatia ndaipóri.",
-    "fallbackNote": "Referencia kuatia ohechauka. Servidor ndive oñemomba'e..."
+    "countOne": "1 kuatia",
+    "countOther": "{count} kuatia",
+    "download": "Emono'õ",
+    "downloadAria": "Emboguejy «{title}» ({format}). Ojepe'a tendayke pyahúpe.",
+    "titulo": "Título {numeral}",
+    "dated": "Ára: {date}"
+  },
+  "categories": {
+    "ley-creacion": "Ley de creación",
+    "estatuto": "Estatuto universitario",
+    "reglamento-general": "Reglamento General",
+    "reglamentos-especiales": "Reglamentos especiales",
+    "codigos": "Códigos institucionales",
+    "politicas": "Políticas institucionales",
+    "planes": "Planes",
+    "manuales": "Manuales",
+    "procedimientos": "Procedimientos",
+    "protocolos": "Protocolos"
+  },
+  "categoryDescriptions": {
+    "ley-creacion": "Tetã Léi omoheñóiva Universidad Nacional de Concepción.",
+    "estatuto": "Norma fundamental ohechaukáva Universidad rembipota, gobierno ha organización.",
+    "reglamento-general": "Omboheko Estatuto. Título ñavõ omboheko mbo'ehaovusu rekove pehẽ.",
+    "reglamentos-especiales": "Órgano, programa ha pytyvõ concreto rembiapoukapy.",
+    "codigos": "Tekoporã ha buen gobierno rehegua principio.",
+    "politicas": "Temimoĩmby orientación gestión área rupi.",
+    "planes": "Temimoĩmby plan mediano plazo-gua ha iproyecto-kuéra.",
+    "manuales": "Función ha práctica porã temimoĩmby rembiapópe g̃uarã.",
+    "procedimientos": "Rectorado paso ha circuito administrativo-kuéra.",
+    "protocolos": "Protocolo ojeporúva situación específica-pe."
+  },
+  "estado": {
+    "derogado": "Derogado",
+    "historico": "Histórico"
+  },
+  "format": {
+    "pdf": "PDF",
+    "doc": "Word kuatia",
+    "xls": "Hoja de cálculo",
+    "drive": "Google Drive",
+    "link": "Joaju"
+  },
+  "states": {
+    "empty": "Ko'ág̃a ndaipóri kuatia oñemyasãiva ko pehẽme. Ehecha jey upe rire.",
+    "unavailable": "Kuatia ndaipóri ko'ág̃a. Eha'ã jey sapy'ami rire."
   },
   "info": {
     "eyebrow": "Marandu ambuégui",
     "title": "Mbo'ehao ñe'ẽ ñemombe'u",
-    "description": "Léi ñemombyky marandu ambuégui térã kuatia kopia ñemomba'e haguã, eho Secretaría General del Rectorado UNC pegua.",
+    "description": "Léi ñemombyky marandu ambuégui térã kuatia kopia ñemomba'e hag̃ua, eho Secretaría General del Rectorado UNC pegua.",
     "ctaTramites": "Ehecha trámite oĩva",
     "ctaInstitutional": "Eguerujey Mba'apohárape"
   }

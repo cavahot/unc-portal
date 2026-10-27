@@ -1,78 +1,58 @@
 import { cmsFetch } from '../client'
-import { PayloadResponse } from '../types'
+import { groupAranceles, latestUpdatedAt, mapAranceles, type ArancelGroup } from '../aranceles'
 
-export type ArancelRectorado = {
-  id:       number
-  concepto: string
-  monto:    number
-  grupo:    'multas' | 'venta' | 'educativos'
-  orden:    number
-  activo:   boolean
-  createdAt: string
-  updatedAt: string
+export type { Arancel, ArancelGroup, ArancelGrupo } from '../aranceles'
+
+/**
+ * ARR-01: aranceles de /aranceles-rectorado. El CMS (colección `aranceles-rectorado`) es la ÚNICA fuente.
+ * Spec: docs/specs/portal/ARANCELES-RECTORADO.md §2.1.
+ *
+ *  - `ok`: hay al menos un arancel publicado y válido.
+ *  - `empty`: el CMS respondió sin filas publicables: aviso vacío, NUNCA montos escritos en el código (antes había
+ *    24 de respaldo; una lista de precios en el código queda vieja sin que nadie pueda corregirla desde el panel).
+ *  - `unavailable`: el CMS no respondió o devolvió una forma inesperada: aviso neutro; la página no da 500.
+ *    Con la caché de datos de Next, tras una carga correcta una caída posterior sigue sirviendo la última
+ *    respuesta buena; este estado solo aparece si nunca la hubo.
+ */
+export type ArancelesResult =
+  | { status: 'ok'; groups: ArancelGroup[]; total: number; updatedAt: string | null }
+  | { status: 'empty' }
+  | { status: 'unavailable' }
+
+/** Solo lo que pinta la página (`id` llega siempre). Sin `active`: ya lo filtra el `where`. */
+const SELECT_FIELDS = ['concepto', 'monto', 'grupo', 'orden', 'updatedAt']
+
+/** Tope de filas (PERF-DB: sin consultas sin cota). Hoy son 24 aranceles. */
+const MAX_ROWS = 200
+
+/** Red de seguridad si se pierde el aviso de revalidación del CMS; el camino normal es la etiqueta. */
+const SAFETY_REVALIDATE_SECONDS = 3600
+
+function buildQuery(): string {
+  const params = new URLSearchParams()
+  // Defensa en profundidad: la colección ya limita la lectura anónima a `active = true` (SEC-10).
+  params.set('where[active][equals]', 'true')
+  params.set('sort', 'orden')
+  params.set('limit', String(MAX_ROWS))
+  params.set('depth', '0')
+  for (const f of SELECT_FIELDS) params.set(`select[${f}]`, 'true')
+  return `/aranceles-rectorado?${params.toString()}`
 }
 
-// ─── Fallback data ────────────────────────────────────────────────────────────
-
-const FALLBACK_ARANCELES: ArancelRectorado[] = [
-  // Multas
-  { id: 1, concepto: 'Multa por mora en matrícula — Posgrado/Maestría', monto: 10000, grupo: 'multas', orden: 1, activo: true, createdAt: '', updatedAt: '' },
-  { id: 2, concepto: 'Multa por mora en pago de cuota — Posgrado/Maestría', monto: 10000, grupo: 'multas', orden: 2, activo: true, createdAt: '', updatedAt: '' },
-  { id: 3, concepto: 'Penalidad por incumplimiento de contrato', monto: 60000, grupo: 'multas', orden: 3, activo: true, createdAt: '', updatedAt: '' },
-  // Venta
-  { id: 4, concepto: 'Constancias Varias', monto: 50000, grupo: 'venta', orden: 1, activo: true, createdAt: '', updatedAt: '' },
-  { id: 5, concepto: 'Expedición de título universitario', monto: 100000, grupo: 'venta', orden: 2, activo: true, createdAt: '', updatedAt: '' },
-  { id: 6, concepto: 'Registro de título universitario', monto: 200000, grupo: 'venta', orden: 3, activo: true, createdAt: '', updatedAt: '' },
-  { id: 7, concepto: 'Certificado de capacitación', monto: 100000, grupo: 'venta', orden: 4, activo: true, createdAt: '', updatedAt: '' },
-  { id: 8, concepto: 'Credencial de estudiante / funcionario / docente', monto: 100000, grupo: 'venta', orden: 5, activo: true, createdAt: '', updatedAt: '' },
-  { id: 9, concepto: 'Certificados de estudios parcial y completo', monto: 50000, grupo: 'venta', orden: 6, activo: true, createdAt: '', updatedAt: '' },
-  { id: 10, concepto: 'Certificado de trabajo', monto: 30000, grupo: 'venta', orden: 7, activo: true, createdAt: '', updatedAt: '' },
-  { id: 11, concepto: 'Resumen anual de haberes', monto: 50000, grupo: 'venta', orden: 8, activo: true, createdAt: '', updatedAt: '' },
-  // Educativos
-  { id: 12, concepto: 'Matrícula Posgrado — Didáctica', monto: 500000, grupo: 'educativos', orden: 1, activo: true, createdAt: '', updatedAt: '' },
-  { id: 13, concepto: 'Matrícula Maestría', monto: 500000, grupo: 'educativos', orden: 2, activo: true, createdAt: '', updatedAt: '' },
-  { id: 14, concepto: 'Cuota Posgrado — Didáctica (módulo)', monto: 300000, grupo: 'educativos', orden: 3, activo: true, createdAt: '', updatedAt: '' },
-  { id: 15, concepto: 'Cuota Maestría — Educación Superior (módulo)', monto: 400000, grupo: 'educativos', orden: 4, activo: true, createdAt: '', updatedAt: '' },
-  { id: 16, concepto: 'Legalización de documentos', monto: 50000, grupo: 'educativos', orden: 5, activo: true, createdAt: '', updatedAt: '' },
-  { id: 17, concepto: 'Autenticación de documentos', monto: 100000, grupo: 'educativos', orden: 6, activo: true, createdAt: '', updatedAt: '' },
-  { id: 18, concepto: 'Defensa de Tesis de Maestría', monto: 1000000, grupo: 'educativos', orden: 7, activo: true, createdAt: '', updatedAt: '' },
-  { id: 19, concepto: 'Matrícula Programa de Formación en Posgrado', monto: 100000, grupo: 'educativos', orden: 8, activo: true, createdAt: '', updatedAt: '' },
-  { id: 20, concepto: 'Cuota mensual Programa de Formación', monto: 100000, grupo: 'educativos', orden: 9, activo: true, createdAt: '', updatedAt: '' },
-  { id: 21, concepto: 'Cuota Doctorado — Educación (módulo)', monto: 750000, grupo: 'educativos', orden: 10, activo: true, createdAt: '', updatedAt: '' },
-  { id: 22, concepto: 'Tutoría final Tesis Doctoral', monto: 2500000, grupo: 'educativos', orden: 11, activo: true, createdAt: '', updatedAt: '' },
-  { id: 23, concepto: 'Presentación de proyecto de Tesis Doctoral', monto: 500000, grupo: 'educativos', orden: 12, activo: true, createdAt: '', updatedAt: '' },
-  { id: 24, concepto: 'Examen extraordinario — Doctorado', monto: 300000, grupo: 'educativos', orden: 13, activo: true, createdAt: '', updatedAt: '' },
-]
-
-// ─── Queries ──────────────────────────────────────────────────────────────────
-
-export async function getArancelesRectorado(): Promise<ArancelRectorado[]> {
+/** Lee el CMS y agrupa; nunca lanza (ver `ArancelesResult`). */
+export async function getArancelesRectorado(): Promise<ArancelesResult> {
+  let rows: unknown
   try {
-    const params = new URLSearchParams()
-    params.append('where[activo][equals]', 'true')
-    params.append('sort', 'orden')
-    params.append('limit', '200')
-
-    const res = await cmsFetch<PayloadResponse<ArancelRectorado>>(
-      `/aranceles-rectorado?${params.toString()}`,
-      { tags: ['aranceles-rectorado'] },
-    )
-
-    return res.docs?.length ? res.docs : FALLBACK_ARANCELES
+    const data = await cmsFetch<{ docs?: unknown }>(buildQuery(), {
+      tags: ['aranceles-rectorado'],
+      next: { revalidate: SAFETY_REVALIDATE_SECONDS },
+    })
+    rows = data?.docs
   } catch {
-    return FALLBACK_ARANCELES
+    return { status: 'unavailable' }
   }
-}
-
-export function groupAranceles(aranceles: ArancelRectorado[]) {
-  return {
-    multas:     aranceles.filter((a) => a.grupo === 'multas'),
-    venta:      aranceles.filter((a) => a.grupo === 'venta'),
-    educativos: aranceles.filter((a) => a.grupo === 'educativos'),
-  }
-}
-
-/** Format monto as Gs. 50.000 */
-export function formatMonto(monto: number): string {
-  return monto.toLocaleString('es-PY')
+  if (!Array.isArray(rows)) return { status: 'unavailable' }
+  const items = mapAranceles(rows)
+  if (items.length === 0) return { status: 'empty' }
+  return { status: 'ok', groups: groupAranceles(items), total: items.length, updatedAt: latestUpdatedAt(items) }
 }

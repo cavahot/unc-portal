@@ -46,6 +46,21 @@ describe('DEP-09 health del portal', () => {
     expect(body.dependencies.cms.error).toBeUndefined()
   })
 
+  // VERIF-DOCKER-06: la sonda debe usar la URL INTERNA del CMS (CMS_URL, red de Compose) y no la pública
+  // (NEXT_PUBLIC_CMS_URL). Con la pública, el estado dependía de DNS/TLS/nginx externos: en la verificación
+  // con Docker real el DNS no resolvía, la sonda esperaba los 3 s completos y el gate de deploy.yml (wget -T 3)
+  // la daba por caída aunque el CMS estaba sano. Límite: sin CMS_URL cae a la pública (compatibilidad).
+  it('usa CMS_URL (interna) y no NEXT_PUBLIC_CMS_URL para sondear el CMS', async () => {
+    vi.stubEnv('CMS_URL', 'http://cms:3000')
+    vi.stubEnv('NEXT_PUBLIC_CMS_URL', 'https://cms.publico.example.test')
+    const fetchMock = vi.fn(async () => new Response('{"status":"ok"}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    const { GET } = await load()
+    await GET()
+    expect(fetchMock).toHaveBeenCalledWith('http://cms:3000/api/health', expect.anything())
+    vi.unstubAllEnvs()
+  })
+
   it('CMS responde 503: sigue siendo informativo (200 del portal)', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response('x', { status: 503 })))
     const { GET } = await load()

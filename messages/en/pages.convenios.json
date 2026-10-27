@@ -1,33 +1,103 @@
 {
   "meta": {
-    "title": "Agreements | Universidad Nacional de Concepción",
-    "description": "National and international cooperation agreements signed by Universidad Nacional de Concepción."
+    "nacional": {
+      "title": "National agreements | Universidad Nacional de Concepción",
+      "description": "Agreements signed by the Universidad Nacional de Concepción with Paraguayan institutions and businesses, with each signed document."
+    },
+    "internacional": {
+      "title": "International agreements | Universidad Nacional de Concepción",
+      "description": "Agreements between the Universidad Nacional de Concepción and universities and institutions abroad, with each signed document."
+    }
   },
-  "breadcrumb": "Agreements",
+  "breadcrumb": {
+    "home": "Home",
+    "institutional": "Institutional"
+  },
   "hero": {
-    "badge": "Institutional Relations",
-    "title": "Institutional Agreements",
-    "description": "Universidad Nacional de Concepción maintains cooperation agreements with national and international institutions to strengthen education, research, and academic exchange."
+    "title": {
+      "nacional": "National agreements",
+      "internacional": "International agreements"
+    },
+    "intro": {
+      "nacional": "Agreements signed with ministries, universities, municipalities, associations and local businesses. Each row links to the signed document (in Spanish).",
+      "internacional": "Agreements with universities and institutions abroad for mobility, research and academic cooperation. Each row links to the signed document."
+    },
+    "summary": {
+      "nacional": "{count} national agreements · {from}–{to}",
+      "internacional": "{count} international agreements · {from}–{to}"
+    }
   },
-  "stats": {
-    "total": "signed agreements",
-    "nacional": "national",
-    "internacional": "international"
-  },
-  "tabs": {
-    "all": "All",
+  "switch": {
+    "label": "Agreement type",
     "nacional": "National",
     "internacional": "International"
   },
-  "card": {
-    "duration": "Duration",
-    "signed": "Signed in",
-    "objective": "Purpose",
-    "viewDocument": "View document",
-    "noDocument": "No document available"
+  "chart": {
+    "heading": "Agreements signed per year",
+    "yearLink": "{year}: {count} agreements",
+    "legendInstitutional": "Institutional",
+    "legendBenefits": "Student benefits"
   },
-  "empty": {
-    "title": "No agreements found",
-    "description": "No agreements are registered in this category."
+  "search": {
+    "label": "Search agreements",
+    "placeholder": "Institution, topic or year",
+    "clear": "Clear search",
+    "statusAll": "{total} agreements across {years} years",
+    "statusOne": "1 agreement matches",
+    "statusOther": "{count} agreements match",
+    "statusNone": "No agreement matches",
+    "emptyTitle": "No agreement matches your search",
+    "emptyHint": "Try another word, remove a filter or choose “All years”. Agreement texts are in Spanish.",
+    "showAll": "Show all agreements"
+  },
+  "filters": {
+    "category": "Category",
+    "all": "All",
+    "year": "Year",
+    "allYears": "All years"
+  },
+  "categories": {
+    "institucional": "Institutional",
+    "beneficios": "Student benefits"
+  },
+  "badge": {
+    "beneficios": "Student benefit"
+  },
+  "index": {
+    "label": "Jump to year"
+  },
+  "columns": {
+    "title": "Agreement",
+    "parties": "Participating institutions",
+    "signed": "Signed",
+    "duration": "Duration",
+    "objective": "Purpose",
+    "document": "Document"
+  },
+  "table": {
+    "caption": {
+      "nacional": "National agreements grouped by year of signature, most recent first",
+      "internacional": "International agreements grouped by year of signature, most recent first"
+    },
+    "countOne": "1 agreement",
+    "countOther": "{count} agreements",
+    "notRecorded": "Not recorded",
+    "noObjective": "No purpose recorded"
+  },
+  "doc": {
+    "view": "View document",
+    "aria": "View document: {title} (opens in a new tab)",
+    "none": "Document not available",
+    "drive": "Google Drive",
+    "web": "UNC website"
+  },
+  "states": {
+    "empty": "No agreements have been published in this section yet.",
+    "unavailable": "We could not load the agreements right now. Please try again in a few minutes."
+  },
+  "info": {
+    "title": "Would your institution like to sign an agreement?",
+    "description": "To propose a cooperation agreement, write to us with its purpose and your institution's contact details.",
+    "cta": "Contact UNC"
   }
 }

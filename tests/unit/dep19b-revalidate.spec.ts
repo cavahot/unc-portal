@@ -6,6 +6,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 
+// CNV-01: Convenios importa el hook de auditoría, que a su vez carga la configuración de Payload (exige
+// DATABASE_URI). Aquí solo se prueba la revalidación: la auditoría se simula (la cubre convenios-cms.spec.ts).
+vi.mock('../../apps/cms/src/utilities/audit', () => ({ logAudit: vi.fn(), getClientIP: () => 'x' }))
+
 const ROOT = path.resolve(__dirname, '..', '..')
 const SECRET = 'S3cr3t-sintetico-de-prueba-0123456789abcdef-XYZ'
 const PORTAL = 'https://portal.test.local'
@@ -204,7 +208,8 @@ describe('hooks: el guardado del editor no depende del portal', () => {
       TribunalMiembros: () => import('../../apps/cms/src/collections/TribunalMiembros'),
     }
     const mod = await loaders[file]()
-    const hook = mod.default.hooks.afterChange[0]
+    // CNV-01: Convenios antepone el hook de auditoría; el de revalidación es siempre el último.
+    const hook = mod.default.hooks.afterChange.at(-1)
     await expect(hook({ doc: {}, req: {}, operation: 'update' })).resolves.not.toThrow()
     expect(calls.length).toBeGreaterThan(0)
     expect(JSON.parse(calls[0].init.body)).toEqual({ tag })

@@ -58,7 +58,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   const [newsResult, carreras, facultades, pageSlugs] = await Promise.all([
-    getNews({ limit: 500, depth: 0 }).catch(() => ({ docs: [] as Awaited<ReturnType<typeof getNews>>['docs'] })),
+    // PERF-DB: el sitemap solo necesita slug y fecha; el tope de 500 es explícito (maxLimit).
+    getNews({ limit: 500, maxLimit: 500, depth: 0, select: ['slug', 'publishedAt'] }).catch(() => ({ docs: [] as Awaited<ReturnType<typeof getNews>>['docs'] })),
     getCarreras().catch(() => [] as Awaited<ReturnType<typeof getCarreras>>),
     getFacultades().catch(() => [] as Awaited<ReturnType<typeof getFacultades>>),
     getPageSlugs().catch(() => [] as string[]),

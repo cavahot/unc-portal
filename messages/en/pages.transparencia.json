@@ -12,5 +12,8 @@
     "heading": "Law No. 5,282/2014",
     "description": "Free citizens' access to public and governmental information."
   },
-  "noDocuments": "No documents available."
+  "viewLabel": "View documents",
+  "progress": "{withDocs} of {total} categories with published documents",
+  "pending": "No documents have been published yet.",
+  "unavailable": "We could not load the information. Please try again in a few minutes."
 }

@@ -9,18 +9,81 @@
   },
   "hero": {
     "eyebrow": "Institutional regulations",
-    "title": "Legal Framework",
-    "description": "The regulatory framework governing the institutional life of the National University of Concepción.",
-    "softwareNote": "We recommend having software installed that is compatible with PDF, DOCS, and XLS documents."
+    "title": "Legal framework",
+    "description": "The laws, statute, regulations and policies that govern the institutional life of the National University of Concepción, ready to consult and download. Documents are published in Spanish.",
+    "softwareNote": "To open the documents you need software that reads PDF, DOC and XLS files."
+  },
+  "hierarchy": {
+    "heading": "From the founding law to day-to-day management",
+    "tiers": {
+      "creacion": "Founding law",
+      "fundamental": "Fundamental rule",
+      "general": "General regulations",
+      "especificas": "Specific rules",
+      "gestion": "Management instruments"
+    }
+  },
+  "search": {
+    "label": "Search for a document",
+    "placeholder": "E.g. becas, posgrado, ética…",
+    "clear": "Clear search",
+    "statusAll": "{total} documents in {categories} categories",
+    "statusOne": "1 document matches “{query}”",
+    "statusOther": "{count} documents match “{query}”",
+    "statusNone": "No document matches “{query}”",
+    "emptyTitle": "No documents found for “{query}”",
+    "emptyHint": "Check the spelling or try a word from the Spanish title, such as “reglamento” or “posgrado”.",
+    "showAll": "Show all documents"
+  },
+  "index": {
+    "label": "Legal framework categories"
   },
   "docs": {
-    "eyebrow": "Regulatory documents",
-    "heading": "Current legal instruments",
-    "description": "The National University of Concepción is governed by a set of normative instruments that ensure its transparent, democratic operation oriented toward the common good.",
-    "totalLabel": "documents",
-    "downloadLabel": "Download",
-    "empty": "No documents are currently available.",
-    "fallbackNote": "Showing reference documents. Connecting to server..."
+    "countOne": "1 document",
+    "countOther": "{count} documents",
+    "download": "Download",
+    "downloadAria": "Download “{title}” ({format}). Opens in a new tab.",
+    "titulo": "Title {numeral}",
+    "dated": "Date: {date}"
+  },
+  "categories": {
+    "ley-creacion": "Founding law",
+    "estatuto": "University statute",
+    "reglamento-general": "General Regulations",
+    "reglamentos-especiales": "Specific regulations",
+    "codigos": "Institutional codes",
+    "politicas": "Institutional policies",
+    "planes": "Plans",
+    "manuales": "Manuals",
+    "procedimientos": "Procedures",
+    "protocolos": "Protocols"
+  },
+  "categoryDescriptions": {
+    "ley-creacion": "The national law that created the National University of Concepción.",
+    "estatuto": "The fundamental rule that sets out the University's purposes, governance and organisation.",
+    "reglamento-general": "Implements the statute. Each title governs one area of university life.",
+    "reglamentos-especiales": "Rules for specific bodies, programmes and services.",
+    "codigos": "Principles of conduct and good governance.",
+    "politicas": "Institutional guidelines by management area.",
+    "planes": "Medium-term institutional plans and their projects.",
+    "manuales": "Duties and good practices for institutional work.",
+    "procedimientos": "Administrative steps and workflows of the Rector's Office.",
+    "protocolos": "Protocols adopted for specific situations."
+  },
+  "estado": {
+    "derogado": "Repealed",
+    "historico": "Historical"
+  },
+  "format": {
+    "pdf": "PDF",
+    "doc": "Word document",
+    "xls": "Spreadsheet",
+    "drive": "Google Drive",
+    "link": "Link"
+  },
+  "states": {
+    "empty": "No documents have been published in this section yet. Please check back later.",
+    "unavailable": "The documents are not available right now. Please try again in a few minutes."
   },
   "info": {
     "eyebrow": "Additional information",

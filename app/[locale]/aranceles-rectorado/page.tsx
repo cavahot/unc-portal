@@ -1,154 +1,199 @@
-import { getTranslations, getLocale } from 'next-intl/server'
-import Link from 'next/link'
+// ARR-01: página pública «Aranceles del Rectorado» conectada al CMS (spec docs/specs/portal/ARANCELES-RECTORADO.md).
+// Todos los montos salen de la colección `aranceles-rectorado`; si el CMS está vacío o caído se muestra un aviso,
+// nunca una lista de precios escrita en el código.
 import type { Metadata } from 'next'
-import {
-  getArancelesRectorado,
-  groupAranceles,
-  formatMonto,
-  type ArancelRectorado,
-} from '@/lib/cms/queries/aranceles'
+import Link from 'next/link'
+import Reveal from '@/components/motion/Reveal'
+import ArancelesBrowser, { type ArancelesLabels, type ArancelViewGroup } from '@/components/aranceles/ArancelesBrowser'
+import { getT } from '@/lib/i18n/server'
+import { formatGuaranies, formatMonto, grupoId, type ArancelGroup } from '@/lib/cms/aranceles'
+import { getArancelesRectorado } from '@/lib/cms/queries/aranceles'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('pages.aranceles-rectorado.meta')
-  return { title: t('title'), description: t('description') }
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.aranceles-rectorado')
+  return { title: t('meta.title'), description: t('meta.description') }
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+type T = Awaited<ReturnType<typeof getT>>
 
-function ArancelTable({
-  rows,
-  colConcepto,
-  colMonto,
-}: {
-  rows: ArancelRectorado[]
-  colConcepto: string
-  colMonto: string
-}) {
-  return (
-    <div className="overflow-x-auto rounded-xl border border-[#5CFF5C]/15">
-      <table className="min-w-full text-sm">
-        <thead>
-          <tr className="border-b border-[#5CFF5C]/15 bg-[#5CFF5C]/8">
-            <th className="px-5 py-3.5 text-left font-semibold text-[#5CFF5C]">{colConcepto}</th>
-            <th className="px-5 py-3.5 text-right font-semibold text-[#5CFF5C] tabular-nums">{colMonto}</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#5CFF5C]/8">
-          {rows.map((row) => (
-            <tr key={row.id} className="transition-colors hover:bg-[#5CFF5C]/5">
-              <td className="px-5 py-3.5 text-slate-300">{row.concepto}</td>
-              <td className="px-5 py-3.5 text-right font-mono font-semibold tabular-nums text-[#5CFF5C]">
-                {formatMonto(row.monto)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
+/**
+ * Fecha de la última actualización en el idioma de la página. Se formatea en el servidor (el HTML hidratado
+ * coincide) y en hora de Paraguay; `gn` no tiene datos de Intl en todos los motores y usa es-PY.
+ */
+function formatUpdated(iso: string, locale: string): string {
+  const tag = locale === 'gn' ? 'es-PY' : locale
+  try {
+    return new Intl.DateTimeFormat(tag, { dateStyle: 'long', timeZone: 'America/Asuncion' }).format(new Date(iso))
+  } catch {
+    return iso.slice(0, 10)
+  }
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+/** Rango real de montos del grupo («De Gs. 10.000 a Gs. 60.000»), o un único monto si todos son iguales. */
+function rangeLabel(g: ArancelGroup, t: T): string {
+  return g.min === g.max ? formatMonto(g.min) : t('index.range', { min: formatMonto(g.min), max: formatMonto(g.max) })
+}
 
-export default async function ArancelesRectoradoPage() {
-  const locale = await getLocale()
-  const t      = await getTranslations('pages.aranceles-rectorado')
+/** Convierte los grupos del dominio en el modelo serializable del cliente (cadenas ya traducidas y formateadas). */
+function toViewGroups(groups: ArancelGroup[], t: T): ArancelViewGroup[] {
+  return groups.map((g) => {
+    const label = t(`grupos.${g.grupo}.title`)
+    return {
+      grupo: g.grupo,
+      label,
+      short: t(`grupos.${g.grupo}.short`),
+      caption: t('table.caption', { group: label }),
+      rangeLabel: rangeLabel(g, t),
+      items: g.items.map((i) => ({ id: i.id, concepto: i.concepto, monto: i.monto, amountText: formatGuaranies(i.monto) })),
+    }
+  })
+}
 
-  const aranceles = await getArancelesRectorado()
-  const { multas, venta, educativos } = groupAranceles(aranceles)
+export default async function ArancelesRectoradoPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.aranceles-rectorado')
+  const prefix = locale === 'es' ? '' : `${locale}/`
+
+  const result = await getArancelesRectorado()
+  const groups = result.status === 'ok' ? toViewGroups(result.groups, t) : []
+  const total = groups.reduce((n, g) => n + g.items.length, 0)
+  const updated = result.status === 'ok' && result.updatedAt ? formatUpdated(result.updatedAt, locale) : null
+
+  const labels: ArancelesLabels = {
+    searchLabel: t('search.label'),
+    placeholder: t('search.placeholder'),
+    clear: t('search.clear'),
+    statusAll: t('search.statusAll', { total, groups: groups.length }),
+    statusOne: t('search.statusOne', { query: '{query}' }),
+    statusOther: t('search.statusOther', { count: '{count}', query: '{query}' }),
+    statusNone: t('search.statusNone', { query: '{query}' }),
+    emptyTitle: t('search.emptyTitle', { query: '{query}' }),
+    emptyHint: t('search.emptyHint'),
+    showAll: t('search.showAll'),
+    indexLabel: t('index.label'),
+    countOne: t('index.countOne'),
+    countOther: t('index.countOther', { count: '{count}' }),
+    colConcept: t('table.concept'),
+    colAmount: t('table.amount'),
+    currencyName: t('table.currencyName'),
+  }
+
+  const linkFocus = 'rounded-sm transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8AFF8A]'
 
   return (
-    <main className="min-h-screen bg-[#0c1c0c] text-slate-100">
+    <>
+      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300] pb-24 pt-28 text-white sm:pt-32 lg:pb-28 print:bg-none print:pb-4 print:pt-0 print:text-black">
+        <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-0 h-[28rem] w-[28rem] rounded-full bg-[#001A00]/40 blur-3xl print:hidden" />
 
-      {/* ── Breadcrumb ──────────────────────────────────────────────────────── */}
-      <nav aria-label="Breadcrumb" className="border-b border-[#5CFF5C]/10 bg-[#0c1c0c]/90 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-          <ol className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-            <li><Link href={`/${locale}`} className="transition-colors hover:text-slate-300">{t('breadcrumb.inicio')}</Link></li>
-            <li aria-hidden className="select-none">/</li>
-            <li className="font-medium text-[#5CFF5C]">{t('breadcrumb.nombre')}</li>
-          </ol>
-        </div>
-      </nav>
+        <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <nav aria-label="Breadcrumb" className="mb-8 print:hidden">
+            <ol className="flex flex-wrap items-center gap-2 text-sm text-white/75">
+              <li>
+                <Link href={`/${locale === 'es' ? '' : locale}`} className={linkFocus}>
+                  {t('breadcrumb.inicio')}
+                </Link>
+              </li>
+              <li aria-hidden="true" className="select-none text-white/50">/</li>
+              <li>
+                {/* El menú principal ubica esta página bajo «Facultades» (como el sitio publicado). */}
+                <Link href={`/${prefix}facultades`} className={linkFocus}>
+                  {t('breadcrumb.facultades')}
+                </Link>
+              </li>
+              <li aria-hidden="true" className="select-none text-white/50">/</li>
+              <li className="font-semibold text-white" aria-current="page">{t('breadcrumb.nombre')}</li>
+            </ol>
+          </nav>
 
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-[#5CFF5C]/10">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(92,255,92,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(92,255,92,0.5) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-        <div aria-hidden className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-[#5CFF5C]/6 blur-3xl" />
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
+            <div>
+              <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#B8FFB8] print:text-black">{t('hero.badge')}</span>
+              <h1 className="mt-4 text-balance font-serif text-5xl font-bold leading-[0.95] tracking-[-0.035em] text-white sm:text-6xl lg:text-7xl print:text-black">
+                {t('hero.titulo')}
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-7 text-white/85 sm:text-lg sm:leading-8 print:text-black">{t('hero.subtitulo')}</p>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-white/75 print:text-black">{t('hero.currencyNote')}</p>
+              {result.status === 'ok' && (
+                <p className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold text-[#B8FFB8] print:text-black">
+                  {updated && <span>{t('updated', { date: updated })}</span>}
+                  <span>{t('summary', { count: total, groups: groups.length })}</span>
+                </p>
+              )}
+            </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#5CFF5C]/20 bg-[#5CFF5C]/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#5CFF5C]">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#5CFF5C]" />
-            {t('hero.badge')}
-          </span>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            {t('hero.titulo')}
-          </h1>
-          <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-400 sm:text-lg">
-            {t('hero.subtitulo')}
-          </p>
+            {/* Firma: cada grupo con su rango real de montos, como índice de salto. Solo en pantallas anchas
+                (en móvil el índice fijo de la lista cumple esa función). */}
+            {groups.length > 0 && (
+              <nav aria-labelledby="arr-ledger" className="hidden lg:block print:hidden">
+                <p id="arr-ledger" className="mb-3 text-sm font-semibold text-white/80">
+                  {t('index.label')}
+                </p>
+                <ul className="flex flex-col gap-2">
+                  {groups.map((g) => (
+                    <li key={g.grupo}>
+                      <a
+                        href={`#${grupoId(g.grupo)}`}
+                        className="group grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6 gap-y-1 rounded-2xl bg-white/[0.09] px-6 py-4 transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8AFF8A] motion-reduce:transition-none"
+                      >
+                        <span className="text-base font-semibold text-white group-hover:text-[#004700]">{g.short}</span>
+                        <span className="text-sm tabular-nums text-white/75 group-hover:text-[#004700]/75">
+                          {g.items.length === 1 ? t('index.countOne') : t('index.countOther', { count: g.items.length })}
+                        </span>
+                        <span className="col-span-2 font-serif text-[1.75rem] font-bold leading-tight tracking-[-0.02em] tabular-nums text-white group-hover:text-[#004700]">
+                          {g.rangeLabel}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* ── Content ─────────────────────────────────────────────────────────── */}
-      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 space-y-12">
-
-        {multas.length > 0 && (
-          <section aria-labelledby="multas-heading">
-            <h2 id="multas-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
-              {t('grupos.multas.title')}
-            </h2>
-            <ArancelTable
-              rows={multas}
-              colConcepto={t('grupos.multas.concepto')}
-              colMonto={t('grupos.multas.monto')}
-            />
-          </section>
-        )}
-
-        {venta.length > 0 && (
-          <section aria-labelledby="venta-heading">
-            <h2 id="venta-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
-              {t('grupos.venta.title')}
-            </h2>
-            <ArancelTable
-              rows={venta}
-              colConcepto={t('grupos.venta.concepto')}
-              colMonto={t('grupos.venta.monto')}
-            />
-          </section>
-        )}
-
-        {educativos.length > 0 && (
-          <section aria-labelledby="educativos-heading">
-            <h2 id="educativos-heading" className="mb-5 text-xl font-bold text-white sm:text-2xl">
-              {t('grupos.educativos.title')}
-            </h2>
-            <ArancelTable
-              rows={educativos}
-              colConcepto={t('grupos.educativos.concepto')}
-              colMonto={t('grupos.educativos.monto')}
-            />
-          </section>
-        )}
-
-        {/* Nota */}
-        <div className="rounded-xl border border-[#5CFF5C]/10 bg-[#5CFF5C]/5 px-6 py-4">
-          <p className="text-sm leading-relaxed text-slate-400">
-            <span className="mr-2 font-semibold text-[#5CFF5C]">Nota:</span>
-            {t('nota')}
-          </p>
+      {/* ── TABLAS ───────────────────────────────────────────────────────── */}
+      <section className="relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem] print:mt-0 print:bg-white print:pt-2">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          {result.status === 'ok' && groups.length > 0 ? (
+            <ArancelesBrowser groups={groups} labels={labels} />
+          ) : (
+            <p role="status" className="rounded-2xl bg-white p-6 text-base leading-7 text-[#3E4A45] sm:p-8">
+              {t(result.status === 'unavailable' ? 'states.unavailable' : 'states.empty')}
+            </p>
+          )}
         </div>
+      </section>
 
-      </div>
-    </main>
+      {/* ── CIERRE ───────────────────────────────────────────────────────── */}
+      <section className="bg-white py-20 sm:py-24 print:hidden">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="flex flex-col gap-8 rounded-[1.5rem] bg-[#004700] p-8 text-white sm:p-10 lg:flex-row lg:items-center lg:gap-16 lg:p-14">
+              <div className="flex-1">
+                <h2 className="font-serif text-3xl font-bold tracking-[-0.03em] sm:text-4xl">{t('info.title')}</h2>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-white/85">{t('info.description')}</p>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row lg:shrink-0 lg:flex-col">
+                <Link
+                  href={`/${prefix}legalizaciones`}
+                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#8AFF8A] px-7 text-sm font-bold text-[#001A00] transition-colors hover:bg-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  {t('info.ctaLegalizaciones')}
+                </Link>
+                <Link
+                  href={`/${prefix}titulos`}
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/30 px-7 text-sm font-bold text-white transition-colors hover:border-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  {t('info.ctaTitulos')}
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </>
   )
 }

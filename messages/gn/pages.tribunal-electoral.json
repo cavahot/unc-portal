@@ -7,7 +7,7 @@
   "hero": {
     "badge": "Teko Teete Mbo'ehaovusu-pe",
     "title": "Tribunal Electoral",
-    "description": "Órgano autónomo encargado de garantizar la transparencia y legalidad de los procesos electorales universitarios."
+    "description": "Órgano autónomo oñangarekóva transparencia ha legalidad mbo'ehaovusu jeporavo-kuérape."
   },
   "members": {
     "title": "Tribunal rehegua",
@@ -21,16 +21,16 @@
   },
   "accordion": {
     "title": "Marandú Electoral-gua",
-    "subtitle": "Eike marandúpe proceso electoral rembiporu rehegua",
+    "subtitle": "Eike kuatia oficial-kuérape proceso electoral ararasa ñavõmegua",
     "viewDoc": "Ehecha marandú",
     "noDocuments": "Ndaipóri marandú ko teẽ-pe.",
     "tipos": {
-      "lista-inscriptos":  "Lista de Inscriptos",
-      "formato-notas":     "Formato de Notas",
-      "padron-electoral":  "Oficialización de Padrón Electoral",
-      "candidaturas":      "Puesta de Manifiesto de Movimientos y Candidaturas",
-      "oficializacion":    "Oficialización de Candidaturas",
-      "proclamacion":      "Proclamación de Candidatos"
+      "lista-inscriptos": "Lista de Inscriptos",
+      "formato-notas": "Formato de Notas",
+      "padron-electoral": "Oficialización de Padrón Electoral",
+      "candidaturas": "Puesta de Manifiesto de Movimientos y Candidaturas",
+      "oficializacion": "Oficialización de Candidaturas",
+      "proclamacion": "Proclamación de Candidatos"
     }
   }
 }
