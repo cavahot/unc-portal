@@ -1,5 +1,12 @@
 name: Backup
 
+# BKP-01: el repositorio es PÚBLICO. El volcado se CIFRA dentro del runner (gpg AES256, frase de paso en
+# el secreto BACKUP_ENCRYPTION_PASSPHRASE) y solo el .gpg + su sha256 se suben como artefacto; el .dump
+# en claro nunca sale del runner y se borra siempre. Restauración: docs/BACKUP_RECOVERY.md (sección
+# «Copia diaria cifrada»). Límite: la DATABASE_URL debe ser alcanzable desde el runner; si la BD no está
+# expuesta a Internet este job no puede funcionar y la vía recomendada es scripts/backup/backup.sh + cron
+# en el VPS con copia externa cifrada.
+
 on:
   # Run daily at 02:00 Paraguay time (UTC-4 → 06:00 UTC)
   schedule:
@@ -12,14 +19,30 @@ on:
         required: false
         default: 'manual'
 
+# Permisos mínimos: el job solo lee el código y sube un artefacto (no necesita escribir en el repo).
+permissions:
+  contents: read
+
 jobs:
   database:
-    name: PostgreSQL dump
+    name: PostgreSQL dump (encrypted)
     runs-on: ubuntu-latest
     # Only run on the main repository (not forks)
     if: github.repository_owner == 'cavahot'
 
     steps:
+      - name: Checkout (scripts/backup only)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/backup
+          persist-credentials: false
+
+      # Falla cerrado ANTES de tocar la base de datos: sin secreto válido no se genera ningún volcado.
+      - name: Validate encryption secret
+        env:
+          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+        run: bash scripts/backup/encrypt-dump.sh --check
+
       - name: Install PostgreSQL client
         run: sudo apt-get install -y postgresql-client
 
@@ -27,29 +50,47 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
+          umask 077
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           DUMP_FILE="unc_portal_${TIMESTAMP}.dump"
+          # El nombre se registra ANTES del volcado para que la limpieza `always()` lo vea aunque pg_dump falle.
+          echo "DUMP_FILE=$DUMP_FILE" >> "$GITHUB_ENV"
           pg_dump "$DATABASE_URL" \
             --format=custom \
             --compress=9 \
             --no-owner \
             --no-acl \
             --file="$DUMP_FILE"
-          echo "DUMP_FILE=$DUMP_FILE" >> "$GITHUB_ENV"
-          SIZE=$(du -sh "$DUMP_FILE" | cut -f1)
-          echo "✅ Dump completed: $DUMP_FILE ($SIZE)"
+          # El volcado debe ser legible antes de cifrarlo (un dump corrupto no es una copia).
+          pg_restore --list "$DUMP_FILE" > /dev/null
+          echo "Dump completed and verified: $DUMP_FILE ($(du -sh "$DUMP_FILE" | cut -f1))"
 
-      - name: Upload dump as artifact
+      # Cifra, verifica el descifrado, escribe el sha256 y borra el texto plano (también si falla).
+      - name: Encrypt dump and remove plaintext
+        env:
+          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+        run: |
+          bash scripts/backup/encrypt-dump.sh "$DUMP_FILE"
+          echo "ENCRYPTED_FILE=${DUMP_FILE}.gpg" >> "$GITHUB_ENV"
+
+      - name: Upload encrypted dump as artifact
         uses: actions/upload-artifact@v4
         with:
           name: db-backup-${{ github.run_id }}
-          path: ${{ env.DUMP_FILE }}
-          # Keep backups for 30 days (GitHub free tier limit for private repos)
-          retention-days: 30
+          path: |
+            ${{ env.ENCRYPTED_FILE }}
+            ${{ env.ENCRYPTED_FILE }}.sha256
+          # Retención acotada: cuanto menos tiempo exista, menor la ventana de exposición si se filtra la frase.
+          retention-days: 14
           if-no-files-found: error
+
+      # Red de seguridad: borra cualquier volcado en claro aunque un paso anterior haya fallado.
+      - name: Remove plaintext dump (always)
+        if: always()
+        run: rm -f ./*.dump
 
       - name: Notify on failure
         if: failure()
         run: |
           echo "::error::Daily backup FAILED at $(date -u '+%Y-%m-%d %H:%M UTC')"
-          echo "Check the Actions log and verify DATABASE_URL secret is set correctly."
+          echo "Check the Actions log: DATABASE_URL and BACKUP_ENCRYPTION_PASSPHRASE (>= 20 chars) secrets must be set and the database reachable from the runner."

@@ -402,8 +402,9 @@ jobs:
             READY_RETRIES="${DEP09_READY_RETRIES:-12}"
             READY_INTERVAL="${DEP09_READY_INTERVAL:-5}"
             dep09_ready() {
-              docker exec unc-cms-prod wget -q -O /dev/null -T 3 http://localhost:3000/api/health/ready &&
-                docker exec unc-portal-prod wget -q -O /dev/null -T 3 http://localhost:3000/api/health
+              # VERIF-DOCKER-04: 127.0.0.1 y no localhost (resuelve a ::1 y el wget de busybox no reintenta con IPv4).
+              docker exec unc-cms-prod wget -q -O /dev/null -T 3 http://127.0.0.1:3000/api/health/ready &&
+                docker exec unc-portal-prod wget -q -O /dev/null -T 3 http://127.0.0.1:3000/api/health
             }
             dep09_wait_ready() {
               local attempt=1
@@ -425,7 +426,7 @@ jobs:
             # normal volvería a lanzar el migrador SIN timeout y lo dejaría Exited con nombre fijo (el
             # siguiente deploy chocaría). Con `--no-deps` y la lista explícita de los demás servicios,
             # el esquema solo se toca en el paso de arriba (con timeout y backup previo). Se listan
-            # también postgres y minio para que un cambio de su configuración en el compose siga
+            # también postgres (y NO minio: MIN-01, perfil s3; nombrarlo lo activaría) para que un cambio de su configuración en el compose siga
             # aplicándose. Si se añade un servicio al compose, hay que añadirlo aquí (lo vigila
             # tests/deploy/dep19a-deploy-fixes.test.mjs). Límite: con --no-deps Compose no espera los
             # `depends_on: service_healthy` de los servicios no listados; postgres ya está sano (el
@@ -434,7 +435,7 @@ jobs:
             docker compose \
               -f infrastructure/docker/compose.prod.yaml \
               --env-file infrastructure/docker/.env.prod \
-              up -d --no-deps --remove-orphans postgres minio cms portal nginx || UP_RC=$?
+              up -d --no-deps --remove-orphans postgres cms portal nginx || UP_RC=$?
 
             if [ "$UP_RC" -ne 0 ] || ! dep09_wait_ready; then
               echo "::error::La versión $IMAGE_TAG no pasó el gate de readiness (up rc=$UP_RC). Rollback de imagen a $PREV_TAG."

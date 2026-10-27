@@ -62,6 +62,25 @@ mkdir -p "$BACKUP_PATH"
     echo "✓ MinIO snapshot created"
   fi
 
+  # 2b. Backup de media en disco local (MIG-IMG fase 1, MEDIA_STORAGE=local).
+  # Los archivos viven en el volumen cms_media (/app/media del contenedor del CMS) y NO están en la BD:
+  # sin esta copia, restaurar solo Postgres deja filas `media` sin archivo. Se empaqueta desde dentro del
+  # contenedor del CMS (sin descargar imágenes nuevas) y se registra su sha256 en checksums.sha256 (paso 5).
+  # Variable: CMS_CONTAINER (por defecto unc-cms-prod). Si el contenedor no existe se avisa y se continúa.
+  echo ""
+  echo "[2b] Backing up CMS media volume (local storage)..."
+  CMS_CONTAINER="${CMS_CONTAINER:-unc-cms-prod}"
+  if command -v docker &> /dev/null && docker inspect "$CMS_CONTAINER" &> /dev/null; then
+    if docker exec "$CMS_CONTAINER" tar -czf - -C /app/media . > "$BACKUP_PATH/media-volume.tar.gz"; then
+      tar -tzf "$BACKUP_PATH/media-volume.tar.gz" > /dev/null && echo "✓ CMS media volume backed up"
+    else
+      echo "⚠ CMS media volume backup FAILED"
+      rm -f "$BACKUP_PATH/media-volume.tar.gz"
+    fi
+  else
+    echo "⚠ container $CMS_CONTAINER not found, CMS media volume skipped"
+  fi
+
   # 3. Backup de archivos de configuración
   echo ""
   echo "[3/3] Backing up configuration..."

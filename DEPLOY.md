@@ -148,8 +148,10 @@ cuyo código la lee. Si el código lee una variable que su servicio no recibe, e
 | `POSTGRES_PASSWORD` | postgres | Secreto aleatorio (comando de abajo); **la misma** contraseña va dentro de `DATABASE_URI` |
 | `DATABASE_URI` | cms, cms-migrate | `postgresql://USUARIO:CONTRASEÑA@postgres:5432/BASE`; usuario/base = `POSTGRES_USER`/`POSTGRES_DB`; si la contraseña lleva caracteres reservados, percent-encoding (`@`→`%40`, `:`→`%3A`, `/`→`%2F`, `#`→`%23`, `?`→`%3F`, `%`→`%25`). Único nombre válido (ya no existe `DATABASE_URL`) |
 | `POSTGRES_SSL` | cms, cms-migrate | `false` dentro de la red de Compose; `true` solo con una BD gestionada externa con TLS |
-| `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` | minio; el CMS las recibe como `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` (se separarán en DEP-11) | Access key (mín. 3 caracteres) y secret key (mín. 8) |
-| `S3_BUCKET` | cms | `unc-media` (debe existir; ver `POST /api/setup/create-bucket`) |
+| `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` | minio (**opcional**, perfil `s3`); el CMS las recibe como `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` (se separarán en DEP-11) | Access key (mín. 3 caracteres) y secret key (mín. 8). Solo se necesitan con `MEDIA_STORAGE=s3` (MIN-01); con `local` pueden quedar vacías |
+| `MEDIA_STORAGE` | cms, cms-migrate | MIG-IMG fase 1: `local` (por defecto; volumen persistente `cms_media` en `/app/media`) o `s3` (MinIO, explícito). **Quien dependía de S3 solo por tener las claves debe fijar `MEDIA_STORAGE=s3`**; tener `S3_*` ya no activa S3 |
+| `MEDIA_MAX_BYTES` | cms, cms-migrate | Tope por archivo subido en bytes (por defecto `10485760` = 10 MiB; techo 11 MiB por el límite del proxy de Next). Los mayores se rechazan con 413, no se truncan |
+| `S3_BUCKET` | cms | `unc-media` (debe existir; ver `POST /api/setup/create-bucket`). Solo con `MEDIA_STORAGE=s3` |
 | `S3_PUBLIC_URL` | cms | `https://files.unc.edu.py` |
 | `PAYLOAD_SECRET` | cms, cms-migrate | Secreto aleatorio, mínimo 32 caracteres. DEP-16: el CMS **no arranca** si falta, es corto o conserva un valor de ejemplo (`REEMPLAZAR_`, `changeme`, `change-this`…) |
 | `PREVIEW_SECRET` | **portal y cms** (mismo valor) | Secreto aleatorio, mínimo 32 caracteres. DEP-16: firma tokens de preview de 5 min (nunca viaja en la URL); débil o ausente → `/api/preview` responde 503 |
@@ -206,6 +208,8 @@ En GitHub → repo → **Settings → Secrets and variables → Actions → New 
 | `SSH_USER` | usuario SSH (`root` o el usuario creado) |
 | `SSH_PRIVATE_KEY` | contenido de `~/.ssh/github_deploy` (clave privada) |
 | `SSH_PORT` | `22` (o el configurado por el proveedor) |
+| `BACKUP_ENCRYPTION_PASSPHRASE` | Solo para `backup.yml` (BKP-01): frase de paso de **≥ 20 caracteres** con la que se cifra el volcado diario antes de subirlo como artefacto (el repositorio es público). Sin ella el backup falla cerrado. Guardarla en 2 lugares por 2 personas; ver `docs/BACKUP_RECOVERY.md` («Copia diaria cifrada») |
+| `DATABASE_URL` | Solo para `backup.yml`: URI de Postgres **alcanzable desde el runner de GitHub**. Si la BD solo vive en la red interna de Docker del VPS el job no puede conectarse; ver «Riesgo residual» en `docs/BACKUP_RECOVERY.md` |
 | `GHCR_READ_TOKEN` | PAT de GitHub con scope `read:packages` (ver abajo) |
 | `NEXT_PUBLIC_SENTRY_DSN` | DSN de Sentry (puede quedar vacío si no se usa) |
 | `SENTRY_AUTH_TOKEN` | Token de Sentry (puede quedar vacío si no se usa) |
@@ -264,12 +268,25 @@ y repite. Nunca ejecutes `migrate:down`, `migrate:reset`, `migrate:refresh` ni `
 producción. Si la base tiene una fila `batch = -1` en `payload_migrations` (esquema creado por push en
 dev), el deploy se rechaza: requiere intervención manual.
 
-### Paso 14 — Inicializar MinIO (solo primera vez)
+### Paso 14 — Inicializar MinIO (OPCIONAL: solo si usas `MEDIA_STORAGE=s3`)
+
+**MIN-01:** MinIO ya no forma parte del despliegue por defecto. Con `MEDIA_STORAGE=local` (valor por defecto) los
+archivos van al volumen `cms_media` y **debes omitir este paso**: `docker compose up` no arranca ni espera a MinIO,
+y el CMS no depende de él. `files.unc.edu.py` responderá 502 mientras no exista el contenedor (esperado).
+
+Para activar el almacenamiento S3 (requiere una imagen de MinIO descargable y fijada, DEP-11 pendiente):
 
 ```bash
-$COMPOSE up -d minio   # MinIO aún no corre: el paso 13 solo levantó Postgres
+# 1. En .env.prod: MEDIA_STORAGE=s3, MINIO_ROOT_USER, MINIO_ROOT_PASSWORD, S3_BUCKET, S3_PUBLIC_URL
+# 2. Levantar el perfil s3 (el perfil se activa con --profile; no basta con editar .env.prod):
+$COMPOSE --profile s3 up -d minio   # MinIO aún no corre: el paso 13 solo levantó Postgres
 bash scripts/setup/init-minio.sh
+# 3. Recrear el CMS para que lea MEDIA_STORAGE=s3:
+$COMPOSE up -d --no-deps cms
 ```
+
+El `up -d` de `deploy.yml` **no** nombra `minio` (nombrar un servicio con perfil activaría ese perfil y arrastraría su
+imagen sin fijar); un despliegue con S3 debe arrancar/actualizar MinIO a mano con el comando de arriba.
 
 Crea el bucket `unc-media` y habilita acceso público de lectura (necesario para que
 los navegadores carguen las imágenes directamente desde MinIO/CDN).
@@ -301,8 +318,8 @@ $COMPOSE up -d
 docker ps
 ```
 
-Deberías ver 5 contenedores con estado `healthy` (`unc-postgres-prod`, `unc-minio-prod`, `unc-cms-prod`,
-`unc-portal-prod`, `unc-nginx-prod`); `unc-cms-migrate-prod` queda en estado `Exited (0)` (es un servicio de
+Deberías ver 4 contenedores con estado `healthy` (`unc-postgres-prod`, `unc-cms-prod`, `unc-portal-prod`,
+`unc-nginx-prod`; `unc-minio-prod` solo si activaste el perfil `s3`, MIN-01); `unc-cms-migrate-prod` queda en estado `Exited (0)` (es un servicio de
 un solo uso y `cms` no arranca sin que termine bien).
 
 ### Paso 16b — Sembrar el tag sano (DEP-09)
@@ -331,7 +348,9 @@ curl -s -o /dev/null -w "%{http_code}" https://cms.unc.edu.py/api/health
 curl -s https://cms.unc.edu.py/api/health/ready
 # Está limitada a 30 peticiones/min por IP (429 si se excede) y cachea el resultado 5 s.
 
-# Media (verifica que MinIO y nginx funcionen)
+# Media con MEDIA_STORAGE=local (por defecto): una imagen subida se sirve por el CMS
+#   curl -sI https://cms.unc.edu.py/api/media/file/<archivo>   -> 200
+# Media con el perfil s3 (MIN-01; verifica MinIO y nginx). Sin el perfil, files.* responde 502 a propósito
 curl -sI https://files.unc.edu.py
 # Debe responder: HTTP/2 200 o 403 (403 es correcto si el bucket está vacío)
 ```
@@ -423,7 +442,7 @@ que el contenedor `unc-postgres-prod` esté en estado `healthy`.
 
 ### Las imágenes no cargan
 
-Verificar que `S3_PUBLIC_URL=https://files.unc.edu.py` esté en `.env.prod` y que
+Solo con `MEDIA_STORAGE=s3` (perfil `s3`, MIN-01): verificar que `S3_PUBLIC_URL=https://files.unc.edu.py` esté en `.env.prod` y que
 el bucket `unc-media` exista con política pública:
 
 ```bash

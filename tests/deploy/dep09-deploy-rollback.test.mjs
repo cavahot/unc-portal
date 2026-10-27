@@ -181,7 +181,7 @@ test('(14) éxito: despliega el tag nuevo, pasa el gate y SOLO entonces actualiz
   // El gate usa la red interna (docker exec contra el contenedor), no la URL pública.
   const gateLines = t.lines.filter((l) => l.startsWith('ARGS exec unc-cms-prod wget') || l.startsWith('ARGS exec unc-portal-prod wget'));
   assert.ok(gateLines.length >= 2);
-  assert.ok(gateLines.every((l) => /localhost:3000/.test(l) && !/unc\.edu\.py/.test(l)), gateLines.join('\n'));
+  assert.ok(gateLines.every((l) => /127.0.0.1:3000/.test(l) && !/unc\.edu\.py/.test(l)), gateLines.join('\n'));
   assert.ok(gateLines.some((l) => /\/api\/health\/ready/.test(l)), 'el CMS se comprueba por readiness');
   noDown(t);
   t.cleanup();
@@ -269,9 +269,9 @@ test('(16) compose: cms, cms-migrate y portal usan ${IMAGE_TAG:?…}; sin :lates
 
 test('(16) compose: el healthcheck del cms apunta a /api/health/ready; el del portal a /api/health', () => {
   const cms = COMPOSE.slice(COMPOSE.indexOf('\n  cms:'), COMPOSE.indexOf('\n  cms-migrate:'));
-  assert.match(cms, /localhost:3000\/api\/health\/ready/);
+  assert.match(cms, /127.0.0.1:3000\/api\/health\/ready/);
   const portal = COMPOSE.slice(COMPOSE.indexOf('\n  portal:'), COMPOSE.indexOf('\n  nginx:'));
-  assert.match(portal, /localhost:3000\/api\/health\s/);
+  assert.match(portal, /127.0.0.1:3000\/api\/health\s/);
 });
 
 test('(16) deploy.yml: el tag sale de workflow_run.head_sha, se pasa al servidor por envs y latest es solo alias', () => {

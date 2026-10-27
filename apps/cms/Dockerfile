@@ -47,7 +47,12 @@ ENV NODE_ENV=production
 # Build the CMS workspace. Output lands in apps/cms/.next/
 # outputFileTracingRoot in apps/cms/next.config.mjs points to the monorepo
 # root so that server.js appears at the top of .next/standalone/, not nested.
-RUN npm run build:cms
+# VERIF-DOCKER-03: `next build` evalúa payload.config.ts, que exige DATABASE_URI (config/database.ts) y lanza
+# si falta. En CI no existe apps/cms/.env, así que sin esto el build fallaba (solo pasaba en una máquina con ese
+# .env, que además se filtraba a la imagen: ver .dockerignore). Se pasa un valor de relleno SOLO a este comando
+# (no es ENV/ARG: no queda en la imagen ni en el entorno de ejecución). Amenaza que evita: build roto en CI y
+# secretos de dev en capas. Límite: no abre conexión (el build solo importa módulos); la URI real llega en runtime.
+RUN DATABASE_URI=postgresql://build:build@localhost:5432/build npm run build:cms
 
 # ── Migrator (DEP-07) ─────────────────────────────────────────────────────────
 # Imagen de un solo uso para `payload migrate` (servicio `cms-migrate` en compose.prod.yaml).
@@ -91,10 +96,26 @@ RUN addgroup --system --gid 1001 nodejs \
 
 RUN mkdir .next && chown nextjs:nodejs .next
 
-# Standalone output is rooted at apps/cms/.next/standalone/ (server.js at top
-# level because outputFileTracingRoot is set to the monorepo root).
+# MIG-IMG fase 1: directorio de los archivos de `media` (MEDIA_STORAGE=local). Se crea AQUÍ con dueño
+# nextjs:nodejs (uid 1001) porque la raíz de /app es de root y el usuario sin privilegios no podría
+# crearlo en la primera subida (hipótesis H-PERM). Al montar el volumen nombrado cms_media en esta ruta,
+# Docker copia el dueño y los permisos de este directorio al volumen vacío. Límite: un volumen que ya
+# tenga contenido con otro dueño (o un bind a una carpeta del host) NO hereda estos permisos y habrá que
+# corregirlos a mano (chown 1001:1001).
+ENV MEDIA_DIR=/app/media
+RUN mkdir -p /app/media && chown nextjs:nodejs /app/media
+
+# VERIF-DOCKER-01: con outputFileTracingRoot = raíz del monorepo, Next replica la estructura del monorepo
+# dentro de standalone: el servidor queda en apps/cms/server.js (NO en la raíz) y sirve los estáticos desde
+# apps/cms/.next/static. Verificado construyendo la imagen real (2026-10-23): `node server.js` en /app daba
+# MODULE_NOT_FOUND y el CMS no arrancaba. Límite: si se quita outputFileTracingRoot, hay que revertir ambas rutas.
 COPY --from=builder --chown=nextjs:nodejs /app/apps/cms/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/cms/.next/static     ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/cms/.next/static     ./apps/cms/.next/static
+
+# VERIF-DOCKER-05: el tracer de Next copia el .node de sharp pero NO libvips-cpp.so (se carga con dlopen). Sin esto
+# `import sharp` falla (ERR_DLOPEN_FAILED) y en el CMS toda ruta de Payload responde 500; en el portal falla el
+# optimizador de imágenes. Se copia el paquete de libvips (musl/x64) desde `deps`. Límite: solo esta plataforma.
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules/@img/sharp-libvips-linuxmusl-x64 ./node_modules/@img/sharp-libvips-linuxmusl-x64
 
 USER nextjs
 
@@ -102,4 +123,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["node", "apps/cms/server.js"]

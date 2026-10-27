@@ -32,15 +32,26 @@ x-cms-env: &cms-env
     NEXT_PUBLIC_SERVER_URL: ${CMS_PUBLIC_URL}
     PORTAL_URL:             ${PORTAL_PUBLIC_URL}
 
+    # MIG-IMG fase 1: almacenamiento de `media`. Por defecto DISCO LOCAL en un volumen persistente
+    # (cms_media montado en MEDIA_DIR). S3/MinIO solo si se fija MEDIA_STORAGE=s3 de forma explícita:
+    # las claves S3_* de abajo ya NO activan S3 por sí solas. MEDIA_DIR debe ser absoluto y coincidir con el
+    # montaje del servicio `cms` (lo vigila el guard `guard-media-volume`). Quien usaba S3 debe fijar s3.
+    MEDIA_STORAGE:   ${MEDIA_STORAGE:-local}
+    MEDIA_DIR:       /app/media
+    MEDIA_MAX_BYTES: ${MEDIA_MAX_BYTES:-10485760}
+
     # S3 / MinIO — var names must match what payload.config.ts reads
-    S3_BUCKET:          ${S3_BUCKET}
-    S3_ACCESS_KEY_ID:   ${MINIO_ROOT_USER}
-    S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+    # MIN-01: MinIO es OPCIONAL (perfil `s3`). Con el perfil apagado estas variables no se usan, por eso
+    # llevan default vacío: sin él Compose avisaría de variable sin definir en cada `up`. Con
+    # MEDIA_STORAGE=s3 el CMS valida que no estén vacías y, si lo están, no arranca (mediaStorage.ts).
+    S3_BUCKET:          ${S3_BUCKET:-}
+    S3_ACCESS_KEY_ID:   ${MINIO_ROOT_USER:-}
+    S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-}
     # Internal endpoint for uploads (container-to-container)
     S3_ENDPOINT:        http://minio:9000
     S3_REGION:          us-east-1
     # Public-facing URL used by generateFileURL — what browsers actually load
-    S3_PUBLIC_URL:      ${S3_PUBLIC_URL}
+    S3_PUBLIC_URL:      ${S3_PUBLIC_URL:-}
 
     # Email (recuperación de contraseña de Payload). DEP-10: mismos nombres que usa el portal para el
     # formulario de contacto; SMTP_FROM (nombre obsoleto) lo sustituyen SMTP_FROM_ADDRESS y SMTP_FROM_NAME.
@@ -86,8 +97,17 @@ services:
 
     stop_grace_period: 30s
 
-  # ── MinIO S3 ─────────────────────────────────────────────────────────────────
+  # ── MinIO S3 (OPCIONAL, perfil `s3`) ───────────────────────────────────────────
+  # MIN-01: ya no forma parte del despliegue por defecto (MEDIA_STORAGE=local usa el volumen cms_media).
+  # Un `docker compose up` normal NO lo arranca, no lo espera y el CMS no depende de él. Para usarlo:
+  # MEDIA_STORAGE=s3 en .env.prod y `docker compose --profile s3 up -d minio` (ver DEPLOY.md y
+  # docs/specs/migration/MIG-IMG-imagenes-de-noticias.md §16.8). NO nombrar `minio` en el `up -d` de
+  # deploy.yml: nombrar un servicio con perfil activa ese perfil (docs.docker.com/compose/how-tos/profiles/).
+  # DEP-11 pendiente: la imagen sigue SIN fijar (`latest` y quay.io no disponible); no se inventa un tag
+  # porque no se puede verificar sin red. guard-deploy-steps lo sigue reportando a propósito: queda rojo
+  # solo por esta imagen del perfil opcional, no por el despliegue por defecto.
   minio:
+    profiles: ["s3"]
     image: quay.io/minio/minio:latest
     container_name: unc-minio-prod
     restart: unless-stopped
@@ -102,8 +122,8 @@ services:
       - ":9001"
 
     environment:
-      MINIO_ROOT_USER:     ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ROOT_USER:     ${MINIO_ROOT_USER:-}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-}
 
     volumes:
       - minio_data:/data
@@ -133,19 +153,29 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      minio:
-        condition: service_healthy
+      # MIN-01: sin `depends_on: minio`. Con MEDIA_STORAGE=local no se usa, y un depends_on a un servicio
+      # de un perfil apagado haría fallar `up` («depends on undefined service»); `required: false` lo evitaría
+      # pero exige Compose >= 2.20 y DEPLOY.md solo pide «v2.x». Con el perfil s3 el CMS puede arrancar antes
+      # que MinIO: el cliente S3 conecta al subir, y MinIO tiene restart: unless-stopped.
       # DEP-07 (C8): el CMS no arranca (no sirve tráfico) si la migración no terminó con éxito.
       cms-migrate:
         condition: service_completed_successfully
 
     environment: *cms-env
 
+    # MIG-IMG fase 1: archivos de `media` en un volumen NOMBRADO persistente (sobrevive a redeploys).
+    # Docker copia al volumen vacío el contenido y el dueño (nextjs:nodejs, uid 1001) de /app/media de la
+    # imagen (creado en apps/cms/Dockerfile), por eso el usuario sin privilegios puede escribir.
+    # Límite: vive en el host; su respaldo fuera del host es DEP-08 (ver docs/BACKUP_RECOVERY.md).
+    volumes:
+      - cms_media:/app/media
+
     # DEP-09: readiness real (SELECT 1 a Postgres), no la liveness `{status:'ok'}`. Si la BD cae el
     # contenedor pasa a `unhealthy` (Docker no lo reinicia por eso) y `depends_on: service_healthy`
     # de portal/nginx lo respeta al arrancar. 4 llamadas/min desde localhost: bajo el límite de 30/min.
     healthcheck:
-      test:         ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health/ready || exit 1"]
+      # VERIF-DOCKER-04: 127.0.0.1 y no localhost (ver tests/deploy/docker-cms-image.test.mjs): localhost resuelve a ::1 y el wget de busybox no reintenta.
+      test:         ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health/ready || exit 1"]
       interval:     15s
       timeout:      5s
       retries:      6
@@ -217,7 +247,7 @@ services:
 
     # DEP-09: liveness propia del portal (200 aunque el CMS esté caído; ver app/api/health/route.ts).
     healthcheck:
-      test:         ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      test:         ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health || exit 1"]
       interval:     15s
       timeout:      5s
       retries:      6
@@ -250,6 +280,9 @@ volumes:
     name: unc_postgres_data_prod
   minio_data:
     name: unc_minio_data_prod
+  # MIG-IMG fase 1: archivos de `media` (almacenamiento local persistente del CMS).
+  cms_media:
+    name: unc_cms_media_prod
   nginx_logs:
     name: unc_nginx_logs_prod
 

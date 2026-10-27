@@ -259,12 +259,13 @@ test('(1) sin residuo, la limpieza previa no es un error ni imprime avisos de fa
   cleanup(dir);
 });
 
-test('(1) el up -d lista exactamente los servicios del compose menos cms-migrate', () => {
+// MIN-01: los servicios con `profiles` (minio, perfil s3) no se listan: nombrarlos activaría su perfil.
+test('(1) el up -d lista exactamente los servicios del compose por defecto menos cms-migrate', () => {
   const dir = makeWorkdir();
   const a = deploy(dir);
   const upCall = a.lines.find((l) => l.startsWith('UPCALL '));
   const listed = upCall.split(/\s+/).filter((w) => Object.keys(COMPOSE.services).includes(w)).sort();
-  const expected = Object.keys(COMPOSE.services).filter((s) => s !== 'cms-migrate').sort();
+  const expected = Object.keys(COMPOSE.services).filter((s) => s !== 'cms-migrate' && !COMPOSE.services[s].profiles?.length).sort();
   assert.deepEqual(listed, expected, upCall);
   cleanup(dir);
 });
