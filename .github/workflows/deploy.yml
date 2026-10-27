@@ -418,10 +418,24 @@ jobs:
             # a Postgres, no el esquema ni MinIO; no se ha ejercitado con Docker real (busybox wget).
             READY_RETRIES="${DEP09_READY_RETRIES:-12}"
             READY_INTERVAL="${DEP09_READY_INTERVAL:-5}"
+            # SEC-REVIEW (ARR-01 expand/contract): smoke de datos. /api/health/ready solo hace SELECT 1; no detecta un
+            # esquema incompatible con la imagen (p. ej. una columna renombrada). Se lee una colección real por la red
+            # interna del contenedor (sin puertos nuevos). Amenaza: dar por sano, o por «recuperado» tras el rollback,
+            # un CMS que responde 500 en las rutas de datos. wget sale != 0 ante 4xx/5xx. Límite: una sola colección
+            # (lectura pública = solo filas activas) y solo comprueba la forma de la respuesta ("docs"), no su contenido.
+            dep09_cms_fetch() {
+              docker exec unc-cms-prod wget -q -O - -T 5 "http://127.0.0.1:3000/api/aranceles-rectorado?limit=1"
+            }
+            dep09_cms_collection_smoke() {
+              local body
+              body=$(dep09_cms_fetch) || return 1
+              printf '%s' "$body" | grep -Eq '"docs"[[:space:]]*:[[:space:]]*\['
+            }
             dep09_ready() {
               # VERIF-DOCKER-04: 127.0.0.1 y no localhost (resuelve a ::1 y el wget de busybox no reintenta con IPv4).
               docker exec unc-cms-prod wget -q -O /dev/null -T 3 http://127.0.0.1:3000/api/health/ready &&
-                docker exec unc-portal-prod wget -q -O /dev/null -T 3 http://127.0.0.1:3000/api/health
+                docker exec unc-portal-prod wget -q -O /dev/null -T 3 http://127.0.0.1:3000/api/health &&
+                dep09_cms_collection_smoke
             }
             dep09_wait_ready() {
               local attempt=1

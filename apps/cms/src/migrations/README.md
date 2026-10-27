@@ -27,9 +27,11 @@ Fuente única del esquema de cualquier entorno persistente (DEP-07). Prohibido `
   `institucional|beneficios`, por defecto `institucional`), `nota` y `orden` (por defecto 99), y quita el NOT NULL de
   `objective` (una fila internacional del sitio publicado no tiene finalidad). Idempotente; su `down` se niega a correr
   si alguna fila usa los campos nuevos o tiene `objective` vacío.
-- `20261025_180000_arr_01_aranceles_rectorado.ts` y `.json`: ARR-01, en `aranceles_rectorado` renombra `activo` a
-  `active` (solo si existe `activo` y no `active`), quita el DEFAULT de `grupo` y crea `aranceles_rectorado_active_idx`
-  y el índice único `concepto_grupo_idx`. Idempotente; su `down` revierte sin borrar filas.
+- `20261025_180000_arr_01_aranceles_rectorado.ts` y `.json`: ARR-01, en `aranceles_rectorado` (paso EXPAND) añade
+  `active` copiando `activo` (una sola vez), CONSERVA `activo` (nullable, DEFAULT true), quita el DEFAULT de `grupo` y
+  crea `aranceles_rectorado_active_idx` y el índice único `concepto_grupo_idx`. Idempotente; su `down` copia
+  `active` a `activo` y no borra filas. El snapshot `.json` solo describe `active` (la columna legada queda fuera).
+  **Contract pendiente:** migración posterior `drop aranceles_rectorado.activo` (ver «Migraciones contract pendientes»).
 - `20261025_190000_glo_gn_01_glosario_guarani.ts` y `.json`: GLO-GN-01, crea `glosario_guarani` (glosario
   español → guaraní privado), su arreglo `glosario_guarani_variantes_gn`, cuatro enums, el índice único
   `terminoEs_fuente_idx` y la columna de bloqueo en `payload_locked_documents_rels`. Idempotente; su `down` se niega
@@ -56,3 +58,12 @@ Fuente única del esquema de cualquier entorno persistente (DEP-07). Prohibido `
 - Los datos iniciales se cargan con `scripts/setup/restore-data-prod.sh` (solo datos, tablas vacías).
 - Una migración nueva se crea con `npm run payload --workspace=@unc/cms -- migrate:create <nombre>`,
   se revisa a mano y se prueba con `up` en una BD sintética vacía antes de mergear.
+
+## Migraciones contract pendientes
+
+- **`drop aranceles_rectorado.activo`** (contract de ARR-01). Cuándo: en un release posterior, cuando el release que
+  contiene `arr_01` ya esté estable y NO se pueda volver a la imagen previa (la que consulta `activo`). Qué hace:
+  `ALTER TABLE "aranceles_rectorado" DROP COLUMN IF EXISTS "activo"`, con su `.ts` registrado en `index.ts`.
+  Ventana de rollback hasta entonces: la imagen vieja sigue funcionando porque `activo` existe y tiene DEFAULT true;
+  las ediciones hechas con la imagen nueva en `active` no se replican a `activo` (la imagen vieja ve el valor previo
+  al deploy y las filas nuevas nacen con `activo = true`).

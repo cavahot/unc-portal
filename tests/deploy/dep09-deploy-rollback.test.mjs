@@ -52,6 +52,12 @@ args="$*"
 D="$(dirname "$FAKE_LOG")"
 echo "ARGS $args" >> "$FAKE_LOG"
 case "$args" in
+  "exec unc-cms-prod wget"*"/api/aranceles-rectorado"*)
+    # SEC-REVIEW: smoke de datos del gate (lectura de una colección real); responde JSON con "docs" salvo tag malo.
+    cur="$(cat "$D/current_tag" 2>/dev/null)"
+    echo "EVENT smoke-cms tag=$cur" >> "$FAKE_LOG"
+    case " \${FAKE_BAD_TAG:-} " in *" $cur "*) exit 1;; esac
+    printf '{"docs":[],"totalDocs":0}'; exit 0;;
   "exec unc-cms-prod wget"*|"exec unc-portal-prod wget"*)
     case "$args" in *cms*) who=cms;; *) who=portal;; esac
     cur="$(cat "$D/current_tag" 2>/dev/null)"

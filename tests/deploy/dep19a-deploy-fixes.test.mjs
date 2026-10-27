@@ -117,6 +117,8 @@ echo "ARGS $args" >> "$FAKE_LOG"
 case "$args" in
   "exec unc-cms-prod wget"*|"exec unc-portal-prod wget"*)
     [ "\${FAKE_READY_FAIL:-0}" = 1 ] && [ "$(cat "$D/current_tag" 2>/dev/null)" = "\${FAKE_READY_FAIL_TAG:-}" ] && exit 1
+    # SEC-REVIEW: el smoke de datos del gate pide una colección real y exige "docs" en la respuesta.
+    case "$args" in *"/api/aranceles-rectorado"*) printf '{"docs":[],"totalDocs":0}';; esac
     exit 0;;
   "rm -f"*)
     shift 2; rc=0

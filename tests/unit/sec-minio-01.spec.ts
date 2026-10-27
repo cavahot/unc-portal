@@ -64,7 +64,9 @@ describe('SEC-MINIO-01 B: sin secretos de MinIO en archivos versionados', () => 
       return secrets.some((s) => text.includes(s))
     })
     expect(hits).toEqual([])
-  })
+    // Lee todos los archivos versionados: con la máquina cargada supera los 5 s por defecto de vitest (falso rojo
+    // observado en harness --quick). El límite amplio no debilita el control: solo evita el corte por tiempo.
+  }, 60_000)
 
   it('ningún script versionado asigna un literal largo a MINIO_SECRET_KEY / SecretKey', () => {
     const literal = /(MINIO_SECRET_KEY|S3_SECRET_ACCESS_KEY|\$SecretKey|AWS_SECRET_ACCESS_KEY)\s*=\s*["'][A-Za-z0-9+/_-]{16,}["']/

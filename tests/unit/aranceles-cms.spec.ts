@@ -310,7 +310,9 @@ describe('ARR-01: migración', () => {
   it('el up es idempotente y no borra datos', () => {
     const src = readFileSync(resolve(DIR, mine!), 'utf8')
     const up = src.split('export async function up')[1].split('export async function down')[0]
-    expect(up).toMatch(/RENAME COLUMN "activo" TO "active"/)
+    // SEC-REVIEW: expand/contract; ya no se renombra, se añade `active` y se copia desde `activo` (que se conserva).
+    expect(up).not.toMatch(/RENAME COLUMN/)
+    expect(up).toMatch(/ADD COLUMN IF NOT EXISTS "active" boolean/)
     expect(up).toMatch(/column_name = 'activo'/)
     expect(up).toContain('CREATE INDEX IF NOT EXISTS "aranceles_rectorado_active_idx"')
     expect(up).toContain('CREATE UNIQUE INDEX IF NOT EXISTS "concepto_grupo_idx"')

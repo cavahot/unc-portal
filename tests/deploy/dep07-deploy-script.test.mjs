@@ -48,6 +48,7 @@ case "$args" in
   *"pg_restore --list"*) cat > /dev/null; echo "EVENT pg_restore-list" >> "$FAKE_LOG"; [ "\${FAKE_LIST_FAIL:-0}" = 1 ] && exit 1; exit 0;;
   *pg_dump*) echo "EVENT pg_dump" >> "$FAKE_LOG"; [ "\${FAKE_DUMP_FAIL:-0}" = 1 ] && exit 1; [ "\${FAKE_DUMP_EMPTY:-0}" = 1 ] && exit 0; printf 'PGDMP-SYNTHETIC'; exit 0;;
   *"run --rm"*cms-migrate*) echo "EVENT migrate" >> "$FAKE_LOG"; case "$args" in *"--name "*) cn="\${args#*--name }"; cn="\${cn%% *}";; *) cn="proj-cms-migrate-run-a1b2c3d4";; esac; echo "$cn" >> "$FAKE_STATE"; echo "STATE created=$cn" >> "$FAKE_LOG"; [ "\${FAKE_MIGRATE_FAIL:-0}" = 1 ] || [ "\${FAKE_MIGRATE_HANG:-0}" = 1 ] || { grep -vxF "$cn" "$FAKE_STATE" > "$FAKE_STATE.tmp"; mv "$FAKE_STATE.tmp" "$FAKE_STATE"; }; echo "META migrate-flags=$args" >> "$FAKE_LOG"; [ "\${FAKE_MIGRATE_FAIL:-0}" = 1 ] && exit 1; [ "\${FAKE_MIGRATE_HANG:-0}" = 1 ] && exec sleep 20; exit 0;;
+  "exec unc-cms-prod wget"*"/api/aranceles-rectorado"*) printf '{"docs":[],"totalDocs":0}'; exit 0;;
   *"up -d"*) echo "EVENT up" >> "$FAKE_LOG"; exit 0;;
   *pull*) echo "EVENT pull" >> "$FAKE_LOG"; exit 0;;
 esac
