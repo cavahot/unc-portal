@@ -64,6 +64,8 @@ export const Noticias: CollectionConfig = {
       label: '¿Destacar en portada?',
       type: 'checkbox',
       defaultValue: false,
+      // PERF-DB: la portada filtra por featured=true; índice para no recorrer toda la tabla (migración perf_db_indexes).
+      index: true,
       admin: {
         description: 'Mostrar en la sección destacada del portal',
         position: 'sidebar',
@@ -252,6 +254,9 @@ export const Noticias: CollectionConfig = {
   timestamps: true,
   versions: {
     drafts: true,
+    // PERF-DB: Payload guarda 100 versiones completas (JSON Lexical) por documento por defecto;
+    // se acota a 10 para que el almacenamiento no crezca sin tope. Límite: versiones antiguas se descartan.
+    maxPerDoc: 10,
   },
   hooks: {
     // DEP-03: quien no publica guarda siempre como borrador (no toca la fila principal).
@@ -271,6 +276,10 @@ export const Noticias: CollectionConfig = {
         // Revalidate portal cache on every change so featured/published state
         // is reflected immediately without waiting for ISR expiry.
         await revalidatePortalTag('noticias')
+        // PERF-DB: la lista de slugs y el detalle cacheados por slug también deben invalidarse; antes
+        // solo se invalidaba la lista y el detalle quedaba viejo hasta vencer el ISR.
+        await revalidatePortalTag('noticias-slugs')
+        await revalidatePortalTag(`noticias:${doc.slug}`)
 
         const usuario = req.user?.email || 'sistema'
 
@@ -330,6 +339,11 @@ export const Noticias: CollectionConfig = {
           resultado: 'exito',
           mensaje: 'Noticia eliminada',
         })
+
+        // PERF-DB: una noticia eliminada debe desaparecer de listas, slugs y detalle cacheados.
+        await revalidatePortalTag('noticias')
+        await revalidatePortalTag('noticias-slugs')
+        await revalidatePortalTag(`noticias:${doc.slug}`)
       },
     ],
   },

@@ -11,6 +11,10 @@ import sharp from 'sharp'
 import { Carreras } from './collections/Carreras'
 import { Facultades } from './collections/Facultades'
 import { MarcoLegal } from './collections/MarcoLegal'
+// LT-01: hitos de la línea de tiempo de /historia (docs/specs/portal/LINEA-TIEMPO.md).
+import { LineaTiempo } from './collections/LineaTiempo'
+// GLO-GN-01: glosario español → guaraní interno (docs/specs/i18n/GLOSARIO-GUARANI.md).
+import { GlosarioGuarani } from './collections/GlosarioGuarani'
 import { Media } from './collections/Media'
 import { Noticias } from './collections/Noticias'
 import { Paginas } from './collections/Paginas'
@@ -21,16 +25,22 @@ import { Auditoria } from './collections/Auditoria'
 import { Autoridades } from './collections/Autoridades'
 import { Ley5189 } from './collections/Ley5189'
 import { Ley5282 } from './collections/Ley5282'
+import { TransparenciaItems } from './collections/TransparenciaItems'
 import Convenios from './collections/Convenios'
 import TribunalMiembros from './collections/TribunalMiembros'
 import TribunalDocumentos from './collections/TribunalDocumentos'
 import ArancelesRectorado from './collections/ArancelesRectorado'
+// FAC-01: aranceles de cada facultad (spec docs/specs/portal/FACULTADES.md §3.3).
+import ArancelesFacultad from './collections/ArancelesFacultad'
 import { FAQs } from './collections/FAQs'
+import { Reconocimientos } from './collections/Reconocimientos'
+import { Acreditaciones } from './collections/Acreditaciones'
 import { Navegacion } from './globals/Navegacion'
 import { Transparencia } from './globals/Transparencia'
 import { EnlacesExternos } from './globals/EnlacesExternos'
 import { Estadisticas } from './globals/Estadisticas'
 import { getDatabaseURL } from './config/database'
+import { buildUploadOptions, resolveMediaStorage } from './config/mediaStorage'
 import { hasRole } from './access/roles'
 import { resolvePayloadSecret } from './config/secrets'
 import { ADMIN_ROUTE } from './config/adminRoute'
@@ -42,6 +52,12 @@ const dirname = path.dirname(filename)
 // ARCH-DB-01: no permite arrancar Payload con una URI vacía o de ejemplo.
 // La conectividad real se verifica aparte en un PostgreSQL sintético.
 const databaseURL = getDatabaseURL()
+
+// MIG-IMG fase 1: el almacenamiento de `media` se elige de forma EXPLÍCITA con MEDIA_STORAGE
+// ('local' por defecto | 's3'). Falla cerrada al arrancar si 's3' queda a medio configurar. Antes el
+// plugin S3 se activaba solo por tener dos variables y, con el MinIO caído, toda subida fallaba.
+// Límite: despliegues que usaban S3 solo por tener las claves deben fijar MEDIA_STORAGE=s3.
+const mediaStorage = resolveMediaStorage(process.env)
 
 // DEP-16/D: roles que pueden abrir un preview firmado. Excluye auditor, consulta y gestor
 // multimedia (no editan contenido). El CMS sigue decidiendo qué borradores ve cada rol (DEP-02).
@@ -141,15 +157,21 @@ export default buildConfig({
     Facultades,
     Carreras,
     MarcoLegal,
+    LineaTiempo,
     Auditoria,
     Autoridades,
+    TransparenciaItems,
     Ley5189,
     Ley5282,
     Convenios,
     TribunalMiembros,
     TribunalDocumentos,
     ArancelesRectorado,
+    ArancelesFacultad,
     FAQs,
+    Reconocimientos,
+    Acreditaciones,
+    GlosarioGuarani,
   ],
 
   globals: [Navegacion, Transparencia, EnlacesExternos, Estadisticas],
@@ -203,10 +225,16 @@ export default buildConfig({
 
   sharp,
 
+  // MIG-IMG fase 1: tope por archivo en las subidas multipart (REST y panel) con abortOnLimit=true:
+  // sin él Payload guardaría el archivo TRUNCADO sin error (processMultipart.js:67-83). Tope desde
+  // MEDIA_MAX_BYTES (10 MiB por defecto). Límite: la Local API no pasa por multipart; el hook de bytes
+  // de Media repite el tope.
+  upload: buildUploadOptions(process.env),
+
   plugins: [
-    // S3 storage only when credentials are explicitly configured.
-    // Without them, Payload falls back to local filesystem (safe for local dev).
-    ...(process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY
+    // S3 solo si MEDIA_STORAGE=s3 (validado arriba: exige claves, bucket y endpoint).
+    // En modo 'local' los archivos van al directorio persistente MEDIA_DIR (collections/Media.ts).
+    ...(mediaStorage.mode === 's3'
       ? [
           s3Storage({
             bucket: process.env.S3_BUCKET || 'unc-media',
@@ -232,8 +260,8 @@ export default buildConfig({
             },
             config: {
               credentials: {
-                accessKeyId:     process.env.S3_ACCESS_KEY_ID,
-                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+                accessKeyId:     process.env.S3_ACCESS_KEY_ID as string, // validadas por resolveMediaStorage('s3')
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
               },
               // Always the internal/direct MinIO endpoint for uploads (not the public URL).
               endpoint:      process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',

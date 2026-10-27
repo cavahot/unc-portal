@@ -83,6 +83,8 @@ export const Auditoria: CollectionConfig = {
       name: 'fechaHora',
       type: 'date',
       required: true,
+      // PERF-DB: el log se ordena/filtra por fecha; índice para que el coste no crezca con la tabla.
+      index: true,
       admin: {
         description: 'Fecha y hora del evento',
       },

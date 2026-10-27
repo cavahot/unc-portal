@@ -76,15 +76,21 @@ export interface Config {
     facultades: Facultade;
     carreras: Carrera;
     'marco-legal': MarcoLegal;
+    'linea-tiempo': LineaTiempo;
     auditoria: Auditoria;
     autoridades: Autoridade;
+    'transparencia-items': TransparenciaItem;
     ley5189: Ley5189;
     ley5282: Ley5282;
     convenios: Convenio;
     'tribunal-miembros': TribunalMiembro;
     'tribunal-documentos': TribunalDocumento;
     'aranceles-rectorado': ArancelesRectorado;
+    'aranceles-facultad': ArancelesFacultad;
     faqs: Faq;
+    reconocimientos: Reconocimiento;
+    acreditaciones: Acreditacione;
+    'glosario-guarani': GlosarioGuarani;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -101,15 +107,21 @@ export interface Config {
     facultades: FacultadesSelect<false> | FacultadesSelect<true>;
     carreras: CarrerasSelect<false> | CarrerasSelect<true>;
     'marco-legal': MarcoLegalSelect<false> | MarcoLegalSelect<true>;
+    'linea-tiempo': LineaTiempoSelect<false> | LineaTiempoSelect<true>;
     auditoria: AuditoriaSelect<false> | AuditoriaSelect<true>;
     autoridades: AutoridadesSelect<false> | AutoridadesSelect<true>;
+    'transparencia-items': TransparenciaItemsSelect<false> | TransparenciaItemsSelect<true>;
     ley5189: Ley5189Select<false> | Ley5189Select<true>;
     ley5282: Ley5282Select<false> | Ley5282Select<true>;
     convenios: ConveniosSelect<false> | ConveniosSelect<true>;
     'tribunal-miembros': TribunalMiembrosSelect<false> | TribunalMiembrosSelect<true>;
     'tribunal-documentos': TribunalDocumentosSelect<false> | TribunalDocumentosSelect<true>;
     'aranceles-rectorado': ArancelesRectoradoSelect<false> | ArancelesRectoradoSelect<true>;
+    'aranceles-facultad': ArancelesFacultadSelect<false> | ArancelesFacultadSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
+    reconocimientos: ReconocimientosSelect<false> | ReconocimientosSelect<true>;
+    acreditaciones: AcreditacionesSelect<false> | AcreditacionesSelect<true>;
+    'glosario-guarani': GlosarioGuaraniSelect<false> | GlosarioGuaraniSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -195,6 +207,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -208,16 +221,29 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Formatos: JPEG, PNG, WebP, AVIF y GIF (imágenes); PDF, DOC y DOCX (documentos). Tamaño máximo: 10 MiB por archivo. Las fotos se reducen automáticamente a 2560 px en su lado más largo, se enderezan según la orientación de la cámara y se eliminan sus metadatos (EXIF, ubicación GPS, datos del teléfono). Si la misma imagen ya existe, el sistema lo indica con su ID para que la reutilice.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  /**
+   * Describe la imagen para personas que usan lector de pantalla (qué se ve y por qué importa). Ejemplo: «Estudiantes de Enfermería en el laboratorio de simulación». Máximo 300 caracteres.
+   */
   alt: string;
   /**
    * Placeholder de blur generado automáticamente para Next.js Image.
    */
   blurDataURL?: string | null;
+  /**
+   * Calculada por el servidor al subir. Sirve para detectar subidas repetidas.
+   */
+  sha256?: string | null;
+  /**
+   * Solo para cargas masivas (por ejemplo, 2024/05/foto.jpg). Vacío en subidas desde el panel.
+   */
+  sourcePath?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -338,10 +364,50 @@ export interface Facultade {
    */
   slug: string;
   descripcion?: string | null;
+  /**
+   * Obsoleto: el decano se carga en Autoridades (tipo «Decano», facultad). Solo lo usan /facultades y la ruta dinámica.
+   */
   decano?: string | null;
   email?: string | null;
   telefono?: string | null;
   imagen?: (number | null) | Media;
+  /**
+   * PRA-01: siglas oficiales (máx. 12 caracteres). Déjelas vacías si no están confirmadas.
+   */
+  siglas?: string | null;
+  /**
+   * Archivo versionado en el proyecto: /images/facultades/<archivo>.png|jpg|webp. Sin subcarpetas ni enlaces externos.
+   */
+  logoPath?: string | null;
+  /**
+   * Texto plano, 2-4 párrafos separados por una línea en blanco. Solo hechos con fuente.
+   */
+  historia?: string | null;
+  /**
+   * Ej.: Campus Universitario: Ruta Py05, Km 210.
+   */
+  direccion?: string | null;
+  /**
+   * Además del correo principal. La etiqueta es opcional (p. ej. «Secretaría General»).
+   */
+  correosAdicionales?:
+    | {
+        etiqueta?: string | null;
+        email: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Dirección completa con https://, p. ej. https://www.founc.edu.py/
+   */
+  sitioWeb?: string | null;
+  redes?:
+    | {
+        red: 'facebook' | 'instagram' | 'x' | 'youtube';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   activa?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -553,11 +619,48 @@ export interface Carrera {
    */
   slug: string;
   facultad: number | Facultade;
-  duracion: number;
-  titulo: string;
+  /**
+   * Déjelo vacío si no está confirmado por la Secretaría Académica.
+   */
+  duracion?: number | null;
+  /**
+   * Déjelo vacío si no está confirmado.
+   */
+  titulo?: string | null;
   modalidad?: ('Presencial' | 'Semipresencial' | 'Virtual') | null;
   descripcion?: string | null;
+  /**
+   * Obsoleto: use «Resoluciones CONES». Solo lo leen las páginas de facultad aún no convertidas.
+   */
   resolucion?: string | null;
+  /**
+   * Resoluciones del CONES que habilitan la carrera (no son acreditaciones ANEAES).
+   */
+  resoluciones?:
+    | {
+        /**
+         * Ej.: 165/15
+         */
+        numero: string;
+        /**
+         * Opcional. Solo Google Drive o sitios de la UNC / FOUNC, con https://
+         */
+        enlace?: string | null;
+        /**
+         * Opcional. Ej.: Actualización
+         */
+        detalle?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Opcional. Solo texto oficial de la facultad.
+   */
+  perfil?: string | null;
+  /**
+   * Número menor = aparece primero dentro de su tipo.
+   */
+  orden?: number | null;
   tipo?: ('grado' | 'posgrado') | null;
   /**
    * Ej: Central/Concepción
@@ -568,16 +671,19 @@ export interface Carrera {
   createdAt: string;
 }
 /**
- * Documentos normativos que rigen la vida institucional de la UNC.
+ * Documentos normativos que se publican en /marco-legal. Para retirar uno, desmarque «Publicado» (no lo borre: queda el historial).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "marco-legal".
  */
 export interface MarcoLegal {
   id: number;
+  /**
+   * Tal como debe leerse en la página. Ej.: «Reglamento de Movilidad UNC».
+   */
   title: string;
   /**
-   * Agrupa el documento en la página pública
+   * Sección de la página en la que aparece el documento.
    */
   category:
     | 'ley-creacion'
@@ -591,25 +697,97 @@ export interface MarcoLegal {
     | 'procedimientos'
     | 'protocolos';
   /**
-   * Breve descripción del contenido del documento
+   * Vigente: no se marca. Derogado: reemplazado o sin efecto, se muestra con aviso. Histórico: se conserva como referencia (p. ej. un plan de un período cerrado).
+   */
+  estado: 'vigente' | 'derogado' | 'historico';
+  /**
+   * Fecha de la resolución o aprobación (opcional). Se muestra junto al documento.
+   */
+  fechaDocumento?: string | null;
+  /**
+   * Una línea sobre el contenido. También se usa en la búsqueda de la página.
    */
   description?: string | null;
   /**
-   * Sube el archivo directamente. Tiene prioridad sobre la URL externa.
+   * Aclaración breve visible para el público. Ej.: «Reemplazado por la versión 2».
+   */
+  nota?: string | null;
+  /**
+   * Opción recomendada: el archivo queda en el almacenamiento de la UNC. Tiene prioridad sobre la URL externa.
    */
   file?: (number | null) | Media;
   /**
-   * Se usa como enlace de descarga cuando no hay archivo subido.
+   * Solo si no sube un archivo. Se aceptan enlaces https de drive.google.com, docs.google.com, www.unc.edu.py o unc.edu.py. En Drive el archivo debe estar compartido como «Cualquier persona con el enlace».
    */
   externalUrl?: string | null;
   /**
-   * Menor número = aparece primero dentro de su categoría
+   * Número menor = aparece primero dentro de su categoría.
    */
   order?: number | null;
   /**
-   * Solo los documentos publicados se muestran en el portal
+   * Desmarque para retirar el documento de la página sin borrarlo.
    */
   active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Hitos de la sección «Línea de tiempo» de la página Historia. Para retirar uno, desmarque «Publicado» (no lo borre: queda el historial).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "linea-tiempo".
+ */
+export interface LineaTiempo {
+  id: number;
+  /**
+   * Año del hito, p. ej. 2007. Se muestra en grande.
+   */
+  anio: number;
+  /**
+   * Solo si aporta, p. ej. «4 de julio» o «Marzo de 2008». No se traduce.
+   */
+  etiquetaFecha?: string | null;
+  /**
+   * Frase breve, en español. Ej.: «Inicio de actividades académicas».
+   */
+  titulo: string;
+  /**
+   * Uno o dos enunciados sobre qué ocurrió y por qué importa (máx. 600 caracteres).
+   */
+  descripcion: string;
+  /**
+   * Las fotos se normalizan automáticamente al subirlas. Complete el texto alternativo de la imagen: describe lo que se ve.
+   */
+  imagen?: (number | null) | Media;
+  /**
+   * Dirección completa que empiece con https://, p. ej. una noticia o la ley publicada.
+   */
+  enlace?: string | null;
+  /**
+   * Solo si hay varios hitos el mismo año: número menor = primero.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para retirar el hito de la página sin borrarlo.
+   */
+  active?: boolean | null;
+  /**
+   * Si un campo queda vacío, la página muestra el texto en español. No use traducción automática sin revisión.
+   */
+  traducciones?: {
+    en?: {
+      titulo?: string | null;
+      descripcion?: string | null;
+    };
+    ptBR?: {
+      titulo?: string | null;
+      descripcion?: string | null;
+    };
+    gn?: {
+      titulo?: string | null;
+      descripcion?: string | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -716,7 +894,46 @@ export interface Autoridade {
   createdAt: string;
 }
 /**
- * Documentos requeridos por la Ley 5189/2014 sobre provisión de información en el uso de recursos públicos.
+ * Categorías (Ley 5189/2014) e ítems del Art. 8° (Ley 5282/2014) que muestra el portal. Cada ítem agrupa sus documentos; un ítem sin documentos se muestra igual con «Documentos aún no publicados».
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transparencia-items".
+ */
+export interface TransparenciaItem {
+  id: number;
+  /**
+   * Ley a la que pertenece el ítem. No se puede cambiar después de crearlo.
+   */
+  ley: '5189' | '5282';
+  /**
+   * Identificador estable en minúsculas, p. ej. «item-18». No se puede cambiar después de crearlo.
+   */
+  codigo: string;
+  /**
+   * Denominación que ve el público, tal como figura en la ley. Se puede renombrar.
+   */
+  titulo: string;
+  /**
+   * Nota breve bajo el título, p. ej. la letra o el artículo de la ley.
+   */
+  descripcion?: string | null;
+  /**
+   * Número menor = aparece primero. Use saltos de 10 para poder intercalar ítems.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultar el ítem y sus documentos del portal sin borrar nada.
+   */
+  active?: boolean | null;
+  /**
+   * Clave calculada (ley y código). No editar.
+   */
+  naturalKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Documentos requeridos por la Ley 5189/2014 sobre provisión de información en el uso de recursos públicos. Para retirar uno, desmarque «Publicado».
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ley5189".
@@ -724,45 +941,42 @@ export interface Autoridade {
 export interface Ley5189 {
   id: number;
   /**
-   * Categoría exigida por la Ley 5189/2014
+   * Categoría exigida por la Ley 5189/2014 (los ítems se administran en «Ítems de transparencia»)
    */
-  category:
-    | 'organigrama'
-    | 'direccion-telefono'
-    | 'nomina-personal'
-    | 'presupuesto-ingresos-gastos'
-    | 'anexo-personal'
-    | 'ejecucion-presupuestaria'
-    | 'registro-viaticos'
-    | 'bienes-patrimoniales'
-    | 'funcionarios-comisionados'
-    | 'otras-informaciones'
-    | 'cumplimiento-art7';
+  item: number | TransparenciaItem;
   /**
-   * Ej: "Enero 2024", "2024", "I Trimestre 2024"
+   * Código del ítem (calculado). No editar.
+   */
+  category?: string | null;
+  /**
+   * Ej.: «Enero 2024», «2024», «I Trimestre 2024». Con la categoría y la descripción forma la clave única.
    */
   period: string;
   /**
-   * Nota breve sobre este documento específico
+   * Nota breve sobre este documento. Sirve para distinguir dos documentos de la misma categoría y período.
    */
   description?: string | null;
   /**
-   * URL de Google Drive para descarga del documento
+   * Enlace https de drive.google.com, docs.google.com, www.unc.edu.py o unc.edu.py. En Drive el archivo debe estar compartido como «Cualquier persona con el enlace».
    */
   driveUrl: string;
   /**
-   * Menor número = aparece primero dentro de su categoría
+   * Número menor = aparece primero dentro de su ítem.
    */
   order?: number | null;
   /**
-   * Solo los documentos publicados se muestran en el portal
+   * Desmarque para retirar el documento del portal sin borrarlo (queda el historial).
    */
   active?: boolean | null;
+  /**
+   * Clave calculada (categoría, período y descripción). No editar.
+   */
+  naturalKey?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Documentos requeridos por el Art. 8° de la Ley 5282/2014 de Libre Acceso Ciudadano a la Información Pública y Transparencia Gubernamental.
+ * Documentos requeridos por el Art. 8° de la Ley 5282/2014 de Libre Acceso Ciudadano a la Información Pública y Transparencia Gubernamental. Para retirar uno, desmarque «Publicado».
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ley5282".
@@ -770,66 +984,95 @@ export interface Ley5189 {
 export interface Ley5282 {
   id: number;
   /**
-   * Ítem exigido por el Art. 8° de la Ley 5282/2014
+   * Ítem exigido por el Art. 8° de la Ley 5282/2014 (los ítems se administran en «Ítems de transparencia»)
    */
-  category:
-    | 'item-1'
-    | 'item-2'
-    | 'item-3'
-    | 'item-4'
-    | 'item-5'
-    | 'item-6'
-    | 'item-7'
-    | 'item-8'
-    | 'item-9'
-    | 'item-10'
-    | 'item-11'
-    | 'item-12'
-    | 'item-13'
-    | 'item-14'
-    | 'item-15'
-    | 'item-16'
-    | 'item-17';
+  item: number | TransparenciaItem;
   /**
-   * Ej: "Enero 2024", "2024", "I Trimestre 2024"
+   * Código del ítem (calculado). No editar.
+   */
+  category?: string | null;
+  /**
+   * Ej.: «Enero 2024», «2024», «I Trimestre 2024». Con la categoría y la descripción forma la clave única.
    */
   period: string;
   /**
-   * Nota breve sobre este documento específico
+   * Nota breve sobre este documento. Sirve para distinguir dos documentos de la misma categoría y período.
    */
   description?: string | null;
   /**
-   * URL de Google Drive para descarga del documento
+   * Enlace https de drive.google.com, docs.google.com, www.unc.edu.py o unc.edu.py. En Drive el archivo debe estar compartido como «Cualquier persona con el enlace».
    */
   driveUrl: string;
   /**
-   * Menor número = aparece primero dentro de su categoría
+   * Número menor = aparece primero dentro de su ítem.
    */
   order?: number | null;
   /**
-   * Solo los documentos publicados se muestran en el portal
+   * Desmarque para retirar el documento del portal sin borrarlo (queda el historial).
    */
   active?: boolean | null;
+  /**
+   * Clave calculada (categoría, período y descripción). No editar.
+   */
+  naturalKey?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Convenios que se publican en /convenios (nacionales) y /convenios/internacionales. Para retirar uno, desmarque «Publicado» (no lo borre: queda el historial).
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "convenios".
  */
 export interface Convenio {
   id: number;
+  /**
+   * Tal como figura en el documento. Ej.: «Convenio Marco de Cooperación Interinstitucional».
+   */
   title: string;
+  /**
+   * Nacional aparece en /convenios; Internacional, en /convenios/internacionales.
+   */
   type: 'nacional' | 'internacional';
+  /**
+   * Institucional: cooperación con universidades, ministerios, municipios y otras instituciones. Beneficios: acuerdos comerciales de descuentos con comercios locales. Define el filtro de la página.
+   */
+  categoria?: ('institucional' | 'beneficios') | null;
+  /**
+   * Año de firma. La página agrupa los convenios por año, del más reciente al más antiguo.
+   */
   year: number;
+  /**
+   * Partes firmantes. Ej.: «Universidad Nacional de Concepción y el Ministerio de Educación y Ciencias».
+   */
   parties: string;
-  objective: string;
+  /**
+   * Objeto del convenio en una o dos frases. También se usa en la búsqueda de la página.
+   */
+  objective?: string | null;
+  /**
+   * Texto libre, como en el documento. Ej.: «24 de Marzo». Puede quedar vacío si no se conoce.
+   */
   signedMonth?: string | null;
+  /**
+   * Texto libre. Ej.: «5 Años», «Indefinido», «Hasta finalizar el proyecto».
+   */
   duration?: string | null;
   /**
-   * URL de Google Drive del documento PDF. Dejar vacío si no hay documento disponible.
+   * Enlace https de drive.google.com, docs.google.com, www.unc.edu.py o unc.edu.py. En Drive el archivo debe estar compartido como «Cualquier persona con el enlace». Vacío: la página muestra «Documento no disponible».
    */
   driveUrl?: string | null;
+  /**
+   * Aclaración breve visible para el público. Ej.: «Documento pendiente de nueva carga».
+   */
+  nota?: string | null;
+  /**
+   * Número menor = aparece primero dentro de su año. Los sembrados conservan el orden del sitio anterior.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para retirar el convenio de la página sin borrarlo.
+   */
   active?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -878,24 +1121,63 @@ export interface TribunalDocumento {
   createdAt: string;
 }
 /**
- * Aranceles, multas y servicios cobrados directamente por el Rectorado.
+ * Montos que publica /aranceles-rectorado. Para cambiar un precio edite la fila; para retirarla desmarque «Publicado» (no la borre: queda el historial en Auditoría).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "aranceles-rectorado".
  */
 export interface ArancelesRectorado {
   id: number;
+  /**
+   * Tal como debe leerse en la página. Ej.: «Constancias Varias». No puede repetirse dentro del mismo grupo.
+   */
   concepto: string;
   /**
-   * Importe en guaraníes. Ej: 50000 para Gs. 50.000
+   * Importe en guaraníes, sin puntos ni símbolo. Ej.: 50000 se muestra como Gs. 50.000.
    */
   monto: number;
+  /**
+   * Tabla de la página en la que aparece el arancel.
+   */
   grupo: 'multas' | 'venta' | 'educativos';
   /**
-   * Menor número aparece primero dentro del grupo.
+   * Número menor = aparece primero dentro de su grupo.
    */
   orden?: number | null;
-  activo?: boolean | null;
+  /**
+   * Desmarque para retirar el arancel de la página sin borrarlo.
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Montos que publica la página de cada facultad. Para cambiar un precio edite la fila; para retirarla desmarque «Publicado» (no la borre: queda el historial en Auditoría).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aranceles-facultad".
+ */
+export interface ArancelesFacultad {
+  id: number;
+  facultad: number | Facultade;
+  /**
+   * Tal como lo publica la facultad. No puede repetirse dentro del mismo grupo.
+   */
+  concepto: string;
+  /**
+   * Importe en guaraníes, sin puntos ni símbolo. Ej.: 50000.
+   */
+  monto: number;
+  grupo: 'multas' | 'venta' | 'servicios' | 'medicos';
+  /**
+   * Opcional. Ej.: «por día».
+   */
+  nota?: string | null;
+  orden?: number | null;
+  /**
+   * Desmarque para retirar el arancel de la página sin borrarlo.
+   */
+  active?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -941,6 +1223,213 @@ export interface Faq {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Premios y reconocimientos otorgados a la UNC. Cada edición necesita una fuente (URL oficial). Nada se publica hasta marcar «Activo».
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reconocimientos".
+ */
+export interface Reconocimiento {
+  id: number;
+  /**
+   * Ej.: Premio Nacional a la Calidad y Excelencia en la Gestión.
+   */
+  nombre: string;
+  /**
+   * Quién entrega el premio. Ej.: CONACYT.
+   */
+  entidad: string;
+  /**
+   * Enlace público al sitio del premio. Solo se permite https://.
+   */
+  sitioOficial?: string | null;
+  /**
+   * Archivo versionado en el proyecto: /images/reconocimientos/<archivo>.png|jpg|webp. Sin subcarpetas ni enlaces externos. Se usa si no hay un logo subido abajo.
+   */
+  logoPath?: string | null;
+  /**
+   * Opcional. Si se sube un archivo, tiene prioridad sobre la ruta del logo.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Descripción breve del logo para lectores de pantalla. Ej.: Logo del Premio Nacional a la Calidad.
+   */
+  logoAlt?: string | null;
+  /**
+   * Origen y permiso de uso del logo, datos que faltan confirmar y otras aclaraciones. No se muestra al público.
+   */
+  nota?: string | null;
+  /**
+   * Una fila por año. Cada edición lleva su fuente; no se inventan años ni distinciones.
+   */
+  ediciones?:
+    | {
+        anio: number;
+        /**
+         * «Por confirmar» si la fuente no dice el nombre exacto de la distinción.
+         */
+        distincion: 'premio' | 'premio-categoria' | 'mencion-especial' | 'reconocimiento' | 'por-confirmar';
+        /**
+         * Ej.: Pública Grande; Sector Público.
+         */
+        categoria?: string | null;
+        /**
+         * Obligatoria. Página oficial que respalda esta edición (https://).
+         */
+        fuenteUrl: string;
+        /**
+         * Aclaraciones para quien revisa: qué falta confirmar, otras fuentes, etc.
+         */
+        nota?: string | null;
+        /**
+         * Marcar solo cuando alguien comprobó que el año, la distinción y la categoría coinciden con la fuente citada.
+         */
+        verificado?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Menor número = aparece primero.
+   */
+  orden?: number | null;
+  /**
+   * Si está desmarcado, el público no puede leer este premio. Actívelo solo después de verificar los datos.
+   */
+  active?: boolean | null;
+  /**
+   * Marcar solo cuando una persona comprobó contra la fuente citada el nombre del premio, la entidad y el logo (y que se puede usar). «Verificado» no publica nada por sí solo: la publicación la controla «Activo».
+   */
+  verificado?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Carreras y programas acreditados. Cada fila lleva su fuente. Resolución y vigencia se completan solo con el documento oficial.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "acreditaciones".
+ */
+export interface Acreditacione {
+  id: number;
+  /**
+   * Nombre tal como figura en la fuente. Ej.: Contaduría Pública.
+   */
+  programa: string;
+  /**
+   * Vincule la carrera si existe en el portal. Los postgrados sin carrera pueden dejarlo vacío.
+   */
+  carrera?: (number | null) | Carrera;
+  /**
+   * Solo si la fuente nombra la facultad. Si no está confirmada, déjela vacía.
+   */
+  facultad?: (number | null) | Facultade;
+  nivel?: ('grado' | 'posgrado') | null;
+  /**
+   * Ej.: Concepción; Filial Horqueta.
+   */
+  sede?: string | null;
+  organismo: 'aneaes' | 'arcusur' | 'otro';
+  /**
+   * Solo si la fuente lo indica. Si no, déjelo vacío.
+   */
+  modelo?: ('modelo-nacional' | 'arcusur' | 'otro') | null;
+  /**
+   * Ej.: 2015-2019. Solo con respaldo en la fuente.
+   */
+  ciclo?: string | null;
+  /**
+   * Número de resolución del organismo. Vacío hasta contar con el documento oficial.
+   */
+  resolucion?: string | null;
+  /**
+   * Vacío hasta contar con el documento oficial.
+   */
+  vigenciaDesde?: string | null;
+  /**
+   * Vacío hasta contar con el documento oficial.
+   */
+  vigenciaHasta?: string | null;
+  /**
+   * Obligatoria. Documento o página oficial que respalda la acreditación (https://).
+   */
+  fuenteUrl: string;
+  /**
+   * Otras fuentes, qué falta confirmar y por qué. No se muestra al público.
+   */
+  nota?: string | null;
+  /**
+   * Menor número = aparece primero.
+   */
+  orden?: number | null;
+  /**
+   * Si está desmarcada, el público no puede leer esta acreditación. Actívela solo después de verificar los datos.
+   */
+  active?: boolean | null;
+  /**
+   * Marcar solo cuando una persona comprobó contra la fuente citada el programa, la sede, el organismo y la vigencia actual. «Verificado» no publica nada por sí solo: la publicación la controla «Activa».
+   */
+  verificado?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Vocabulario controlado para traducir el portal al guaraní. Marque «Revisado» cuando un hablante nativo confirme la entrada: desde entonces ningún script la modifica. No es contenido público.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "glosario-guarani".
+ */
+export interface GlosarioGuarani {
+  id: number;
+  /**
+   * Acepción entre paréntesis si hace falta, p. ej. «técnico (persona)».
+   */
+  terminoEs: string;
+  /**
+   * Vacío = sin evidencia (confianza X). No invente una forma.
+   */
+  terminoGn?: string | null;
+  variantesGn?:
+    | {
+        valor: string;
+        id?: string | null;
+      }[]
+    | null;
+  tipo: 'diccionario' | 'oficial' | 'prestamo' | 'neologismo' | 'institucional' | 'corpus' | 'localizacion';
+  categoria?: ('universidad' | 'academico' | 'administrativo' | 'tecnologia' | 'general') | null;
+  confianza: 'A' | 'B' | 'C' | 'X';
+  /**
+   * Nombre de la fuente, p. ej. «Vocabulario es-gn de la SPL (datos.gov.py)». Use «Sin evidencia» si no hay.
+   */
+  fuente: string;
+  /**
+   * Solo sitios oficiales: datos.gov.py, repositorio.conacyt.gov.py, spl.gov.py.
+   */
+  fuenteUrl?: string | null;
+  /**
+   * Corpus o artículo que muestra el uso (p. ej. Jojajovai). Solo https.
+   */
+  evidenciaUrl?: string | null;
+  oficial?: boolean | null;
+  /**
+   * Protege la entrada: los scripts no la modifican.
+   */
+  revisado?: boolean | null;
+  /**
+   * Desmarque para retirar sin borrar.
+   */
+  activo?: boolean | null;
+  /**
+   * El actualizador solo modifica sus propias filas.
+   */
+  origen?: ('glosario-po' | 'actualizador' | 'panel') | null;
+  fechaConsulta?: string | null;
+  /**
+   * Acepción, advertencias, «Pendiente de revisión: …».
+   */
+  nota?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1005,12 +1494,20 @@ export interface PayloadLockedDocument {
         value: number | MarcoLegal;
       } | null)
     | ({
+        relationTo: 'linea-tiempo';
+        value: number | LineaTiempo;
+      } | null)
+    | ({
         relationTo: 'auditoria';
         value: number | Auditoria;
       } | null)
     | ({
         relationTo: 'autoridades';
         value: number | Autoridade;
+      } | null)
+    | ({
+        relationTo: 'transparencia-items';
+        value: number | TransparenciaItem;
       } | null)
     | ({
         relationTo: 'ley5189';
@@ -1037,8 +1534,24 @@ export interface PayloadLockedDocument {
         value: number | ArancelesRectorado;
       } | null)
     | ({
+        relationTo: 'aranceles-facultad';
+        value: number | ArancelesFacultad;
+      } | null)
+    | ({
         relationTo: 'faqs';
         value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'reconocimientos';
+        value: number | Reconocimiento;
+      } | null)
+    | ({
+        relationTo: 'acreditaciones';
+        value: number | Acreditacione;
+      } | null)
+    | ({
+        relationTo: 'glosario-guarani';
+        value: number | GlosarioGuarani;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1097,6 +1610,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -1114,6 +1628,8 @@ export interface UsersSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   blurDataURL?: T;
+  sha256?: T;
+  sourcePath?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1322,6 +1838,25 @@ export interface FacultadesSelect<T extends boolean = true> {
   email?: T;
   telefono?: T;
   imagen?: T;
+  siglas?: T;
+  logoPath?: T;
+  historia?: T;
+  direccion?: T;
+  correosAdicionales?:
+    | T
+    | {
+        etiqueta?: T;
+        email?: T;
+        id?: T;
+      };
+  sitioWeb?: T;
+  redes?:
+    | T
+    | {
+        red?: T;
+        url?: T;
+        id?: T;
+      };
   activa?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1339,6 +1874,16 @@ export interface CarrerasSelect<T extends boolean = true> {
   modalidad?: T;
   descripcion?: T;
   resolucion?: T;
+  resoluciones?:
+    | T
+    | {
+        numero?: T;
+        enlace?: T;
+        detalle?: T;
+        id?: T;
+      };
+  perfil?: T;
+  orden?: T;
   tipo?: T;
   sede?: T;
   activa?: T;
@@ -1352,11 +1897,52 @@ export interface CarrerasSelect<T extends boolean = true> {
 export interface MarcoLegalSelect<T extends boolean = true> {
   title?: T;
   category?: T;
+  estado?: T;
+  fechaDocumento?: T;
   description?: T;
+  nota?: T;
   file?: T;
   externalUrl?: T;
   order?: T;
   active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "linea-tiempo_select".
+ */
+export interface LineaTiempoSelect<T extends boolean = true> {
+  anio?: T;
+  etiquetaFecha?: T;
+  titulo?: T;
+  descripcion?: T;
+  imagen?: T;
+  enlace?: T;
+  orden?: T;
+  active?: T;
+  traducciones?:
+    | T
+    | {
+        en?:
+          | T
+          | {
+              titulo?: T;
+              descripcion?: T;
+            };
+        ptBR?:
+          | T
+          | {
+              titulo?: T;
+              descripcion?: T;
+            };
+        gn?:
+          | T
+          | {
+              titulo?: T;
+              descripcion?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1399,15 +1985,32 @@ export interface AutoridadesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transparencia-items_select".
+ */
+export interface TransparenciaItemsSelect<T extends boolean = true> {
+  ley?: T;
+  codigo?: T;
+  titulo?: T;
+  descripcion?: T;
+  orden?: T;
+  active?: T;
+  naturalKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ley5189_select".
  */
 export interface Ley5189Select<T extends boolean = true> {
+  item?: T;
   category?: T;
   period?: T;
   description?: T;
   driveUrl?: T;
   order?: T;
   active?: T;
+  naturalKey?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1416,12 +2019,14 @@ export interface Ley5189Select<T extends boolean = true> {
  * via the `definition` "ley5282_select".
  */
 export interface Ley5282Select<T extends boolean = true> {
+  item?: T;
   category?: T;
   period?: T;
   description?: T;
   driveUrl?: T;
   order?: T;
   active?: T;
+  naturalKey?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1432,12 +2037,15 @@ export interface Ley5282Select<T extends boolean = true> {
 export interface ConveniosSelect<T extends boolean = true> {
   title?: T;
   type?: T;
+  categoria?: T;
   year?: T;
   parties?: T;
   objective?: T;
   signedMonth?: T;
   duration?: T;
   driveUrl?: T;
+  nota?: T;
+  orden?: T;
   active?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1478,7 +2086,22 @@ export interface ArancelesRectoradoSelect<T extends boolean = true> {
   monto?: T;
   grupo?: T;
   orden?: T;
-  activo?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aranceles-facultad_select".
+ */
+export interface ArancelesFacultadSelect<T extends boolean = true> {
+  facultad?: T;
+  concepto?: T;
+  monto?: T;
+  grupo?: T;
+  nota?: T;
+  orden?: T;
+  active?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1498,6 +2121,87 @@ export interface FaqsSelect<T extends boolean = true> {
         tag?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reconocimientos_select".
+ */
+export interface ReconocimientosSelect<T extends boolean = true> {
+  nombre?: T;
+  entidad?: T;
+  sitioOficial?: T;
+  logoPath?: T;
+  logo?: T;
+  logoAlt?: T;
+  nota?: T;
+  ediciones?:
+    | T
+    | {
+        anio?: T;
+        distincion?: T;
+        categoria?: T;
+        fuenteUrl?: T;
+        nota?: T;
+        verificado?: T;
+        id?: T;
+      };
+  orden?: T;
+  active?: T;
+  verificado?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "acreditaciones_select".
+ */
+export interface AcreditacionesSelect<T extends boolean = true> {
+  programa?: T;
+  carrera?: T;
+  facultad?: T;
+  nivel?: T;
+  sede?: T;
+  organismo?: T;
+  modelo?: T;
+  ciclo?: T;
+  resolucion?: T;
+  vigenciaDesde?: T;
+  vigenciaHasta?: T;
+  fuenteUrl?: T;
+  nota?: T;
+  orden?: T;
+  active?: T;
+  verificado?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "glosario-guarani_select".
+ */
+export interface GlosarioGuaraniSelect<T extends boolean = true> {
+  terminoEs?: T;
+  terminoGn?: T;
+  variantesGn?:
+    | T
+    | {
+        valor?: T;
+        id?: T;
+      };
+  tipo?: T;
+  categoria?: T;
+  confianza?: T;
+  fuente?: T;
+  fuenteUrl?: T;
+  evidenciaUrl?: T;
+  oficial?: T;
+  revisado?: T;
+  activo?: T;
+  origen?: T;
+  fechaConsulta?: T;
+  nota?: T;
   updatedAt?: T;
   createdAt?: T;
 }

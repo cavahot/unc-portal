@@ -294,6 +294,21 @@ export const readActiveOrInstitutional: Access = ({ req }) => {
   return activeOnly
 }
 
+/**
+ * FAC-01 (SEC-10): igual que `readActiveOrInstitutional`, pero con otro nombre de checkbox. Existe porque
+ * `facultades` y `carreras` usan `activa` y renombrarlo obligaría a migrar a la vez seis páginas, consultas,
+ * siembras y tests (spec docs/specs/portal/FACULTADES.md §3.1).
+ * Amenaza que evita: que un anónimo lea por REST/GraphQL facultades o carreras desactivadas.
+ * Límite: filas con el campo nulo quedan ocultas; también se ocultan dentro de relaciones pobladas para anónimos.
+ */
+export const readFlagOrInstitutional =
+  (field: string): Access =>
+  ({ req }) => {
+    if (hasRole(req.user, INSTITUTIONAL_WRITE_ROLES)) return true
+    const flagOnly: Where = { [field]: { equals: true } }
+    return flagOnly
+  }
+
 // Media collection
 export const canWriteMedia: Access = ({ req }) =>
   hasRole(req.user, ['superadmin', 'web-admin', 'publisher', 'editor', 'correspondent', 'media-manager'])

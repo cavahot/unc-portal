@@ -87,6 +87,8 @@ export const Paginas: CollectionConfig = {
   timestamps: true,
   versions: {
     drafts: true,
+    // PERF-DB: acota el historial (100 por defecto en Payload) para que no crezca sin tope.
+    maxPerDoc: 10,
   },
   hooks: {
     // DEP-03: quien no publica guarda siempre como borrador (no toca la fila principal).

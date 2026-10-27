@@ -1,5 +1,8 @@
 import type { CollectionConfig } from 'payload'
-import { canWriteInstitutional } from '../access/roles'
+import { canWriteInstitutional, readActiveOrInstitutional } from '../access/roles'
+import { makeAuditAfterChange, makeAuditAfterDelete } from '../hooks/audit/auditInstitutionalChange'
+import { revalidatePortalTag } from '../utilities/revalidation'
+import { validateHttpsUrl } from '../utilities/validators'
 
 const AUTHORITY_TYPES = [
   { label: 'Rector/a', value: 'rector' },
@@ -17,11 +20,32 @@ export const Autoridades: CollectionConfig = {
     group: 'Institucional',
     description: 'Autoridades y funcionarios de la institución con fotografías y currículum.',
   },
+  // AUT-01: la página /autoridades lee esta colección (única fuente). Lectura pública solo de filas activas
+  // (SEC-10: evita exponer por REST/GraphQL personas retiradas); escritura solo superadmin y web-admin.
   access: {
-    read: () => true,
+    read: readActiveOrInstitutional,
     create: canWriteInstitutional,
     update: canWriteInstitutional,
     delete: canWriteInstitutional,
+  },
+  // AUT-01: cada cambio deja rastro de auditoría y avisa al portal (etiqueta `autoridades`) para que la página
+  // se refresque sin esperar al caché. Límite: si el portal está caído la invalidación se pierde (el portal
+  // aplica además una revalidación de seguridad de 1 hora).
+  hooks: {
+    afterChange: [
+      makeAuditAfterChange('autoridades', 'Autoridad'),
+      async ({ doc }) => {
+        await revalidatePortalTag('autoridades', { collection: 'autoridades' })
+        return doc
+      },
+    ],
+    afterDelete: [
+      makeAuditAfterDelete('autoridades', 'Autoridad'),
+      async ({ doc }) => {
+        await revalidatePortalTag('autoridades', { collection: 'autoridades' })
+        return doc
+      },
+    ],
   },
   fields: [
     {
@@ -73,6 +97,8 @@ export const Autoridades: CollectionConfig = {
       name: 'cvUrl',
       type: 'text',
       label: 'Currículum Vitae (URL externa)',
+      // AUT-01: solo https sin credenciales; evita guardar javascript:/http: que luego se publicarían como enlace.
+      validate: (value: unknown) => validateHttpsUrl(value, { required: false }),
       admin: {
         description: 'Enlace externo al CV si no se sube un archivo',
       },
