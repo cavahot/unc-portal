@@ -1,11 +1,16 @@
 #!/bin/bash
 
-# Script para verificar y crear bucket en MinIO
+# Script de DESARROLLO para verificar y crear el bucket en MinIO local.
+# SEC-MINIO-01: las credenciales ya NO viven en este archivo (estuvieron versionadas y
+# se consideran filtradas). Se leen del entorno; el script nunca las imprime.
+#   Uso: MINIO_ACCESS_KEY=... MINIO_SECRET_KEY=... bash scripts/minio/setup-bucket.sh
+#   Opcionales: MINIO_ENDPOINT (127.0.0.1:9100), BUCKET_NAME (unc-media),
+#               MINIO_PUBLIC_READ=1 (publica el bucket completo; solo desarrollo).
 
-MINIO_ENDPOINT="127.0.0.1:9100"
-MINIO_ACCESS_KEY="unc_storage_admin"
-MINIO_SECRET_KEY="d427a7aac123c8feb38d3c04b3ea09344f04dd79401c5fd6"
-BUCKET_NAME="unc-media"
+MINIO_ENDPOINT="${MINIO_ENDPOINT:-127.0.0.1:9100}"
+MINIO_ACCESS_KEY="${MINIO_ACCESS_KEY:?Defina MINIO_ACCESS_KEY en el entorno (no se versiona)}"
+MINIO_SECRET_KEY="${MINIO_SECRET_KEY:?Defina MINIO_SECRET_KEY en el entorno (no se versiona)}"
+BUCKET_NAME="${BUCKET_NAME:-unc-media}"
 
 echo "🔧 Verificando configuración de MinIO..."
 
@@ -55,9 +60,17 @@ else
     fi
 fi
 
-# Configurar política pública de lectura
+# Política del bucket. SEC-MINIO-01: por defecto el bucket queda PRIVADO. Publicar todo el
+# bucket es una decisión explícita (MINIO_PUBLIC_READ=1) solo para desarrollo local: con la
+# política `public` cualquiera que alcance el puerto puede leer y escribir según el verbo.
+# Límite: esto no protege un MinIO expuesto; en producción rige scripts/setup/init-minio.sh.
 echo "🔐 Configurando permisos..."
-mc policy set public unc-local/$BUCKET_NAME
+if [ "${MINIO_PUBLIC_READ:-0}" = "1" ]; then
+    echo "⚠️  ADVERTENCIA: MINIO_PUBLIC_READ=1, se publica TODO el bucket '$BUCKET_NAME' (solo desarrollo)."
+    mc anonymous set download unc-local/$BUCKET_NAME
+else
+    echo "🔒 Bucket privado (defina MINIO_PUBLIC_READ=1 solo si necesita lectura anónima en desarrollo)."
+fi
 
 echo ""
 echo "✅ Configuración de MinIO completada"

@@ -14,8 +14,8 @@
 ✅ Console: http://localhost:9101
 ✅ Credentials: Configuradas correctamente
 ✓ Endpoint: http://127.0.0.1:9100
-✓ Access Key: unc_storage_admin
-✓ Secret Key: d427a7aac123c8feb38d3c04b3ea09344f04dd79401c5fd6
+✓ Access Key: <MINIO_ACCESS_KEY>
+✓ Secret Key: <MINIO_SECRET_KEY>
 ```
 
 ### 2. Configuración Payload
@@ -77,8 +77,8 @@ curl -v http://127.0.0.1:9100/unc-media/
 ```
 1. Abre http://localhost:9101
 2. Login:
-   - Usuario: unc_storage_admin
-   - Contraseña: d427a7aac123c8feb38d3c04b3ea09344f04dd79401c5fd6
+   - Usuario: <MINIO_ACCESS_KEY>
+   - Contraseña: <MINIO_SECRET_KEY>
 3. ¿Existe bucket "unc-media"?
    - Si NO: Crear
    - Si SÍ: Pasar a Paso 2

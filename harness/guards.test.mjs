@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  guardTrackedSecrets, guardApiCoverage, guardRouteRoles, guardJsonld,
-  guardEnvParity, ENV_IGNORED, parseComposeEnvironments, guardDeploySteps, guardI18nParity, guardSecretRequired, guardSeedPasswords,
+  guardTrackedSecrets, guardMinioSecrets, guardApiCoverage, guardRouteRoles, guardJsonld,
+  guardEnvParity, guardMediaVolume, guardBackupEncrypted, ENV_IGNORED, parseComposeEnvironments, guardDeploySteps, guardI18nParity, guardSecretRequired, guardSeedPasswords,
   GUARD_IDS, runGuards, RATE_LIMITED_API_ROUTES, PUBLIC_API_ROUTES, collectInputs,
 } from './guards.mjs'
 import { getPlan } from './check.mjs'
@@ -354,11 +354,110 @@ test('guard-seed-passwords: password con ?? o || y literal es rojo; el helper es
   }).passed, true)
 })
 
-test('el plan expone los 9 guards y runGuards devuelve un resultado por guard', () => {
-  assert.equal(GUARD_IDS.length, 9)
+// MIG-IMG fase 1: el servicio cms debe tener un volumen nombrado persistente en MEDIA_DIR y la imagen debe
+// crear ese directorio con dueño nextjs (uid 1001); si no, los archivos subidos se pierden en cada redeploy
+// o la primera subida falla por permisos (hipótesis H-PERM de MIG-IMG).
+const MEDIA_COMPOSE_OK = [
+  'x-cms-env: &cms-env',
+  '    MEDIA_DIR: /app/media',
+  'services:',
+  '  cms:',
+  '    environment: *cms-env',
+  '    volumes:',
+  '      - cms_media:/app/media',
+  '  nginx:',
+  '    image: nginx',
+  'volumes:',
+  '  cms_media:',
+  '    name: unc_cms_media_prod',
+].join('\n')
+const MEDIA_DOCKERFILE_OK = 'FROM x AS runner\nENV MEDIA_DIR=/app/media\nRUN mkdir -p /app/media && chown nextjs:nodejs /app/media\n'
+
+test('guard-media-volume: sin volumen, sin chown o con montaje en otra ruta es rojo', () => {
+  assert.equal(guardMediaVolume({ compose: MEDIA_COMPOSE_OK, dockerfile: MEDIA_DOCKERFILE_OK }).passed, true)
+  const noVolume = MEDIA_COMPOSE_OK.replace('    volumes:\n      - cms_media:/app/media\n', '')
+  assert.equal(guardMediaVolume({ compose: noVolume, dockerfile: MEDIA_DOCKERFILE_OK }).passed, false)
+  const otherPath = MEDIA_COMPOSE_OK.replace('cms_media:/app/media', 'cms_media:/otra/ruta')
+  assert.equal(guardMediaVolume({ compose: otherPath, dockerfile: MEDIA_DOCKERFILE_OK }).passed, false)
+  const bind = MEDIA_COMPOSE_OK.replace('cms_media:/app/media', './media:/app/media')
+  assert.equal(guardMediaVolume({ compose: bind, dockerfile: MEDIA_DOCKERFILE_OK }).passed, false)
+  const undeclared = MEDIA_COMPOSE_OK.replace('  cms_media:\n    name: unc_cms_media_prod', '  otro:\n    name: x')
+  assert.equal(guardMediaVolume({ compose: undeclared, dockerfile: MEDIA_DOCKERFILE_OK }).passed, false)
+  assert.equal(guardMediaVolume({ compose: MEDIA_COMPOSE_OK, dockerfile: 'FROM x\n' }).passed, false)
+  assert.equal(guardMediaVolume({ compose: MEDIA_COMPOSE_OK.replace('    MEDIA_DIR: /app/media\n', ''), dockerfile: MEDIA_DOCKERFILE_OK }).passed, false)
+  assert.equal(guardMediaVolume({ compose: null, dockerfile: null }).passed, false)
+})
+
+test('guard-media-volume sobre el repo real pasa', () => {
+  const r = guardMediaVolume(collectInputs().media)
+  assert.deepEqual(r.findings, [])
+})
+
+// BKP-01: el workflow de copia diaria no puede subir un .dump en claro a un artefacto (repo público).
+const BKP_SCRIPT_OK = 'gpg --batch --symmetric --cipher-algo AES256 --passphrase-fd 0 -o "$out" "$in"\nMIN=20\n'
+const BKP_WF_OK = [
+  'permissions:', '  contents: read', 'jobs:', '  database:', '    steps:',
+  '      - run: bash scripts/backup/encrypt-dump.sh --check',
+  '        env:', '          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}',
+  '      - run: pg_dump "$DATABASE_URL" --file="$DUMP_FILE"',
+  '      - run: bash scripts/backup/encrypt-dump.sh "$DUMP_FILE"',
+  '        env:', '          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}',
+  '      - uses: actions/upload-artifact@v4',
+  '        with:', '          name: db-backup', '          path: |', '            ${{ env.ENCRYPTED_FILE }}', '            ${{ env.ENCRYPTED_FILE }}.sha256',
+  '      - if: always()', '        run: rm -f ./*.dump',
+].join('\n')
+
+test('guard-backup-encrypted: artefacto en claro, sin secreto, frase en argv o sin limpieza son rojos', () => {
+  assert.equal(guardBackupEncrypted({ workflow: BKP_WF_OK, script: BKP_SCRIPT_OK }).passed, true)
+  const plain = BKP_WF_OK.replace('${{ env.ENCRYPTED_FILE }}\n', '${{ env.DUMP_FILE }}\n')
+  assert.equal(guardBackupEncrypted({ workflow: plain, script: BKP_SCRIPT_OK }).passed, false)
+  const noSecret = BKP_WF_OK.replaceAll('secrets.BACKUP_ENCRYPTION_PASSPHRASE', 'secrets.OTRO')
+  assert.equal(guardBackupEncrypted({ workflow: noSecret, script: BKP_SCRIPT_OK }).passed, false)
+  const noClean = BKP_WF_OK.replace('if: always()', 'if: success()')
+  assert.equal(guardBackupEncrypted({ workflow: noClean, script: BKP_SCRIPT_OK }).passed, false)
+  const argv = 'gpg --batch --symmetric --passphrase "$P" -o x y\n'
+  assert.equal(guardBackupEncrypted({ workflow: BKP_WF_OK, script: argv }).passed, false)
+  assert.equal(guardBackupEncrypted({ workflow: BKP_WF_OK, script: 'cp a b\n' }).passed, false)
+  assert.equal(guardBackupEncrypted({ workflow: BKP_WF_OK.replace('encrypt-dump.sh --check', 'true'), script: BKP_SCRIPT_OK }).passed, false)
+  assert.equal(guardBackupEncrypted({ workflow: null, script: null }).passed, false)
+})
+
+test('guard-backup-encrypted sobre el repo real pasa', () => {
+  const r = guardBackupEncrypted(collectInputs().backup)
+  assert.deepEqual(r.findings, [])
+})
+
+test('el plan expone los 12 guards y runGuards devuelve un resultado por guard', () => {
+  assert.equal(GUARD_IDS.length, 12)
   const ids = getPlan('quick').filter((s) => s.guard).map((s) => s.id)
   assert.deepEqual(ids, GUARD_IDS)
   const results = runGuards({})
   assert.deepEqual(results.map((r) => r.id), GUARD_IDS)
   assert.ok(results.every((r) => r.passed === false), 'entradas ausentes no deben lanzar ni pasar')
+})
+
+// SEC-MINIO-01: guard de claves de MinIO/S3 literales en scripts y docs versionados (fixtures sintéticas).
+test('guard-minio-secrets: detecta literales largos y no revela el valor', () => {
+  const fake = 'a'.repeat(32) // valor sintético, no es una credencial real
+  const bad = guardMinioSecrets({
+    'scripts/a.sh': `MINIO_SECRET_KEY="${fake}"`,
+    'scripts/b.ps1': `$SecretKey = "${fake}"`,
+    'docs/c.md': `AWS_SECRET_ACCESS_KEY='${fake}'`,
+  })
+  assert.equal(bad.id, 'guard-minio-secrets')
+  assert.equal(bad.passed, false)
+  assert.equal(bad.findings.length, 3)
+  assert.ok(bad.findings.every((f) => !f.includes(fake)), 'los findings no contienen el valor')
+  const good = guardMinioSecrets({
+    'scripts/a.sh': 'MINIO_SECRET_KEY="${MINIO_SECRET_KEY:?falta}"',
+    'scripts/b.ps1': '$SecretKey = $env:MINIO_SECRET_KEY',
+    'docs/c.md': 'Secret Key: <MINIO_SECRET_KEY>',
+  })
+  assert.equal(good.passed, true)
+  assert.equal(guardMinioSecrets(null).passed, false)
+})
+
+test('guard-minio-secrets sobre el repo real pasa', () => {
+  const r = guardMinioSecrets(collectInputs().minioFiles)
+  assert.deepEqual(r.findings, [])
 })

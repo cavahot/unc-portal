@@ -77,3 +77,6 @@ tsconfig*.tsbuildinfo
 
 # SEC/DEP-17: volcado de datos (posible PII); no versionar. Ya existe en el historial publico: decision aparte.
 setup/seed.dump.gz
+
+# Salidas de depuracion de playwright-cli (logs, capturas); no versionar.
+.playwright-cli/

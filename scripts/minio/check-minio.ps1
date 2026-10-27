@@ -1,8 +1,11 @@
 # Script para verificar MinIO y crear bucket si es necesario
 
 $MinioEndpoint = "http://127.0.0.1:9100"
-$AccessKey = "unc_storage_admin"
-$SecretKey = "d427a7aac123c8feb38d3c04b3ea09344f04dd79401c5fd6"
+# SEC-MINIO-01: credenciales solo desde el entorno; el script nunca las imprime.
+if (-not $env:MINIO_ACCESS_KEY) { Write-Host "Defina MINIO_ACCESS_KEY en el entorno (no se versiona)." -ForegroundColor Red; exit 1 }
+$AccessKey = $env:MINIO_ACCESS_KEY
+if (-not $env:MINIO_SECRET_KEY) { Write-Host "Defina MINIO_SECRET_KEY en el entorno (no se versiona)." -ForegroundColor Red; exit 1 }
+$SecretKey = $env:MINIO_SECRET_KEY
 $BucketName = "unc-media"
 $Region = "us-east-1"
 
@@ -55,7 +58,7 @@ try {
         Write-Host ""
         Write-Host "Opción 1: Usar MinIO Console"
         Write-Host "  1. Abre http://localhost:9101"
-        Write-Host "  2. Login: unc_storage_admin / d427a7aac123c8feb38d3c04b3ea09344f04dd79401c5fd6"
+        Write-Host "  2. Inicie sesión con el usuario y la clave de MinIO que provee su gestor de secretos"
         Write-Host "  3. Crea bucket 'unc-media'"
         Write-Host ""
         Write-Host "Opción 2: Instalar AWS CLI"

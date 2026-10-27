@@ -60,6 +60,29 @@ export function guardTrackedSecrets(trackedFiles) {
 }
 
 // ---------------------------------------------------------------------------
+// SEC-MINIO-01. guard-minio-secrets
+// ---------------------------------------------------------------------------
+
+/**
+ * Detecta asignaciones de una clave secreta de MinIO/S3 con un literal largo en scripts y docs versionados.
+ * Amenaza: una credencial en git queda legible para siempre en el historial (la de SEC-MINIO-01 así se filtró).
+ * Límite: patrón heurístico por nombre de variable; no ve claves sin nombre típico ni el historial previo, y
+ * solo informa ruta:línea (NUNCA el valor). `files` = { ruta: contenido } de .sh/.ps1/.md/.yml versionados.
+ */
+export function guardMinioSecrets(files) {
+  const id = 'guard-minio-secrets'
+  if (!files || typeof files !== 'object') return missing(id, 'scripts y docs versionados')
+  const literal = /(MINIO_SECRET_KEY|MINIO_ROOT_PASSWORD|S3_SECRET_ACCESS_KEY|AWS_SECRET_ACCESS_KEY|\$SecretKey)\s*=\s*["'][A-Za-z0-9+/_-]{16,}["']/
+  const findings = []
+  for (const [file, content] of Object.entries(files)) {
+    ;(content ?? '').split('\n').forEach((line, i) => {
+      if (literal.test(line)) findings.push(`${file}:${i + 1} (clave secreta de MinIO/S3 con valor literal)`)
+    })
+  }
+  return result(id, findings)
+}
+
+// ---------------------------------------------------------------------------
 // 2. guard-api-coverage (DEP-06)
 // ---------------------------------------------------------------------------
 
@@ -485,10 +508,106 @@ export function guardSeedPasswords(files) {
 // Lectura real (solo lectura) y orquestación
 // ---------------------------------------------------------------------------
 
+/**
+ * MIG-IMG fase 1: persistencia de los archivos de `media` en producción.
+ * Comprueba (textualmente, sin ejecutar Docker) que: (1) el environment del CMS define `MEDIA_DIR`;
+ * (2) el servicio `cms` monta un volumen NOMBRADO (no un bind a una ruta del host) exactamente en esa ruta;
+ * (3) ese volumen está declarado en la sección `volumes:` de nivel superior; (4) el Dockerfile del CMS crea
+ * el directorio con dueño `nextjs` (`chown nextjs`) y fija `ENV MEDIA_DIR`, para que el volumen nuevo herede
+ * permisos de escritura del usuario sin privilegios (uid 1001).
+ * Amenaza: archivos subidos en la capa efímera del contenedor (se pierden en cada redeploy) o primera
+ * subida fallida por permisos (hipótesis H-PERM). Límite: no prueba permisos reales ni que el volumen se
+ * respalde (DEP-08); solo la forma del compose y del Dockerfile. `input` = { compose, dockerfile }.
+ */
+export function guardMediaVolume(input) {
+  const id = 'guard-media-volume'
+  const { compose, dockerfile } = input ?? {}
+  if (typeof compose !== 'string') return missing(id, 'compose.prod.yaml')
+  if (typeof dockerfile !== 'string') return missing(id, 'apps/cms/Dockerfile')
+  const findings = []
+  const lines = compose.split(/\r?\n/)
+  const dir = lines.map((l) => l.match(/^\s+MEDIA_DIR:\s*(\S+)/)).find(Boolean)?.[1]
+  if (!dir) {
+    findings.push('compose.prod.yaml: el environment del CMS no define MEDIA_DIR')
+  } else {
+    // Bloque del servicio cms: desde «  cms:» hasta el siguiente servicio (clave de indentación 2).
+    const start = lines.findIndex((l) => /^ {2}cms:\s*$/.test(l))
+    let end = lines.length
+    for (let i = start + 1; start >= 0 && i < lines.length; i++) {
+      if (/^ {2}[\w-]+:\s*$/.test(lines[i]) || /^\S/.test(lines[i])) {
+        end = i
+        break
+      }
+    }
+    const block = start >= 0 ? lines.slice(start, end) : []
+    const mount = block.map((l) => l.match(/^\s+-\s+([^\s:]+):(\S+?)(?::\w+)?\s*$/)).find((m) => m && m[2] === dir)
+    if (!mount) {
+      findings.push(`compose.prod.yaml: el servicio cms no monta un volumen en ${dir}`)
+    } else if (/^[./~]/.test(mount[1])) {
+      findings.push(`compose.prod.yaml: el montaje de ${dir} es un bind a una ruta del host; debe ser un volumen nombrado`)
+    } else {
+      const top = lines.findIndex((l) => /^volumes:\s*$/.test(l))
+      const declared = top >= 0 && lines.slice(top + 1).some((l) => l.startsWith(`  ${mount[1]}:`))
+      if (!declared) findings.push(`compose.prod.yaml: el volumen ${mount[1]} no está declarado en volumes:`)
+    }
+  }
+  // Línea de instrucción (no comentario) que cree/entregue MEDIA_DIR a nextjs.
+  const owned = dir
+    ? dockerfile.split(/\r?\n/).some((l) => !l.trim().startsWith('#') && l.includes('chown') && l.includes('nextjs') && l.includes(dir))
+    : false
+  if (!owned) findings.push('apps/cms/Dockerfile: no crea MEDIA_DIR con dueño nextjs (chown nextjs)')
+  if (!/^ENV\s+MEDIA_DIR[= ]/m.test(dockerfile)) findings.push('apps/cms/Dockerfile: falta ENV MEDIA_DIR')
+  return result(id, findings)
+}
+
+// ---------------------------------------------------------------------------
+// 11. guard-backup-encrypted (BKP-01)
+// ---------------------------------------------------------------------------
+
+/**
+ * La copia diaria (`.github/workflows/backup.yml`) corre en un repositorio PÚBLICO: un artefacto de Actions
+ * con el volcado en claro puede ser descargado por terceros. El workflow debe (1) validar el secreto
+ * BACKUP_ENCRYPTION_PASSPHRASE antes del volcado, (2) cifrar con gpg/age mediante el script, que debe
+ * entregar la frase por descriptor (nunca `--passphrase <valor>` en argv), (3) subir solo el archivo
+ * cifrado (nada de DUMP_FILE ni `.dump` sin `.gpg`/`.age`) y (4) borrar el texto plano en un paso `always()`.
+ * Amenaza: exposición de usuarios, hashes y datos personales. Límite: análisis textual; no prueba que el
+ * secreto exista en GitHub, que la frase sea robusta ni que gpg funcione en el runner.
+ * `input` = { workflow, script } (texto de backup.yml y de scripts/backup/encrypt-dump.sh).
+ */
+export function guardBackupEncrypted(input) {
+  const id = 'guard-backup-encrypted'
+  const { workflow, script } = input ?? {}
+  if (typeof workflow !== 'string') return missing(id, '.github/workflows/backup.yml')
+  if (typeof script !== 'string') return missing(id, 'scripts/backup/encrypt-dump.sh')
+  // YAML/bash: solo se descartan líneas de comentario completas (stripComments es de JS y confunde `./*.dump`).
+  const wf = workflow.split(/\r?\n/).filter((l) => !/^\s*#/.test(l)).join('\n')
+  const sh = script.split(/\r?\n/).filter((l) => !/^\s*#/.test(l)).join('\n')
+  const findings = []
+  if (!/secrets\.BACKUP_ENCRYPTION_PASSPHRASE/.test(wf)) findings.push('backup.yml: no usa el secreto BACKUP_ENCRYPTION_PASSPHRASE')
+  if (!/encrypt-dump\.sh\s+--check/.test(wf)) findings.push('backup.yml: no valida el secreto de cifrado antes del volcado (encrypt-dump.sh --check)')
+  if (!((/\bgpg\b/.test(sh) && /--symmetric/.test(sh)) || /\bage\b\s+-/.test(sh))) findings.push('encrypt-dump.sh: no cifra con gpg --symmetric ni age')
+  if (/--passphrase(?![-\w])/.test(sh)) findings.push('encrypt-dump.sh: pasa la frase con --passphrase (queda en argv); usar --passphrase-fd')
+  else if (!/--passphrase-fd|--passphrase-file/.test(sh)) findings.push('encrypt-dump.sh: la frase no se entrega por descriptor/archivo')
+  // Bloque de cada paso upload-artifact: su `path:` (en línea o en bloque) no puede apuntar al volcado en claro.
+  const lines = wf.split(/\r?\n/)
+  lines.forEach((line, i) => {
+    if (!/uses:\s*actions\/upload-artifact/.test(line)) return
+    const step = []
+    for (let j = i + 1; j < lines.length && !/^\s*-\s/.test(lines[j]); j++) step.push(lines[j])
+    const text = step.join('\n')
+    const path = text.match(/\bpath:\s*([\s\S]*?)(?=\n\s+[a-z-]+:\s|$)/)?.[1] ?? ''
+    if (/DUMP_FILE/.test(path) || /\.dump(?!\.(gpg|age))/.test(path)) findings.push(`backup.yml:${i + 1}: upload-artifact sube el volcado en claro`)
+    if (!/ENCRYPTED_FILE|\.gpg|\.age/.test(path)) findings.push(`backup.yml:${i + 1}: upload-artifact no sube un archivo cifrado (.gpg/.age)`)
+  })
+  if (!/uses:\s*actions\/upload-artifact/.test(wf)) findings.push('backup.yml: no sube ningún artefacto (la copia no sale del runner)')
+  if (!/if:\s*always\(\)[\s\S]*?rm\s+-f[^\n]*\.dump/.test(wf)) findings.push('backup.yml: falta un paso if: always() que borre el .dump en claro')
+  return result(id, findings)
+}
+
 export const GUARD_IDS = [
-  'guard-tracked-secrets', 'guard-api-coverage', 'guard-route-roles', 'guard-jsonld',
+  'guard-tracked-secrets', 'guard-minio-secrets', 'guard-api-coverage', 'guard-route-roles', 'guard-jsonld',
   'guard-env-parity', 'guard-deploy-steps', 'guard-i18n-parity', 'guard-secret-required',
-  'guard-seed-passwords',
+  'guard-seed-passwords', 'guard-media-volume', 'guard-backup-encrypted',
 ]
 
 const LOCALES = ['es', 'en', 'gn', 'pt-BR']
@@ -555,11 +674,17 @@ export function collectInputs(root = ROOT) {
 
   return {
     trackedFiles,
+    // SEC-MINIO-01: scripts y docs versionados, insumo de guard-minio-secrets.
+    minioFiles: readMap(root, (trackedFiles ?? []).filter((f) => /\.(sh|ps1|md|ya?ml)$/.test(f) && existsSync(path.join(root, f)))),
     proxy: readText(root, 'proxy.ts'),
     apiHandlers: readMap(root, RATE_LIMITED_API_ROUTES),
     routes: readMap(root, cmsRoutes),
     jsonldFiles: readMap(root, jsonldFiles),
     seedFiles: readMap(root, seedFiles),
+    // BKP-01: insumos de guard-backup-encrypted.
+    backup: { workflow: readText(root, '.github/workflows/backup.yml'), script: readText(root, 'scripts/backup/encrypt-dump.sh') },
+    // MIG-IMG fase 1: insumos de guard-media-volume.
+    media: { compose: readText(root, composePath), dockerfile: readText(root, 'apps/cms/Dockerfile') },
     env: {
       portalSources: readMap(root, portalEnvFiles),
       cmsSources: readMap(root, cmsEnvFiles),
@@ -574,12 +699,13 @@ export function collectInputs(root = ROOT) {
 }
 
 /**
- * Ejecuta los 9 guards sobre insumos ya leídos. Devuelve un resultado por
+ * Ejecuta los 12 guards sobre insumos ya leídos. Devuelve un resultado por
  * guard, siempre en el orden de GUARD_IDS; ninguno se omite aunque otro falle.
  */
 export function runGuards(inputs = {}) {
   return [
     guardTrackedSecrets(inputs.trackedFiles),
+    guardMinioSecrets(inputs.minioFiles),
     guardApiCoverage(inputs.proxy, inputs.apiHandlers),
     guardRouteRoles(inputs.routes),
     guardJsonld(inputs.jsonldFiles),
@@ -588,5 +714,7 @@ export function runGuards(inputs = {}) {
     guardI18nParity(inputs.i18n, inputs.i18nFallback),
     guardSecretRequired(inputs.payloadConfig),
     guardSeedPasswords(inputs.seedFiles),
+    guardMediaVolume(inputs.media),
+    guardBackupEncrypted(inputs.backup),
   ]
 }
