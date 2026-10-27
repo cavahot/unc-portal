@@ -1,33 +1,103 @@
 {
   "meta": {
-    "title": "Convenios | Universidad Nacional de Concepción",
-    "description": "Convenios de cooperación nacionales e internacionales firmados por la Universidad Nacional de Concepción."
+    "nacional": {
+      "title": "Convenios nacionales | Universidad Nacional de Concepción",
+      "description": "Convenios que la Universidad Nacional de Concepción firmó con instituciones y empresas del Paraguay, con el documento de cada uno."
+    },
+    "internacional": {
+      "title": "Convenios internacionales | Universidad Nacional de Concepción",
+      "description": "Convenios de la Universidad Nacional de Concepción con universidades e instituciones de otros países, con el documento de cada uno."
+    }
   },
-  "breadcrumb": "Convenios",
+  "breadcrumb": {
+    "home": "Inicio",
+    "institutional": "Institucional"
+  },
   "hero": {
-    "badge": "Relaciones Institucionales",
-    "title": "Convenios Institucionales",
-    "description": "La Universidad Nacional de Concepción mantiene acuerdos de cooperación con instituciones nacionales e internacionales para fortalecer la educación, la investigación y el intercambio académico."
+    "title": {
+      "nacional": "Convenios nacionales",
+      "internacional": "Convenios internacionales"
+    },
+    "intro": {
+      "nacional": "Acuerdos firmados con ministerios, universidades, municipios, gremios y comercios del país. Cada fila enlaza al documento firmado.",
+      "internacional": "Acuerdos con universidades e instituciones de otros países para movilidad, investigación y cooperación académica. Cada fila enlaza al documento firmado."
+    },
+    "summary": {
+      "nacional": "{count} convenios nacionales · {from}–{to}",
+      "internacional": "{count} convenios internacionales · {from}–{to}"
+    }
   },
-  "stats": {
-    "total": "convenios firmados",
-    "nacional": "nacionales",
-    "internacional": "internacionales"
-  },
-  "tabs": {
-    "all": "Todos",
+  "switch": {
+    "label": "Tipo de convenio",
     "nacional": "Nacionales",
     "internacional": "Internacionales"
   },
-  "card": {
-    "duration": "Duración",
-    "signed": "Firmado en",
-    "objective": "Finalidad",
-    "viewDocument": "Ver documento",
-    "noDocument": "Sin documento disponible"
+  "chart": {
+    "heading": "Convenios firmados por año",
+    "yearLink": "{year}: {count} convenios",
+    "legendInstitutional": "Institucionales",
+    "legendBenefits": "Beneficios para estudiantes"
   },
-  "empty": {
-    "title": "Sin convenios registrados",
-    "description": "No hay convenios registrados en esta categoría."
+  "search": {
+    "label": "Buscar convenios",
+    "placeholder": "Institución, tema o año",
+    "clear": "Borrar búsqueda",
+    "statusAll": "{total} convenios en {years} años",
+    "statusOne": "1 convenio coincide",
+    "statusOther": "{count} convenios coinciden",
+    "statusNone": "Ningún convenio coincide",
+    "emptyTitle": "Ningún convenio coincide con la búsqueda",
+    "emptyHint": "Pruebe con otra palabra, quite un filtro o elija «Todos los años».",
+    "showAll": "Ver todos los convenios"
+  },
+  "filters": {
+    "category": "Categoría",
+    "all": "Todos",
+    "year": "Año",
+    "allYears": "Todos los años"
+  },
+  "categories": {
+    "institucional": "Institucionales",
+    "beneficios": "Beneficios para estudiantes"
+  },
+  "badge": {
+    "beneficios": "Beneficio estudiantil"
+  },
+  "index": {
+    "label": "Ir al año"
+  },
+  "columns": {
+    "title": "Denominación",
+    "parties": "Instituciones participantes",
+    "signed": "Fecha de firma",
+    "duration": "Duración",
+    "objective": "Finalidad",
+    "document": "Documento"
+  },
+  "table": {
+    "caption": {
+      "nacional": "Convenios nacionales agrupados por año de firma, del más reciente al más antiguo",
+      "internacional": "Convenios internacionales agrupados por año de firma, del más reciente al más antiguo"
+    },
+    "countOne": "1 convenio",
+    "countOther": "{count} convenios",
+    "notRecorded": "Sin dato",
+    "noObjective": "Sin finalidad registrada"
+  },
+  "doc": {
+    "view": "Ver documento",
+    "aria": "Ver documento: {title} (se abre en una pestaña nueva)",
+    "none": "Documento no disponible",
+    "drive": "Google Drive",
+    "web": "Sitio UNC"
+  },
+  "states": {
+    "empty": "Todavía no hay convenios publicados en esta sección.",
+    "unavailable": "No pudimos cargar los convenios en este momento. Vuelva a intentarlo en unos minutos."
+  },
+  "info": {
+    "title": "¿Su institución quiere firmar un convenio?",
+    "description": "Para proponer un convenio de cooperación, escríbanos con el objeto del acuerdo y los datos de contacto de su institución.",
+    "cta": "Contactar a la UNC"
   }
 }

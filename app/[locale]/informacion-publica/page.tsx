@@ -297,7 +297,7 @@ export default async function InformacionPublicaPage({
               aria-hidden="true"
               className="pointer-events-none absolute -top-4 left-6 font-serif text-[8rem] font-black leading-none text-[#5CFF5C]/[0.06]"
             >
-              "
+              &ldquo;
             </span>
 
             <div className="relative">
@@ -308,13 +308,13 @@ export default async function InformacionPublicaPage({
                 </p>
               </div>
               <blockquote className="text-sm leading-7 text-white/60 sm:text-base sm:leading-8">
-                "Toda persona interesada en acceder a la información pública, deberá presentar una
+                &ldquo;Toda persona interesada en acceder a la información pública, deberá presentar una
                 solicitud ante la oficina establecida en la fuente pública correspondiente,{' '}
                 <strong className="font-semibold text-white/80">
                   personalmente, por correo electrónico, en forma escrita o verbal
                 </strong>, y en este último caso, se extenderá un acta. La presentación contendrá la
                 identificación del solicitante, su domicilio real, la descripción clara y precisa de
-                la información pública que requiere, y finalmente, el formato o soporte preferido."
+                la información pública que requiere, y finalmente, el formato o soporte preferido.&rdquo;
               </blockquote>
             </div>
           </div>

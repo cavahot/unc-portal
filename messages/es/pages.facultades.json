@@ -12,5 +12,99 @@
   "decano": "Decano/a",
   "contacto": "Contacto",
   "backToFacultades": "Volver a Facultades",
-  "carrerasTitle": "Carreras ofrecidas"
+  "carrerasTitle": "Carreras ofrecidas",
+  "detalle": {
+    "meta": {
+      "description": "Carreras de grado, posgrados, decanato, aranceles y contacto de la {nombre} de la Universidad Nacional de Concepción."
+    },
+    "breadcrumb": {
+      "inicio": "Inicio",
+      "facultades": "Facultades"
+    },
+    "hero": {
+      "fichaLabel": "Datos de la facultad",
+      "decano": "Decano",
+      "grado": "Carreras de grado",
+      "posgrado": "Posgrados",
+      "logoAlt": "Logo de la {nombre}",
+      "cta": "Ver carreras"
+    },
+    "foto": {
+      "campusAlt": "Vista aérea del Campus Universitario de la UNC, con el pórtico de entrada sobre la Ruta PY05 y los edificios entre árboles",
+      "campusCaption": "Campus Universitario de la Universidad Nacional de Concepción, Ruta PY05, km 210.",
+      "propiaAlt": "Fotografía de la {nombre}"
+    },
+    "index": {
+      "label": "En esta página",
+      "presentacion": "Presentación",
+      "grado": "Carreras de grado",
+      "posgrado": "Posgrados",
+      "decanato": "Decanato",
+      "acreditacion": "Acreditación",
+      "aranceles": "Aranceles",
+      "contacto": "Contacto"
+    },
+    "presentacion": {
+      "title": "Presentación"
+    },
+    "carreras": {
+      "gradoTitle": "Carreras de grado",
+      "posgradoTitle": "Programas de posgrado",
+      "gradoIntro": "Cada carrera indica la resolución del Consejo Nacional de Educación Superior (CONES) que la habilita.",
+      "posgradoIntro": "Especializaciones con su resolución del CONES.",
+      "resLabel": "Res. CONES",
+      "resOpen": "Resolución CONES {numero} (documento en Google Drive, se abre en otra pestaña)",
+      "sede": "Sede",
+      "modalidad": "Modalidad",
+      "duracion": "{count, plural, one {# año} other {# años}}",
+      "titulo": "Título",
+      "perfil": "Perfil del egresado",
+      "empty": "Todavía no hay carreras publicadas para esta facultad.",
+      "unavailable": "No pudimos cargar las carreras en este momento. Intente de nuevo más tarde."
+    },
+    "decanato": {
+      "title": "Decanato",
+      "verAutoridades": "Ver todas las autoridades",
+      "correo": "Escribir al decanato"
+    },
+    "acreditacion": {
+      "title": "Acreditación",
+      "badge": "Acreditada por la {organismo}",
+      "vigencia": "Vigente hasta {anio}",
+      "fuente": "Ver la fuente"
+    },
+    "aranceles": {
+      "title": "Aranceles",
+      "intro": "Montos en guaraníes publicados por la facultad.",
+      "concept": "Concepto",
+      "amount": "Monto",
+      "currencyName": "guaraníes",
+      "caption": "{grupo}: concepto y monto",
+      "grupos": {
+        "multas": "Multas y otros derechos no tributarios",
+        "venta": "Venta de libros, formularios y documentos",
+        "servicios": "Venta de servicios de la administración pública",
+        "medicos": "Servicios médicos y hospitalarios"
+      }
+    },
+    "contacto": {
+      "title": "Contacto",
+      "direccion": "Dirección",
+      "mapa": "Ver en el mapa",
+      "telefono": "Teléfono",
+      "correo": "Correo electrónico",
+      "sitio": "Sitio web",
+      "redes": "Redes sociales",
+      "nuevaPestana": "(se abre en otra pestaña)",
+      "redesNombres": {
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "x": "X",
+        "youtube": "YouTube"
+      }
+    },
+    "states": {
+      "unavailable": "No pudimos cargar la información de la facultad en este momento. Intente de nuevo más tarde."
+    }
+  }
 }

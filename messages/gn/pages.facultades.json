@@ -12,5 +12,99 @@
   "decano": "Decano/a",
   "contacto": "Ñomongeta",
   "backToFacultades": "Jevy Facultad-pe",
-  "carrerasTitle": "Aprenduka ofrece"
+  "carrerasTitle": "Aprenduka ofrece",
+  "detalle": {
+    "meta": {
+      "description": "Aprenduka, posgrado, decanato, mboimba ha ñomongeta {nombre} Universidad Nacional de Concepción pegua."
+    },
+    "breadcrumb": {
+      "inicio": "Ñepyrũ",
+      "facultades": "Facultad"
+    },
+    "hero": {
+      "fichaLabel": "Facultad marandu",
+      "decano": "Decano",
+      "grado": "Aprenduka",
+      "posgrado": "Posgrado",
+      "logoAlt": "{nombre} logo",
+      "cta": "Ehecha aprenduka"
+    },
+    "foto": {
+      "campusAlt": "UNC Campus Universitario yvate guive, okẽ Ruta PY05 ykére ha óga ka'aguy mbytépe",
+      "campusCaption": "Universidad Nacional de Concepción Campus Universitario, Ruta PY05, km 210.",
+      "propiaAlt": "{nombre} ta'anga"
+    },
+    "index": {
+      "label": "Ko kuatiaroguépe",
+      "presentacion": "Ñepresenta",
+      "grado": "Aprenduka",
+      "posgrado": "Posgrado",
+      "decanato": "Decanato",
+      "acreditacion": "Acreditación",
+      "aranceles": "Mboimba",
+      "contacto": "Ñomongeta"
+    },
+    "presentacion": {
+      "title": "Ñepresenta"
+    },
+    "carreras": {
+      "gradoTitle": "Aprenduka",
+      "posgradoTitle": "Posgrado",
+      "gradoIntro": "Peteĩteĩ aprenduka ohechauka Consejo Nacional de Educación Superior (CONES) resolución omoneĩva chupe.",
+      "posgradoIntro": "Especialización ha CONES resolución.",
+      "resLabel": "Res. CONES",
+      "resOpen": "CONES resolución {numero} (kuatia Google Drive-pe, ojeipe'a ambue pestaña-pe)",
+      "sede": "Sede",
+      "modalidad": "Modalidad",
+      "duracion": "{count, plural, one {# ary} other {# ary}}",
+      "titulo": "Título",
+      "perfil": "Egresado perfil",
+      "empty": "Ndaipóri gueteri aprenduka ko facultad-pe.",
+      "unavailable": "Ndaikatúi ojehupi aprenduka ko'ág̃a. Eñeha'ã jey upéi."
+    },
+    "decanato": {
+      "title": "Decanato",
+      "verAutoridades": "Ehecha opaite mburuvicha",
+      "correo": "Ehai decanato-pe"
+    },
+    "acreditacion": {
+      "title": "Acreditación",
+      "badge": "{organismo} omoneĩva",
+      "vigencia": "Oĩporã {anio} peve",
+      "fuente": "Ehecha ñepyrũha"
+    },
+    "aranceles": {
+      "title": "Mboimba",
+      "intro": "Viru guaraníes-pe facultad ohechaukáva.",
+      "concept": "Mba'e",
+      "amount": "Viru",
+      "currencyName": "guaraníes",
+      "caption": "{grupo}: mba'e ha viru",
+      "grupos": {
+        "multas": "Mba'e Jepysore ha ambue derecho",
+        "venta": "Aranduka, formulario ha kuatia ñemoña",
+        "servicios": "Administración pública servicio ñemoña",
+        "medicos": "Tasyo ha pohano servicio"
+      }
+    },
+    "contacto": {
+      "title": "Ñomongeta",
+      "direccion": "Kundaharape",
+      "mapa": "Ehecha mapa-pe",
+      "telefono": "Pumbyry",
+      "correo": "Ñe'ẽveve",
+      "sitio": "Ñanduti renda",
+      "redes": "Redes sociales",
+      "nuevaPestana": "(ojeipe'a ambue pestaña-pe)",
+      "redesNombres": {
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "x": "X",
+        "youtube": "YouTube"
+      }
+    },
+    "states": {
+      "unavailable": "Ndaikatúi ojehupi facultad marandu ko'ág̃a. Eñeha'ã jey upéi."
+    }
+  }
 }

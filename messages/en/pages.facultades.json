@@ -12,5 +12,99 @@
   "decano": "Dean",
   "contacto": "Contact",
   "backToFacultades": "Back to Faculties",
-  "carrerasTitle": "Available programs"
+  "carrerasTitle": "Available programs",
+  "detalle": {
+    "meta": {
+      "description": "Undergraduate programs, graduate programs, dean's office, fees and contact for the {nombre} of the National University of Concepción."
+    },
+    "breadcrumb": {
+      "inicio": "Home",
+      "facultades": "Faculties"
+    },
+    "hero": {
+      "fichaLabel": "Faculty at a glance",
+      "decano": "Dean",
+      "grado": "Undergraduate programs",
+      "posgrado": "Graduate programs",
+      "logoAlt": "Logo of the {nombre}",
+      "cta": "See programs"
+    },
+    "foto": {
+      "campusAlt": "Aerial view of the UNC University Campus, with the entrance arch on Route PY05 and buildings among trees",
+      "campusCaption": "University Campus of the National University of Concepción, Route PY05, km 210.",
+      "propiaAlt": "Photograph of the {nombre}"
+    },
+    "index": {
+      "label": "On this page",
+      "presentacion": "Overview",
+      "grado": "Undergraduate programs",
+      "posgrado": "Graduate programs",
+      "decanato": "Dean's office",
+      "acreditacion": "Accreditation",
+      "aranceles": "Fees",
+      "contacto": "Contact"
+    },
+    "presentacion": {
+      "title": "Overview"
+    },
+    "carreras": {
+      "gradoTitle": "Undergraduate programs",
+      "posgradoTitle": "Graduate programs",
+      "gradoIntro": "Each program lists the resolution of the National Council of Higher Education (CONES) that authorizes it.",
+      "posgradoIntro": "Specializations with their CONES resolution.",
+      "resLabel": "CONES res.",
+      "resOpen": "CONES resolution {numero} (Google Drive document, opens in a new tab)",
+      "sede": "Campus",
+      "modalidad": "Mode",
+      "duracion": "{count, plural, one {# year} other {# years}}",
+      "titulo": "Degree",
+      "perfil": "Graduate profile",
+      "empty": "No programs have been published for this faculty yet.",
+      "unavailable": "We couldn't load the programs right now. Please try again later."
+    },
+    "decanato": {
+      "title": "Dean's office",
+      "verAutoridades": "See all authorities",
+      "correo": "Email the dean's office"
+    },
+    "acreditacion": {
+      "title": "Accreditation",
+      "badge": "Accredited by {organismo}",
+      "vigencia": "Valid until {anio}",
+      "fuente": "See the source"
+    },
+    "aranceles": {
+      "title": "Fees",
+      "intro": "Amounts in guaraníes published by the faculty.",
+      "concept": "Item",
+      "amount": "Amount",
+      "currencyName": "guaraníes",
+      "caption": "{grupo}: item and amount",
+      "grupos": {
+        "multas": "Fines and other non-tax charges",
+        "venta": "Sale of books, forms and documents",
+        "servicios": "Sale of public administration services",
+        "medicos": "Medical and hospital services"
+      }
+    },
+    "contacto": {
+      "title": "Contact",
+      "direccion": "Address",
+      "mapa": "View on the map",
+      "telefono": "Phone",
+      "correo": "Email",
+      "sitio": "Website",
+      "redes": "Social media",
+      "nuevaPestana": "(opens in a new tab)",
+      "redesNombres": {
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "x": "X",
+        "youtube": "YouTube"
+      }
+    },
+    "states": {
+      "unavailable": "We couldn't load the faculty information right now. Please try again later."
+    }
+  }
 }

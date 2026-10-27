@@ -2,6 +2,8 @@ import { config as loadEnv } from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { getPayload } from 'payload'
+import { requireSeedAdminPassword } from './seedAdminPassword'
+import type { Noticia } from '../../src/payload-types'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -13,10 +15,31 @@ loadEnv({
 const configModule = await import('../../src/payload.config.js')
 const config = configModule.default
 
+// SEC-09: arma el contenido enriquecido (Lexical) con los literales exactos que exige Noticia['content'];
+// un objeto literal suelto infiere `type: string` y no compila. Solo para datos de siembra.
+const textContent = (text: string): Noticia['content'] => ({
+  root: {
+    type: 'root',
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 1,
+    children: [
+      {
+        type: 'paragraph',
+        version: 1,
+        children: [{ type: 'text', version: 1, text }],
+      },
+    ],
+  },
+})
+
 async function seedPayload() {
   console.log('[PayloadSeed] Starting Payload seeding...\n')
 
   try {
+    // SEC-08: valida la contraseña ANTES de cualquier lectura/escritura; falla si falta, es débil o NODE_ENV=production.
+    const seedAdminPassword = requireSeedAdminPassword()
     const payload = await getPayload({ config })
 
     // Create admin user if needed
@@ -31,7 +54,7 @@ async function seedPayload() {
         collection: 'users',
         data: {
           email: 'admin@unc.edu.py',
-          password: process.env.SEED_ADMIN_PASSWORD ?? 'Admin@2026',
+          password: seedAdminPassword,
           role: 'superadmin',
         },
       })
@@ -45,65 +68,31 @@ async function seedPayload() {
         title: 'Inicio de clases 2026',
         slug: 'inicio-clases-2026',
         summary: 'La Universidad Nacional de Concepción inicia el año lectivo 2026 con todas sus carreras.',
-        category: 'institucional',
+        category: 'institucional' as const,
         publishedAt: '2026-07-15',
         featured: true,
-        _status: 'published',
-        content: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                children: [
-                  { text: 'Comienza un nuevo período académico con nuevas oportunidades.' },
-                ],
-              },
-            ],
-          },
-        },
+        _status: 'published' as const,
+        content: textContent('Comienza un nuevo período académico con nuevas oportunidades.'),
       },
       {
         title: 'Nueva carrera de Inteligencia Artificial',
         slug: 'carrera-inteligencia-artificial',
         summary: 'La UNC lanza su nueva carrera de Ingeniería en Inteligencia Artificial.',
-        category: 'academica',
+        category: 'academica' as const,
         publishedAt: '2026-07-10',
         featured: true,
-        _status: 'published',
-        content: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                children: [{ text: 'Especialización en machine learning y deep learning.' }],
-              },
-            ],
-          },
-        },
+        _status: 'published' as const,
+        content: textContent('Especialización en machine learning y deep learning.'),
       },
       {
         title: 'Convenio internacional de investigación',
         slug: 'convenio-investigacion-internacional',
         summary: 'UNC firma convenio con universidades europeas para proyectos de investigación.',
-        category: 'investigacion',
+        category: 'investigacion' as const,
         publishedAt: '2026-07-05',
         featured: true,
-        _status: 'published',
-        content: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                children: [
-                  { text: 'Investigación en biotecnología y energías renovables.' },
-                ],
-              },
-            ],
-          },
-        },
+        _status: 'published' as const,
+        content: textContent('Investigación en biotecnología y energías renovables.'),
       },
     ]
 

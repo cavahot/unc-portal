@@ -1,6 +1,8 @@
 import { getPayload } from 'payload'
 import config from '../../../payload.config'
 import { Pool } from 'pg'
+import { MONITORING_ROLES, hasRole } from '../../../access/roles'
+import { getDatabaseURL } from '../../../config/database'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,10 +38,27 @@ interface HealthStatus {
   lastCheck: string
 }
 
+/**
+ * DEP-04 (RDD-DEP-12): salud del CMS.
+ * Pública a propósito SOLO en su forma mínima: anónimo y cualquier sesión sin rol de monitoreo
+ * reciben `{ status: 'ok' }` constante, porque el healthcheck de Docker y el portal la llaman sin
+ * sesión. El detalle (BD, MinIO, portal) queda para superadmin y auditor.
+ * Amenaza: mapear la infraestructura interna desde Internet. Límite: la respuesta mínima NO prueba
+ * que la BD esté viva: eso lo hace `/api/health/ready` (DEP-09); este endpoint es liveness para monitores
+ * y no cambia de contrato; sin rate limit (DEP-06).
+ */
 export async function GET(request: Request) {
-  const payload = await getPayload({ config })
-  const { user } = await payload.auth({ headers: request.headers })
-  if (!user) {
+  let canSeeDetail = false
+  try {
+    const payload = await getPayload({ config })
+    const { user } = await payload.auth({ headers: request.headers })
+    canSeeDetail = hasRole(user, MONITORING_ROLES)
+  } catch (error) {
+    const detail = error instanceof Error ? error.name : 'non-Error thrown'
+    console.error(`[api/health] auth/init failed: ${detail}`)
+    return Response.json({ status: 'error' }, { status: 503 })
+  }
+  if (!canSeeDetail) {
     return Response.json({ status: 'ok' })
   }
 
@@ -63,14 +82,14 @@ export async function GET(request: Request) {
   }
 
   // Run checks in parallel with timeouts
-  const checkPromises = [
+  // SEC-09: llamadas en línea para que `allSettled` infiera una tupla; con un array intermedio
+  // cada `results[i].value` pasa a ser la unión de los cuatro tipos y no asigna a `services`.
+  const results = await Promise.allSettled([
     checkCMS(),
     checkDatabase(),
     checkMinIO(),
     checkPortal(),
-  ]
-
-  const results = await Promise.allSettled(checkPromises)
+  ])
 
   if (results[0].status === 'fulfilled' && results[0].value) {
     health.services.cms = results[0].value
@@ -125,21 +144,21 @@ async function checkCMS(): Promise<{ status: 'up' | 'down'; responseTime: number
 }
 
 async function checkDatabase(): Promise<{ status: 'up' | 'down'; responseTime: number; connections: number } | null> {
+  // DEP-04: sin credencial embebida. `getDatabaseURL()` lanza si no hay URI PostgreSQL válida y
+  // entonces la BD figura caída sin conectarse a nada (falla cerrado). Límite: no aplica SSL propio.
+  let pool: Pool | undefined
   try {
     const start = Date.now()
-    const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/unc_portal'
-    const pool = new Pool({
-      connectionString: dbUrl,
+    pool = new Pool({
+      connectionString: getDatabaseURL(),
       connectionTimeoutMillis: 3000,
       idleTimeoutMillis: 3000,
     })
 
-    const result = await Promise.race([
+    await Promise.race([
       pool.query('SELECT 1'),
       new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),
     ])
-
-    await pool.end()
 
     return {
       status: 'up',
@@ -148,13 +167,16 @@ async function checkDatabase(): Promise<{ status: 'up' | 'down'; responseTime: n
     }
   } catch (error) {
     return null
+  } finally {
+    await pool?.end().catch(() => undefined)
   }
 }
 
 async function checkMinIO(): Promise<{ status: 'up' | 'down'; responseTime: number } | null> {
   try {
     const start = Date.now()
-    const minioUrl = process.env.MINIO_ENDPOINT || 'http://localhost:9000'
+    // DEP-10: endpoint S3 interno = S3_ENDPOINT (el mismo que usa el almacenamiento); MINIO_ENDPOINT era un segundo nombre.
+    const minioUrl = process.env.S3_ENDPOINT || 'http://localhost:9000'
     const response = await Promise.race([
       fetch(`${minioUrl}/minio/health/live`, { method: 'GET' }),
       new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),
@@ -172,7 +194,8 @@ async function checkMinIO(): Promise<{ status: 'up' | 'down'; responseTime: numb
 async function checkPortal(): Promise<{ status: 'up' | 'down'; responseTime: number } | null> {
   try {
     const start = Date.now()
-    const portalUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+    // DEP-10: NEXT_PUBLIC_SERVER_URL es la URL del propio CMS; la del portal es PORTAL_URL.
+    const portalUrl = process.env.PORTAL_URL || 'http://localhost:3000'
     const response = await Promise.race([
       fetch(`${portalUrl}/api/health`, { method: 'GET' }),
       new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),

@@ -12,5 +12,99 @@
   "decano": "Decano/a",
   "contacto": "Contato",
   "backToFacultades": "Voltar às Faculdades",
-  "carrerasTitle": "Cursos oferecidos"
+  "carrerasTitle": "Cursos oferecidos",
+  "detalle": {
+    "meta": {
+      "description": "Cursos de graduação, pós-graduação, direção, taxas e contato da {nombre} da Universidade Nacional de Concepción."
+    },
+    "breadcrumb": {
+      "inicio": "Início",
+      "facultades": "Faculdades"
+    },
+    "hero": {
+      "fichaLabel": "Dados da faculdade",
+      "decano": "Decano",
+      "grado": "Cursos de graduação",
+      "posgrado": "Pós-graduação",
+      "logoAlt": "Logotipo da {nombre}",
+      "cta": "Ver cursos"
+    },
+    "foto": {
+      "campusAlt": "Vista aérea do Campus Universitário da UNC, com o pórtico de entrada na Rota PY05 e os prédios entre árvores",
+      "campusCaption": "Campus Universitário da Universidade Nacional de Concepción, Rota PY05, km 210.",
+      "propiaAlt": "Fotografia da {nombre}"
+    },
+    "index": {
+      "label": "Nesta página",
+      "presentacion": "Apresentação",
+      "grado": "Cursos de graduação",
+      "posgrado": "Pós-graduação",
+      "decanato": "Direção",
+      "acreditacion": "Acreditação",
+      "aranceles": "Taxas",
+      "contacto": "Contato"
+    },
+    "presentacion": {
+      "title": "Apresentação"
+    },
+    "carreras": {
+      "gradoTitle": "Cursos de graduação",
+      "posgradoTitle": "Programas de pós-graduação",
+      "gradoIntro": "Cada curso indica a resolução do Conselho Nacional de Educação Superior (CONES) que o habilita.",
+      "posgradoIntro": "Especializações com sua resolução do CONES.",
+      "resLabel": "Res. CONES",
+      "resOpen": "Resolução CONES {numero} (documento no Google Drive, abre em outra aba)",
+      "sede": "Sede",
+      "modalidad": "Modalidade",
+      "duracion": "{count, plural, one {# ano} other {# anos}}",
+      "titulo": "Título",
+      "perfil": "Perfil do egresso",
+      "empty": "Ainda não há cursos publicados para esta faculdade.",
+      "unavailable": "Não foi possível carregar os cursos agora. Tente novamente mais tarde."
+    },
+    "decanato": {
+      "title": "Direção",
+      "verAutoridades": "Ver todas as autoridades",
+      "correo": "Escrever à direção"
+    },
+    "acreditacion": {
+      "title": "Acreditação",
+      "badge": "Acreditada pela {organismo}",
+      "vigencia": "Válida até {anio}",
+      "fuente": "Ver a fonte"
+    },
+    "aranceles": {
+      "title": "Taxas",
+      "intro": "Valores em guaranis publicados pela faculdade.",
+      "concept": "Item",
+      "amount": "Valor",
+      "currencyName": "guaranis",
+      "caption": "{grupo}: item e valor",
+      "grupos": {
+        "multas": "Multas e outros direitos não tributários",
+        "venta": "Venda de livros, formulários e documentos",
+        "servicios": "Venda de serviços da administração pública",
+        "medicos": "Serviços médicos e hospitalares"
+      }
+    },
+    "contacto": {
+      "title": "Contato",
+      "direccion": "Endereço",
+      "mapa": "Ver no mapa",
+      "telefono": "Telefone",
+      "correo": "E-mail",
+      "sitio": "Site",
+      "redes": "Redes sociais",
+      "nuevaPestana": "(abre em outra aba)",
+      "redesNombres": {
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "x": "X",
+        "youtube": "YouTube"
+      }
+    },
+    "states": {
+      "unavailable": "Não foi possível carregar as informações da faculdade agora. Tente novamente mais tarde."
+    }
+  }
 }

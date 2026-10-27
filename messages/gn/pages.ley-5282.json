@@ -3,20 +3,36 @@
     "title": "Léi 5282/2014 — Universidad Nacional de Concepción",
     "description": "Tetãygua marandu joaju porã, Léi 5282/2014 reheve, UNC-pe."
   },
-  "hero": {
-    "label": "Ñe'ẽ ñemombe'u",
-    "title": "Léi 5282/2014",
-    "description": "Tetãygua marandu joaju porã"
+  "breadcrumb": {
+    "home": "Ñepyrũ",
+    "institutional": "Temimoĩmby",
+    "page": "Léi 5282/2014"
   },
-  "intro": "Léi N° 5282/2014 omboñepyrũ tetãygua marandu joaju derecho tetãgua mba'apohárãpe, ñe'ẽ ñemombe'u ha democracia ñemombarete haguã.",
+  "hero": {
+    "eyebrow": "Jeike sãso marandúpe",
+    "title": "Léi 5282/2014",
+    "description": "Tetãygua marandu joaju porã",
+    "badgeLabel": "Art. 8° — 17 ítem"
+  },
   "docs": {
     "eyebrow": "Kuatia oĩva",
     "heading": "Marandu oñemombe'u",
-    "empty": "Ko'ã momento kuatia ndaipóri.",
-    "downloadLabel": "Emono'õ"
+    "description": "Eike kuatia Léi 5282/2014 Art. 8° ojeruréva rehe. Káda kuatia ojepe'a peteĩ pestaña pyahúpe, servicio institucional ojeikuaa hendápe.",
+    "openLabel": "Ehecha kuatia",
+    "count": "{count, plural, one {# kuatia} other {# kuatia}}",
+    "summary": "{withDocs} {total}-gui categoría-pe oĩ kuatia oñemoherakuãva",
+    "indexLabel": "Eho peteĩ categoría-pe",
+    "noDocs": "Ndaipóri gueteri kuatia oñemoĩva.",
+    "emptyTitle": "Ndaipóri gueteri kuatia oñemoherakuãva",
+    "emptyText": "Universidad omoĩ hína ko léi marandu. Káda categoría ohechaukáta hembiapo ojejapo vove.",
+    "unavailableTitle": "Ndaikatúi roguerahauka marandu",
+    "unavailableText": "Servicio de contenidos ndoikói ko'ágã. Ndaipóri heseguete kuatia: eheka jey sapy'ánte."
   },
-  "contact": {
-    "title": "Ñeporandu haguã",
-    "description": "Eñomongeta Secretaría General pegua marandu hetave haguã."
+  "info": {
+    "eyebrow": "Marco normativo",
+    "title": "Compromiso marandu jeike ndive",
+    "description": "Universidad Nacional de Concepción omyasãi ko marandu Léi 5282/2014 he'iháicha ha omo'ã tetãygua derecho jeike hag̃ua tetãgua marandúpe.",
+    "ctaTransparencia": "Ehecha Transparencia",
+    "ctaInstitutional": "Ejevy Temimoĩmby-pe"
   }
 }

@@ -22,6 +22,10 @@
     "a5": { "role": "Dirección General Académica", "description": "Coordina los programas académicos, admisión, registro y todo lo relacionado con la trayectoria estudiantil." },
     "a6": { "role": "Dirección Administrativa y Financiera", "description": "Gestiona los recursos económicos, presupuesto institucional, contrataciones y servicios generales." }
   },
+  "rectorado": "Rectorado",
+  "cvLabel": "Currículum Vitae",
+  "others": { "label": "Gestión institucional", "title": "Otras autoridades" },
+  "states": { "empty": "Por el momento no hay autoridades publicadas. Vuelva a consultar más tarde.", "unavailable": "No pudimos cargar las autoridades en este momento. Intente nuevamente en unos minutos." },
   "note": "Para información actualizada de las autoridades, comuníquese con la Secretaría General del Rectorado de la Universidad Nacional de Concepción, ubicado en la ciudad de Concepción, Paraguay.",
   "organigrama": {
     "label": "Estructura completa",

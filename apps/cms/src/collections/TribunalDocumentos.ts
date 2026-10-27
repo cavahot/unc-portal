@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { canWriteInstitutional } from '../access/roles'
+import { canWriteInstitutional, readActiveOrInstitutional } from '../access/roles'
+import { revalidatePortalTag } from '../utilities/revalidation'
 
 const TribunalDocumentos: CollectionConfig = {
   slug: 'tribunal-documentos',
@@ -13,25 +14,17 @@ const TribunalDocumentos: CollectionConfig = {
     defaultColumns: ['titulo', 'tipo', 'orden', 'active'],
   },
   access: {
-    read:   () => true,
+    read:   readActiveOrInstitutional, // SEC-10: público solo lo activo (política provisional)
     create: canWriteInstitutional,
     update: canWriteInstitutional,
     delete: canWriteInstitutional,
   },
   hooks: {
     afterChange: [
+      // DEP-19b: avisa al portal con el helper común (timeout, reintentos, log sin secretos). Nunca lanza:
+      // la publicación del editor no depende del portal. Límite: sin cola; ver utilities/revalidation.ts.
       async () => {
-        try {
-          const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
-          const secret  = process.env.REVALIDATION_SECRET ?? ''
-          await fetch(`${baseUrl}/api/revalidate`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${secret}` },
-            body:    JSON.stringify({ tag: 'tribunal-documentos' }),
-          })
-        } catch {
-          // revalidation is best-effort
-        }
+        await revalidatePortalTag('tribunal-documentos', { collection: 'tribunal-documentos' })
       },
     ],
   },

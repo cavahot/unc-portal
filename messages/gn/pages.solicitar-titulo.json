@@ -1,30 +1,30 @@
 {
-  "pageTitle": "Solicitar Título — UNC",
-  "pageDescription": "Solicita la gestión de tu título universitario en la Universidad Nacional de Concepción a través del formulario oficial.",
+  "pageTitle": "Ejerure Título — UNC",
+  "pageDescription": "Ejerure nde título universitario gestión Universidad Nacional de Concepción-pe formulario oficial rupive.",
   "portalLabel": "Portal UNC",
-  "heading": "Solicitud de Título Universitario",
-  "description": "Iniciá el proceso de gestión de tu diploma universitario de forma online a través del formulario oficial de la Universidad Nacional de Concepción.",
-  "ctaLabel": "Iniciar ahora",
-  "ctaHeading": "¿Listo para solicitar tu título?",
-  "ctaNote": "Este formulario abre en Google Forms en una nueva pestaña.",
-  "ctaButton": "Iniciar solicitud",
-  "processHeading": "Proceso de solicitud",
+  "heading": "Título Universitario jerure",
+  "description": "Emoñepyrũ nde diploma universitario gestión online formulario oficial Universidad Nacional de Concepción-pegua rupive.",
+  "ctaLabel": "Emoñepyrũ ko'ág̃a",
+  "ctaHeading": "¿Ndesako'ípa ejerure hag̃ua nde título?",
+  "ctaNote": "Ko formulario ojepe'a Google Forms-pe, tendayke pyahúpe.",
+  "ctaButton": "Emoñepyrũ jerure",
+  "processHeading": "Jerure rape",
   "steps": {
     "step01": {
-      "title": "Completá el formulario",
-      "description": "Ingresá tus datos personales y la información de tu carrera."
+      "title": "Emyenyhẽ formulario",
+      "description": "Emoinge nde marandu personal ha nde carrera rehegua marandu."
     },
     "step02": {
-      "title": "Adjuntá la documentación",
-      "description": "Cédula de identidad, certificado de egreso y demás documentos requeridos según tu facultad."
+      "title": "Emoirũ kuatia",
+      "description": "Cédula de identidad, certificado de egreso ha ambue kuatia oñeikotevẽva nde facultad he'iháicha."
     },
     "step03": {
       "title": "Seguimiento",
-      "description": "Recibirás notificaciones sobre el estado de tu solicitud a través del correo registrado."
+      "description": "Rehupytýta marandu nde jerure rehegua correo emoĩ vaekuépe."
     },
     "step04": {
-      "title": "Retiro del título",
-      "description": "Una vez aprobado, te notificaremos la fecha y lugar de entrega de tu diploma universitario."
+      "title": "Título ñeme'ẽ",
+      "description": "Oñemboaje rire, romomarandúta ndéve ára ha tenda oñeme'ẽtaha nde diploma universitario."
     }
   }
 }

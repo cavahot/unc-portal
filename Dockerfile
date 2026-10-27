@@ -68,6 +68,11 @@ RUN mkdir -p .next && chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static     ./.next/static
 
+# VERIF-DOCKER-05: el tracer de Next copia el .node de sharp pero NO libvips-cpp.so (se carga con dlopen). Sin esto
+# `import sharp` falla (ERR_DLOPEN_FAILED) y en el CMS toda ruta de Payload responde 500; en el portal falla el
+# optimizador de imágenes. Se copia el paquete de libvips (musl/x64) desde `deps`. Límite: solo esta plataforma.
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules/@img/sharp-libvips-linuxmusl-x64 ./node_modules/@img/sharp-libvips-linuxmusl-x64
+
 USER nextjs
 
 EXPOSE 3000

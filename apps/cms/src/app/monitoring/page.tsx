@@ -10,8 +10,9 @@ export default function Monitoring() {
   useEffect(() => {
     const load = async () => {
       try {
+        // DEP-04: solo metrics se filtra por res.ok (403 a roles sin monitoreo); health siempre devuelve JSON.
         const h = await fetch('/api/health').then(r => r.json())
-        const m = await fetch('/api/metrics').then(r => r.json())
+        const m = await fetch('/api/metrics').then(r => (r.ok ? r.json() : null))
         setHealth(h)
         setMetrics(m)
       } catch (e) {

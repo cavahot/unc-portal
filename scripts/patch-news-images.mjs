@@ -14,6 +14,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
 
 const execAsync = promisify(exec)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -25,7 +26,8 @@ const XML_ARG = args.find(a => a.startsWith('--xml='))?.split('=').slice(1).join
 const CMS_URL = args.find(a => a.startsWith('--cms='))?.split('=')[1] || 'http://localhost:3002'
 
 const CMS_EMAIL    = process.env.CMS_EMAIL    || 'admin@unc.edu.py'
-const CMS_PASSWORD = process.env.CMS_PASSWORD || 'Admin1234!'
+// SEC-08: la contraseña es obligatoria (CMS_PASSWORD, mínimo 12 caracteres); falla antes de cualquier red si falta o es débil.
+const CMS_PASSWORD = requireCmsPassword()
 
 /* ── XML helpers ─────────────────────────────────────────── */
 

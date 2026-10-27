@@ -10,7 +10,7 @@ import PreviewBanner from '@/components/preview/PreviewBanner'
 import { getNavigation, FALLBACK_NAVIGATION } from '@/lib/cms/queries/navigation'
 import { loadMessages } from '@/lib/i18n/server'
 import { baseOg } from '@/lib/seo/og'
-import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/seo/jsonld'
+import { buildOrganizationSchema, buildWebSiteSchema, safeJsonLd } from '@/lib/seo/jsonld'
 
 export async function generateMetadata({
   params,
@@ -53,11 +53,11 @@ export default async function LocaleLayout({
       {/* Structured data — site-wide */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildOrganizationSchema()) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(buildOrganizationSchema()) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildWebSiteSchema()) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(buildWebSiteSchema()) }}
       />
       {isDraft && <PreviewBanner />}
       <Header navigation={navigation} />

@@ -9,6 +9,9 @@ import InstitutionalAccessSection from '@/components/institutional/Institutional
 import Reveal from '@/components/motion/Reveal';
 import TiltCard from '@/components/motion/TiltCard';
 import StatsBlock from '@/components/stats/StatsBlock';
+import AwardsAccreditationsSection, { type AwardsLabels } from '@/components/home/AwardsAccreditationsSection';
+import { getRecognitions } from '@/lib/cms/queries/recognitions';
+import { getAccreditations } from '@/lib/cms/queries/accreditations';
 import { getNews } from '@/lib/cms/queries/news';
 import { getStatsGlobal } from '@/lib/cms/queries/stats';
 import { Link } from '@/i18n/navigation';
@@ -86,6 +89,10 @@ function DocumentIcon() {
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
 
+// ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible»/«vacío» cuando el build
+// corre sin CMS alcanzable. Límite: la página puede mostrar datos hasta 60 s viejos (las etiquetas lo acortan).
+export const revalidate = 60
+
 export async function generateMetadata({
   params,
 }: {
@@ -134,12 +141,15 @@ export default async function Home({
     notFound()
   }
   // Try featured news first; fall back to latest if none are marked featured
-  const [t, format, featuredResult, latestResult, stats] = await Promise.all([
+  const [t, format, featuredResult, latestResult, stats, recognitions, accreditationGroups] = await Promise.all([
     getT(locale, 'pages.home'),
     getF(locale),
     getNews({ featured: true, limit: 6 }),
     getNews({ limit: 6 }),
     getStatsGlobal(),
+    // PRA-02: ambas consultas devuelven [] si el CMS cae o no hay filas activas+verificadas (la sección se oculta).
+    getRecognitions(),
+    getAccreditations(),
   ]);
   const noticias = featuredResult.docs.length > 0 ? featuredResult.docs : latestResult.docs;
 
@@ -194,6 +204,39 @@ export default async function Home({
       featured: false,
     },
   ];
+
+
+  // PRA-02: textos de la sección «Premios y acreditaciones» (claves awards.* de pages.home).
+  const awardsLabels: AwardsLabels = {
+    sectionLabel: t('awards.sectionLabel'),
+    title: t('awards.title'),
+    description: t('awards.description'),
+    awardedBy: t('awards.awardedBy', { name: '{name}' }),
+    officialSite: t('awards.officialSite'),
+    source: t('awards.source'),
+    externalHint: t('awards.externalHint'),
+    editionsTitle: t('awards.editionsTitle'),
+    distinction: {
+      premio: t('awards.distinction.premio'),
+      premioCategoria: t('awards.distinction.premioCategoria'),
+      mencionEspecial: t('awards.distinction.mencionEspecial'),
+      reconocimiento: t('awards.distinction.reconocimiento'),
+    },
+    accreditationsTitle: t('awards.accreditations.title'),
+    accreditationsBody: t('awards.accreditations.body'),
+    model: {
+      modeloNacional: t('awards.accreditations.model.modeloNacional'),
+      arcuSur: t('awards.accreditations.model.arcuSur'),
+    },
+    organism: {
+      aneaes: t('awards.accreditations.organism.aneaes'),
+      arcusur: t('awards.accreditations.organism.arcusur'),
+      otro: t('awards.accreditations.organism.otro'),
+    },
+    validUntil: t('awards.accreditations.validUntil', { year: '{year}' }),
+    otherPrograms: t('awards.accreditations.otherPrograms'),
+    logoAlt: t('awards.logoAlt', { name: '{name}' }),
+  };
 
   return (
     <>
@@ -604,6 +647,13 @@ export default async function Home({
           </Reveal>
         </div>
       </section>
+
+      {/* PRA-02: premios y acreditaciones; se oculta sola si el CMS no tiene filas activas y verificadas. */}
+      <AwardsAccreditationsSection
+        recognitions={recognitions}
+        groups={accreditationGroups}
+        labels={awardsLabels}
+      />
 
       {/* =====================================================
           FRANJA INSTITUCIONAL

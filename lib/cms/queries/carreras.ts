@@ -1,4 +1,5 @@
 import { cmsFetch } from '../client'
+import { demoFallbackAllowed, isCmsNotFound } from '../errors'
 import type { Carrera, Facultade } from '@unc/cms-types'
 import { PayloadResponse } from '../types'
 
@@ -62,6 +63,11 @@ const FALLBACK_CARRERAS = [
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
+/**
+ * Lista de carreras activas (DEP-19b). Producción: CMS caído -> propaga `CmsError`
+ * (la página decide; no se cachean carreras inventadas); respuesta vacía -> `[]` real.
+ * Solo en desarrollo una caída devuelve FALLBACK_CARRERAS (datos de demostración).
+ */
 export async function getCarreras(): Promise<CarreraPopulada[]> {
   try {
     const params = new URLSearchParams()
@@ -74,12 +80,17 @@ export async function getCarreras(): Promise<CarreraPopulada[]> {
       tags: ['carreras'],
     })
 
-    return res.docs ?? FALLBACK_CARRERAS
-  } catch {
-    return FALLBACK_CARRERAS
+    return res.docs ?? []
+  } catch (error) {
+    if (demoFallbackAllowed()) return FALLBACK_CARRERAS
+    throw error
   }
 }
 
+/**
+ * Carrera por slug (DEP-15). Lista vacía o 404 -> `null`; red caída, timeout o
+ * 5xx -> propaga `CmsError` (no se cachea como 404). Fallback solo en desarrollo.
+ */
 export async function getCarreraBySlug(slug: string): Promise<CarreraPopulada | null> {
   try {
     const params = new URLSearchParams()
@@ -92,34 +103,38 @@ export async function getCarreraBySlug(slug: string): Promise<CarreraPopulada | 
     })
 
     return res.docs?.[0] ?? null
-  } catch {
-    return FALLBACK_CARRERAS.find((c) => c.slug === slug) ?? null
+  } catch (error) {
+    if (isCmsNotFound(error)) return null
+    if (demoFallbackAllowed()) return FALLBACK_CARRERAS.find((c) => c.slug === slug) ?? null
+    throw error
   }
 }
 
+/**
+ * Carreras de una facultad por tipo (DEP-19b). Antes devolvía `[]` ante cualquier error, lo que
+ * mezclaba «sin carreras» con «CMS caído». Ahora la caída propaga `CmsError` (las páginas de
+ * facultad lo capturan y muestran el estado vacío); la respuesta vacía sigue siendo `[]`.
+ */
 export async function getCarrerasByFacultadAndTipo(
   facultadSlug: string,
   tipo: 'grado' | 'posgrado',
 ): Promise<CarreraPopulada[]> {
-  try {
-    const params = new URLSearchParams()
-    params.append('where[activa][equals]', 'true')
-    params.append('where[facultad.slug][equals]', facultadSlug)
-    params.append('where[tipo][equals]', tipo)
-    params.append('sort', 'nombre')
-    params.append('depth', '1')
-    params.append('limit', '100')
+  const params = new URLSearchParams()
+  params.append('where[activa][equals]', 'true')
+  params.append('where[facultad.slug][equals]', facultadSlug)
+  params.append('where[tipo][equals]', tipo)
+  params.append('sort', 'nombre')
+  params.append('depth', '1')
+  params.append('limit', '100')
 
-    const res = await cmsFetch<PayloadResponse<CarreraPopulada>>(`/carreras?${params.toString()}`, {
-      tags: ['carreras'],
-    })
+  const res = await cmsFetch<PayloadResponse<CarreraPopulada>>(`/carreras?${params.toString()}`, {
+    tags: ['carreras'],
+  })
 
-    return res.docs ?? []
-  } catch {
-    return []
-  }
+  return res.docs ?? []
 }
 
+/** Carreras de una facultad (DEP-19b): producción propaga la caída; desarrollo usa FALLBACK_CARRERAS. */
 export async function getCarrerasByFacultad(facultadSlug: string): Promise<CarreraPopulada[]> {
   try {
     const params = new URLSearchParams()
@@ -133,8 +148,11 @@ export async function getCarrerasByFacultad(facultadSlug: string): Promise<Carre
       tags: ['carreras'],
     })
 
-    return res.docs ?? FALLBACK_CARRERAS.filter((c) => (c.facultad as Facultade).slug === facultadSlug)
-  } catch {
-    return FALLBACK_CARRERAS.filter((c) => (c.facultad as Facultade).slug === facultadSlug)
+    return res.docs ?? []
+  } catch (error) {
+    if (demoFallbackAllowed()) {
+      return FALLBACK_CARRERAS.filter((c) => (c.facultad as Facultade).slug === facultadSlug)
+    }
+    throw error
   }
 }

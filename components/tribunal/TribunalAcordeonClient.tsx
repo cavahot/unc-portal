@@ -1,5 +1,7 @@
 'use client'
 
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import { useState } from 'react'
 import type { TribunalDocumentoItem, TribunalDocumentoTipo } from '@/lib/cms/queries/tribunal'
 import { ACCORDION_TIPOS } from '@/lib/cms/queries/tribunal'
@@ -134,7 +136,7 @@ export default function TribunalAcordeonClient({ documentos, t }: Props) {
                           </div>
                           {doc.driveUrl ? (
                             <a
-                              href={doc.driveUrl}
+                              href={safeHref(doc.driveUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#5CFF5C]/30 bg-[#5CFF5C]/10 px-3 py-1.5 text-xs font-semibold text-[#5CFF5C] transition-colors hover:bg-[#5CFF5C]/20"

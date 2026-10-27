@@ -1,21 +1,21 @@
 {
-  "pageTitle": "Noticias - Universidad Nacional de Concepción",
-  "pageDescription": "Novedades y comunicados institucionales de la UNC.",
+  "pageTitle": "Marandu - Universidad Nacional de Concepción",
+  "pageDescription": "UNC marandu pyahu ha comunicado institucional-kuéra.",
   "portalLabel": "Portal UNC",
-  "heading": "Noticias",
-  "subheading": "Novedades y comunicados de la Universidad Nacional de Concepción",
-  "empty": "No hay noticias disponibles en este momento.",
-  "home": "Inicio",
-  "gallery": "Galería",
-  "backToNews": "Ver más noticias",
-  "draftBanner": "Vista previa — esta noticia no está publicada",
-  "draftExit": "Salir del preview",
+  "heading": "Marandu",
+  "subheading": "Universidad Nacional de Concepción marandu pyahu ha comunicado-kuéra",
+  "empty": "Ko'ág̃a ndaipóri marandu.",
+  "home": "Ñepyrũ",
+  "gallery": "Ta'ãngakuéra",
+  "backToNews": "Ehecha hetave marandu",
+  "draftBanner": "Jehecha ypy — ko marandu ndojeikuaaukái gueteri",
+  "draftExit": "Esẽ jehecha ypýgui",
   "categories": {
-    "institucional": "Institucional",
+    "institucional": "Temimoĩmby",
     "academica": "Académica",
-    "investigacion": "Investigación",
+    "investigacion": "Jeporekapy",
     "extension": "Extensión",
-    "eventos": "Eventos",
-    "comunicados": "Comunicados"
+    "eventos": "Evento-kuéra",
+    "comunicados": "Comunicado-kuéra"
   }
 }

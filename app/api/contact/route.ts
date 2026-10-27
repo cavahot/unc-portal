@@ -1,20 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import { readBodyLimited, payloadTooLarge } from '@/lib/security/bodyLimit'
+import { getClientIp } from '@/lib/security/clientIp'
+import { createRateLimiter, tooManyRequests } from '@/lib/security/rateLimit'
 
-// ─── Simple in-memory rate limiter ───────────────────────────────────────────
-// Resets on each cold start. For multi-instance deploys, use Redis instead.
-const rl = new Map<string, { n: number; reset: number }>()
-const LIMIT = 5
-const WINDOW = 60_000 // 1 minute
-
-function allow(ip: string): boolean {
-  const now = Date.now()
-  const e = rl.get(ip)
-  if (!e || now > e.reset) { rl.set(ip, { n: 1, reset: now + WINDOW }); return true }
-  if (e.n >= LIMIT) return false
-  e.n++
-  return true
-}
+// ─── Límite de tasa y tamaño (DEP-06 / RDD-DEP-14) ───────────────────────────
+// Qué hace: 5 envíos por minuto por IP confiable (x-real-ip fijado por nginx) y cuerpo ≤ 32 KiB.
+// Amenaza: spam por correo; el límite previo tomaba el PRIMER x-forwarded-for, que el
+// cliente controla, y se evadía rotándolo. Límite: store en memoria por instancia.
+const limiter = createRateLimiter({ limit: 5, windowMs: 60_000 })
+const MAX_BODY_BYTES = 32 * 1024
 
 // ─── Sanitize HTML (basic) ───────────────────────────────────────────────────
 function esc(s: string) {
@@ -23,24 +18,23 @@ function esc(s: string) {
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
-  // Rate limit by IP
-  const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-    req.headers.get('x-real-ip') ??
-    'unknown'
-
-  if (!allow(ip)) {
-    return NextResponse.json(
-      { error: 'Demasiadas solicitudes. Intentá de nuevo en un minuto.' },
-      { status: 429 },
-    )
+  // Límite por IP confiable (DEP-06): antes de leer el cuerpo o tocar SMTP.
+  const rate = limiter.check(getClientIp(req.headers))
+  if (!rate.allowed) {
+    return tooManyRequests(rate, 'Demasiadas solicitudes. Intentá de nuevo en un minuto.')
   }
 
-  // Parse body
+  // Cuerpo acotado (DEP-06): 413 si excede el tope por Content-Length o por bytes reales.
+  const raw = await readBodyLimited(req, MAX_BODY_BYTES)
+  if (!raw.ok) return payloadTooLarge('La solicitud es demasiado grande.')
+
   let body: Record<string, unknown>
   try {
-    body = await req.json()
+    body = JSON.parse(raw.text)
   } catch {
+    return NextResponse.json({ error: 'Solicitud inválida.' }, { status: 400 })
+  }
+  if (body === null || typeof body !== 'object') {
     return NextResponse.json({ error: 'Solicitud inválida.' }, { status: 400 })
   }
 
@@ -60,18 +54,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'El email no es válido.' }, { status: 400 })
   }
 
-  // Transport
+  // Transporte SMTP (DEP-10 / RDD-DEP-33). Qué hace: usa los MISMOS nombres de variable que el CMS
+  // (SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASSWORD, SMTP_FROM_ADDRESS). Por qué: antes el
+  // portal leía SMTP_PASS/SMTP_FROM y el compose no entregaba ninguno, así que el contacto salía sin
+  // credenciales. Límite: `secure` sigue el valor explícito de SMTP_SECURE; si falta, se mantiene el
+  // criterio previo (TLS implícito solo en el puerto 465). No valida la conectividad con el relay.
   const smtpPort = parseInt(process.env.SMTP_PORT ?? '1025', 10)
+  const smtpSecure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : smtpPort === 465
   const transport = nodemailer.createTransport({
     host: process.env.SMTP_HOST ?? 'localhost',
     port: smtpPort,
-    secure: smtpPort === 465,
+    secure: smtpSecure,
     ...(process.env.SMTP_USER
-      ? { auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS ?? '' } }
+      ? { auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD ?? '' } }
       : {}),
   })
 
-  const from = `"Portal UNC" <${process.env.SMTP_FROM ?? 'noreply@unc.edu.py'}>`
+  const from = `"Portal UNC" <${process.env.SMTP_FROM_ADDRESS ?? 'noreply@unc.edu.py'}>`
   const to = process.env.CONTACT_TO ?? 'secgral@unc.edu.py'
 
   try {

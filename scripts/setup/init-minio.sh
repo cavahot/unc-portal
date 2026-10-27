@@ -86,13 +86,26 @@ else
   echo "✓  Bucket creado"
 fi
 
-# 6. Establecer política de acceso público de lectura
-# Los archivos (imágenes, documentos) deben ser accesibles públicamente
-# para que los navegadores los carguen directamente desde files.unc.edu.py
+# 6. Política de acceso anónimo (SEC-MINIO-01: opt-in, acotada, sin listado)
+# `mc anonymous set download` concede SOLO s3:GetObject: se puede leer un objeto cuya clave se
+# conoce, pero NO listar el bucket (no hay s3:ListBucket) ni escribir. Amenaza que evita: publicar
+# por omisión cualquier objeto futuro del bucket. Límite: la política es por prefijo, no por objeto;
+# Media guarda las claves planas (sin `prefix`, MIG-IMG §4.1) y el bucket contiene únicamente la
+# colección `media` (payload.config.ts, s3Storage), por eso el prefijo por defecto es la raíz.
+# Si algún día el bucket aloja contenido no público, defina MINIO_PUBLIC_MEDIA_PREFIX (y el
+# `prefix` de Media) antes de habilitar esto.
 echo ""
-echo "→ Aplicando política de acceso público de lectura..."
-docker exec "$CONTAINER" mc anonymous set download "prod/$S3_BUCKET"
-echo "✓  Política: lectura pública habilitada (download)"
+if [[ "${MINIO_PUBLIC_READ:-0}" == "1" ]]; then
+  MINIO_PUBLIC_MEDIA_PREFIX="${MINIO_PUBLIC_MEDIA_PREFIX:-}"
+  if [[ -z "$MINIO_PUBLIC_MEDIA_PREFIX" ]]; then
+    echo "⚠  ADVERTENCIA: sin MINIO_PUBLIC_MEDIA_PREFIX la lectura anónima cubre TODO el bucket '$S3_BUCKET'."
+  fi
+  echo "→ Aplicando lectura anónima (solo GET de objetos conocidos, sin listado)..."
+  docker exec "$CONTAINER" mc anonymous set download "prod/$S3_BUCKET/${MINIO_PUBLIC_MEDIA_PREFIX}"
+  echo "✓  Política: download sobre prod/$S3_BUCKET/${MINIO_PUBLIC_MEDIA_PREFIX}"
+else
+  echo "→ Bucket privado: no se aplicó lectura anónima (defina MINIO_PUBLIC_READ=1 para publicarla; ver SEC-MINIO-01)."
+fi
 
 # 7. Verificar
 echo ""

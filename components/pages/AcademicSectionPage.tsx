@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import Reveal from '@/components/motion/Reveal'
+import { safeHref } from '@/lib/security/safeUrl'
+// DEP-19b: migas y acciones llegan como props; hoy las pasan páginas con literales, pero el componente
+// es reutilizable y un futuro origen CMS no debe poder inyectar `javascript:` (defensa en profundidad).
 
 /* =========================================================
    TYPES
@@ -128,7 +131,7 @@ export default function AcademicSectionPage({
                   <li key={item.href} className="flex items-center gap-2">
                     {i > 0 && <span aria-hidden="true" className="select-none">/</span>}
                     <Link
-                      href={item.href}
+                      href={safeHref(item.href)}
                       className="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5CFF5C]"
                     >
                       {item.label}
@@ -170,7 +173,7 @@ export default function AcademicSectionPage({
                 {actions.map((action) => (
                   <a
                     key={action.href}
-                    href={action.href}
+                    href={safeHref(action.href)}
                     target={action.external ? '_blank' : undefined}
                     rel={action.external ? 'noopener noreferrer' : undefined}
                     className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] ${

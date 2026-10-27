@@ -135,25 +135,53 @@ cp infrastructure/docker/.env.prod.example infrastructure/docker/.env.prod
 nano infrastructure/docker/.env.prod
 ```
 
-Completar **todos** los valores marcados como `REEMPLAZAR_*`. Los campos críticos:
+Completar **todos** los valores marcados como `REEMPLAZAR_*`. Hay un solo nombre por concepto
+(DEP-10): cada variable de `.env.prod` se interpola en `compose.prod.yaml` y llega al servicio
+cuyo código la lee. Si el código lee una variable que su servicio no recibe, el guard `guard-env-parity`
+(`harness/guards.mjs`) y `node --test tests/deploy/dep10-env-vars.test.mjs` fallan.
 
-| Variable | Descripción |
-|----------|-------------|
-| `POSTGRES_PASSWORD` | Mínimo 32 caracteres aleatorios |
-| `MINIO_ROOT_USER` | Access key de MinIO (mínimo 3 chars) |
-| `MINIO_ROOT_PASSWORD` | Secret key de MinIO (mínimo 8 chars) |
-| `PAYLOAD_SECRET` | Mínimo 32 caracteres aleatorios |
-| `PREVIEW_SECRET` | Mínimo 32 caracteres aleatorios |
-| `REVALIDATION_SECRET` | Mínimo 32 caracteres aleatorios |
-| `S3_PUBLIC_URL` | `https://files.unc.edu.py` |
-| `POSTGRES_SSL` | `false` (Postgres está en la misma red Docker) |
-| `SMTP_HOST` | Host del servidor de correo de la UNC |
+#### Variables por servicio (DEP-10)
 
-Para generar valores aleatorios seguros:
+| Variable (`.env.prod`) | Servicio que la recibe | Cómo se obtiene / valor |
+|---|---|---|
+| `POSTGRES_DB`, `POSTGRES_USER` | postgres | Nombres elegidos (p. ej. `unc_portal`, `unc_cms`) |
+| `POSTGRES_PASSWORD` | postgres | Secreto aleatorio (comando de abajo); **la misma** contraseña va dentro de `DATABASE_URI` |
+| `DATABASE_URI` | cms, cms-migrate | `postgresql://USUARIO:CONTRASEÑA@postgres:5432/BASE`; usuario/base = `POSTGRES_USER`/`POSTGRES_DB`; si la contraseña lleva caracteres reservados, percent-encoding (`@`→`%40`, `:`→`%3A`, `/`→`%2F`, `#`→`%23`, `?`→`%3F`, `%`→`%25`). Único nombre válido (ya no existe `DATABASE_URL`) |
+| `POSTGRES_SSL` | cms, cms-migrate | `false` dentro de la red de Compose; `true` solo con una BD gestionada externa con TLS |
+| `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` | minio (**opcional**, perfil `s3`); el CMS las recibe como `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` (se separarán en DEP-11) | Access key (mín. 3 caracteres) y secret key (mín. 8). Solo se necesitan con `MEDIA_STORAGE=s3` (MIN-01); con `local` pueden quedar vacías |
+| `MEDIA_STORAGE` | cms, cms-migrate | MIG-IMG fase 1: `local` (por defecto; volumen persistente `cms_media` en `/app/media`) o `s3` (MinIO, explícito). **Quien dependía de S3 solo por tener las claves debe fijar `MEDIA_STORAGE=s3`**; tener `S3_*` ya no activa S3 |
+| `MEDIA_MAX_BYTES` | cms, cms-migrate | Tope por archivo subido en bytes (por defecto `10485760` = 10 MiB; techo 11 MiB por el límite del proxy de Next). Los mayores se rechazan con 413, no se truncan |
+| `S3_BUCKET` | cms | `unc-media` (debe existir; ver `POST /api/setup/create-bucket`). Solo con `MEDIA_STORAGE=s3` |
+| `S3_PUBLIC_URL` | cms | `https://files.unc.edu.py` |
+| `PAYLOAD_SECRET` | cms, cms-migrate | Secreto aleatorio, mínimo 32 caracteres. DEP-16: el CMS **no arranca** si falta, es corto o conserva un valor de ejemplo (`REEMPLAZAR_`, `changeme`, `change-this`…) |
+| `PREVIEW_SECRET` | **portal y cms** (mismo valor) | Secreto aleatorio, mínimo 32 caracteres. DEP-16: firma tokens de preview de 5 min (nunca viaja en la URL); débil o ausente → `/api/preview` responde 503 |
+| `REVALIDATION_SECRET` | **portal y cms** (mismo valor) | Secreto aleatorio, mínimo 32 caracteres. DEP-16: débil o ausente → `/api/revalidate` responde 503 |
+| `PORTAL_PUBLIC_URL` | portal como `NEXT_PUBLIC_SITE_URL`; cms como `PORTAL_URL` | `https://portal.unc.edu.py` |
+| `CMS_PUBLIC_URL` | portal como `NEXT_PUBLIC_CMS_URL`; cms como `NEXT_PUBLIC_SERVER_URL` | `https://cms.unc.edu.py` |
+| `MEDIA_HOSTNAME` | portal | `files.unc.edu.py` (imágenes y CSP) |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE` | portal y cms | Datos del relay de la UNC; `SMTP_SECURE=true` solo con TLS implícito (465) |
+| `SMTP_USER`, `SMTP_PASSWORD` | portal y cms | Credenciales del relay; ambas vacías si no exige autenticación |
+| `SMTP_FROM_ADDRESS` | portal y cms | Remitente (p. ej. `noreply@unc.edu.py`) |
+| `SMTP_FROM_NAME` | cms | Nombre visible del remitente del CMS |
+| `CONTACT_TO` | portal | Casilla que recibe el formulario de contacto |
+| `N8N_WEBHOOK_URL` | cms (opcional) | Vacío = notificaciones por webhook desactivadas |
+| `NEXT_PUBLIC_SENTRY_DSN` | portal (runtime) | DSN del proyecto de Sentry. DEP-16: el túnel `/api/monitoring` reenvía SOLO a este host/proyecto; vacío → el túnel responde 503 |
+| `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` | solo build (no llegan a ningún contenedor) | Los pasa `deploy.yml` como `build-args` desde secrets de GitHub; el token se crea en Sentry |
+
+Constantes del compose que **no** se configuran en `.env.prod`: `CMS_URL=http://cms:3000` (portal → CMS por la red
+interna), `S3_ENDPOINT=http://minio:9000`, `S3_REGION=us-east-1`. `IMAGE_TAG` lo fija el pipeline (`sha-xxxxxxx`).
+Nombres que ya **no** existen: `SMTP_PASS`, `SMTP_FROM`, `DATABASE_URL`, `MINIO_ENDPOINT`.
+
+Para generar valores aleatorios seguros (alfanuméricos, sin caracteres que exijan percent-encoding):
 
 ```bash
 openssl rand -base64 48 | tr -d '=+/' | head -c 48
 ```
+
+Límites (DEP-10, sin verificar con Docker ni SMTP reales): el envío de correo (recuperación de contraseña del CMS y
+formulario de contacto) debe probarse con Mailpit o el relay real antes de producción; `PORTAL_URL` usa la URL pública,
+por lo que el servidor debe poder resolver su propio dominio desde el contenedor del CMS; y las variables `NEXT_PUBLIC_*`
+pueden quedar fijadas en el build de la imagen (ver `docs/specs/deploy/DEP-10-variables-de-entorno.md`).
 
 ---
 
@@ -180,6 +208,8 @@ En GitHub → repo → **Settings → Secrets and variables → Actions → New 
 | `SSH_USER` | usuario SSH (`root` o el usuario creado) |
 | `SSH_PRIVATE_KEY` | contenido de `~/.ssh/github_deploy` (clave privada) |
 | `SSH_PORT` | `22` (o el configurado por el proveedor) |
+| `BACKUP_ENCRYPTION_PASSPHRASE` | Solo para `backup.yml` (BKP-01): frase de paso de **≥ 20 caracteres** con la que se cifra el volcado diario antes de subirlo como artefacto (el repositorio es público). Sin ella el backup falla cerrado. Guardarla en 2 lugares por 2 personas; ver `docs/BACKUP_RECOVERY.md` («Copia diaria cifrada») |
+| `DATABASE_URL` | Solo para `backup.yml`: URI de Postgres **alcanzable desde el runner de GitHub**. Si la BD solo vive en la red interna de Docker del VPS el job no puede conectarse; ver «Riesgo residual» en `docs/BACKUP_RECOVERY.md` |
 | `GHCR_READ_TOKEN` | PAT de GitHub con scope `read:packages` (ver abajo) |
 | `NEXT_PUBLIC_SENTRY_DSN` | DSN de Sentry (puede quedar vacío si no se usa) |
 | `SENTRY_AUTH_TOKEN` | Token de Sentry (puede quedar vacío si no se usa) |
@@ -196,7 +226,10 @@ En GitHub → repo → **Settings → Secrets and variables → Actions → New 
 
 En GitHub → repo → **Settings → Environments → New environment**:
 - Nombre: `production`
-- (Opcional) Agregar required reviewers para aprobación manual antes de cada deploy
+- **Required reviewers (ajuste MANUAL, DEP-09):** el job `deploy` declara `environment: production`, pero que
+  GitHub exija aprobación humana antes de desplegar depende de Settings → Environments → `production` →
+  *Required reviewers*. No se puede automatizar desde este repositorio y **no está configurado hasta que
+  alguien con permisos lo haga**; hasta entonces cada push a `main` con CI en verde despliega sin aprobación.
 
 ---
 
@@ -210,46 +243,92 @@ El servidor necesita poder bajar las imágenes Docker privadas:
 echo "<GHCR_READ_TOKEN>" | docker login ghcr.io -u cavahot --password-stdin
 ```
 
-### Paso 13 — Levantar el stack
+### Paso 13 — Descargar imágenes y migrar el esquema (DEP-07)
+
+El esquema de la base se crea SOLO con migraciones versionadas (`apps/cms/src/migrations`), nunca
+restaurando el esquema de un dump. Orden del primer deploy: **migrate → restore-data → up**.
 
 ```bash
 cd /opt/unc-portal
+COMPOSE="docker compose -f infrastructure/docker/compose.prod.yaml --env-file infrastructure/docker/.env.prod"
 
-docker compose \
-  -f infrastructure/docker/compose.prod.yaml \
-  --env-file infrastructure/docker/.env.prod \
-  pull
+# DEP-09: las imágenes se despliegan por sha inmutable; IMAGE_TAG es OBLIGATORIO (sin él Compose falla).
+# Usa el tag publicado por el último build de main (`sha-` + 7 primeros caracteres del commit).
+export IMAGE_TAG=sha-xxxxxxx
 
-docker compose \
-  -f infrastructure/docker/compose.prod.yaml \
-  --env-file infrastructure/docker/.env.prod \
-  up -d
+$COMPOSE pull
+
+# Levanta Postgres (si hace falta) y aplica las migraciones; sale con código != 0 si falla.
+$COMPOSE run --rm -T cms-migrate < /dev/null
 ```
 
-Verificar que todos los contenedores estén healthy (puede tardar ~2 minutos):
+Si `cms-migrate` falla: **no continúes**. Lee el error (`docker logs unc-cms-migrate-prod` o la salida
+del comando); la migración corre en una transacción, así que no queda esquema a medias. Corrige la causa
+y repite. Nunca ejecutes `migrate:down`, `migrate:reset`, `migrate:refresh` ni `migrate:fresh` en
+producción. Si la base tiene una fila `batch = -1` en `payload_migrations` (esquema creado por push en
+dev), el deploy se rechaza: requiere intervención manual.
+
+### Paso 14 — Inicializar MinIO (OPCIONAL: solo si usas `MEDIA_STORAGE=s3`)
+
+**MIN-01:** MinIO ya no forma parte del despliegue por defecto. Con `MEDIA_STORAGE=local` (valor por defecto) los
+archivos van al volumen `cms_media` y **debes omitir este paso**: `docker compose up` no arranca ni espera a MinIO,
+y el CMS no depende de él. `files.unc.edu.py` responderá 502 mientras no exista el contenedor (esperado).
+
+Para activar el almacenamiento S3 (requiere una imagen de MinIO descargable y fijada, DEP-11 pendiente):
 
 ```bash
-docker ps
-```
-
-Deberías ver 5 contenedores con estado `healthy`:
-`unc-postgres-prod`, `unc-minio-prod`, `unc-cms-prod`, `unc-portal-prod`, `unc-nginx-prod`
-
-### Paso 14 — Inicializar MinIO (solo primera vez)
-
-```bash
+# 1. En .env.prod: MEDIA_STORAGE=s3, MINIO_ROOT_USER, MINIO_ROOT_PASSWORD, S3_BUCKET, S3_PUBLIC_URL
+# 2. Levantar el perfil s3 (el perfil se activa con --profile; no basta con editar .env.prod):
+$COMPOSE --profile s3 up -d minio   # MinIO aún no corre: el paso 13 solo levantó Postgres
 bash scripts/setup/init-minio.sh
+# 3. Recrear el CMS para que lea MEDIA_STORAGE=s3:
+$COMPOSE up -d --no-deps cms
 ```
+
+El `up -d` de `deploy.yml` **no** nombra `minio` (nombrar un servicio con perfil activaría ese perfil y arrastraría su
+imagen sin fijar); un despliegue con S3 debe arrancar/actualizar MinIO a mano con el comando de arriba.
 
 Crea el bucket `unc-media` y habilita acceso público de lectura (necesario para que
 los navegadores carguen las imágenes directamente desde MinIO/CDN).
 
-### Paso 15 — Restaurar la base de datos (solo primera vez)
+### Paso 15 — Cargar los datos iniciales (solo primera vez)
 
-El repo incluye un seed con todos los datos de producción (noticias, tesis, convenios, etc.):
+El repo incluye un seed con los datos (noticias, tesis, convenios, etc.). Se cargan **solo los datos**,
+sobre el esquema ya migrado y con las tablas vacías:
 
 ```bash
-bash scripts/setup/restore-db-prod.sh
+bash scripts/setup/restore-data-prod.sh
+```
+
+El script aborta si el esquema no está migrado, si alguna tabla de destino tiene datos o si el dump no
+encaja con el esquema (la carga es una sola transacción: no deja datos parciales). Excluye
+`payload_migrations`, sesiones, bloqueos, preferencias y `payload_kv` (`setup/restore-data.exclude.txt`).
+Genera antes un backup verificado en `backups/pre-restore-data-<UTC>.dump`; no sustituye un backup
+cifrado fuera del servidor (DEP-08). El dump versionado `setup/seed.dump.gz` requiere revisión de PII.
+
+> **Deprecado:** `scripts/setup/restore-db-prod.sh` (restore completo con `DROP SCHEMA`) ya no es el camino
+> del primer deploy porque trae el esquema de dev. Solo sirve como recuperación manual de un estado completo.
+> **Hipótesis sin verificar:** que el seed (2026-08-08) sea compatible con el baseline (2026-10-17); la
+> primera prueba debe hacerse en una base sintética autorizada (ver `docs/specs/deploy/DEP-07-via-unica-de-esquema.md`).
+
+### Paso 16 — Levantar el stack
+
+```bash
+$COMPOSE up -d
+docker ps
+```
+
+Deberías ver 4 contenedores con estado `healthy` (`unc-postgres-prod`, `unc-cms-prod`, `unc-portal-prod`,
+`unc-nginx-prod`; `unc-minio-prod` solo si activaste el perfil `s3`, MIN-01); `unc-cms-migrate-prod` queda en estado `Exited (0)` (es un servicio de
+un solo uso y `cms` no arranca sin que termine bien).
+
+### Paso 16b — Sembrar el tag sano (DEP-09)
+
+Una vez que el stack está `healthy`, registra el tag desplegado como «último sano». Los deploys de CI lo
+leen como destino de rollback y **abortan si no existe** (primer deploy: no hay rollback posible).
+
+```bash
+echo "$IMAGE_TAG" > /opt/unc-portal/.deploy-previous-tag
 ```
 
 ---
@@ -261,11 +340,17 @@ bash scripts/setup/restore-db-prod.sh
 curl -s -o /dev/null -w "%{http_code}" https://portal.unc.edu.py/api/health
 # Debe responder: 200
 
-# CMS admin
+# CMS admin (liveness: no prueba la BD)
 curl -s -o /dev/null -w "%{http_code}" https://cms.unc.edu.py/api/health
 # Debe responder: 200
 
-# Media (verifica que MinIO y nginx funcionen)
+# CMS readiness (DEP-09): SELECT 1 a Postgres; 200 {"status":"ready"} o 503 {"status":"unavailable"}
+curl -s https://cms.unc.edu.py/api/health/ready
+# Está limitada a 30 peticiones/min por IP (429 si se excede) y cachea el resultado 5 s.
+
+# Media con MEDIA_STORAGE=local (por defecto): una imagen subida se sirve por el CMS
+#   curl -sI https://cms.unc.edu.py/api/media/file/<archivo>   -> 200
+# Media con el perfil s3 (MIN-01; verifica MinIO y nginx). Sin el perfil, files.* responde 502 a propósito
 curl -sI https://files.unc.edu.py
 # Debe responder: HTTP/2 200 o 403 (403 es correcto si el bucket está vacío)
 ```
@@ -277,9 +362,59 @@ curl -sI https://files.unc.edu.py
 Una vez configurado todo, los deploys son automáticos:
 
 1. Hacer push a `main` → el CI corre los tests
-2. Si el CI pasa → el workflow de deploy construye las imágenes Docker y las publica en ghcr.io
-3. El servidor baja las nuevas imágenes y reinicia los contenedores
-4. Se ejecuta un health check automático
+2. Si el CI pasa → el workflow de deploy construye las imágenes Docker (CMS, migrator y portal) y las publica en ghcr.io
+3. El servidor (DEP-09) recibe `IMAGE_TAG=sha-<7 hex>` (el commit que pasó CI; `latest` solo es un alias de
+   publicación y nunca se despliega), lo valida y exige `/opt/unc-portal/.deploy-previous-tag`
+4. Baja las nuevas imágenes, hace un `pg_dump` verificado (`backups/pre-deploy-<UTC>.dump`, se omite si la base está vacía), ejecuta `cms-migrate` y solo si termina bien reinicia los contenedores
+5. **Gate de readiness (DEP-09):** por la red interna (`docker exec … wget`, no la URL pública) consulta
+   `unc-cms-prod` en `/api/health/ready` (`SELECT 1` a Postgres) y `unc-portal-prod` en `/api/health`, con
+   reintentos (`DEP09_READY_RETRIES`, 12 por defecto, cada `DEP09_READY_INTERVAL`, 5 s ⇒ ≈ 60 s)
+6. Si el gate pasa, escribe el tag nuevo en `.deploy-previous-tag`; después corre un health check externo
+   (DNS, TLS, nginx) que avisa pero no revierte
+
+Si el backup o la migración fallan, el deploy termina en rojo y la versión nueva NO se levanta (la anterior sigue sirviendo).
+
+### Rollback (DEP-09)
+
+Si `up -d` falla o el gate no responde, el propio deploy ejecuta
+`IMAGE_TAG=<tag previo> docker compose up -d --no-deps cms portal`, vuelve a pasar el gate, informa el resultado y
+**termina en rojo** (exit != 0) con `.deploy-previous-tag` sin tocar. No ejecuta `down` ni relanza `cms-migrate`.
+
+- **El rollback es solo de imagen.** Las migraciones ya aplicadas NO se revierten. Volver al sha anterior solo es
+  seguro si las migraciones del lote son retrocompatibles (patrón expandir/contraer).
+- Si no lo son, la restauración de datos es **manual**, con aprobación humana, desde el `pg_dump` previo
+  (`backups/pre-deploy-<UTC>.dump`; ver DEP-01/DEP-08) y se pierden las escrituras posteriores a ese dump.
+- Rollback manual a un sha concreto: `IMAGE_TAG=sha-xxxxxxx $COMPOSE up -d --no-deps cms portal` y, si quedó sano,
+  `echo sha-xxxxxxx > /opt/unc-portal/.deploy-previous-tag`.
+- Si el mensaje dice que el rollback «NO se recuperó», hay que intervenir a mano (`docker logs unc-cms-prod`).
+- Las imágenes previas deben seguir en el host: `docker image prune -f` solo borra imágenes colgantes, pero no limpies
+  con `prune -a` el sha anterior. Los tags antiguos se acumulan: bórralos a mano conservando al menos el último sano.
+- Primer deploy automático: sin `.deploy-previous-tag` el script aborta antes de tocar nada (ver Paso 16b).
+
+### Concurrencia, cortes y secretos del deploy (DEP-19a)
+
+- **Disparador:** el deploy solo corre si el CI que lo dispara fue un `push` verde a `main` **de este repositorio**
+  (no un PR de fork cuya rama se llame `main`).
+- **Un solo deploy a la vez:** `concurrency: deploy-prod` en GitHub (sin cancelar el que está en curso) y un
+  `flock -n` sobre `/opt/unc-portal/.deploy.lock` en el servidor. Si hay otro deploy en curso, el nuevo termina en
+  rojo con «Hay otro deploy en curso» sin tocar nada. **Requisito del servidor:** el binario `flock` (paquete
+  `util-linux`, presente en Debian/Ubuntu); sin él el deploy falla cerrado.
+- **Salida anormal:** el script escribe `/opt/unc-portal/.deploy-last-failure` (`<UTC> tag=<tag> rc=<n>`) y **no**
+  modifica `.deploy-previous-tag`. Un deploy sano lo borra. `command_timeout` del SSH es de 35 min (cota de peor
+  caso ≈ 29 min: migrate 630 s + dos gates + pull/backup/up; si cambias `DEP07_MIGRATE_TIMEOUT` o
+  `DEP09_READY_*`, recalcula).
+- **Migrador residual:** antes del `run` se elimina cualquier contenedor `unc-cms-migrate-prod` heredado
+  (`Exited` tras un `up` manual) y el `up -d` del deploy usa `--no-deps` con la lista de servicios **sin**
+  `cms-migrate`. Si añades un servicio al compose, añádelo a esa lista en `deploy.yml`. Un `up -d` manual sin
+  `--no-deps` sigue funcionando (relanza el migrador, idempotente).
+- **Secretos:** `GHCR_READ_TOKEN` y el actor llegan al servidor como variables de entorno (`envs` del ssh-action) y el
+  login usa `--password-stdin`; no se interpolan en el texto del script.
+- Pendiente de validar con servidor real: dos deploys consecutivos, `flock` del host, propagación de `envs` y
+  `command_timeout`. Detalle en `docs/specs/deploy/DEP-19a-correcciones-deploy.md`.
+
+> **No verificado con Docker/servidor reales** (solo con un shim de `docker` en `tests/deploy/dep09-deploy-rollback.test.mjs`):
+> el `wget` de las imágenes, el comportamiento de `up --no-deps` con `depends_on` y la propagación de `envs` de la acción SSH.
+> Detalle y riesgos en `docs/specs/deploy/DEP-09-health-y-rollback.md`.
 
 No es necesario acceder al servidor para deploys de rutina.
 
@@ -307,7 +442,7 @@ que el contenedor `unc-postgres-prod` esté en estado `healthy`.
 
 ### Las imágenes no cargan
 
-Verificar que `S3_PUBLIC_URL=https://files.unc.edu.py` esté en `.env.prod` y que
+Solo con `MEDIA_STORAGE=s3` (perfil `s3`, MIN-01): verificar que `S3_PUBLIC_URL=https://files.unc.edu.py` esté en `.env.prod` y que
 el bucket `unc-media` exista con política pública:
 
 ```bash

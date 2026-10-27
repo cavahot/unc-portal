@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react';
 import type { Navegacion } from '@unc/cms-types';
+import { safeHref } from '@/lib/security/safeUrl';
 
 interface MenuItem {
   label: string;
@@ -24,9 +25,12 @@ interface MegaMenuProps {
 }
 
 /**
- * Resolves a CMS navigation link to a portal href.
- * - `manual` links use the stored URL as-is.
- * - `relationship` links resolve to the related Pagina's full-path slug.
+ * Resuelve un enlace de navegación del CMS a un href del portal (DEP-19b).
+ * - `relationship`: `/<slug>` de la página relacionada.
+ * - `manual`: la URL guardada, siempre filtrada por `safeHref`.
+ * Amenaza que evita: quien edite el global Navegación (o una cuenta comprometida)
+ * guarda `javascript:`/`data:`/`//host` y el clic ejecuta código o sale a otro origen.
+ * Límite: no valida que el destino exista; una ruta relativa sin barra queda en `#`.
  */
 function resolveHref(link: {
   type: 'manual' | 'relationship';
@@ -34,13 +38,17 @@ function resolveHref(link: {
   page?: number | { slug: string } | null;
 }): string {
   if (link.type === 'relationship' && link.page && typeof link.page === 'object') {
-    return `/${link.page.slug}`;
+    return safeHref(`/${link.page.slug}`);
   }
 
-  return link.url || '#';
+  return safeHref(link.url);
 }
 
-function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
+/**
+ * Convierte el global Navegación en elementos de menú con hrefs saneados (DEP-19b).
+ * Se exporta para poder probar la defensa sin renderizar el menú completo.
+ */
+export function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
   return (navigation.links || []).map((link) => ({
     label: link.label,
     href: resolveHref(link),
@@ -548,7 +556,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                 </button>
               ) : (
                 <Link
-                  href={item.href}
+                  href={safeHref(item.href)}
                   aria-current={
                     isCurrent ? 'page' : undefined
                   }
@@ -586,7 +594,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                     </div>
 
                     <Link
-                      href={item.href}
+                      href={safeHref(item.href)}
                       onClick={closeDesktopMenu}
                       {...(isExternal(item.href) && { target: '_blank', rel: 'noopener noreferrer' })}
                       className="rounded-full border border-unc-400/25 bg-unc-600/10 px-3 py-1.5 text-xs font-medium text-unc-300 transition-colors hover:bg-unc-600/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
@@ -603,7 +611,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                       return (
                         <Link
                           key={child.label}
-                          href={child.href}
+                          href={safeHref(child.href)}
                           aria-current={
                             childIsCurrent
                               ? 'page'
@@ -773,7 +781,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                                 className="border-t border-white/[0.08] px-3 pb-3 pt-2"
                               >
                                 <Link
-                                  href={item.href}
+                                  href={safeHref(item.href)}
                                   onClick={closeMobileMenu}
                                   className="mb-1 block rounded-xl bg-unc-600/[0.15] px-3 py-3 text-sm font-medium text-unc-300 transition-colors hover:bg-unc-600/[0.22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unc-300"
                                 >
@@ -790,7 +798,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                                     return (
                                       <Link
                                         key={child.label}
-                                        href={child.href}
+                                        href={safeHref(child.href)}
                                         onClick={
                                           closeMobileMenu
                                         }
@@ -825,7 +833,7 @@ export default function MegaMenu({ navigation }: MegaMenuProps) {
                           </>
                         ) : (
                           <Link
-                            href={item.href}
+                            href={safeHref(item.href)}
                             onClick={closeMobileMenu}
                             aria-current={
                               isCurrent

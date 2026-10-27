@@ -1,23 +1,43 @@
 import { getPayload } from 'payload'
 import config from '../../../payload.config'
-import { logger, LogCategory } from '../../../../../lib/monitoring/logger'
+import { MONITORING_ROLES } from '../../../access/roles'
+import { logger, type LogCategory } from '../../../../../../lib/monitoring/logger'
+import {
+  internalError,
+  invalidParameter,
+  parseAllowed,
+  parseBoundedInt,
+  requireRole,
+} from '../../../utilities/routeGuard'
 
 export const dynamic = 'force-dynamic'
 
+// DEP-04: listas blancas; `category` compone el nombre del archivo de log, no debe aceptar texto libre.
+const CATEGORIES: readonly LogCategory[] = ['cms', 'portal', 'database', 'auth', 'api', 'security', 'performance']
+const LEVELS = ['debug', 'info', 'warn', 'error', 'critical'] as const
+
+/**
+ * DEP-04 (RDD-DEP-11): logs del servidor solo para superadmin y auditor.
+ * Amenaza: lectura de trazas internas por cualquier sesión y `category` como vector de ruta.
+ * Límite: los logs en archivo son por instancia; sin rate limit (DEP-06). Se corrigió además la
+ * ruta de importación del logger (apuntaba a `apps/lib`, TS2307).
+ */
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-
-  const category = (searchParams.get('category') || 'api') as LogCategory
-  const level = searchParams.get('level') as string | null
-  const limit = parseInt(searchParams.get('limit') || '100')
-  const hours = parseInt(searchParams.get('hours') || '24')
-
   try {
     const payload = await getPayload({ config })
-    const { user } = await payload.auth({ headers: request.headers })
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+
+    const guard = await requireRole(payload, request, MONITORING_ROLES)
+    if (!guard.ok) return guard.response
+
+    const { searchParams } = new URL(request.url)
+    const category = parseAllowed(searchParams.get('category'), CATEGORIES, 'api')
+    if (!category) return invalidParameter('category')
+    const level = parseAllowed(searchParams.get('level'), LEVELS, undefined)
+    if (level === null) return invalidParameter('level')
+    const limit = parseBoundedInt(searchParams.get('limit'), { min: 1, max: 200, fallback: 100 })
+    if (limit === null) return invalidParameter('limit')
+    const hours = parseBoundedInt(searchParams.get('hours'), { min: 1, max: 720, fallback: 24 })
+    if (hours === null) return invalidParameter('hours')
 
     let logs = logger.getLogs(category, limit)
 
@@ -38,9 +58,6 @@ export async function GET(request: Request) {
       logs: logs.reverse(), // Mostrar más recientes primero
     })
   } catch (error) {
-    return Response.json(
-      { error: 'Failed to fetch logs', details: String(error) },
-      { status: 500 }
-    )
+    return internalError('api/logs', error, 'Failed to fetch logs')
   }
 }

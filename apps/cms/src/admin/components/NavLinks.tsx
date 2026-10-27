@@ -3,11 +3,13 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { adminPath } from '../../config/adminRoute'
 
+// SEC-09: enlaces del panel construidos con adminPath (routes.admin = /accesoSeguro); /admin daba 404.
 const links = [
-  { href: '/admin/portal', icon: '📊', label: 'Dashboard' },
-  { href: '/admin/portal-monitoring', icon: '🔍', label: 'Monitoreo' },
-  { href: '/admin/portal-audit', icon: '📋', label: 'Auditoría' },
+  { href: adminPath('/portal'), icon: '📊', label: 'Dashboard' },
+  { href: adminPath('/portal-monitoring'), icon: '🔍', label: 'Monitoreo' },
+  { href: adminPath('/portal-audit'), icon: '📋', label: 'Auditoría' },
 ]
 
 export const CustomNavLinks: React.FC = () => {

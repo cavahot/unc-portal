@@ -79,6 +79,38 @@
       }
     }
   },
+  "awards": {
+    "sectionLabel": "Qualidade reconhecida",
+    "title": "Prêmios e acreditações",
+    "description": "Distinções à gestão e programas acreditados por órgãos nacionais de avaliação da qualidade.",
+    "awardedBy": "Concedido por {name}",
+    "officialSite": "Site oficial",
+    "source": "Fonte",
+    "externalHint": "abre em uma nova aba",
+    "editionsTitle": "Edições em que fomos distinguidos",
+    "distinction": {
+      "premio": "Prêmio",
+      "premioCategoria": "Prêmio por categoria",
+      "mencionEspecial": "Menção especial",
+      "reconocimiento": "Reconhecimento"
+    },
+    "accreditations": {
+      "title": "Acreditações",
+      "body": "Agência Nacional de Avaliação e Acreditação da Educação Superior (ANEAES)",
+      "model": {
+        "modeloNacional": "Modelo Nacional",
+        "arcuSur": "ARCU-SUL"
+      },
+      "organism": {
+        "aneaes": "ANEAES",
+        "arcusur": "ARCU-SUL",
+        "otro": "Outro órgão"
+      },
+      "validUntil": "até {year}",
+      "otherPrograms": "Outros programas acreditados"
+    },
+    "logoAlt": "Logo de {name}"
+  },
   "institutional": {
     "label": "Universidade pública",
     "title": "Excelência acadêmica, pesquisa e inovação",

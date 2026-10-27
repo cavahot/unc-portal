@@ -1,45 +1,45 @@
 {
-  "ariaLabel": "Navegación principal",
-  "skipLink": "Saltar al contenido principal",
-  "homeAriaLabel": "Ir al inicio de la Universidad Nacional de Concepción",
-  "logoAlt": "Logotipo oficial de la Universidad Nacional de Concepción",
+  "ariaLabel": "Poravorã guasu",
+  "skipLink": "Eho tetepy guasúpe",
+  "homeAriaLabel": "Eho Universidad Nacional de Concepción ñepyrũme",
+  "logoAlt": "Universidad Nacional de Concepción logotipo oficial",
   "brandName": "Universidad Nacional",
   "brandLocation": "de Concepción",
   "brandTagline": "Marcando el Norte",
-  "searchAriaLabel": "Buscar en el portal institucional",
-  "searchTitle": "Buscar",
+  "searchAriaLabel": "Eheka portal institucional-pe",
+  "searchTitle": "Eheka",
   "aulaVirtual": "Aula Virtual",
-  "aulaVirtualAriaLabel": "Acceder al Aula Virtual. Abre en una nueva pestaña",
+  "aulaVirtualAriaLabel": "Eike Aula Virtual-pe. Ojepe'a tendayke pyahúpe",
   "intranet": "Intranet",
-  "intranetAriaLabel": "Acceder a la Intranet. Abre en una nueva pestaña",
-  "openMenu": "Abrir menú de navegación",
-  "closeMenu": "Cerrar menú de navegación",
-  "mainMenu": "Menú principal",
-  "relatedLinks": "Accesos institucionales relacionados",
-  "viewSection": "Ver sección",
-  "viewMainSection": "Ver sección principal",
-  "searchInPortal": "Heka portalpe",
+  "intranetAriaLabel": "Eike Intranet-pe. Ojepe'a tendayke pyahúpe",
+  "openMenu": "Embojuruja poravorã",
+  "closeMenu": "Emboty poravorã",
+  "mainMenu": "Poravorã guasu",
+  "relatedLinks": "Joaju institucional-kuéra",
+  "viewSection": "Ehecha pehẽ",
+  "viewMainSection": "Ehecha pehẽ guasu",
+  "searchInPortal": "Eheka portal-pe",
   "items": {
     "inicio": "Ñepyrũ",
-    "institucional": "Mba'apohára",
-    "facultades": "Mokõi Tetãgua Jeporu",
+    "institucional": "Temimoĩmby",
+    "facultades": "Facultad-kuéra",
     "noticias": "Marandu",
-    "preguntasFrecuentes": "Preguntas Frecuentes",
+    "preguntasFrecuentes": "Porandu py'ỹiguáva",
     "contactos": "Ñomongeta",
-    "academia": "Mbo'ehára"
+    "academia": "Academia"
   },
   "institutional": {
-    "historia": "Historia",
-    "misionVisionValores": "Misión, Visión y Valores",
+    "historia": "Tembiasakue",
+    "misionVisionValores": "Misión, Visión ha Valores",
     "marcoLegal": "Marco Legal",
     "organigrama": "Organigrama",
-    "autoridades": "Autoridades",
-    "transparenciaLey5189": "Transparencia Ley 5.189",
-    "transparenciaLey5282": "Transparencia Ley 5.282",
-    "informacionPublica": "Información Pública",
+    "autoridades": "Mburuvichakuéra",
+    "transparenciaLey5189": "Transparencia Léi 5.189",
+    "transparenciaLey5282": "Transparencia Léi 5.282",
+    "informacionPublica": "Tetãgua marandu",
     "tramites": "Trámites",
-    "titulos": "Títulos",
-    "solicitarTitulo": "Solicitar Título",
+    "titulos": "Título-kuéra",
+    "solicitarTitulo": "Ejerure título",
     "legalizaciones": "Legalizaciones",
     "convenios": "Convenios",
     "tribunalElectoral": "Tribunal Electoral"
@@ -54,12 +54,12 @@
     "arancelesRectorado": "Aranceles Rectorado"
   },
   "contactos": {
-    "porDependencia": "Contactos por dependencia"
+    "porDependencia": "Ñomongeta dependencia rupi"
   },
   "academia": {
     "direccionAcademica": "Dirección General Académica",
     "aseguramientoCalidad": "Aseguramiento de la Calidad",
-    "investigacion": "Investigación",
+    "investigacion": "Jeporekapy",
     "extensionVinculacion": "Extensión y Vinculación",
     "bienestarInstitucional": "Bienestar Institucional",
     "revistasAcademicas": "Revistas Académicas",
@@ -67,28 +67,28 @@
   },
   "footer": {
     "institutional": {
-      "title": "Mba'apohára",
-      "ariaLabel": "Enlaces institucionales",
-      "autoridades": "Autoridades",
-      "historia": "Historia",
-      "misionVision": "Misión y Visión",
+      "title": "Temimoĩmby",
+      "ariaLabel": "Joaju institucional-kuéra",
+      "autoridades": "Mburuvichakuéra",
+      "historia": "Tembiasakue",
+      "misionVision": "Misión ha Visión",
       "organigrama": "Organigrama"
     },
     "services": {
-      "title": "Servicios",
-      "ariaLabel": "Servicios institucionales",
-      "carreras": "Carreras",
+      "title": "Pytyvõkuéra",
+      "ariaLabel": "Temimoĩmby pytyvõkuéra",
+      "carreras": "Carrera-kuéra",
       "tramites": "Trámites",
       "transparencia": "Transparencia",
       "contacto": "Ñomongeta"
     },
     "academia": {
-      "title": "Mbo'ehára",
-      "ariaLabel": "Enlaces académicos",
-      "investigacion": "Investigación",
+      "title": "Academia",
+      "ariaLabel": "Joaju académico-kuéra",
+      "investigacion": "Jeporekapy",
       "extension": "Extensión universitaria",
       "noticias": "Marandu",
-      "calendarioAcademico": "Calendario académico"
+      "calendarioAcademico": "Arapapaha académico"
     }
   }
 }

@@ -1198,3 +1198,48 @@
   outline: 3px solid #5cff5c !important;
   outline-offset: 3px !important;
 }
+/* MAP-01: pulso sutil del pin del mapa del campus; solo si el usuario no pidió menos movimiento. */
+@media (prefers-reduced-motion: no-preference) {
+  .campus-map-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: soft-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+/* LT-01: aparición de cada hito de la línea de tiempo de /historia al entrar en pantalla.
+   Mejora progresiva solo con CSS: sin soporte de `animation-timeline`, sin JS o con
+   `prefers-reduced-motion: reduce`, los hitos se ven desde el inicio (no repite RDD-MLG-05).
+   Solo opacidad y desplazamiento; en impresión no hay animación. */
+@keyframes lt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .lt-reveal {
+      animation: lt-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 55%;
+    }
+  }
+}
+
+/* FAC-01: deriva lenta de la foto de la página de facultad (la única imagen en movimiento de la página).
+   Solo transform; sin movimiento con `prefers-reduced-motion: reduce` ni al imprimir. */
+@keyframes fac-drift {
+  from { transform: scale(1.06) translate3d(-1%, 0, 0); }
+  to { transform: scale(1.06) translate3d(1%, -1%, 0); }
+}
+@media screen and (prefers-reduced-motion: no-preference) {
+  .fac-drift {
+    animation: fac-drift 24s ease-in-out infinite alternate;
+  }
+}

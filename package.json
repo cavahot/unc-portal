@@ -6,7 +6,7 @@
     "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start -p 3001",
-    "lint": "next lint",
+    "lint": "eslint app components lib i18n proxy.ts --ext .ts,.tsx,.js,.mjs",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit --project tsconfig.portal.json",
     "test": "vitest run --config vitest.config.ts",
     "test:int": "vitest run --config vitest.int.config.ts",
@@ -41,13 +41,13 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@sentry/nextjs": "^10.69.0",
+    "@sentry/nextjs": "^10.76.2",
     "@unc/cms-types": "*",
-    "next": "^16.2.12",
+    "next": "^16.4.3",
     "next-intl": "^4.13.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "zod": "^3.23.8"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.45.0",
@@ -68,12 +68,12 @@
     "vitest": "^4.1.10"
   },
   "overrides": {
-    "sharp": "^0.35.3",
-    "undici": "^7.29.0",
+    "sharp": "^0.35.5",
+    "undici": "^7.30.1",
     "postcss": "^8.5.26",
-    "fast-uri": "^4.1.2",
-    "js-yaml": "^4.3.1",
-    "brace-expansion": "^1.1.18"
+    "fast-uri": "^4.2.3",
+    "js-yaml": "^4.3.2",
+    "brace-expansion": "^1.1.21"
   },
   "workspaces": [
     "apps/*",
@@ -83,7 +83,7 @@
     "node": ">=20.9.0"
   },
   "allowScripts": {
-    "sharp@0.35.3": true,
+    "sharp@0.35.5": true,
     "unrs-resolver@1.12.2": true,
     "esbuild@0.25.12": true
   },

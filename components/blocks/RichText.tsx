@@ -1,3 +1,6 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
+
 // ── Types ──────────────────────────────────────────────────────────────
 
 type LexicalNode = Record<string, unknown> & { type: string; children?: LexicalNode[] }
@@ -91,7 +94,7 @@ function serializeNode(node: LexicalNode, key: string): React.ReactNode {
       )
 
     case 'link': {
-      const url = (node.url as string) || '#'
+      const url = safeHref(node.url)
       const isExternal = url.startsWith('http')
       return (
         <a

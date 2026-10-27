@@ -50,33 +50,37 @@ export default function Header({ navigation }: HeaderProps) {
 
       <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-[72px] items-center gap-3 xl:h-20">
-          {/* Identidad institucional */}
+          {/* Identidad institucional.
+              UI-HDR-01: sin borde ni anillo de color al enfocar (decisión del PO); el foco de teclado se
+              marca con un fondo suave para no perder la señal de navegación (WCAG 2.4.7). */}
           <Link
             href="/"
             aria-label={t('homeAriaLabel')}
-            className="group flex shrink-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#004700]"
+            className="group flex shrink-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:bg-white/10"
           >
-            <div className="relative h-12 w-12 shrink-0 transition-transform duration-300 group-hover:scale-[1.04] xl:h-14 xl:w-14">
+            {/* UI-HDR-02: mismo estilo de identidad que el pie (logo grande, nombre y lema). */}
+            <div className="relative h-14 w-14 shrink-0 transition-transform duration-300 group-hover:scale-[1.04] xl:h-16 xl:w-16">
               <Image
                 src="/images/logo.png"
                 alt={t('logoAlt')}
                 fill
                 priority
-                sizes="(min-width: 1280px) 56px, 48px"
+                sizes="(min-width: 1280px) 64px, 56px"
                 className="object-contain"
               />
             </div>
 
             <div className="hidden 2xl:block">
-              <span className="block whitespace-nowrap text-sm font-semibold leading-tight text-white">
+              {/* "de Concepción" comparte la tipografía de "Universidad Nacional" (decisión del PO). */}
+              <span className="block whitespace-nowrap text-base font-semibold leading-tight text-white">
                 {t('brandName')}
               </span>
 
-              <span className="block whitespace-nowrap text-xs leading-tight text-white/70">
+              <span className="block whitespace-nowrap text-base font-semibold leading-tight text-white">
                 {t('brandLocation')}
               </span>
 
-              <span className="mt-0.5 block text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-[#8AFF8A]">
+              <span className="mt-1 block text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-[#8AFF8A]">
                 {t('brandTagline')}
               </span>
             </div>

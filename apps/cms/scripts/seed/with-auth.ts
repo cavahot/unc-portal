@@ -1,6 +1,7 @@
 import { config as loadEnv } from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { requireSeedAdminPassword } from './seedAdminPassword'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -14,6 +15,8 @@ async function seedWithAuth() {
   const CMS_URL = 'http://localhost:3002'
 
   try {
+    // SEC-08: valida la contraseña ANTES de cualquier lectura/escritura; falla si falta, es débil o NODE_ENV=production.
+    const seedAdminPassword = requireSeedAdminPassword()
     // Step 1: Login first
     console.log('[SeedAuth] Attempting to login...')
     const loginRes = await fetch(`${CMS_URL}/api/users/login`, {
@@ -21,7 +24,7 @@ async function seedWithAuth() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: 'admin@unc.edu.py',
-        password: process.env.SEED_ADMIN_PASSWORD ?? 'Admin@2026',
+        password: seedAdminPassword,
       }),
     })
 

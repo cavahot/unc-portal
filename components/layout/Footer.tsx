@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { getT } from '@/lib/i18n/server';
 import { Link } from '@/i18n/navigation';
+import CampusMap from '@/components/layout/CampusMap'; // MAP-01
+import { safeHref } from '@/lib/security/safeUrl'; // DEP-19b: defensa en profundidad (hoy los enlaces son literales)
 
 type FooterLinkItem = {
   label: string;
@@ -352,12 +354,13 @@ function FooterNavigationLink({
 }) {
   return (
     <Link
-      href={item.href}
-      className="group inline-flex items-center gap-2 rounded-md py-1 text-sm text-white/65 transition-colors duration-200 hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
+      href={safeHref(item.href)}
+      className="group relative inline-flex items-center rounded-md py-1 text-sm text-white/65 transition-colors duration-200 hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
     >
-      <span>{item.label}</span>
+      {/* nowrap en lg+: la flecha es absoluta para no restar ancho a la etiqueta */}
+      <span className="lg:whitespace-nowrap">{item.label}</span>
 
-      <span className="-translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100">
+      <span className="pointer-events-none absolute left-full top-1/2 ml-1.5 -translate-x-1 -translate-y-1/2 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100">
         <ArrowIcon />
       </span>
     </Link>
@@ -451,10 +454,10 @@ export default async function Footer({ locale }: { locale: string }) {
         className="pointer-events-none absolute left-1/2 top-0 -z-10 h-52 w-52 -translate-x-1/2 rounded-full bg-[#5CFF5C]/10 blur-3xl"
       />
 
-      <div className="mx-auto max-w-7xl px-5 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+      <div className="mx-auto max-w-[1536px] px-5 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-8 2xl:gap-10">
           {/* Identidad institucional */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 2xl:col-span-3">
             <Link
               href="/"
               aria-label={t('goHome')}
@@ -475,7 +478,8 @@ export default async function Footer({ locale }: { locale: string }) {
                   {t('universidadNacional')}
                 </span>
 
-                <span className="block text-sm leading-tight text-white/70">
+                {/* UI-FTR-01: "de Concepción" comparte la tipografía de "Universidad Nacional" (decisión del PO). */}
+                <span className="block text-base font-semibold leading-tight text-white">
                   {t('deConcepcion')}
                 </span>
 
@@ -499,7 +503,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 {socialLinks.map((social) => (
                   <a
                     key={social.label}
-                    href={social.href}
+                    href={safeHref(social.href)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={t('visitSocial', { network: social.label })}
@@ -514,7 +518,7 @@ export default async function Footer({ locale }: { locale: string }) {
           </div>
 
           {/* Navegación institucional */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-3 lg:col-span-5">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:col-span-8 2xl:col-span-4">
             <FooterNavigationColumn
               title={t('institutional')}
               links={institutionalLinks}
@@ -536,9 +540,11 @@ export default async function Footer({ locale }: { locale: string }) {
             </div>
           </div>
 
-          {/* Contacto institucional */}
-          <div className="lg:col-span-3">
+          {/* Contacto institucional: 2 columnas internas desde md (datos | mapa) para igualar alturas */}
+          <div className="lg:col-span-12 2xl:col-span-5">
             <div className="rounded-3xl border border-white/15 bg-[#001A00]/45 p-5 shadow-[0_22px_48px_-26px_rgba(0,26,0,0.9)] backdrop-blur-sm sm:p-6">
+              <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+              <div className="flex flex-col">
               <span className="text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-[#8AFF8A]">
                 {t('rectorado')}
               </span>
@@ -598,51 +604,59 @@ export default async function Footer({ locale }: { locale: string }) {
 
               <Link
                 href="/contacto"
-                  className="footer-contact-button group mt-6"              >
+                  className="footer-contact-button group mt-6 self-start"
+              >
                 {t('seeContactInfo')}
 
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
                   <ArrowIcon />
                 </span>
               </Link>
+              </div>
+
+              {/* MAP-01: mapa con carga bajo demanda (sin pedidos a Google hasta el clic) */}
+              <div className="md:max-w-sm md:justify-self-end 2xl:max-w-none">
+              <CampusMap
+                labels={{
+                  title: t('mapTitle'), loadButton: t('mapLoad'), directions: t('mapDirections'),
+                  openInMaps: t('mapOpen'), posterLabel: t('mapPosterLabel'),
+                  iframeTitle: t('mapIframeTitle'), address: t('addressOneLine'),
+                }}
+              />
+              </div>
+
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Barra legal inferior */}
-        <div className="mt-10 flex flex-col gap-5 border-t border-white/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        {/* Barra legal inferior: misma rejilla de 3 zonas (copyright | legales | MITIC) */}
+        <div className="mt-10 grid gap-5 border-t border-white/15 pt-6 sm:grid-cols-3 sm:items-center">
           <p className="text-center text-xs leading-5 text-white/50 sm:text-left">
             {t('allRightsReserved', { year: currentYear })}
           </p>
 
           <nav
             aria-label={t('legalInfo')}
-            className="flex flex-wrap justify-center gap-x-5 gap-y-2 sm:justify-end"
+            className="flex flex-wrap justify-center gap-x-5 gap-y-2"
           >
-            <Link
-              href="/privacidad"
-              className="rounded text-xs text-white/50 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
-            >
-              {t('privacyPolicy')}
-            </Link>
-
-            <Link
-              href="/accesibilidad"
-              className="rounded text-xs text-white/50 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
-            >
-              {t('accessibility')}
-            </Link>
-
-            <Link
-              href="/mapa-sitio"
-              className="rounded text-xs text-white/50 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
-            >
-              {t('sitemap')}
-            </Link>
+            {[
+              { href: '/privacidad', label: t('privacyPolicy') },
+              { href: '/accesibilidad', label: t('accessibility') },
+              { href: '/mapa-sitio', label: t('sitemap') },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={safeHref(item.href)}
+                className="rounded text-xs text-white/50 transition-colors hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
-          <div className="flex flex-col items-center gap-2 sm:items-end">
-            <p className="text-center text-[0.6rem] text-white/30 sm:text-right">
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-end sm:gap-4">
+            <p className="text-center text-[0.65rem] leading-4 text-white/40 sm:text-right">
               {t('miticStandard')}{' '}
               <a
                 href="https://mitic.gov.py/materiales/norma-de-gobierno-linea-grafica/"
@@ -658,7 +672,7 @@ export default async function Footer({ locale }: { locale: string }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={t('miticAriaLabel')}
-              className="opacity-70 transition-opacity hover:opacity-100"
+              className="shrink-0 opacity-70 transition-opacity hover:opacity-100"
             >
               <MiticLogo />
             </a>

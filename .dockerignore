@@ -12,6 +12,10 @@ packages/*/node_modules/
 .env
 .env.*
 !.env.example
+# VERIF-DOCKER-02: .env de CUALQUIER subdirectorio (p. ej. apps/cms/.env con secretos de dev) tampoco entra al contexto
+**/.env
+**/.env.*
+!**/.env.example
 infrastructure/docker/.env
 infrastructure/docker/.env.prod
 
@@ -41,3 +45,10 @@ playwright-report/
 # ── Backups / temp ────────────────────────────────────────────
 backups/
 scratch/
+
+# DEP-01: dumps de BD (posible PII) fuera del contexto de build
+setup/*.dump
+setup/*.dump.gz
+
+# MIG-IMG fase 1: archivos subidos en desarrollo; nunca deben entrar al contexto ni a las capas de la imagen.
+apps/cms/media

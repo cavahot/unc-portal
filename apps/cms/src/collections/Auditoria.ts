@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { canReadAuditLog } from '../access/roles'
+
 export const Auditoria: CollectionConfig = {
   slug: 'auditoria',
   labels: {
@@ -13,10 +15,16 @@ export const Auditoria: CollectionConfig = {
     description: 'Registro de eventos y acciones en el sistema',
   },
   access: {
-    read: async ({ req }) => !!req.user,
-    create: ({ req }) => Boolean(req.user),
-    update: async ({ req }) => !!req.user && req.user?.role === 'superadmin',
-    delete: async ({ req }) => !!req.user && req.user?.role === 'superadmin',
+    // DEP-04 (RDD-DEP-11): solo superadmin y auditor leen el log (contiene emails e IP).
+    // Política PROVISIONAL de solo estrechamiento; la matriz final es de SEC-03.
+    read: canReadAuditLog,
+    // SEC-05: clientes REST/GraphQL no crean eventos falsos, ni aun con rol superadmin.
+    // logAudit() escribe desde el servidor por Local API; auditar sus llamadas por separado.
+    create: () => false,
+    // DEP-04: el log no es mutable. Amenaza: borrar o reescribir evidencia con una cuenta
+    // comprometida. Límite: un acceso directo a la BD o una migración no pasa por estas ACL.
+    update: () => false,
+    delete: () => false,
   },
   fields: [
     {
@@ -75,6 +83,8 @@ export const Auditoria: CollectionConfig = {
       name: 'fechaHora',
       type: 'date',
       required: true,
+      // PERF-DB: el log se ordena/filtra por fecha; índice para que el coste no crezca con la tabla.
+      index: true,
       admin: {
         description: 'Fecha y hora del evento',
       },

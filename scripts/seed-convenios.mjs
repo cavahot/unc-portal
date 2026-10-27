@@ -1,94 +1,171 @@
-// scripts/seed-convenios.mjs
-// Usage: node scripts/seed-convenios.mjs
-// Env: CMS_URL (default: http://localhost:3002), CMS_EMAIL, CMS_PASSWORD
+/**
+ * seed-convenios.mjs — CNV-01
+ *
+ * Siembra en el CMS los 149 convenios vigentes del sitio anterior (150 publicados, menos 1 duplicado excluido): 104 nacionales
+ * (106 publicados; 1 duplicado excluido y 1 movida a internacionales por decisión del PO, 2026-10-24)
+ * (https://www.unc.edu.py/convenios-nacionales/) y 45 internacionales (44 publicados + la UFGD 2009)
+ * (https://www.unc.edu.py/convenios-internacionales-de-la-unc/). Datos en scripts/lib/conveniosSeedData.mjs
+ * (generado). Después el CMS es la única fuente: se editan desde el panel.
+ * Spec: docs/specs/portal/CONVENIOS.md §5 y escenario 10.
+ *
+ * Uso:
+ *   node scripts/seed-convenios.mjs --dry-run                          # sin red
+ *   CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-convenios.mjs     # CMS local (localhost:3002)
+ *   ... node scripts/seed-convenios.mjs --fill-empty                   # completa SOLO nota/enlace vacíos
+ *   CMS_URL=https://... node scripts/seed-convenios.mjs --allow-remote # explícito; solo https
+ *
+ * Reglas (amenaza -> control):
+ *   - Escribir en un CMS equivocado -> solo localhost salvo --allow-remote (y entonces solo https).
+ *   - Credencial débil o literal -> `requireCmsPassword` (SEC-08); el correo viene de CMS_EMAIL; nada se imprime.
+ *   - Duplicar filas al re-ejecutar -> GET por clave natural exacta (tipo + año + denominación + participantes)
+ *     antes de cada POST.
+ *   - Pisar ediciones del PO -> una fila existente no se modifica. Única excepción, explícita: --fill-empty
+ *     completa `nota` y `driveUrl` SOLO si en el CMS están vacíos (nunca reemplaza un valor cargado por el PO).
+ *   - Saturar el CMS -> pausa entre escrituras.
+ * Límite: no comprueba que los archivos de Drive sigan accesibles. Los valores del dataset ya están corregidos
+ * (capa conveniosCorrections.mjs); si el PO edita una denominación/participantes en el panel, la clave cambia y una
+ * nueva ejecución crearía una copia: no re-ejecutar el seed después de editar en el panel (spec §8).
+ */
+import { pathToFileURL } from 'node:url'
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
+import { CONVENIOS_TODOS, toCmsPayloadConvenio } from './lib/conveniosSeedData.mjs'
 
-const CMS_URL = process.env.CMS_URL ?? 'http://localhost:3002'
-const EMAIL    = process.env.CMS_EMAIL
-const PASSWORD = process.env.CMS_PASSWORD
+const PACE_MS = 120
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-const RECORDS = [
-  // Nacional
-  { year: 2012, type: 'nacional', title: 'Convenio Interinstitucional', parties: 'Universidad Nacional de Concepción y la Universidad Nacional de Asunción', signedMonth: '23 de Noviembre', duration: '5 Años', objective: 'Establecer una relación de cooperación interinstitucional entre ambas universidades nacionales del Paraguay', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2012, type: 'nacional', title: 'Convenio de Cooperación Interinstitucional', parties: 'Universidad Nacional de Concepción y Organización Multidisciplinaria de Apoyo a Profesores y Alumnos (OMAPA)', signedMonth: '28 de Marzo', duration: '3 Años', objective: 'Promover actividades tendientes a fomentar el avance de los jóvenes paraguayos en su formación intelectual y desarrollo integral como personas', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2012, type: 'nacional', title: 'Acuerdo Institucional', parties: 'Asociación de Universidades Públicas del Paraguay y el Ministerio de Educación y Cultura', signedMonth: '16 de Marzo', duration: '1 Año', objective: 'Propiciar la implementación del Programa de Concesión de Becas de Estudios Universitarios', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2012, type: 'nacional', title: 'Convenio de Cooperación Interinstitucional', parties: 'Universidad Nacional de Concepción y la Gobernación de Boquerón', signedMonth: '03 de Febrero', duration: '2 Años', objective: 'Desarrollar acciones conjuntas en investigación y regular la cooperación interinstitucional para el acceso a plazas en programas de Práctica Supervisada de Pregrado', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2011, type: 'nacional', title: 'Convenio Específico', parties: 'Universidad Nacional de Concepción y la Fundación Parque Tecnológico Itaipú – Paraguay', signedMonth: '29 de Diciembre', duration: '3 Meses', objective: "Ejecutar el proyecto 'Las Tic's en el Proceso Educativo como herramienta de Inclusión Social', Proyecto Adjudicado del Programa Retorno Social de Becarios de Itaipú", driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2011, type: 'nacional', title: 'Convenio Marco de Colaboración', parties: 'Universidad Nacional de Concepción y la Fundación Universitaria Iberoamericana (FUNIBER)', signedMonth: '04 de Agosto', duration: '5 Años', objective: 'Colaborar en la ejecución de programas académicos con modalidad presencial, semi-presencial o a distancia, y actividades de extensión universitaria', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2011, type: 'nacional', title: 'Acuerdo de Cooperación', parties: 'Universidad Nacional de Concepción y la Itaipú Binacional', signedMonth: '07 de Julio', duration: '1 Año', objective: "Establecer bases y condiciones para el desarrollo del Programa 'Becas de Estudios Universitarios – Carrera Completa'", driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2010, type: 'nacional', title: 'Convenio de Cooperación Interinstitucional', parties: 'Universidad Nacional de Concepción y el Ministerio de Salud Pública y Bienestar Social', signedMonth: '05 de Febrero', duration: '2 Años', objective: 'Regular la relación interinstitucional en materia de actividades académicas de los estudiantes en los programas de Prácticas Supervisadas de Pregrado', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2010, type: 'nacional', title: 'Convenio Marco de Cooperación', parties: 'Universidad Nacional de Concepción y la Asociación de Funcionarios de la Universidad Nacional de Concepción (AFUNC)', signedMonth: '12 de Enero', duration: '2 Años', objective: 'Ceder parte de la UNC en usufructo a la AFUNC para la constitución de su local y autorizar a la AFUNC la invocación de la UNC para gestionar fondos', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2009, type: 'nacional', title: 'Convenio de Cooperación', parties: 'Universidad Nacional de Concepción y la Secretaría Ejecutiva de la Comisión Nacional de Conmemoración del Bicentenario', signedMonth: '24 de Setiembre', duration: '5 Años', objective: 'Colaborar mutuamente en actividades del ámbito de la cultura, educación, difusión y apoyo técnico para la celebración del Bicentenario de la Independencia Patria', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2009, type: 'nacional', title: 'Convenio de Cooperación', parties: 'Universidad Nacional de Concepción y la Universidade Federal da Grande Dourados', signedMonth: '11 de Setiembre', duration: '5 Años', objective: 'Impulsar una colaboración basada en la igualdad, asistencia mutua, cooperación en programas de enseñanza e investigación para mejorar la capacitación de docentes, técnicos y estudiantes', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2009, type: 'nacional', title: 'Convenio Marco de Cooperación', parties: 'Universidad Nacional de Concepción y la Secretaría de la Información y Comunicación para el Desarrollo de la República', signedMonth: '18 de Junio', duration: '5 Años', objective: 'Ayudar al fortalecimiento de ambas Instituciones en educación técnica y superior, investigación, extensión universitaria y actualización de profesionales', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2007, type: 'nacional', title: 'Convenio de Cooperación', parties: 'Universidad Nacional de Concepción y COOMECIPAR', signedMonth: '30 de Octubre', duration: '1 Año', objective: 'Ejecutar proyectos conjuntos, prestación de servicios, realización de Conferencias, Cursos y eventos Culturales e iniciativas de emprendimiento', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2007, type: 'nacional', title: 'Convenio de Cooperación Interinstitucional', parties: 'Universidad Nacional de Itapúa (Facultad de Medicina) y la Universidad Nacional de Concepción', signedMonth: '11 de Junio', objective: 'Apoyar el funcionamiento inicial de la UNC, posibilitando el usufructo de las instalaciones físicas de la Facultad de Medicina de Concepción', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2005, type: 'nacional', title: 'Convenio con el Ministerio de Salud Pública y Bienestar Social', parties: 'Universidad Nacional de Itapúa (Facultad de Medicina) y el Ministerio de Salud Pública y Bienestar Social', signedMonth: 'Enero', duration: 'Indefinido', objective: 'Cooperar mutuamente en actividades científicas, tecnológicas, formación de recursos humanos y prestación de servicios', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  // Internacional
-  { year: 2017, type: 'internacional', title: 'Acuerdo de Cooperación Interuniversitaria', parties: 'Universidad Nacional de Concepción — contraparte pendiente de confirmación oficial', objective: 'Acuerdo pendiente de carga completa en el sistema de gestión institucional', active: true },
-  { year: 2016, type: 'internacional', title: 'Convenio Marco de Cooperación Académica', parties: 'Universidad Nacional de Concepción y la Universidad Autónoma de San Luis Potosí (México)', signedMonth: '12 de Abril', duration: '5 Años', objective: 'Establecer lazos permanentes de Cooperación Interinstitucional e Intercambio recíproco en actividades de movilidad estudiantil, docencia, investigación y extensión', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2015, type: 'internacional', title: 'Convenio Marco de Cooperación', parties: 'Facultad de Medicina UNC y la Universidad Favaloro (Argentina)', signedMonth: '27 de Julio', duration: '2 Años', objective: 'Cooperar recíprocamente en la programación de acciones tendientes a lograr aportes concretos en las áreas de docencia, investigación, capacitación y actividades de interés común', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2015, type: 'internacional', title: 'Convenio Específico de Colaboración', parties: 'Facultad de Medicina UNC y Facultad de Medicina de la Universidad de Buenos Aires (Argentina)', signedMonth: '11 de Marzo', duration: '3 Años', objective: 'Establecer relaciones de colaboración mutua en actividades de carácter científico-tecnológico, docente, de divulgación y educación para la salud', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2014, type: 'internacional', title: 'Convenio de Intercambio y Cooperación Académica', parties: 'Universidad Nacional de Concepción y la Universidad de Burgos, España', signedMonth: '04 de Diciembre', duration: '3 Años', objective: 'Promover el entendimiento internacional para el intercambio de información académica y de educación, mediante intercambio de estudiantes, docentes y actividades conjuntas de investigación', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2014, type: 'internacional', title: 'Convenio de Cooperación — Renovación', parties: 'Universidad Nacional de Concepción y la Universidade Federal da Grande Dourados (Brasil)', signedMonth: '29 de Abril', duration: '5 Años', objective: 'Impulsar una colaboración basada en igualdad y asistencia mutua, participando en la cooperación de programas de enseñanza e investigación (renovación del convenio de 2009)', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2014, type: 'internacional', title: 'Convenio de Cooperación', parties: 'Universidad Nacional de Concepción y la Universidad Federal de Santa María (Brasil)', signedMonth: '26 de Junio', duration: '5 Años', objective: 'Estimular e implementar programas de cooperación técnico-científica y cultural, incluyendo transferencia de conocimientos e intercambio de docentes, alumnos y técnico-administrativos', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2014, type: 'internacional', title: 'Convenio de Cooperación Interinstitucional', parties: 'Universidad Nacional de Concepción y el Instituto Latinoamericano de Estudios Superiores (ILES – PAMAM S.A.)', signedMonth: '27 de Mayo', duration: '3 Años', objective: 'Establecer y desarrollar mecanismos de mutua colaboración para promover el desarrollo y difusión de la cultura, la investigación científica y tecnológica', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2014, type: 'internacional', title: 'Convenio de Cooperación y Movilidad Internacional', parties: 'Universidad Nacional de Concepción y la Universidad de Deusto, España (Programa Erasmus Mundus Action 2 Lot 14 SUD-UE)', signedMonth: '30 de Abril', duration: '3 Años', objective: 'Mejorar la calidad de la educación superior y promover cooperación entre Europa y América del Sur con becas de movilidad para estudiantes y trabajadores', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2013, type: 'internacional', title: 'Convenio de Cooperación', parties: 'Universidad Nacional de Concepción (Facultad de Odontología) y Gobernaciones Rotarias de los Distritos 4970 y 4980 (Uruguay)', signedMonth: '05 de Marzo', duration: '1 Año', objective: 'Realizar intercambios de capacitaciones en filosofía y técnica PRAT, implementación de estrategias y seguimiento de proyectos APS en salud bucal', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2011, type: 'internacional', title: 'Convenio de Cooperación', parties: 'Universidad Nacional de Concepción y la Universidad Nacional Mayor de San Marcos (Lima, Perú)', signedMonth: '31 de Marzo', duration: '5 Años', objective: 'Establecer una cooperación académico-científico-cultural desarrollando programas conjuntos de investigación e intercambio de docentes, alumnos y resultados científicos', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2011, type: 'internacional', title: 'Convenio de Cooperación', parties: 'Universidad Nacional de Concepción y la Universidad Inca Garcilaso de la Vega (Lima, Perú)', signedMonth: '30 de Marzo', duration: '5 Años', objective: 'Establecer una cooperación académico-científico-cultural desarrollando programas conjuntos de investigación, intercambio de recursos humanos y publicación de trabajos científicos', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2011, type: 'internacional', title: 'Convenio Marco de Cooperación Académica, Cultural, Científica y Tecnológica', parties: 'Universidad Nacional de Concepción y la Universidad Ricardo Palma (Lima, Perú)', signedMonth: '30 de Marzo', duration: '5 Años', objective: 'Realizar proyectos vinculados con la educación, la cultura, la investigación científica y tecnología, el servicio a la sociedad aunando esfuerzos y recursos disponibles', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-  { year: 2010, type: 'internacional', title: 'Acuerdo de Cooperación', parties: 'Universidad Nacional de Concepción (Facultad de Ciencias Agrarias) y la Empresa Brasileña de Pesquisa Agropecuaria (EMBRAPA)', signedMonth: '05 de Mayo', duration: '5 Años', objective: 'Establecer una cooperación académico-científico-cultural en proyectos conjuntos de agricultura y recursos naturales para el desarrollo sustentable agropecuario', driveUrl: 'https://drive.google.com/file/d/REEMPLAZAR_CON_ID_REAL/view', active: true },
-]
-
-async function main() {
-  if (!EMAIL || !PASSWORD) {
-    console.error('❌  Set CMS_EMAIL and CMS_PASSWORD environment variables')
-    process.exit(1)
+/** true solo para hosts de desarrollo local. */
+export function isLocalCmsUrl(url) {
+  try {
+    const h = new URL(url).hostname
+    return h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '::1'
+  } catch {
+    return false
   }
-
-  // Login
-  const loginRes = await fetch(`${CMS_URL}/api/users/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: EMAIL, password: PASSWORD }),
-  })
-  if (!loginRes.ok) {
-    console.error(`❌  Login failed: ${loginRes.status}`)
-    process.exit(1)
-  }
-  const { token } = await loginRes.json()
-  const headers = { 'Content-Type': 'application/json', Authorization: `JWT ${token}` }
-
-  // Fetch existing titles for idempotency
-  const existingRes = await fetch(`${CMS_URL}/api/convenios?limit=200`, { headers })
-  const existingData = await existingRes.json()
-  const existingTitles = new Set((existingData.docs ?? []).map(d => d.title))
-
-  let created = 0, skipped = 0, errors = 0
-
-  for (const record of RECORDS) {
-    if (existingTitles.has(record.title)) {
-      console.log(`⚠  Skip (exists): ${record.title}`)
-      skipped++
-      continue
-    }
-    const res = await fetch(`${CMS_URL}/api/convenios`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(record),
-    })
-    if (res.ok) {
-      console.log(`✓  Created [${record.type}] ${record.year} — ${record.title}`)
-      created++
-    } else {
-      const err = await res.text()
-      console.error(`✗  Error: ${record.title} — ${err}`)
-      errors++
-    }
-  }
-
-  console.log(`\nDone: ${created} created, ${skipped} skipped, ${errors} errors`)
-  process.exit(errors > 0 ? 1 : 0)
 }
 
-main().catch(err => { console.error(err); process.exit(1) })
+/** Conteo de filas por una propiedad (para el resumen del dry-run). */
+function countBy(rows, key) {
+  const out = {}
+  for (const r of rows) out[r[key]] = (out[r[key]] ?? 0) + 1
+  return out
+}
+
+/** Campos que --fill-empty puede completar cuando están vacíos en el CMS. */
+export const FILLABLE_FIELDS = ['nota', 'driveUrl']
+
+const isEmpty = (v) => v === undefined || v === null || v === ''
+
+/** Ejecuta la siembra. `deps` permite inyectar env, fetch, log y pace (pruebas). */
+export async function run({ dryRun = false, allowRemote = false, fillEmpty = false, deps = {} } = {}) {
+  const env = deps.env ?? process.env
+  const log = deps.log ?? ((m) => console.log(m))
+  const doFetch = deps.fetch ?? globalThis.fetch
+  const pace = deps.pace ?? sleep
+  const cmsUrl = (env.CMS_URL || 'http://localhost:3002').replace(/\/+$/, '')
+
+  if (dryRun) {
+    const plan = {
+      convenios: CONVENIOS_TODOS.length,
+      perType: countBy(CONVENIOS_TODOS, 'type'),
+      perCategoria: countBy(CONVENIOS_TODOS, 'categoria'),
+      conEnlace: CONVENIOS_TODOS.filter((r) => r.driveFileId).length,
+    }
+    log(`[dry-run] CMS destino: ${cmsUrl} (sin llamadas de red)`)
+    log(`[dry-run] convenios: ${plan.convenios} (active=true; solo se crean los que no existan por clave natural)`)
+    log(`[dry-run] por tipo: ${JSON.stringify(plan.perType)} | por categoría: ${JSON.stringify(plan.perCategoria)} | con enlace: ${plan.conEnlace}`)
+    return { dryRun: true, plan }
+  }
+
+  if (!isLocalCmsUrl(cmsUrl)) {
+    if (!allowRemote) throw new Error(`Este guion solo escribe en un CMS local; destino rechazado: ${cmsUrl}. Use --allow-remote para un destino https explícito.`)
+    if (new URL(cmsUrl).protocol !== 'https:') throw new Error('Con --allow-remote el CMS debe usar https.')
+  }
+  const email = (env.CMS_EMAIL || '').trim()
+  if (!email) throw new Error('Falta CMS_EMAIL (usuario superadmin o web-admin).')
+  const password = requireCmsPassword(env)
+
+  const loginRes = await doFetch(`${cmsUrl}/api/users/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  const login = await loginRes.json().catch(() => ({}))
+  if (!login.token) throw new Error(`No se pudo iniciar sesión en el CMS (HTTP ${loginRes.status}).`)
+  const headers = { 'Content-Type': 'application/json', Authorization: `JWT ${login.token}` }
+  log(`Sesión iniciada en ${cmsUrl}`)
+
+  const api = async (method, endpoint, body) => {
+    const res = await doFetch(`${cmsUrl}/api/${endpoint}`, { method, headers, body: body ? JSON.stringify(body) : undefined })
+    const data = await res.json().catch(() => ({}))
+    return { ok: res.ok, status: res.status, data }
+  }
+  /** GET por clave natural exacta (tipo + año + denominación + participantes). */
+  const buscarPorClave = async (k) => {
+    const q = new URLSearchParams()
+    q.set('where[type][equals]', k.type)
+    q.set('where[year][equals]', String(k.year))
+    q.set('where[title][equals]', k.title)
+    q.set('where[parties][equals]', k.parties)
+    q.set('limit', '2')
+    q.set('depth', '0')
+    const r = await api('GET', `convenios?${q.toString()}`)
+    if (!r.ok) throw new Error(`Consulta a convenios falló (HTTP ${r.status}).`)
+    return r.data.docs?.[0] ?? null
+  }
+  /**
+   * Busca la fila por su clave corregida y, si no está, por la clave ORIGINAL (verbatim) de la fila: una BD sembrada antes
+   * de las correcciones del PO (2026-10-24) no debe recibir una copia corregida. La corrección de la BD la hace
+   * scripts/apply-convenios-corrections.mjs, no este guion. Con sesión institucional ve también las filas retiradas.
+   */
+  const findExisting = async (row) => {
+    const porClave = await buscarPorClave(row)
+    if (porClave || !row.original) return porClave
+    return buscarPorClave(row.original)
+  }
+
+  const counts = { creados: 0, existentes: 0, errores: 0 }
+  if (fillEmpty) counts.completados = 0
+  for (const row of CONVENIOS_TODOS) {
+    const existing = await findExisting(row)
+    if (existing) {
+      counts.existentes++
+      if (!fillEmpty) continue
+      const wanted = toCmsPayloadConvenio(row)
+      const patch = Object.fromEntries(FILLABLE_FIELDS.filter((f) => !isEmpty(wanted[f]) && isEmpty(existing[f])).map((f) => [f, wanted[f]]))
+      if (Object.keys(patch).length === 0) continue
+      const r = await api('PATCH', `convenios/${existing.id}`, patch)
+      await pace(PACE_MS)
+      if (r.ok) {
+        counts.completados++
+        log(`  * Completado (${Object.keys(patch).join(', ')}) ${row.year}: ${row.title}`)
+      } else {
+        counts.errores++
+        log(`  ! Falló completar ${row.year} ${row.title} (HTTP ${r.status})`)
+      }
+      continue
+    }
+    const r = await api('POST', 'convenios', toCmsPayloadConvenio(row))
+    await pace(PACE_MS)
+    if (r.ok) {
+      counts.creados++
+      log(`  + Creado [${row.type}/${row.categoria}] ${row.year}: ${row.title}`)
+    } else {
+      counts.errores++
+      log(`  ! Falló ${row.year} ${row.title} (HTTP ${r.status}): ${JSON.stringify(r.data.errors ?? r.data).slice(0, 300)}`)
+    }
+  }
+  log('')
+  log(`Resumen: ${JSON.stringify(counts)}`)
+  return { dryRun: false, counts }
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  run({
+    dryRun: process.argv.includes('--dry-run'),
+    allowRemote: process.argv.includes('--allow-remote'),
+    fillEmpty: process.argv.includes('--fill-empty'),
+  }).catch((err) => {
+    console.error(`Error: ${err.message}`)
+    process.exit(1)
+  })
+}

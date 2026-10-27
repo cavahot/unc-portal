@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Law 5282/2014 — Access to Information | National University of Concepción",
+    "description": "Public information in compliance with Law 5282/2014 on Free Citizen Access to Public Information and Government Transparency."
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "institutional": "Institutional",
+    "page": "Law 5282/2014"
+  },
+  "hero": {
+    "eyebrow": "Free access to information",
+    "title": "Law 5282/2014",
+    "description": "In compliance with Article 8 of Law No. 5282/2014 «On Free Citizen Access to Public Information and Government Transparency», the National University of Concepción makes the minimum required information available to citizens.",
+    "badgeLabel": "Art. 8 — 17 items"
+  },
+  "docs": {
+    "eyebrow": "Minimum required information",
+    "heading": "Available public information",
+    "description": "Access the documents required by Article 8 of Law 5282/2014. Each document opens in a new tab, on the institutional service where it is published.",
+    "openLabel": "Open document",
+    "count": "{count, plural, one {# document} other {# documents}}",
+    "summary": "{withDocs} of {total} categories with published documents",
+    "indexLabel": "Jump to a category",
+    "noDocs": "Documents not yet published.",
+    "emptyTitle": "No documents have been published yet",
+    "emptyText": "The University is preparing the information for this law. Each category will show its document as soon as it is published.",
+    "unavailableTitle": "We could not load the information",
+    "unavailableText": "The content service is not responding right now. This does not mean the documents do not exist: please try again in a few minutes."
+  },
+  "info": {
+    "eyebrow": "Regulatory framework",
+    "title": "Commitment to access to information",
+    "description": "The National University of Concepción publishes this information in compliance with Law 5282/2014 and guarantees the citizen right of access to public information.",
+    "ctaTransparencia": "Go to Transparency",
+    "ctaInstitutional": "Back to Institutional"
+  }
+}

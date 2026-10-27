@@ -1,13 +1,25 @@
 import type { CollectionConfig } from 'payload'
 import { getPayload } from 'payload'
 import config from '../payload.config'
-import { logAudit, getClientIP, extractChanges } from '../utilities/audit'
-import { notifyApprovalStateChange } from '../utilities/notifications'
-import { approvalHistoryField } from '../fields/approvalHistory'
+import { getClientIP, logAudit } from '../utilities/audit'
+import { approvalHistoryField, reviewCommentField } from '../fields/approvalHistory'
+import { createdByField } from '../fields/createdBy'
+import { auditEditorialChange, notifyEditorialChange } from '../hooks/editorial/afterTransition'
+import {
+  createEnforceEditorialTransition,
+  forceDraftSaveUnlessPublisher,
+  stripAuthorshipSort,
+} from '../hooks/editorial/enforceTransition'
 import { notifyN8N } from '../utilities/notifications'
 import { slugify } from '../utilities/slugify'
 import { revalidatePortalTag } from '../utilities/revalidation'
-import { canWriteEditorial, canDeleteEditorial } from '../access/roles'
+import {
+  canCreateEditorial,
+  canUpdateEditorial,
+  canDeleteEditorial,
+  readPublishedOrEditorial,
+  canReadEditorialVersions,
+} from '../access/roles'
 
 export const Noticias: CollectionConfig = {
   slug: 'noticias',
@@ -16,9 +28,13 @@ export const Noticias: CollectionConfig = {
     defaultColumns: ['title', 'featured', '_status', 'category', 'publishedAt'],
   },
   access: {
-    read: () => true,
-    create: canWriteEditorial,
-    update: canWriteEditorial,
+    // DEP-02: anónimo y roles sin función editorial solo leen publicados.
+    read: readPublishedOrEditorial,
+    readVersions: canReadEditorialVersions,
+    // DEP-03 (SEC-03): solo los autores crean; editan autores, Revisor y Publicador (el hook limita a
+    // estos dos últimos a campos de estado). Borrar no cambia (punto por confirmar de SEC-03).
+    create: canCreateEditorial('noticias'),
+    update: canUpdateEditorial('noticias'),
     delete: canDeleteEditorial,
   },
   fields: [
@@ -37,15 +53,19 @@ export const Noticias: CollectionConfig = {
       ],
       index: true,
       admin: {
-        description: 'Estado del flujo de aprobación editorial',
+        description: 'Estado del flujo de aprobación editorial. El servidor valida cada cambio según su rol (DEP-03).',
         position: 'sidebar',
       },
     },
+    // DEP-03: comentario obligatorio al rechazar (campo virtual: sin columna).
+    reviewCommentField,
     {
       name: 'featured',
       label: '¿Destacar en portada?',
       type: 'checkbox',
       defaultValue: false,
+      // PERF-DB: la portada filtra por featured=true; índice para no recorrer toda la tabla (migración perf_db_indexes).
+      index: true,
       admin: {
         description: 'Mostrar en la sección destacada del portal',
         position: 'sidebar',
@@ -100,6 +120,8 @@ export const Noticias: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    // DEP-03: autoría fijada por el servidor (nullable; las noticias heredadas no la tienen).
+    createdByField,
     // ── Tabs (main body) ──────────────────────────────────────────────────────
     {
       type: 'tabs',
@@ -232,8 +254,13 @@ export const Noticias: CollectionConfig = {
   timestamps: true,
   versions: {
     drafts: true,
+    // PERF-DB: Payload guarda 100 versiones completas (JSON Lexical) por documento por defecto;
+    // se acota a 10 para que el almacenamiento no crezca sin tope. Límite: versiones antiguas se descartan.
+    maxPerDoc: 10,
   },
   hooks: {
+    // DEP-03: quien no publica guarda siempre como borrador (no toca la fila principal).
+    beforeOperation: [forceDraftSaveUnlessPublisher, stripAuthorshipSort],
     beforeValidate: [
       ({ data }) => {
         if (data && !data.slug && data.title) {
@@ -242,53 +269,25 @@ export const Noticias: CollectionConfig = {
         return data
       },
     ],
+    // DEP-03: valida la transición de estado, fija el historial y el estado coherente (servidor).
+    beforeChange: [createEnforceEditorialTransition('noticias')],
     afterChange: [
       async ({ doc, previousDoc, req, operation }) => {
         // Revalidate portal cache on every change so featured/published state
         // is reflected immediately without waiting for ISR expiry.
         await revalidatePortalTag('noticias')
+        // PERF-DB: la lista de slugs y el detalle cacheados por slug también deben invalidarse; antes
+        // solo se invalidaba la lista y el detalle quedaba viejo hasta vencer el ISR.
+        await revalidatePortalTag('noticias-slugs')
+        await revalidatePortalTag(`noticias:${doc.slug}`)
 
         const usuario = req.user?.email || 'sistema'
-        const rol = req.user?.role || 'system'
-        const ip = getClientIP(req)
 
-        let accion: 'crear' | 'actualizar' | 'publicar' = 'crear'
-        let cambios = {}
+        // DEP-03: una fila de auditoría por guardado, con la acción de la transición.
+        await auditEditorialChange({ collection: 'noticias', operation, doc, previousDoc, req })
 
-        if (operation === 'update') {
-          accion = 'actualizar'
-          if (previousDoc._status === 'draft' && doc._status === 'published') {
-            accion = 'publicar'
-          }
-          cambios = extractChanges(previousDoc || {}, doc)
-        }
-
-        await logAudit({
-          usuario,
-          rol,
-          accion,
-          coleccion: 'noticias',
-          documento: `${doc.title} (ID: ${doc.id})`,
-          ip,
-          resultado: 'exito',
-          mensaje: `Noticia ${accion === 'crear' ? 'creada' : accion === 'publicar' ? 'publicada' : 'actualizada'}`,
-          cambiosRelevantes: Object.keys(cambios).length > 0 ? cambios : undefined,
-        })
-
-        // Notificar cambios de estado de aprobación
-        if (previousDoc?.approvalStatus !== doc.approvalStatus) {
-          await notifyApprovalStateChange(
-            doc.id,
-            doc.title,
-            doc.slug,
-            previousDoc?.approvalStatus || 'draft',
-            doc.approvalStatus,
-            usuario,
-            req.user?.email,
-            undefined,
-            undefined
-          )
-        }
+        // DEP-03: «aprobada/rechazada/publicada» se avisa al AUTOR, no al actor.
+        await notifyEditorialChange({ doc, previousDoc, req })
 
         // Obtener datos de contacto del usuario actual
         const payload = await getPayload({ config })
@@ -340,6 +339,11 @@ export const Noticias: CollectionConfig = {
           resultado: 'exito',
           mensaje: 'Noticia eliminada',
         })
+
+        // PERF-DB: una noticia eliminada debe desaparecer de listas, slugs y detalle cacheados.
+        await revalidatePortalTag('noticias')
+        await revalidatePortalTag('noticias-slugs')
+        await revalidatePortalTag(`noticias:${doc.slug}`)
       },
     ],
   },

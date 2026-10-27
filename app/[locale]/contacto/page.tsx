@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getT } from '@/lib/i18n/server'
+import CampusMap from '@/components/layout/CampusMap' // MAP-01: reemplaza el iframe con place id inventado
 import Reveal from '@/components/motion/Reveal'
 import ContactForm from '@/components/contact/ContactForm'
 
@@ -299,17 +300,17 @@ export default async function ContactoPage({
               <div className="flex flex-col gap-6">
                 {/* Map embed */}
                 <div className="overflow-hidden rounded-[1.35rem] border border-[#D7E0DB] shadow-[0_12px_36px_rgba(7,42,15,0.08)]">
-                  <iframe
-                    title="Ubicación de la Universidad Nacional de Concepción"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3710.2!2d-57.4344!3d-23.4075!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945c5a1b1b1b1b1b%3A0x1b1b1b1b1b1b1b1b!2sUniversidad%20Nacional%20de%20Concepci%C3%B3n!5e0!3m2!1ses!2spy!4v1234567890"
-                    width="100%"
-                    height="280"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="block"
-                  />
+                  <div className="bg-[#004700] p-4">
+                    <CampusMap labels={{
+                  title: tc('mapTitle'),
+                  loadButton: tc('mapLoad'),
+                  directions: tc('mapDirections'),
+                  openInMaps: tc('mapOpen'),
+                  posterLabel: tc('mapPosterLabel'),
+                  iframeTitle: tc('mapIframeTitle'),
+                  address: tc('addressOneLine'),
+                }} />
+                  </div>
                 </div>
 
                 {/* Social + direct links */}

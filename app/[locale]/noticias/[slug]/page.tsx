@@ -4,12 +4,13 @@ import { notFound } from 'next/navigation'
 import { getT, getF } from '@/lib/i18n/server'
 import { Link } from '@/i18n/navigation'
 import { getNewsBySlug, getNewsBySlugDraft, getNewsSlugs } from '@/lib/cms/queries/news'
+import { safeStaticParams, NEWS_PRERENDER_LIMIT } from '@/lib/cms/staticParams'
 import RichText from '@/components/RichText'
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 import NewsGallery from '@/components/news/NewsGallery'
 import { baseOg } from '@/lib/seo/og'
 import { routing } from '@/i18n/routing'
-import { buildNewsArticleSchema, buildBreadcrumbSchema } from '@/lib/seo/jsonld'
+import { buildNewsArticleSchema, buildBreadcrumbSchema, safeJsonLd } from '@/lib/seo/jsonld'
 
 // ISR: revalidate every hour. On-demand slugs (published after build) are
 // generated at first request and then cached for `revalidate` seconds.
@@ -18,12 +19,17 @@ export const revalidate = 3600
 // Allow slugs not returned by generateStaticParams to be rendered on-demand.
 export const dynamicParams = true
 
+// DEP-15: si el CMS no responde durante el build devuelve [] (rutas bajo demanda)
+// en lugar de lanzar y abortar `next build`.
 export async function generateStaticParams() {
-  const slugs = await getNewsSlugs(200)
-  // Generate one entry per locale × slug so Next.js pre-renders all combinations.
-  return routing.locales.flatMap((locale) =>
-    slugs.map((slug) => ({ locale, slug })),
-  )
+  return safeStaticParams(async () => {
+    // PERF-DB: solo las más recientes (getNewsSlugs ordena por -publishedAt); el resto, bajo demanda.
+    const slugs = await getNewsSlugs(NEWS_PRERENDER_LIMIT)
+    // Generate one entry per locale × slug so Next.js pre-renders all combinations.
+    return routing.locales.flatMap((locale) =>
+      slugs.map((slug) => ({ locale, slug })),
+    )
+  })
 }
 
 export async function generateMetadata({
@@ -60,32 +66,23 @@ export default async function NoticiaDetailPage({
 
   const { isEnabled: isDraft } = await draftMode()
 
-  // When draft mode is active, verify the viewer still holds a valid Payload
-  // CMS session. The draftMode cookie alone persists after logout — this check
-  // ensures an unauthenticated viewer falls through to published content rather
-  // than seeing unreleased drafts.
+  // DEP-02b: con draftMode activo se reenvía el payload-token del editor (leído
+  // de su cookie, solo en esta rama para no volver dinámica la página pública)
+  // al CMS, que decide el acceso (DEP-02). Sin token o con 401/403 se cae al
+  // contenido publicado. El token no se registra ni se pasa a componentes.
   let noticia = null
   if (isDraft) {
     const cookieStore = await cookies()
     const payloadToken = cookieStore.get('payload-token')?.value
     if (payloadToken) {
-      try {
-        const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3002'
-        const me = await fetch(`${cmsUrl}/api/users/me`, {
-          headers: { Authorization: `JWT ${payloadToken}` },
-          cache: 'no-store',
-        })
-        if (me.ok) {
-          noticia = await getNewsBySlugDraft(slug).catch(() => null)
-        }
-      } catch {
-        // CMS unreachable — fall through to published below
-      }
+      noticia = await getNewsBySlugDraft(slug, payloadToken).catch(() => null)
     }
   }
-  // Fall back to published content when not in draft, or when CMS auth check fails
+  // Fall back to published content when not in draft, or when CMS auth check fails.
+  // DEP-15: sin `.catch`: «no existe» devuelve null (404) pero una caída del CMS
+  // propaga el error, así Next no cachea un 404 durante `revalidate` (1 h).
   if (!noticia) {
-    noticia = await getNewsBySlug(slug).catch(() => null)
+    noticia = await getNewsBySlug(slug)
   }
 
   if (!noticia) notFound()
@@ -115,8 +112,8 @@ export default async function NoticiaDetailPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(newsArticleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }} />
     <div className="min-h-screen bg-slate-950">
       {isDraft && (
         <div className="fixed inset-x-0 top-0 z-[200] flex items-center justify-between bg-amber-500 px-4 py-2 text-white">

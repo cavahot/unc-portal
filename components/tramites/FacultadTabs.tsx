@@ -1,5 +1,7 @@
 'use client'
 
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import { useState } from 'react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -393,7 +395,7 @@ function TramiteCard({ tramite, accent }: { tramite: TramiteItem; accent: string
       {/* Link */}
       {tramite.linkHref && (
         <a
-          href={tramite.linkHref}
+          href={safeHref(tramite.linkHref)}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 inline-flex items-center gap-2 self-start rounded-full px-4 py-2 text-xs font-semibold transition-all"

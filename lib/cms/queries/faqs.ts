@@ -1,4 +1,5 @@
 import { cmsFetch } from '../client'
+import { demoFallbackAllowed } from '../errors'
 import { PayloadResponse } from '../types'
 
 export const FAQ_CATEGORIES = [
@@ -196,6 +197,11 @@ function lexical(text: string) {
   }
 }
 
+/**
+ * Preguntas frecuentes activas (DEP-19b). Producción: caída del CMS -> propaga `CmsError`; respuesta
+ * vacía -> `[]` real. Solo en desarrollo una caída devuelve DEMO_FAQS. Límite: la página debe
+ * decidir cómo mostrar el error.
+ */
 export async function getFAQs(): Promise<FAQItem[]> {
   try {
     const res = await cmsFetch<PayloadResponse<FAQItem>>(
@@ -203,7 +209,8 @@ export async function getFAQs(): Promise<FAQItem[]> {
       { tags: ['faqs'], next: { revalidate: 3600 } },
     )
     return res.docs ?? []
-  } catch {
-    return DEMO_FAQS
+  } catch (error) {
+    if (demoFallbackAllowed()) return DEMO_FAQS
+    throw error
   }
 }

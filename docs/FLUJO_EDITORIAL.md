@@ -1,5 +1,7 @@
 # Flujo Editorial con Aprobación - Portal UNC
 
+> **Reemplazado en lo relativo a la publicación (2026-10-23).** Este documento es histórico y contradice el código: asigna «publicar» al Editor y al Publicador a la vez. La política vigente está en `docs/specs/security/SEC-03-matriz-editorial.md`, el diagrama en `docs/specs/editorial/FLUJOGRAMA-EDITORIAL.md` y la decisión del Product Owner (el Revisor aprueba y publica) en `docs/specs/editorial/SEC-03-D0-revisor-publica.md`. No usar la tabla «Control de Acceso» ni «Paso 4» de abajo como referencia.
+
 ## 📋 Resumen
 
 Sistema de aprobación editorial que garantiza calidad y control de noticias:

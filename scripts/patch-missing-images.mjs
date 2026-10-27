@@ -3,9 +3,23 @@
  * IDs: 271, 270
  */
 
-const CMS_URL      = 'http://localhost:3002'
-const CMS_EMAIL    = process.env.CMS_EMAIL    || 'admin@unc.edu.py'
-const CMS_PASSWORD = process.env.CMS_PASSWORD || 'Admin1234!'
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
+import { fetchAllowedHost, isAllowedSourceUrl, requireCmsEmail, resolveCmsTarget } from './lib/cmsTarget.mjs'
+
+// SEC-REVIEW: destino validado (localhost, o https con --allow-remote), correo obligatorio (sin valor por
+// defecto) y contraseña fuerte (SEC-08); todo falla antes de cualquier red.
+let CMS_URL, CMS_EMAIL, CMS_PASSWORD
+try {
+  CMS_URL = resolveCmsTarget({
+    url: process.argv.find(a => a.startsWith('--cms='))?.split('=')[1] || 'http://localhost:3002',
+    allowRemote: process.argv.includes('--allow-remote'),
+  })
+  CMS_EMAIL = requireCmsEmail()
+  CMS_PASSWORD = requireCmsPassword()
+} catch (error) {
+  console.error(`❌ ${error.message}`)
+  process.exit(1)
+}
 
 const PATCHES = [
   {
@@ -57,11 +71,12 @@ async function patchNoticia(token, id, featuredImageUrl) {
 async function findImageFromWP(slug) {
   const url = `https://www.unc.edu.py/${slug}/`
   try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
+    // SEC-REVIEW: solo hosts del allowlist y sin seguir redirecciones hacia otros hosts.
+    const res = await fetchAllowedHost(url, { signal: AbortSignal.timeout(8000) })
     const html = await res.text()
     // Buscar la primera imagen featured (og:image o primera en wp-content)
     const og = html.match(/property="og:image"\s+content="([^"]+)"/)
-    if (og) return og[1]
+    if (og && isAllowedSourceUrl(og[1])) return og[1]
     const wp = html.match(/wp-content\/uploads\/[^"'\s>]+\.(?:jpg|jpeg|png|webp)/i)
     if (wp) return `https://www.unc.edu.py/${wp[0]}`
   } catch {
@@ -97,6 +112,9 @@ async function main() {
       process.stdout.write('  🔍 Buscando en sitio WP...\n')
       imageUrl = await findImageFromWP(patch.slug)
     }
+
+    // SEC-REVIEW: la URL guardada en el CMS también debe venir de un host permitido.
+    if (imageUrl && !isAllowedSourceUrl(imageUrl)) imageUrl = null
 
     if (!imageUrl) {
       console.log('  ⚠ No se encontró imagen — agregala manualmente en el CMS admin')

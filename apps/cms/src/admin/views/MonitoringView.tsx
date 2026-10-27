@@ -69,26 +69,36 @@ export const MonitoringView: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
 
-  const fetchData = async () => {
+  // SEC-09: `isCancelled` evita setState tras desmontar el efecto; el botón de refresco usa el valor por defecto.
+  const fetchData = async (isCancelled: () => boolean = () => false) => {
     try {
+      // DEP-04: /api/metrics responde 403 a roles sin monitoreo; solo se guarda un cuerpo exitoso
+      // para que la vista no lea campos inexistentes. Health devuelve JSON también con 503 (unhealthy), por eso no se filtra por res.ok.
       const [h, m] = await Promise.all([
         fetch('/api/health').then(r => r.json()),
-        fetch('/api/metrics').then(r => r.json()),
+        fetch('/api/metrics').then(r => (r.ok ? r.json() : null)),
       ])
+      if (isCancelled()) return
       setHealth(h)
       setMetrics(m)
       setLastUpdate(new Date())
     } catch (e) {
       console.error(e)
     } finally {
-      setLoading(false)
+      if (!isCancelled()) setLoading(false)
     }
   }
 
+  // SEC-09: carga inicial y refresco cada 30 s; la bandera `cancelled` descarta respuestas tardías tras el cleanup.
   useEffect(() => {
-    fetchData()
-    const interval = setInterval(fetchData, 30000)
-    return () => clearInterval(interval)
+    let cancelled = false
+    const run = () => { void fetchData(() => cancelled) }
+    run()
+    const interval = setInterval(run, 30000)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
   }, [])
 
   const services = [
@@ -132,7 +142,7 @@ export const MonitoringView: React.FC = () => {
             {lastUpdate && ` · Última: ${lastUpdate.toLocaleTimeString('es-PY')}`}
           </p>
         </div>
-        <button onClick={fetchData} style={{
+        <button onClick={() => { void fetchData() }} style={{
           padding: '8px 16px', borderRadius: '8px', border: '1px solid #e2e8f0',
           backgroundColor: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer',
           color: '#0f172a',

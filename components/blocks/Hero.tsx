@@ -1,3 +1,5 @@
+// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
+import { safeHref } from '@/lib/security/safeUrl'
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Media } from '@unc/cms-types';
@@ -57,7 +59,7 @@ export default function HeroBlock({
 
         {ctaLabel && ctaUrl && (
           <Link
-            href={ctaUrl}
+            href={safeHref(ctaUrl)}
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[#004700] shadow-lg transition-colors hover:bg-[#E6FFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
           >
             {ctaLabel}

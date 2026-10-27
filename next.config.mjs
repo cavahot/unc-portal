@@ -1,5 +1,6 @@
 import createNextIntlPlugin from 'next-intl/plugin'
 import { withSentryConfig } from '@sentry/nextjs'
+import { buildImagesConfig } from './lib/images/nextImagesConfig.mjs'
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
@@ -27,27 +28,10 @@ const nextConfig = {
       },
     ]
   },
-  images: {
-    formats: ['image/avif', 'image/webp'],
-    qualities: [75, 92],
-    remotePatterns: [
-      // MinIO local (dev)
-      { protocol: 'http', hostname: 'localhost', port: '9100', pathname: '/**' },
-      { protocol: 'http', hostname: '127.0.0.1', port: '9100', pathname: '/**' },
-      // Payload CMS local media (dev)
-      { protocol: 'http', hostname: 'localhost', port: '3002', pathname: '/**' },
-      { protocol: 'http', hostname: '127.0.0.1', port: '3002', pathname: '/**' },
-      // WordPress original (imágenes migradas que aún no están en Payload)
-      { protocol: 'https', hostname: 'www.unc.edu.py', pathname: '/**' },
-      { protocol: 'https', hostname: 'migracion.unc.edu.py', pathname: '/**' },
-      // Flag CDN para los selectores de idioma
-      { protocol: 'https', hostname: 'flagcdn.com', pathname: '/**' },
-      // Servidor dedicado — configurar MEDIA_HOSTNAME en Vercel env vars
-      ...(process.env.MEDIA_HOSTNAME
-        ? [{ protocol: 'https', hostname: process.env.MEDIA_HOSTNAME, pathname: '/**' }]
-        : []),
-    ],
-  },
+  // MIG-IMG fase 2a: hosts/rutas que puede pedir el optimizador y `dangerouslyAllowLocalIP` solo en
+  // desarrollo (lib/images/nextImagesConfig.mjs, probado en tests/unit/portal-images-config.spec.ts).
+  // Lee NODE_ENV, NEXT_PUBLIC_CMS_URL y MEDIA_HOSTNAME; se congela al construir (`next build`).
+  images: buildImagesConfig(process.env),
 }
 
 // Required for Docker production image (see Dockerfile at repo root).

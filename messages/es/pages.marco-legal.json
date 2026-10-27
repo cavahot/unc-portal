@@ -9,18 +9,81 @@
   },
   "hero": {
     "eyebrow": "Normativa institucional",
-    "title": "Marco Legal",
-    "description": "Base normativa que rige la vida institucional de la Universidad Nacional de Concepción.",
-    "softwareNote": "Recomendamos tener instalado software compatible con documentos PDF, DOCS y XLS."
+    "title": "Marco legal",
+    "description": "Leyes, estatutos, reglamentos y políticas que rigen la vida institucional de la Universidad Nacional de Concepción, para consultar y descargar.",
+    "softwareNote": "Para abrir los documentos necesita un programa compatible con archivos PDF, DOC y XLS."
+  },
+  "hierarchy": {
+    "heading": "Del marco general a la gestión",
+    "tiers": {
+      "creacion": "Norma de creación",
+      "fundamental": "Norma fundamental",
+      "general": "Reglamentación general",
+      "especificas": "Normas específicas",
+      "gestion": "Instrumentos de gestión"
+    }
+  },
+  "search": {
+    "label": "Buscar un documento",
+    "placeholder": "Ej.: becas, posgrado, ética…",
+    "clear": "Borrar búsqueda",
+    "statusAll": "{total} documentos en {categories} categorías",
+    "statusOne": "1 documento coincide con «{query}»",
+    "statusOther": "{count} documentos coinciden con «{query}»",
+    "statusNone": "Ningún documento coincide con «{query}»",
+    "emptyTitle": "No encontramos documentos con «{query}»",
+    "emptyHint": "Revise la ortografía o pruebe con una palabra del título, como «reglamento» o «posgrado».",
+    "showAll": "Ver todos los documentos"
+  },
+  "index": {
+    "label": "Categorías del marco legal"
   },
   "docs": {
-    "eyebrow": "Documentos normativos",
-    "heading": "Instrumentos legales vigentes",
-    "description": "La Universidad Nacional de Concepción se rige por un conjunto de instrumentos normativos que garantizan su funcionamiento transparente, democrático y orientado al bien común.",
-    "totalLabel": "documentos",
-    "downloadLabel": "Descargar",
-    "empty": "No hay documentos disponibles en este momento.",
-    "fallbackNote": "Mostrando documentos de referencia. Conectando al servidor..."
+    "countOne": "1 documento",
+    "countOther": "{count} documentos",
+    "download": "Descargar",
+    "downloadAria": "Descargar «{title}» ({format}). Se abre en una pestaña nueva.",
+    "titulo": "Título {numeral}",
+    "dated": "Fecha: {date}"
+  },
+  "categories": {
+    "ley-creacion": "Ley de creación",
+    "estatuto": "Estatuto universitario",
+    "reglamento-general": "Reglamento General",
+    "reglamentos-especiales": "Reglamentos especiales",
+    "codigos": "Códigos institucionales",
+    "politicas": "Políticas institucionales",
+    "planes": "Planes",
+    "manuales": "Manuales",
+    "procedimientos": "Procedimientos",
+    "protocolos": "Protocolos"
+  },
+  "categoryDescriptions": {
+    "ley-creacion": "Ley de la Nación que crea la Universidad Nacional de Concepción.",
+    "estatuto": "Norma fundamental que define los fines, el gobierno y la organización de la Universidad.",
+    "reglamento-general": "Desarrolla el Estatuto. Cada título regula un ámbito de la vida universitaria.",
+    "reglamentos-especiales": "Reglas de órganos, programas y servicios concretos.",
+    "codigos": "Principios de conducta y de buen gobierno.",
+    "politicas": "Orientaciones institucionales por área de gestión.",
+    "planes": "Planes institucionales de mediano plazo y sus proyectos.",
+    "manuales": "Funciones y buenas prácticas para el trabajo institucional.",
+    "procedimientos": "Pasos y circuitos administrativos del Rectorado.",
+    "protocolos": "Protocolos adoptados ante situaciones específicas."
+  },
+  "estado": {
+    "derogado": "Derogado",
+    "historico": "Histórico"
+  },
+  "format": {
+    "pdf": "PDF",
+    "doc": "Documento de Word",
+    "xls": "Hoja de cálculo",
+    "drive": "Google Drive",
+    "link": "Enlace"
+  },
+  "states": {
+    "empty": "Todavía no hay documentos publicados en esta sección. Vuelva a consultar más adelante.",
+    "unavailable": "Los documentos no están disponibles en este momento. Intente de nuevo en unos minutos."
   },
   "info": {
     "eyebrow": "Información adicional",
