@@ -1,149 +1,117 @@
 /**
- * Seed script — Autoridades institucionales
- * Source: https://www.unc.edu.py/autoridades/
+ * seed-autoridades.mjs — AUT-01
  *
- * Usage:
- *   $env:CMS_EMAIL="admin@unc.edu.py"; $env:CMS_PASSWORD="yourPassword"
- *   node scripts/seed-autoridades.mjs
+ * Siembra en el CMS las autoridades que /autoridades ya mostraba (datos en scripts/lib/autoridadesSeedData.mjs).
+ * Después el CMS es la única fuente: se editan desde el panel.
+ *
+ * Uso:
+ *   node scripts/seed-autoridades.mjs --dry-run                       # sin red
+ *   CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-autoridades.mjs  # CMS local (localhost:3002)
+ *   CMS_URL=https://... node scripts/seed-autoridades.mjs --allow-remote   # explícito; solo https
+ *
+ * Reglas (amenaza -> control):
+ *   - Escribir en un CMS equivocado -> solo localhost salvo --allow-remote (y entonces solo https).
+ *   - Credencial débil o literal -> `requireCmsPassword` (SEC-08); el correo viene de CMS_EMAIL; nada se imprime.
+ *   - Pisar ediciones del PO al re-ejecutar -> idempotente: si existe una fila con ese `name`, NO se toca.
+ *   - Decano sin facultad -> si la facultad (por slug) no existe se informa el error y NO se crea la fila.
+ * Límite: crea con active=true (personas ya publicadas en el sitio); no sube fotos ni CV.
  */
+import { pathToFileURL } from 'node:url'
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
+import { AUTORIDADES, toCmsPayloadAutoridad } from './lib/autoridadesSeedData.mjs'
 
-const CMS_URL = 'http://localhost:3002'
-const CMS_EMAIL = process.env.CMS_EMAIL || 'admin@unc.edu.py'
-const CMS_PASSWORD = process.env.CMS_PASSWORD || ''
+const PACE_MS = 150
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-const AUTHORITIES = [
-  // ── Rectorado ────────────────────────────────────────────────────────────
-  {
-    name: 'Prof. Dr. Clarito Rojas Marín',
-    role: 'Rector',
-    type: 'rector',
-    bio: 'Autoridad máxima de la Universidad Nacional de Concepción. Representa a la institución ante organismos nacionales e internacionales.',
-    order: 1,
-  },
-  {
-    name: 'Prof. Dr. Arnaldo Miguel Ferreira Cabañas',
-    role: 'Vicerrector',
-    type: 'vicerrector',
-    bio: 'Apoya y complementa la gestión rectoral en la conducción académica e institucional de la universidad.',
-    order: 2,
-  },
+/** true solo para hosts de desarrollo local. */
+export function isLocalCmsUrl(url) {
+  try {
+    const h = new URL(url).hostname
+    return h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '::1'
+  } catch {
+    return false
+  }
+}
 
-  // ── Decanos ──────────────────────────────────────────────────────────────
-  {
-    name: 'Prof. Dr. Carlos Ramón Lima De León',
-    role: 'Decano',
-    type: 'decano',
-    faculty: 'Facultad de Odontología',
-    order: 10,
-  },
-  {
-    name: 'Prof. Ing. Agr. Derlys Fernando López Avalos',
-    role: 'Decano',
-    type: 'decano',
-    faculty: 'Facultad de Ciencias Agrarias',
-    order: 11,
-  },
-  {
-    name: 'Prof. Mg. Gerardo Lang Ferri',
-    role: 'Decano',
-    type: 'decano',
-    faculty: 'Facultad de Ciencias Económicas y Administrativas',
-    order: 12,
-  },
-  {
-    name: 'Prof. Dr. Roberto Gustavo Barrios',
-    role: 'Decano',
-    type: 'decano',
-    faculty: 'Facultad de Medicina',
-    order: 13,
-  },
-  {
-    name: 'Prof. Dra. María Concepción Araujo De Benítez',
-    role: 'Decana',
-    type: 'decano',
-    faculty: 'Facultad de Humanidades y Ciencias de la Educación',
-    order: 14,
-  },
-  {
-    name: 'Prof. Dr. Jorge Daniel Mello Román',
-    role: 'Decano',
-    type: 'decano',
-    faculty: 'Facultad de Ciencias Exactas y Tecnológica',
-    order: 15,
-  },
-]
+/** Ejecuta la siembra. `deps` permite inyectar env, fetch, log y pace (pruebas). */
+export async function run({ dryRun = false, allowRemote = false, deps = {} } = {}) {
+  const env = deps.env ?? process.env
+  const log = deps.log ?? ((m) => console.log(m))
+  const doFetch = deps.fetch ?? globalThis.fetch
+  const pace = deps.pace ?? sleep
+  const cmsUrl = (env.CMS_URL || 'http://localhost:3002').replace(/\/+$/, '')
 
-// ── Auth ────────────────────────────────────────────────────────────────────
+  if (dryRun) {
+    log(`[dry-run] CMS destino: ${cmsUrl} (sin llamadas de red)`)
+    log(`[dry-run] autoridades: ${AUTORIDADES.length} (active=true; solo se crean las que no existan por nombre)`)
+    return { dryRun: true, plan: { autoridades: AUTORIDADES.length } }
+  }
 
-async function getToken() {
-  const res = await fetch(`${CMS_URL}/api/users/login`, {
+  if (!isLocalCmsUrl(cmsUrl)) {
+    if (!allowRemote) throw new Error(`Este guion solo escribe en un CMS local; destino rechazado: ${cmsUrl}. Use --allow-remote para un destino https explícito.`)
+    if (new URL(cmsUrl).protocol !== 'https:') throw new Error('Con --allow-remote el CMS debe usar https.')
+  }
+  const email = (env.CMS_EMAIL || '').trim()
+  if (!email) throw new Error('Falta CMS_EMAIL (usuario superadmin o web-admin).')
+  const password = requireCmsPassword(env)
+
+  const loginRes = await doFetch(`${cmsUrl}/api/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: CMS_EMAIL, password: CMS_PASSWORD }),
+    body: JSON.stringify({ email, password }),
   })
-  if (!res.ok) throw new Error(`Auth failed (${res.status}): ${await res.text()}`)
-  const data = await res.json()
-  return data.token
-}
+  const login = await loginRes.json().catch(() => ({}))
+  if (!login.token) throw new Error(`No se pudo iniciar sesión en el CMS (HTTP ${loginRes.status}).`)
+  const headers = { 'Content-Type': 'application/json', Authorization: `JWT ${login.token}` }
+  log(`Sesión iniciada en ${cmsUrl}`)
 
-async function createAuthority(token, authority) {
-  const res = await fetch(`${CMS_URL}/api/autoridades`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
-    body: JSON.stringify({ ...authority, active: true }),
-  })
-  if (!res.ok) throw new Error(`POST failed (${res.status}): ${await res.text()}`)
-  return res.json()
-}
-
-// ── Main ─────────────────────────────────────────────────────────────────────
-
-async function main() {
-  console.log('\n── SEED AUTORIDADES ──────────────────────────────────────')
-  console.log(`   CMS: ${CMS_URL}`)
-  console.log(`   Autoridades: ${AUTHORITIES.length}`)
-
-  if (!CMS_PASSWORD) {
-    console.error('\n❌  Falta CMS_PASSWORD')
-    console.error('   $env:CMS_EMAIL="tu@email.com"; $env:CMS_PASSWORD="tu_pass"')
-    console.error('   node scripts/seed-autoridades.mjs')
-    process.exit(1)
+  const api = async (method, endpoint, body) => {
+    const res = await doFetch(`${cmsUrl}/api/${endpoint}`, { method, headers, body: body ? JSON.stringify(body) : undefined })
+    const data = await res.json().catch(() => ({}))
+    return { ok: res.ok, status: res.status, data }
+  }
+  const findOne = async (collection, field, value) => {
+    const r = await api('GET', `${collection}?where[${field}][equals]=${encodeURIComponent(value)}&limit=1&depth=0`)
+    if (!r.ok) throw new Error(`Consulta a ${collection} falló (HTTP ${r.status}).`)
+    return r.data.docs?.[0] ?? null
   }
 
-  let token
-  try {
-    token = await getToken()
-    console.log('✅  Auth OK\n')
-  } catch (err) {
-    console.error(`❌  ${err.message}`)
-    process.exit(1)
-  }
-
-  let ok = 0
-  let fail = 0
-
-  for (const authority of AUTHORITIES) {
-    process.stdout.write(`   [${authority.type}] ${authority.name}... `)
-    try {
-      await createAuthority(token, authority)
-      console.log('✅')
-      ok++
-    } catch (err) {
-      console.log(`❌  ${err.message}`)
-      fail++
+  const counts = { creadas: 0, existentes: 0, errores: 0 }
+  for (const item of AUTORIDADES) {
+    const existing = await findOne('autoridades', 'name', item.name)
+    if (existing) {
+      counts.existentes++
+      log(`  = Ya existe (no se toca): ${item.name}`)
+      continue
+    }
+    let facultyId
+    if (item.type === 'decano') {
+      const fac = item.facultadSlug ? await findOne('facultades', 'slug', item.facultadSlug) : null
+      if (!fac) {
+        counts.errores++
+        log(`  ! ${item.name}: falta la facultad «${item.facultadSlug}» en el CMS; no se crea (cree la facultad y re-ejecute).`)
+        continue
+      }
+      facultyId = fac.id
+    }
+    const r = await api('POST', 'autoridades', toCmsPayloadAutoridad(item, facultyId))
+    await pace(PACE_MS)
+    if (r.ok) {
+      counts.creadas++
+      log(`  + Creada: ${item.name}`)
+    } else {
+      counts.errores++
+      log(`  ! Falló ${item.name} (HTTP ${r.status}): ${JSON.stringify(r.data.errors ?? r.data).slice(0, 300)}`)
     }
   }
-
-  console.log('\n──────────────────────────────────────────────────────────')
-  console.log(`   Resultado: ${ok} creados · ${fail} errores`)
-  if (ok > 0) {
-    console.log(`   Recargá el CMS en ${CMS_URL}/admin/collections/autoridades`)
-    console.log(`   Portal: http://localhost:3001/autoridades`)
-  }
-  console.log()
+  log('')
+  log(`Resumen: ${JSON.stringify(counts)}`)
+  return { dryRun: false, counts }
 }
 
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  run({ dryRun: process.argv.includes('--dry-run'), allowRemote: process.argv.includes('--allow-remote') }).catch((err) => {
+    console.error(`Error: ${err.message}`)
+    process.exit(1)
+  })
+}

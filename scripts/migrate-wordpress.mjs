@@ -14,6 +14,8 @@
  *   --only=posts      Migrate only news posts
  *   --only=pages      Migrate only static pages
  *   --cms=<url>       CMS base URL (default: http://localhost:3002)
+ *   --uploads=<dir>   MIG-WP: local folder with downloaded images AAAA/MM/file
+ *                     (default: ~/Downloads/Plataforma/wp-migration/uploads)
  */
 
 import fs from 'node:fs'
@@ -23,6 +25,16 @@ import { createReadStream, existsSync } from 'node:fs'
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
 import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
+import { fetchWithRetry } from './lib/retry.mjs'
+import { buildDraftPayload, buildStepBody, checkIdentities, remainingSteps } from './lib/wpPublishFlow.mjs'
+import {
+  cleanContentHtml,
+  extractEmbeddedImages,
+  pickFeaturedImage,
+  stripShortcodes,
+  stripWpComments,
+  wpDateInfo,
+} from './lib/wpContent.mjs'
 
 const execAsync = promisify(exec)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -37,11 +49,33 @@ const ONLY     = args.find(a => a.startsWith('--only='))?.split('=')[1] || 'both
 const LIMIT    = (() => { const l = args.find(a => a.startsWith('--limit=')); return l ? parseInt(l.split('=')[1], 10) : Infinity })()
 const XML_ARG  = args.find(a => a.startsWith('--xml='))?.split('=').slice(1).join('=')
 const CMS_URL  = args.find(a => a.startsWith('--cms='))?.split('=')[1] || 'http://localhost:3002'
+// MIG-WP: carpeta local con las imágenes ya descargadas (AAAA/MM/archivo). Solo se consulta si el archivo existe.
+const UPLOADS_DIR = args.find(a => a.startsWith('--uploads='))?.split('=').slice(1).join('=')
+  || path.join(HOME, 'Downloads', 'Plataforma', 'wp-migration', 'uploads')
 
 const CMS_EMAIL    = process.env.CMS_EMAIL    || 'admin@unc.edu.py'
 // SEC-08: la contraseña es obligatoria (CMS_PASSWORD, mínimo 12 caracteres); falla antes de cualquier red si falta o es débil.
 // En --dry-run no hay login ni escritura, por eso no se exige.
 const CMS_PASSWORD = DRY_RUN ? '' : requireCmsPassword()
+
+/**
+ * MIG-WP: credenciales opcionales del revisor y del publicador (SEC-03: nadie aprueba ni publica lo
+ * propio, así que son identidades DISTINTAS del autor). Cada contraseña pasa por la misma validación
+ * de requireCmsPassword; el mensaje de error nunca incluye el valor. Sin ellas solo se crean borradores.
+ */
+function optionalIdentity(label, emailVar, passwordVar) {
+  const email = process.env[emailVar]
+  const hasPassword = (process.env[passwordVar] ?? '').trim() !== ''
+  if (!email && !hasPassword) return null
+  if (!email || !hasPassword) throw new Error(`${label}: defina ${emailVar} y ${passwordVar} juntos.`)
+  try {
+    return { email, password: requireCmsPassword({ ...process.env, CMS_PASSWORD: process.env[passwordVar] }) }
+  } catch (error) {
+    throw new Error(`${label} (${passwordVar}): ${error.message.replace('CMS_PASSWORD', passwordVar)}`)
+  }
+}
+const REVIEWER_CREDS  = DRY_RUN ? null : optionalIdentity('Revisor', 'CMS_REVIEWER_EMAIL', 'CMS_REVIEWER_PASSWORD')
+const PUBLISHER_CREDS = DRY_RUN ? null : optionalIdentity('Publicador', 'CMS_PUBLISHER_EMAIL', 'CMS_PUBLISHER_PASSWORD')
 
 /* =========================================================
    XML RESOLVER  (supports .xml or .zip)
@@ -153,9 +187,9 @@ function emptyLexical() {
 function htmlToLexical(html) {
   if (!html || !html.trim()) return emptyLexical()
 
-  // Remove shortcodes and script/style blocks
-  let h = html
-    .replace(/\[.*?\]/gs, '')
+  // MIG-WP: comentarios HTML (Gutenberg) y shortcodes de la lista blanca ANTES de quitar etiquetas;
+  // los corchetes legítimos del texto ("[sic]", "[1]") se conservan. Luego se quitan script/style.
+  let h = cleanContentHtml(html).html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
 
@@ -245,7 +279,8 @@ function slugify(text) {
 }
 
 function excerpt(html, maxLen = 280) {
-  const text = html.replace(/\[.*?\]/gs, '').replace(/<[^>]+>/g, ' ')
+  // MIG-WP: mismo criterio que htmlToLexical (comentarios + shortcodes acotados, no `[.*?]`).
+  const text = stripShortcodes(stripWpComments(html)).replace(/<[^>]+>/g, ' ')
     .replace(/&[a-z]+;/gi, ' ').replace(/\s+/g, ' ').trim()
   return text.length <= maxLen ? text : text.slice(0, maxLen).replace(/\s+\S*$/, '') + '…'
 }
@@ -327,19 +362,24 @@ function mapCategory(wpCategories, title, content) {
    PAYLOAD AUTH
    ========================================================= */
 
-async function getToken() {
+async function getToken(email = CMS_EMAIL, password = CMS_PASSWORD) {
   const res = await fetch(`${CMS_URL}/api/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: CMS_EMAIL, password: CMS_PASSWORD }),
+    body: JSON.stringify({ email, password }),
   })
   if (!res.ok) throw new Error(`Auth failed: ${res.status} ${await res.text()}`)
   const { token } = await res.json()
   return token
 }
 
+/**
+ * PERF-DB: crea un documento con reintentos (5xx, 429 y red; backoff 500 ms/1 s/2 s). Un 4xx de
+ * validación NO se reintenta: se propaga tal cual. Límite: si un 5xx llegó a guardar el documento, el
+ * reintento choca con el slug único; el llamador lo trata como condición de carrera (ver migrateNews).
+ */
 async function cmsPost(token, collection, data) {
-  const res = await fetch(`${CMS_URL}/api/${collection}`, {
+  const res = await fetchWithRetry(`${CMS_URL}/api/${collection}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
     body: JSON.stringify(data),
@@ -349,11 +389,127 @@ async function cmsPost(token, collection, data) {
   return body.doc
 }
 
+/** MIG-WP: id y rol de la sesión (GET /api/users/me); alimenta la comprobación única de identidades. */
+async function whoAmI(token) {
+  const res = await fetchWithRetry(`${CMS_URL}/api/users/me`, { headers: { Authorization: `JWT ${token}` } })
+  if (!res.ok) throw new Error(`No se pudo consultar /api/users/me: ${res.status}`)
+  const { user } = await res.json()
+  if (!user) throw new Error('La sesión no devolvió usuario.')
+  return { id: user.id, role: user.role }
+}
+
+/**
+ * MIG-WP: transición editorial de una noticia con la identidad que corresponde al paso (PATCH).
+ * Sólo se envían campos de estado; el servidor valida rol, estado y «nadie aprueba lo propio».
+ * Con reintentos solo ante 5xx/429/red; un 403/422 se propaga (es la política, no un fallo transitorio).
+ */
+async function cmsPatch(token, collection, id, data) {
+  const res = await fetchWithRetry(`${CMS_URL}/api/${collection}/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
+    body: JSON.stringify(data),
+  })
+  const body = await res.json()
+  if (!res.ok) throw new Error(JSON.stringify(body.errors || body))
+  return body.doc
+}
+
+/**
+ * MIG-WP: documento existente por slug con su estado editorial actual (borrador incluido), o null.
+ * Se pide la última versión (draft=true) porque revisor y aprobación se guardan como versión.
+ */
+async function findNoticia(token, slug) {
+  const url = `${CMS_URL}/api/noticias?where[slug][equals]=${encodeURIComponent(slug)}&limit=1&depth=0&draft=true`
+  const res = await fetchWithRetry(url, { headers: { Authorization: `JWT ${token}` } })
+  if (!res.ok) throw new Error(`No se pudo comprobar el slug "${slug}": ${res.status}`)
+  const { docs } = await res.json()
+  return Array.isArray(docs) && docs.length > 0 ? docs[0] : null
+}
+
+/**
+ * MIG-WP: avanza una noticia por los pasos legales que le faltan, cada uno con su identidad.
+ * Devuelve true si llegó a publicado. Sin tokens de revisor/publicador no avanza (modo borradores).
+ */
+async function advanceNoticia(ctx, doc) {
+  if (ctx.mode !== 'full') return false
+  const { steps, blocked } = remainingSteps(doc)
+  if (blocked) throw new Error(blocked)
+  for (const step of steps) {
+    await cmsPatch(ctx.tokens[step.actor], 'noticias', doc.id, buildStepBody(step.to))
+  }
+  return steps.length > 0
+}
+
+/**
+ * PERF-DB: ¿ya existe una noticia con este slug? Consulta mínima (sin profundidad ni cuerpo) con los
+ * mismos reintentos que cmsPost. Si el CMS no responde de forma fiable lanza, para NO suponer que no
+ * existe y duplicar. Límite: no distingue borradores de publicadas; basta con el slug único.
+ */
+async function noticiaExists(token, slug) {
+  const url = `${CMS_URL}/api/noticias?where[slug][equals]=${encodeURIComponent(slug)}&limit=1&depth=0&select[id]=true`
+  const res = await fetchWithRetry(url, { headers: { Authorization: `JWT ${token}` } })
+  if (!res.ok) throw new Error(`No se pudo comprobar el slug "${slug}": ${res.status}`)
+  const { docs } = await res.json()
+  return Array.isArray(docs) && docs.length > 0
+}
+
+/** MIG-WP: pausa entre noticias; cada una produce hasta 5 peticiones y varias revalidaciones del portal. */
+const ITEM_DELAY_MS = 800
+
 /* =========================================================
    MIGRATE NEWS POSTS
    ========================================================= */
 
-async function migratePosts(xml, token) {
+/**
+ * MIG-WP: análisis puro de una noticia (sin red ni escritura): fecha ISO, imágenes embebidas,
+ * imagen destacada con su fuente y banderas de limpieza. Solo comprueba si existen archivos locales.
+ */
+function analyzePost(post, thumbnailUrl) {
+  const raw = post.post_content || ''
+  const embedded = extractEmbeddedImages(raw, { uploadsDir: UPLOADS_DIR, fileExists: existsSync })
+  const featured = pickFeaturedImage({ thumbnailUrl, embedded })
+  const dateInfo = wpDateInfo(post)
+  let featuredLocal = null
+  if (featured.relPath) {
+    const fromBody = embedded.find(im => im.url === featured.url)
+    featuredLocal = fromBody ? fromBody.localPath : (existsSync(path.join(UPLOADS_DIR, ...featured.relPath.split('/'))) ? featured.relPath : null)
+  }
+  return {
+    post,
+    iso: dateInfo.iso,
+    dateSource: dateInfo.source,
+    embedded,
+    featured,
+    featuredLocal,
+    flags: cleanContentHtml(raw).flags,
+  }
+}
+
+/** MIG-WP: resumen global (todas las publicadas) por fuente de imagen destacada y archivo local. */
+function printImageSummary(analyzed) {
+  const by = { miniatura: 0, cuerpo: 0, ninguna: 0 }
+  let withLocal = 0, embeddedTotal = 0, embeddedRec = 0, gutenberg = 0, shortcodes = 0, dateGmt = 0, dateLocal = 0, dateNone = 0
+  for (const a of analyzed) {
+    by[a.featured.source]++
+    if (a.featuredLocal) withLocal++
+    embeddedTotal += a.embedded.length
+    embeddedRec += a.embedded.filter(im => im.estado === 'recuperable').length
+    if (a.dateSource === 'gmt') dateGmt++
+    else if (a.dateSource === 'local') dateLocal++
+    else dateNone++
+    if (a.flags.gutenberg) gutenberg++
+    if (a.flags.shortcodes) shortcodes++
+  }
+  console.log(`\n   Resumen de imágenes (${analyzed.length} noticias publicadas):`)
+  console.log(`     destacada por miniatura: ${by.miniatura} | por cuerpo: ${by.cuerpo} | sin imagen: ${by.ninguna}`)
+  console.log(`     destacadas con archivo local existente: ${withLocal} (carpeta: ${UPLOADS_DIR})`)
+  console.log(`     imágenes embebidas: ${embeddedTotal} (${embeddedRec} recuperables, ${embeddedTotal - embeddedRec} no recuperables)`)
+  console.log(`     con comentarios Gutenberg: ${gutenberg} | con shortcodes: ${shortcodes}`)
+  console.log(`     fecha: ${dateGmt} usaron post_date_gmt | ${dateLocal} convertidas desde hora local (America/Asuncion) | ${dateNone} sin fecha\n`)
+}
+
+async function migratePosts(xml, ctx) {
+  const token = ctx.tokens?.author
   console.log('\n── NEWS POSTS ───────────────────────────────────')
 
   // Parse taxonomy
@@ -395,18 +551,28 @@ async function migratePosts(xml, token) {
 
   // Parse posts
   const allRows = parseTableRows(xml, 'uncm1_posts')
-  const posts = allRows
-    .filter(p => p.post_type === 'post' && p.post_status === 'publish')
-    .slice(0, LIMIT)
+  const published = allRows.filter(p => p.post_type === 'post' && p.post_status === 'publish')
 
-  console.log(`   Total published posts: ${allRows.filter(p => p.post_type === 'post' && p.post_status === 'publish').length}`)
+  // MIG-WP: análisis de TODAS las noticias publicadas (solo lectura, sin red ni escritura) para el resumen
+  // global; las que se migran son las más recientes primero cuando hay --limit.
+  const analyzed = published.map(post => analyzePost(post, thumbnailByPostId[post.ID] || null))
+  const byDateDesc = (a, b) => (b.iso || '').localeCompare(a.iso || '')
+  const selected = (LIMIT < Infinity ? [...analyzed].sort(byDateDesc) : analyzed).slice(0, LIMIT)
+  const posts = selected.map(a => a.post)
+
+  console.log(`   Total published posts: ${published.length}`)
   console.log(`   Migrating: ${posts.length}`)
+  printImageSummary(analyzed)
 
-  let ok = 0, skipped = 0, failed = 0
+  let ok = 0, skipped = 0, failed = 0, existed = 0, completed = 0, publishedNow = 0, draftOnly = 0
   const errors = []
   const seenSlugs = new Set() // track slugs within this run to detect in-run duplicates
+  // MIG-WP: imágenes embebidas por noticia {url, localPath|null, alt, estado}, listas para usar cuando se decida
+  // cómo guardarlas en Payload (el esquema actual no tiene dónde ponerlas; no se escriben).
+  const embeddedImagesBySlug = {}
 
-  for (const [i, post] of posts.entries()) {
+  for (const [i, info] of selected.entries()) {
+    const post = info.post
     const wpCategories = postCategories[post.ID] || []
     const title = (post.post_title || 'Sin título').slice(0, 150)
     let slug = post.post_name
@@ -430,49 +596,82 @@ async function migratePosts(xml, token) {
       continue
     }
 
-    const thumbUrl = thumbnailByPostId[post.ID] || null
+    embeddedImagesBySlug[slug] = info.embedded
 
-    const payload = {
+    // MIG-WP: el servidor exige que todo contenido nuevo nazca en Borrador (SEC-03); la publicación
+    // se hace después, paso a paso, con la identidad de cada rol (ver advanceNoticia).
+    const payload = buildDraftPayload({
       title,
       slug,
       summary,
       content: htmlToLexical(post.post_content || ''),
       category: mapCategory(wpCategories, title, post.post_content),
       tags: wpCategories.map(t => ({ tag: t })).slice(0, 10),
-      publishedAt: post.post_date ? new Date(post.post_date).toISOString() : new Date().toISOString(),
-      approvalStatus: 'publicado',
+      // MIG-WP: post_date_gmt solo si difiere de post_date; si es igual (GMT no calculado), falta o es inválido,
+      // se convierte post_date desde America/Asuncion (ver wpDateInfo).
+      publishedAt: info.iso || new Date().toISOString(),
       featured: false,
-      _status: 'published',
-      ...(thumbUrl ? { featuredImageUrl: thumbUrl } : {}),
-    }
+      // MIG-WP: miniatura resuelta; si no hay, primera imagen recuperable del cuerpo (URL del sitio original).
+      ...(info.featured.url ? { featuredImageUrl: info.featured.url } : {}),
+    })
 
     if (DRY_RUN) {
-      console.log(`  ✅ [${i + 1}/${posts.length}] ${title.slice(0, 60)} → ${payload.category}`)
+      const rec = info.embedded.filter(im => im.estado === 'recuperable').length
+      const nonRec = info.embedded.length - rec
+      const featLocal = info.featured.url
+        ? (info.featuredLocal ? 'archivo local: sí' : 'archivo local: no')
+        : '-'
+      console.log(`  ✅ [${i + 1}/${posts.length}] ${title.slice(0, 60)}`)
+      console.log(`       slug: ${slug} | fecha: ${payload.publishedAt} | categoría: ${payload.category}`)
+      console.log(`       destacada: ${info.featured.source} (${featLocal}) | embebidas: ${rec} recuperables, ${nonRec} no recuperables`)
+      console.log(`       limpieza: comentarios Gutenberg ${info.flags.gutenberg ? 'sí' : 'no'}, shortcodes ${info.flags.shortcodes ? 'sí' : 'no'}`)
       ok++
       continue
     }
 
     try {
-      await cmsPost(token, 'noticias', payload)
+      // PERF-DB: idempotencia. Si el slug ya existe se omite (no se crea `slug-<ID>`), así una
+      // migración interrumpida se puede relanzar sin duplicar noticias.
+      // MIG-WP: si quedó a medias (borrador/en revisión/aprobada) se completa; nunca se duplica.
+      const found = await findNoticia(token, slug)
+      if (found) {
+        const advanced = await advanceNoticia(ctx, found)
+        if (advanced) {
+          console.log(`  🔁 [${i + 1}/${posts.length}] completada: ${slug}`)
+          completed++
+          publishedNow++
+          await new Promise(r => setTimeout(r, ITEM_DELAY_MS))
+        } else {
+          console.log(`  ⏭  [${i + 1}/${posts.length}] ya existía: ${slug}`)
+          existed++
+        }
+        continue
+      }
+      const created = await cmsPost(token, 'noticias', payload)
+      if (ctx.mode === 'full') {
+        await advanceNoticia(ctx, created)
+        publishedNow++
+      } else {
+        draftOnly++
+      }
       console.log(`  ✅ [${i + 1}/${posts.length}] ${title.slice(0, 60)}`)
       ok++
-      if (i % 10 === 9) await new Promise(r => setTimeout(r, 200))
+      // MIG-WP: pausa por noticia para no saturar el CMS ni el portal (revalidación y límite de peticiones).
+      await new Promise(r => setTimeout(r, ITEM_DELAY_MS))
     } catch (err) {
-      // Retry once with ID suffix when the DB reports a slug uniqueness violation
+      // PERF-DB: un conflicto de slug tras la comprobación solo puede ser una condición de carrera real
+      // (otro proceso lo creó entre la consulta y el POST, o un 5xx que sí guardó). Se vuelve a
+      // comprobar: si ya existe se cuenta como existente; si no, es un fallo real. Sin sufijo `-<ID>`.
       const isSlugConflict = err.message.includes('único') || err.message.includes('unique') || err.message.includes('slug')
-      if (isSlugConflict && !payload.slug.endsWith('-' + post.ID)) {
-        const retrySlug = payload.slug.slice(0, 94) + '-' + post.ID
+      if (isSlugConflict) {
         try {
-          await cmsPost(token, 'noticias', { ...payload, slug: retrySlug })
-          console.log(`  ✅ [${i + 1}/${posts.length}] ${title.slice(0, 60)} (slug: ${retrySlug})`)
-          ok++
-          continue
-        } catch (retryErr) {
-          const retryMsg = retryErr.message.slice(0, 120)
-          console.log(`  ❌ [${i + 1}/${posts.length}] FAIL (retry): ${title.slice(0, 50)} — ${retryMsg}`)
-          errors.push({ collection: 'noticias', title, slug: retrySlug, error: retryMsg })
-          failed++
-          continue
+          if (await noticiaExists(token, slug)) {
+            console.log(`  ⏭  [${i + 1}/${posts.length}] ya existía (carrera): ${slug}`)
+            existed++
+            continue
+          }
+        } catch {
+          // Sin respuesta fiable: se informa el error original abajo.
         }
       }
       const msg = err.message.slice(0, 120)
@@ -482,8 +681,11 @@ async function migratePosts(xml, token) {
     }
   }
 
-  console.log(`\n   ✅ ${ok}  ⚠ ${skipped}  ❌ ${failed}`)
-  return { ok, skipped, failed, errors }
+  console.log(`\n   ✅ ${ok}  ⏭ ${existed} ya existían  ⚠ ${skipped}  ❌ ${failed}`)
+  if (!DRY_RUN) {
+    console.log(`   🔁 ${completed} completadas desde pasos intermedios | publicadas en esta corrida: ${publishedNow} | solo borrador: ${draftOnly}`)
+  }
+  return { ok, skipped, existed, failed, errors }
 }
 
 /* =========================================================
@@ -584,16 +786,37 @@ async function main() {
 
   // Auth
   let token
+  const ctx = { mode: 'draft-only', tokens: {} }
   if (!DRY_RUN) {
     console.log('\n🔐 Authenticating with Payload…')
     token = await getToken()
     console.log('   ✅ OK')
+    ctx.tokens.author = token
+
+    // MIG-WP: comprobación única de identidades ANTES de procesar (no 273 fallos iguales).
+    const identities = { author: await whoAmI(token) }
+    if (REVIEWER_CREDS) {
+      ctx.tokens.reviewer = await getToken(REVIEWER_CREDS.email, REVIEWER_CREDS.password)
+      identities.reviewer = await whoAmI(ctx.tokens.reviewer)
+    }
+    if (PUBLISHER_CREDS) {
+      ctx.tokens.publisher = await getToken(PUBLISHER_CREDS.email, PUBLISHER_CREDS.password)
+      identities.publisher = await whoAmI(ctx.tokens.publisher)
+    }
+    const check = checkIdentities(identities)
+    if (!check.ok) throw new Error(`Identidades editoriales no válidas:\n - ${check.problems.join('\n - ')}`)
+    ctx.mode = check.mode
+    console.log(
+      check.mode === 'full'
+        ? '   Modo: flujo completo (autor -> revisor -> publicador, tres identidades distintas)'
+        : '   Modo: SOLO BORRADORES (sin CMS_REVIEWER_* ni CMS_PUBLISHER_*; nada se publica)',
+    )
   }
 
   const allErrors = []
 
   if (ONLY === 'both' || ONLY === 'posts') {
-    const r = await migratePosts(xml, token)
+    const r = await migratePosts(xml, ctx)
     allErrors.push(...r.errors)
   }
 

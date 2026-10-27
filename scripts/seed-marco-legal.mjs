@@ -1,365 +1,142 @@
 /**
- * Seed script — Marco Legal documents
- * Source: https://www.unc.edu.py/marco-legal/
+ * seed-marco-legal.mjs — MLG-01
  *
- * Usage:
- *   $env:CMS_EMAIL="admin@unc.edu.py"; $env:CMS_PASSWORD="yourPassword"
- *   node scripts/seed-marco-legal.mjs
+ * Siembra en el CMS los 44 documentos que publica https://www.unc.edu.py/marco-legal/
+ * (datos en scripts/lib/marcoLegalSeedData.mjs). Después el CMS es la única fuente: se editan desde el panel.
+ * Spec: docs/specs/portal/MARCO-LEGAL.md §5 y escenario 10.
+ *
+ * Uso:
+ *   node scripts/seed-marco-legal.mjs --dry-run                         # sin red
+ *   CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-marco-legal.mjs    # CMS local (localhost:3002)
+ *   ... node scripts/seed-marco-legal.mjs --update                      # corrige category/externalUrl/order
+ *   CMS_URL=https://... node scripts/seed-marco-legal.mjs --allow-remote   # explícito; solo https
+ *
+ * Reglas (amenaza -> control):
+ *   - Escribir en un CMS equivocado -> solo localhost salvo --allow-remote (y entonces solo https).
+ *   - Credencial débil o literal -> `requireCmsPassword` (SEC-08); el correo viene de CMS_EMAIL; nada se imprime.
+ *   - Duplicar filas al re-ejecutar -> GET por clave natural (título exacto) antes de cada POST.
+ *   - Pisar ediciones del PO -> una fila existente solo se informa; con --update se corrigen SOLO los campos
+ *     del seed (category, externalUrl, order). `active`, `estado`, notas y fechas nunca se tocan.
+ *   - Saturar el CMS -> pausa entre escrituras.
+ * Límite: no comprueba que los archivos de Drive sigan accesibles.
  */
+import { pathToFileURL } from 'node:url'
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
+import { MARCO_LEGAL_DOCS, SEED_MANAGED_FIELDS, toCmsPayloadMarcoLegal } from './lib/marcoLegalSeedData.mjs'
 
-const CMS_URL = 'http://localhost:3002'
-const CMS_EMAIL = process.env.CMS_EMAIL || 'admin@unc.edu.py'
-const CMS_PASSWORD = process.env.CMS_PASSWORD || ''
+const PACE_MS = 120
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-const DOCUMENTS = [
-  // ── Ley de Creación ─────────────────────────────────────────────────────
-  {
-    title: 'Ley Nro. 3201/2007 – Creación UNC',
-    category: 'ley-creacion',
-    externalUrl: 'https://drive.google.com/file/d/1Jm07lULWCC1Vrf0Piw1DClvluDU2d43x/view?usp=sharing',
-    order: 1,
-  },
+/** true solo para hosts de desarrollo local. */
+export function isLocalCmsUrl(url) {
+  try {
+    const h = new URL(url).hostname
+    return h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '::1'
+  } catch {
+    return false
+  }
+}
 
-  // ── Estatuto Universitario ───────────────────────────────────────────────
-  {
-    title: 'Estatuto UNC',
-    category: 'estatuto',
-    externalUrl: 'https://drive.google.com/file/d/1I0rEzgzZcOFulmBzOrc9JHEC2oltTY68/view?usp=sharing',
-    order: 1,
-  },
+/** Campos del seed que difieren entre la fila del CMS y el payload deseado. */
+function diffManaged(existing, wanted) {
+  return SEED_MANAGED_FIELDS.filter((f) => existing[f] !== wanted[f])
+}
 
-  // ── Reglamento General ───────────────────────────────────────────────────
-  {
-    title: 'Reglamento General UNC: Título I «De la naturaleza, fines y composición de la Universidad»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1qsB0cPzlIUX2734kbj0sm-smahnnIspd/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Reglamento General UNC: Título II «De los órganos de gobierno, forma de integración, deberes y atribuciones»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1vDeyN6Jvk6lg3YdfgSLRgbL_lYnozN4V/view?usp=sharing',
-    order: 2,
-  },
-  {
-    title: 'Reglamento General UNC: Título III «Del Régimen Electoral»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1298PVVEPOzZZw9vcXQfnQQWQW1Z_Hcpq/view?usp=sharing',
-    order: 3,
-  },
-  {
-    title: 'Reglamento General UNC: Título IV «De las Unidades Académicas»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1hYHozQYsKlBFVqCFyGFOpVo5tgB19FB9/view?usp=sharing',
-    order: 4,
-  },
-  {
-    title: 'Reglamento General UNC: Título V «Del Régimen Académico»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1c5cpR3wP3YLHneAG9d1XgE6VdTNzWR0U/view?usp=sharing',
-    order: 5,
-  },
-  {
-    title: 'Reglamento General UNC: Título VI «Del Régimen Disciplinario»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1SXFvrFrvHQnuM1lPX3J62qQPh3PfWfiA/view?usp=sharing',
-    order: 6,
-  },
-  {
-    title: 'Reglamento General UNC: Título VII «De las becas y ayudas económicas»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/17MFvM3WIRrvbUMQfykcQaWaaA8KAgcMn/view?usp=sharing',
-    order: 7,
-  },
-  {
-    title: 'Reglamento General UNC: Título VIII «De los programas de posgrado»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1DyaUHktdfnX5UGZIn8ji7aM2luFWoovF/view?usp=sharing',
-    order: 8,
-  },
-  {
-    title: 'Reglamento General UNC: Título IX «De la extensión universitaria»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1FbM7fxBl5zVWKFmebc7NIkRvxHoutFRO/view?usp=sharing',
-    order: 9,
-  },
-  {
-    title: 'Reglamento General UNC: Título X «De la carrera docente»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1jP1tR4FfDhRCIkqNByxGKXIvg7EjkG6X/view?usp=sharing',
-    order: 10,
-  },
-  {
-    title: 'Reglamento General UNC: Título XI «De la investigación»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1STqe3lrymOSY8vLKxJ-aPnGN4l-Tq8ov/view?usp=sharing',
-    order: 11,
-  },
-  {
-    title: 'Reglamento General UNC: Título XII «De los mecanismos de selección, promoción y evaluación de funcionarios»',
-    category: 'reglamento-general',
-    externalUrl: 'https://drive.google.com/file/d/1Znre4aCmBwZWXREJTXJU7FXBZK7PziCh/view?usp=sharing',
-    order: 12,
-  },
+/** Ejecuta la siembra. `deps` permite inyectar env, fetch, log y pace (pruebas). */
+export async function run({ dryRun = false, allowRemote = false, update = false, deps = {} } = {}) {
+  const env = deps.env ?? process.env
+  const log = deps.log ?? ((m) => console.log(m))
+  const doFetch = deps.fetch ?? globalThis.fetch
+  const pace = deps.pace ?? sleep
+  const cmsUrl = (env.CMS_URL || 'http://localhost:3002').replace(/\/+$/, '')
 
-  // ── Reglamentos Especiales ───────────────────────────────────────────────
-  {
-    title: 'Reglamento de Funcionamiento CSU',
-    category: 'reglamentos-especiales',
-    externalUrl: 'https://drive.google.com/file/d/1J6J62UcGtL_abXqnCgma6S61E8opPJKb/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Reglamento Movilidad UNC',
-    category: 'reglamentos-especiales',
-    externalUrl: 'https://drive.google.com/file/d/1jbtqc3UF9zbuDvjNcvjNcvwSMi5xmAINpqNf/view?usp=sharing',
-    order: 2,
-  },
-  {
-    title: 'Reglamento de Tesis – Maestría en Educación UNC',
-    category: 'reglamentos-especiales',
-    externalUrl: 'https://drive.google.com/file/d/1TMC6xIHEfNpg08IjCnAuLqjp8Ecacc8T/view?usp=sharing',
-    order: 3,
-  },
-  {
-    title: 'Reglamento cursos de posgrado del Rectorado UNC',
-    category: 'reglamentos-especiales',
-    externalUrl: 'https://drive.google.com/file/d/1wVVo0ClfwBMeKGTJOnWuxuEsFBGUi0d3/view?usp=sharing',
-    order: 4,
-  },
-  {
-    title: 'Reglamento UNC – Ley de Gratuidad',
-    category: 'reglamentos-especiales',
-    externalUrl: 'https://drive.google.com/file/d/1P7_oouyDPmfyPiV0S2hDq1DX-nPBCgJA/view?usp=sharing',
-    order: 5,
-  },
-  {
-    title: 'Reglamento de Gestiones y Actos de la Secretaría General del Rectorado',
-    category: 'reglamentos-especiales',
-    externalUrl: 'https://drive.google.com/file/d/1U-ftpwOxU7UM0nv_sFRBjDgJVnte7lNI/view?usp=sharing',
-    order: 6,
-  },
+  if (dryRun) {
+    const perCategory = {}
+    for (const d of MARCO_LEGAL_DOCS) perCategory[d.category] = (perCategory[d.category] ?? 0) + 1
+    log(`[dry-run] CMS destino: ${cmsUrl} (sin llamadas de red)`)
+    log(`[dry-run] documentos: ${MARCO_LEGAL_DOCS.length} (active=true, estado=vigente; solo se crean los que no existan por título)`)
+    log(`[dry-run] por categoría: ${JSON.stringify(perCategory)}`)
+    return { dryRun: true, plan: { documentos: MARCO_LEGAL_DOCS.length, perCategory } }
+  }
 
-  // ── Códigos Institucionales ──────────────────────────────────────────────
-  {
-    title: 'Código de Ética UNC',
-    category: 'codigos',
-    externalUrl: 'https://drive.google.com/file/d/1z00oUla3Bz8m7ePzoR6YbitiFeAKXsCJ/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Código de Ética UNC – Versión 2',
-    category: 'codigos',
-    externalUrl: 'https://drive.google.com/file/d/18avjC_E37WXMGTNA8r9XxfLs-zNggAzg/view?usp=sharing',
-    order: 2,
-  },
-  {
-    title: 'Código de Buen Gobierno UNC',
-    category: 'codigos',
-    externalUrl: 'https://drive.google.com/file/d/1O6MhMywuXalF8eWotgmWv9Qeanki58tv/view?usp=sharing',
-    order: 3,
-  },
+  if (!isLocalCmsUrl(cmsUrl)) {
+    if (!allowRemote) throw new Error(`Este guion solo escribe en un CMS local; destino rechazado: ${cmsUrl}. Use --allow-remote para un destino https explícito.`)
+    if (new URL(cmsUrl).protocol !== 'https:') throw new Error('Con --allow-remote el CMS debe usar https.')
+  }
+  const email = (env.CMS_EMAIL || '').trim()
+  if (!email) throw new Error('Falta CMS_EMAIL (usuario superadmin o web-admin).')
+  const password = requireCmsPassword(env)
 
-  // ── Políticas Institucionales ────────────────────────────────────────────
-  {
-    title: 'Política de Control Interno UNC – V3',
-    category: 'politicas',
-    externalUrl: 'https://drive.google.com/file/d/1x1AthCSLZmrUIrIuc9ldTNExhuF5xAUY/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Política de Talento Humano UNC',
-    category: 'politicas',
-    externalUrl: 'https://drive.google.com/file/d/1sPStXfAPJvqYecJIaUx1tMQKd3enalTC/view?usp=sharing',
-    order: 2,
-  },
-  {
-    title: 'Políticas de Información y Comunicación UNC',
-    category: 'politicas',
-    externalUrl: 'https://drive.google.com/file/d/1xdRC0efzmShUXRqOpAbkWlyNo0wqTtru/view?usp=sharing',
-    order: 3,
-  },
-  {
-    title: 'Políticas de Extensión Universitaria UNC',
-    category: 'politicas',
-    externalUrl: 'https://drive.google.com/file/d/1JYAssk0YASYrcDaW3idGAtFDEOIprcNp/view?usp=sharing',
-    order: 4,
-  },
-  {
-    title: 'Políticas de Investigación y Publicación UNC',
-    category: 'politicas',
-    externalUrl: 'https://drive.google.com/file/d/1qwzZZowPI3q9nKYx45UuyZ6EdxPHWZud/view?usp=sharing',
-    order: 5,
-  },
-  {
-    title: 'Políticas de Vinculación UNC',
-    category: 'politicas',
-    externalUrl: 'https://drive.google.com/file/d/1yKM61Iml9fY2eCROYt_zHkrUg60XT_M4/view?usp=sharing',
-    order: 6,
-  },
-  {
-    title: 'Políticas y Líneas de Acción Institucional',
-    category: 'politicas',
-    externalUrl: 'https://drive.google.com/file/d/1dSUlvbk1UBh7082SAdx5RMxQN2pn6wor/view?usp=sharing',
-    order: 7,
-  },
-
-  // ── Planes Estratégicos ──────────────────────────────────────────────────
-  {
-    title: 'Plan Estratégico Institucional UNC 2017–2022',
-    category: 'planes',
-    externalUrl: 'https://drive.google.com/file/d/14QgcgKm1vnO4iSIjruGWhEgxFnxtcogS/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Plan de Formación de Investigadores',
-    category: 'planes',
-    externalUrl: 'https://drive.google.com/file/d/1JS6DtnKjdUWeLiqxot77W44NZEm2XYgl/view?usp=sharing',
-    order: 2,
-  },
-  {
-    title: 'Plan de Comunicación UNC',
-    category: 'planes',
-    externalUrl: 'https://drive.google.com/file/d/1qE7ecXupBWU33qiX1EYiA04HhEnfwwyh/view?usp=sharing',
-    order: 3,
-  },
-  {
-    title: 'Plan básico de digitalización de trámites',
-    category: 'planes',
-    externalUrl: 'https://drive.google.com/file/d/1wUXJy7kpMyf4y6Uy7s8ANlh6_8SDEgpy/view?usp=sharing',
-    order: 4,
-  },
-  {
-    title: 'Plan de Seguridad Universitario UNC',
-    category: 'planes',
-    externalUrl: 'https://drive.google.com/file/d/1B0Tu5Ze6bKP6fQGPlGko_l5ektJuFydz/view?usp=sharing',
-    order: 5,
-  },
-
-  // ── Manuales ────────────────────────────────────────────────────────────
-  {
-    title: 'Manual de Funciones Rectorado UNC',
-    category: 'manuales',
-    externalUrl: 'https://drive.google.com/file/d/1UbJqhsuyLDHnUgZv7OAAzJHMPChXcG1g/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Manual de Buenas Prácticas – Enfoque inclusivo UNC',
-    category: 'manuales',
-    externalUrl: 'https://drive.google.com/file/d/13oRo1rTwKpXqwGWtSXyS16_GTfb0Vjq8/view?usp=sharing',
-    order: 2,
-  },
-
-  // ── Procedimientos ───────────────────────────────────────────────────────
-  {
-    title: 'Procedimiento Recorrido Expedientes Rectorado',
-    category: 'procedimientos',
-    externalUrl: 'https://drive.google.com/file/d/1Eirfg4BBX5bK_LtrfE1jcbWj7j1yAzcX/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Procedimiento Recorrido Solicitud Contratos Rectorado',
-    category: 'procedimientos',
-    externalUrl: 'https://drive.google.com/file/d/1l75KHTk8YKZve9WsnZOjKFHCNQPgygoU/view?usp=sharing',
-    order: 2,
-  },
-  {
-    title: 'Procedimiento de actualización legajo funcionarios Rectorado UNC',
-    category: 'procedimientos',
-    externalUrl: 'https://drive.google.com/file/d/1FhihkYp29_jusUYsm9JVq_ovyRVAppSI/view?usp=sharing',
-    order: 3,
-  },
-  {
-    title: 'Delineamiento nominación Docentes de Medio Tiempo y Tiempo Completo',
-    category: 'procedimientos',
-    externalUrl: 'https://drive.google.com/file/d/1fDNMSwgGGgjo6Md-uchLCKVRHB-zBzMg/view?usp=sharing',
-    order: 4,
-  },
-
-  // ── Protocolos ───────────────────────────────────────────────────────────
-  {
-    title: 'Protocolo Sanitario – Pandemia Rectorado UNC',
-    category: 'protocolos',
-    externalUrl: 'https://drive.google.com/file/d/12qtbAX6d6Brt9cNYoIDJwzVngFcMquCI/view?usp=sharing',
-    order: 1,
-  },
-  {
-    title: 'Protocolo Sanitario – Pandemia UNC',
-    category: 'protocolos',
-    externalUrl: 'https://drive.google.com/file/d/1ThlMvPFLTyVDMkLOWzfn6-_YftDeUK88/view?usp=sharing',
-    order: 2,
-  },
-  {
-    title: 'Proyecto Marco Internacionalización Educación Superior – UNC',
-    category: 'protocolos',
-    externalUrl: 'https://drive.google.com/file/d/1-uzqsH7Y2vAVcMPr2ukLjrGdDT3WXMxM/view?usp=sharing',
-    order: 3,
-  },
-]
-
-// ── Auth ────────────────────────────────────────────────────────────────────
-
-async function getToken() {
-  const res = await fetch(`${CMS_URL}/api/users/login`, {
+  const loginRes = await doFetch(`${cmsUrl}/api/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: CMS_EMAIL, password: CMS_PASSWORD }),
+    body: JSON.stringify({ email, password }),
   })
-  if (!res.ok) throw new Error(`Auth failed (${res.status}): ${await res.text()}`)
-  const data = await res.json()
-  return data.token
-}
+  const login = await loginRes.json().catch(() => ({}))
+  if (!login.token) throw new Error(`No se pudo iniciar sesión en el CMS (HTTP ${loginRes.status}).`)
+  const headers = { 'Content-Type': 'application/json', Authorization: `JWT ${login.token}` }
+  log(`Sesión iniciada en ${cmsUrl}`)
 
-async function createDoc(token, doc) {
-  const res = await fetch(`${CMS_URL}/api/marco-legal`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
-    body: JSON.stringify({ ...doc, active: true }),
-  })
-  if (!res.ok) throw new Error(`POST failed (${res.status}): ${await res.text()}`)
-  return res.json()
-}
-
-// ── Main ─────────────────────────────────────────────────────────────────────
-
-async function main() {
-  console.log('\n── SEED MARCO LEGAL ──────────────────────────────────────')
-  console.log(`   CMS: ${CMS_URL}`)
-  console.log(`   Docs: ${DOCUMENTS.length} documentos`)
-
-  if (!CMS_PASSWORD) {
-    console.error('\n❌  Falta CMS_PASSWORD')
-    console.error('   $env:CMS_EMAIL="tu@email.com"; $env:CMS_PASSWORD="tu_pass"')
-    console.error('   node scripts/seed-marco-legal.mjs')
-    process.exit(1)
+  const api = async (method, endpoint, body) => {
+    const res = await doFetch(`${cmsUrl}/api/${endpoint}`, { method, headers, body: body ? JSON.stringify(body) : undefined })
+    const data = await res.json().catch(() => ({}))
+    return { ok: res.ok, status: res.status, data }
+  }
+  const findByTitle = async (title) => {
+    const r = await api('GET', `marco-legal?where[title][equals]=${encodeURIComponent(title)}&limit=2&depth=0`)
+    if (!r.ok) throw new Error(`Consulta a marco-legal falló (HTTP ${r.status}).`)
+    return r.data.docs?.[0] ?? null
   }
 
-  let token
-  try {
-    token = await getToken()
-    console.log('✅  Auth OK\n')
-  } catch (err) {
-    console.error(`❌  ${err.message}`)
-    process.exit(1)
-  }
-
-  let ok = 0
-  let fail = 0
-
-  for (const doc of DOCUMENTS) {
-    process.stdout.write(`   [${doc.category}] ${doc.title.slice(0, 60)}... `)
-    try {
-      await createDoc(token, doc)
-      console.log('✅')
-      ok++
-    } catch (err) {
-      console.log(`❌  ${err.message}`)
-      fail++
+  const counts = { creados: 0, sinCambios: 0, conDiferencias: 0, actualizados: 0, errores: 0 }
+  for (const [index, item] of MARCO_LEGAL_DOCS.entries()) {
+    const wanted = toCmsPayloadMarcoLegal(item, index)
+    const existing = await findByTitle(item.title)
+    if (existing) {
+      const diff = diffManaged(existing, wanted)
+      if (diff.length === 0) {
+        counts.sinCambios++
+        continue
+      }
+      counts.conDiferencias++
+      if (!update) {
+        log(`  ~ Difiere (${diff.join(', ')}), no se toca sin --update: ${item.title}`)
+        continue
+      }
+      const patch = Object.fromEntries(diff.map((f) => [f, wanted[f]]))
+      const r = await api('PATCH', `marco-legal/${existing.id}`, patch)
+      await pace(PACE_MS)
+      if (r.ok) {
+        counts.actualizados++
+        log(`  * Actualizado (${diff.join(', ')}): ${item.title}`)
+      } else {
+        counts.errores++
+        log(`  ! Falló la actualización de ${item.title} (HTTP ${r.status}): ${JSON.stringify(r.data.errors ?? r.data).slice(0, 300)}`)
+      }
+      continue
+    }
+    const r = await api('POST', 'marco-legal', wanted)
+    await pace(PACE_MS)
+    if (r.ok) {
+      counts.creados++
+      log(`  + Creado [${item.category}]: ${item.title}`)
+    } else {
+      counts.errores++
+      log(`  ! Falló ${item.title} (HTTP ${r.status}): ${JSON.stringify(r.data.errors ?? r.data).slice(0, 300)}`)
     }
   }
-
-  console.log(`\n── Resultado: ${ok} creados · ${fail} errores ─────────────`)
-  if (ok > 0) console.log('   Recargá el CMS en http://localhost:3002/admin/collections/marco-legal')
+  log('')
+  log(`Resumen: ${JSON.stringify(counts)}`)
+  return { dryRun: false, counts }
 }
 
-main().catch((e) => { console.error(e); process.exit(1) })
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  run({
+    dryRun: process.argv.includes('--dry-run'),
+    allowRemote: process.argv.includes('--allow-remote'),
+    update: process.argv.includes('--update'),
+  }).catch((err) => {
+    console.error(`Error: ${err.message}`)
+    process.exit(1)
+  })
+}
