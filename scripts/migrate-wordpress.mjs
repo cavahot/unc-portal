@@ -13,7 +13,8 @@
  *   --limit=<n>       Limit news posts to N (default: all)
  *   --only=posts      Migrate only news posts
  *   --only=pages      Migrate only static pages
- *   --cms=<url>       CMS base URL (default: http://localhost:3002)
+ *   --cms=<url>       CMS base URL (default: http://localhost:3002); remoto solo con https y --allow-remote
+ *   --allow-remote    permite un CMS no local (https obligatorio)
  *   --uploads=<dir>   MIG-WP: local folder with downloaded images AAAA/MM/file
  *                     (default: ~/Downloads/Plataforma/wp-migration/uploads)
  */
@@ -25,6 +26,7 @@ import { createReadStream, existsSync } from 'node:fs'
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
 import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
+import { requireCmsEmail, resolveCmsTarget } from './lib/cmsTarget.mjs'
 import { fetchWithRetry } from './lib/retry.mjs'
 import { buildDraftPayload, buildStepBody, checkIdentities, remainingSteps } from './lib/wpPublishFlow.mjs'
 import {
@@ -48,12 +50,31 @@ const DRY_RUN  = args.includes('--dry-run')
 const ONLY     = args.find(a => a.startsWith('--only='))?.split('=')[1] || 'both'
 const LIMIT    = (() => { const l = args.find(a => a.startsWith('--limit=')); return l ? parseInt(l.split('=')[1], 10) : Infinity })()
 const XML_ARG  = args.find(a => a.startsWith('--xml='))?.split('=').slice(1).join('=')
-const CMS_URL  = args.find(a => a.startsWith('--cms='))?.split('=')[1] || 'http://localhost:3002'
+// SEC-REVIEW: destino validado (localhost, o https con --allow-remote); evita enviar credenciales a un host ajeno.
+let CMS_URL
+try {
+  CMS_URL = resolveCmsTarget({
+    url: args.find(a => a.startsWith('--cms='))?.split('=')[1] || 'http://localhost:3002',
+    allowRemote: args.includes('--allow-remote'),
+  })
+} catch (error) {
+  console.error(`❌ ${error.message}`)
+  process.exit(1)
+}
 // MIG-WP: carpeta local con las imágenes ya descargadas (AAAA/MM/archivo). Solo se consulta si el archivo existe.
 const UPLOADS_DIR = args.find(a => a.startsWith('--uploads='))?.split('=').slice(1).join('=')
   || path.join(HOME, 'Downloads', 'Plataforma', 'wp-migration', 'uploads')
 
-const CMS_EMAIL    = process.env.CMS_EMAIL    || 'admin@unc.edu.py'
+// SEC-REVIEW: sin correo por defecto; en --dry-run no hay login, por eso no se exige.
+let CMS_EMAIL = ''
+if (!DRY_RUN) {
+  try {
+    CMS_EMAIL = requireCmsEmail()
+  } catch (error) {
+    console.error(`❌ ${error.message}`)
+    process.exit(1)
+  }
+}
 // SEC-08: la contraseña es obligatoria (CMS_PASSWORD, mínimo 12 caracteres); falla antes de cualquier red si falta o es débil.
 // En --dry-run no hay login ni escritura, por eso no se exige.
 const CMS_PASSWORD = DRY_RUN ? '' : requireCmsPassword()

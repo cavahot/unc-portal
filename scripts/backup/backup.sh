@@ -48,18 +48,23 @@ mkdir -p "$BACKUP_PATH"
     echo "✓ PostgreSQL backed up (via Docker)"
   fi
 
-  # 2. Backup de MinIO
+  # 2. Backup de MinIO (solo MEDIA_STORAGE=s3; MinIO es un perfil opcional y por defecto el medio es local).
+  # Amenaza que evita: con `set -e`, un `docker exec` contra un contenedor ausente abortaba TODO el backup
+  # (BD y media local incluidas). Límite: con s3 el fallo del paso se avisa pero no detiene la copia de la BD.
   echo ""
   echo "[2/3] Backing up MinIO storage..."
-  if command -v mc &> /dev/null; then
-    mc cp --recursive "minio/unc-media" "$BACKUP_PATH/media/" 2>&1 || echo "⚠ MinIO backup via mc skipped"
-    echo "✓ MinIO backed up"
+  if [ "${MEDIA_STORAGE:-local}" = "s3" ]; then
+    if command -v mc &> /dev/null; then
+      mc cp --recursive "minio/unc-media" "$BACKUP_PATH/media/" 2>&1 || echo "⚠ MinIO backup via mc skipped"
+      echo "✓ MinIO backed up"
+    else
+      echo "⚠ mc not found, creating snapshot"
+      mkdir -p "$BACKUP_PATH/media"
+      docker exec unc-minio-local bash -c "tar -czf - /data/unc-media" > "$BACKUP_PATH/media/minio-snapshot.tar.gz" 2>&1 || echo "⚠ MinIO snapshot FAILED (container unc-minio-local not running?)"
+      echo "✓ MinIO snapshot step finished"
+    fi
   else
-    echo "⚠ mc not found, creating snapshot"
-    # Crear snapshot manual de MinIO
-    mkdir -p "$BACKUP_PATH/media"
-    docker exec unc-minio-local bash -c "tar -czf - /data/unc-media" > "$BACKUP_PATH/media/minio-snapshot.tar.gz" 2>&1
-    echo "✓ MinIO snapshot created"
+    echo "– MEDIA_STORAGE=${MEDIA_STORAGE:-local}: MinIO step skipped (media is covered by step 2b)"
   fi
 
   # 2b. Backup de media en disco local (MIG-IMG fase 1, MEDIA_STORAGE=local).
@@ -97,7 +102,7 @@ mkdir -p "$BACKUP_PATH"
     echo "timestamp: $TIMESTAMP"
     echo "hostname: $(hostname)"
     echo "os: $(uname -s)"
-    echo "database_version: $(docker exec unc-postgres-local psql --version 2>/dev/null || echo 'unknown')"
+    echo "database_version: $(psql --version 2>/dev/null || docker exec unc-postgres-local psql --version 2>/dev/null || echo 'unknown')"
     echo "files:"
     ls -lh "$BACKUP_PATH"/ 2>/dev/null | awk '{print "  - " $9 " (" $5 ")"}'
   } > "$BACKUP_PATH/metadata.txt"

@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, FieldAccess } from 'payload'
 import sharp from 'sharp'
 import { canWriteMedia, canDeleteMedia } from '../access/roles'
 import { resolveMaxBytes, resolveMediaStorage } from '../config/mediaStorage'
@@ -30,6 +30,14 @@ export function validateAlt(value: unknown): true | string {
   if (/[<>]/.test(text)) return 'La descripción no puede contener los caracteres < ni >.'
   return true
 }
+
+/**
+ * SEC-REVIEW: lectura por campo de la procedencia (sha256, sourcePath). Qué hace: solo roles con escritura de medios
+ * ven estos campos. Amenaza que evita: la colección es pública (`read: () => true`) y REST/GraphQL anónimos
+ * revelarían la huella del original y rutas internas del lote de origen. Límite: el archivo y `alt` siguen públicos;
+ * un rol con escritura de medios sí ve ambos campos.
+ */
+const canReadProvenance: FieldAccess = (args) => canWriteMedia(args as never) === true
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -81,6 +89,7 @@ export const Media: CollectionConfig = {
       label: 'Huella SHA-256 del original',
       unique: true,
       index: true,
+      access: { read: canReadProvenance },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -93,6 +102,7 @@ export const Media: CollectionConfig = {
       type: 'text',
       label: 'Ruta de origen',
       maxLength: SOURCE_PATH_MAX,
+      access: { read: canReadProvenance },
       validate: (value: unknown) => validateSourcePath(value),
       admin: {
         readOnly: true,
