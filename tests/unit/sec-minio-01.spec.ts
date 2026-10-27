@@ -17,11 +17,16 @@ import path from 'node:path'
 const ROOT = path.resolve(__dirname, '..', '..')
 const read = (rel: string) => readFileSync(path.join(ROOT, rel), 'utf8')
 
-/** Valor filtrado: se toma de la versión comprometida (HEAD) del helper; nunca se imprime. */
+/**
+ * Valor filtrado: se toma del commit público que lo introdujo (c331a50, SEC-MINIO-01); nunca se imprime.
+ * Por qué no HEAD: una vez corregido el helper, HEAD contiene la plantilla `${MINIO_SECRET_KEY:?...}` y esa
+ * cadena se tomaría por «secreto» y coincidiría consigo misma (falso positivo). Límite: en un clon superficial
+ * sin ese commit no hay valor que buscar y la comprobación del .env local sigue activa.
+ */
 function leakedSecrets(): string[] {
   const values = new Set<string>()
-  const head = spawnSync('git', ['show', 'HEAD:scripts/minio/setup-bucket.sh'], { cwd: ROOT, encoding: 'utf8', shell: false })
-  const m = head.status === 0 ? /MINIO_SECRET_KEY="([^"]{16,})"/.exec(head.stdout) : null
+  const old = spawnSync('git', ['show', 'c331a50:scripts/minio/setup-bucket.sh'], { cwd: ROOT, encoding: 'utf8', shell: false })
+  const m = old.status === 0 ? /MINIO_SECRET_KEY="([^"$][^"]{15,})"/.exec(old.stdout) : null
   if (m) values.add(m[1])
   const envPath = path.join(ROOT, 'apps/cms/.env')
   if (existsSync(envPath)) {
