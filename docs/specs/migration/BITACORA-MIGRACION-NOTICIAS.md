@@ -1,6 +1,6 @@
 # Bitácora — Migración de noticias WordPress → Portal UNC
 
-**Estado:** registro cronológico, abierto. Última actualización: 2026-10-23. Es un documento de consulta: no autoriza ejecutar nada. Regla de redacción: solo se afirman hechos verificables en el repositorio o dichos en el encargo del Product Owner; lo demás se marca **por confirmar**. No contiene credenciales ni datos personales.
+**Estado:** registro cronológico, abierto. Última actualización: 2026-10-28. Es un documento de consulta: no autoriza ejecutar nada. Regla de redacción: solo se afirman hechos verificables en el repositorio o dichos en el encargo del Product Owner; lo demás se marca **por confirmar**. No contiene credenciales ni datos personales.
 
 **Documentos hermanos:** `docs/specs/migration/MIG-IMG-imagenes-de-noticias.md` (imágenes y decisiones D1-D4), `docs/research/evidence-register-mig-img.md`, `docs/specs/editorial/SEC-03-D0-revisor-publica.md` y `docs/specs/editorial/FLUJOGRAMA-EDITORIAL.md` (flujo editorial).
 
@@ -17,13 +17,14 @@
 | 7 | 2026-10-23 | **Conflicto de política editorial descubierto**: el importador intentaba publicar de golpe, pero el servidor exige que todo contenido nuevo nazca en **Borrador** («siempre nace en Borrador», 422) y que publicar requiera varias personas distintas. | `transitions.ts:218-225`; solución del importador: `scripts/lib/wpPublishFlow.mjs` (crea en Borrador y avanza paso a paso con una identidad por rol; exige **tres identidades distintas**: autor, revisor, publicador, `:44-52,86-93`). No se relajó la política. |
 | 8 | 2026-10-23 | **Importación local por la cadena real** con **tres identidades de prueba locales** (autor, revisor, publicador) sobre la base de datos **local** únicamente. | Hecho según el encargo del PO. **Estado: «en curso».** Conteos de noticias creadas, publicadas u omitidas: **por confirmar** (no hay registro verificable en el repositorio). Los errores se escribirían en `migration-errors.json` (`scripts/migrate-wordpress.mjs`, cierre). |
 | 9 | 2026-10-23 | **Decisiones del PO D0-D4.** | D0: el Revisor aprueba y publica (`docs/specs/editorial/SEC-03-D0-revisor-publica.md`). D1-D4: imágenes (`MIG-IMG` §15). |
+| 10 | 2026-10-28 | **Cargador masivo de imágenes implementado y probado en seco** (`scripts/load-news-images.mjs` + `scripts/lib/mediaLoader.mjs`). Fase 0 (`--dry-run`, sin red) ejecutada sobre los datos reales; fases 1 y 2 **solo con pruebas unitarias contra un CMS falso**, NO ejecutadas contra el CMS local. | Cifras de la fase 0 y comandos: `MIG-IMG-imagenes-de-noticias.md` §18. Pruebas: `tests/unit/mig-img-plan.spec.ts`, `mig-img-loader-dryrun.spec.ts`, `mig-img-loader-resume.spec.ts`, `mig-img-loader-agreement.spec.ts`. Ejecución real pendiente de la revisión del informe y de una copia de seguridad de la BD. |
 
 ## 2. Estado actual de la migración
 
 | Elemento | Estado |
 |---|---|
 | Noticias 2024-2026 en el CMS local | Importación local **en curso**; conteos por confirmar. |
-| Imágenes 2024-2026 | Descargadas y verificadas fuera del repositorio (237). **No cargadas a Media** todavía (el cargador `scripts/load-news-images.mjs` es una propuesta de MIG-IMG §11; no existe en el repo). |
+| Imágenes 2024-2026 | Descargadas y verificadas fuera del repositorio (237). **No cargadas a Media** todavía (el cargador `scripts/load-news-images.mjs` existe desde 2026-10-28; solo se corrió la fase 0 en seco, ver MIG-IMG §18). |
 | Noticias y páginas 2016-2023 | Contenido: dentro del volcado (por confirmar el alcance exacto). Imágenes: **no descargadas**. |
 | Servidor de pruebas / producción | Sin importación. No autorizado todavía. |
 | Importador | Funciona con 3 identidades. Con D0 pasará a 2 (autor y revisor); **no modificar antes que el servidor** (ver la enmienda §8). |

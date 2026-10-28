@@ -486,3 +486,55 @@ Revertir los archivos. La migración es aditiva: las columnas pueden quedar (Pay
 ### 17.8 Siguiente paso: cargador masivo
 
 `scripts/load-news-images.mjs` + `scripts/lib/mediaLoader.mjs` (§11): calcula `sha256` local, consulta `GET /api/media?where[sha256][equals]=…` y sube solo lo nuevo con `sourcePath`; trata el 409 como «existente» (usa `errors[0].data.id`). Debe correr contra `http://cms:3000` en la red interna (evita el `limit_req` de 10/min de nginx, §16.3), con un usuario `media-manager` y pausado.
+
+---
+
+## 18. Implementación del cargador masivo (2026-10-28)
+
+**Estado:** código y pruebas listos; fase 0 ejecutada sobre los datos reales; fases 1 y 2 **no ejecutadas** contra ningún CMS (solo pruebas contra un CMS falso en proceso). Cumple §11 con las diferencias indicadas abajo.
+
+### 18.1 Qué existe
+
+| Archivo | Contenido |
+|---|---|
+| `scripts/load-news-images.mjs` | CLI: guardias, fase 0/1/2, progreso reanudable, códigos de salida. |
+| `scripts/lib/mediaLoader.mjs` | Lógica: `validateUploadBytes`, `parseWpPosts` (mismo slug que `migrate-wordpress.mjs`), `buildNoticiaEntries`, `buildReport`, `selectUploads`, `planMediaLinks`, cliente HTTP con pausa/429/5xx, `runUpload`, `runLink`. |
+| `tests/unit/mig-img-plan.spec.ts`, `mig-img-loader-dryrun.spec.ts`, `mig-img-loader-resume.spec.ts`, `mig-img-loader-agreement.spec.ts` | P-11, P-12, P-13 y la concordancia con `validateUploadFile` del CMS en una tabla de fixtures. |
+
+Diferencias con §11: (1) credenciales de la fase 1: `CMS_EMAIL`/`CMS_PASSWORD` (no `MEDIA_EMAIL`); (2) la validación de bytes se **reimplementa sin sharp** (firmas jpeg/png/webp/gif, ≤ 11 MiB, sin SVG, nombre seguro) porque `uploadGuard.ts` es TypeScript con sharp; una prueba obliga a que ambas coincidan; el CMS repite la guardia y decodifica por completo; (3) `--manifest` no existe: manifiesto e informe se recalculan en cada corrida (determinista, 1 s); (4) por defecto solo se suben archivos **válidos y referenciados** por alguna noticia (`--include-orphans` sube todos); los duplicados por contenido se suben una vez y los demás usan el mismo id.
+
+### 18.2 Comandos
+
+Variables (solo entorno, nunca argumentos): `CMS_EMAIL`, `CMS_PASSWORD` (autor y subida; rol con permiso de subir y de escribir noticias), y para publicar `CMS_REVIEWER_EMAIL/PASSWORD` y `CMS_PUBLISHER_EMAIL/PASSWORD` (tres identidades distintas; sin ellas la fase 2 solo deja borradores).
+
+```
+# Fase 0 (sin red, sin credenciales)
+node scripts/load-news-images.mjs --dry-run --xml=<volcado.xml> --uploads=<dir con AAAA/MM> --out=<dir fuera del repo>
+# Fase 1 (subir) y fase 2 (enlazar); mismos --xml/--uploads/--out; destino por defecto http://localhost:3002
+node scripts/load-news-images.mjs --only-upload [--limit=N] [--delay-ms=1500] [--include-orphans] ...
+node scripts/load-news-images.mjs --link ...
+```
+
+`--out` dentro del repositorio se rechaza (los artefactos llevan rutas y hashes locales). Destino remoto: solo `--cms=https://…` con `--allow-remote`. Código de salida: 0 ok; 1 errores no reintentables o identidades inválidas; 2 uso/guardia; 3 solo errores reintentables (repetir el mismo comando).
+
+### 18.3 Formato del informe (`mig-img-report.json`) y del progreso
+
+`files` (total, valid, rejected, rejectedByReason, byYear, byYearMonth, duplicatesBySha256), `noticias` (total, byYear, withFeatured, withGallery, withoutImage, withoutImageByYear, withoutImageSlugsByYear), `orphans`, `referencedButRejected`, `referencedButMissing` (referenciadas por el contenido y recuperables pero ausentes de la carpeta). `manifest.json` = `{ noticias[{postId, slug, title, year, month, featured, gallery, missing}], files[{relPath, bytes, sha256, status, reason}], aliases }`. `progress.json` (en `--out`) guarda por archivo `subido|existente|rechazado|error` con `mediaId` y por noticia `escrita|completa`; sin tokens ni contraseñas. Estados de la fase 2 por noticia: `enlazada`, `sin_cambios`, `pendiente` (noticia aún no importada o media sin subir), `bloqueada` (rechazada o en estado desconocido), `sin_imagen`, `conflicto` (la noticia ya tiene otra imagen/galería elegida por una persona: no se pisa).
+
+### 18.4 Lote 2016-2023
+
+Cuando MITIC entregue `wp-content/uploads`, repetir los mismos comandos con otra `--uploads=<dir>` (y el mismo `--out` para conservar el progreso): lo ya cargado se resuelve por `sourcePath`/`sha256` como `existente`, las noticias `sin_imagen` pasan a tener destacada y la fase 2 las enlaza. Las noticias de 2016-2023 sin imagen se informan como `sin_imagen` (no como fallo).
+
+### 18.5 Rollback
+
+Enlaces: quitar `featuredImage`/`gallery` por el flujo editorial o descartar los borradores aún no publicados (`progress.json` → `links` lista los slugs tocados). Media: borrar por `sourcePath` desde la lista de `progress.json` (`files` con `state: subido`) con un usuario `media-manager`, tras desenlazar (§7, guardia de borrado). Antes de ejecutar: copia de seguridad de la BD y del volumen de medios.
+
+### 18.6 Límites
+
+No decodifica la imagen en el cargador (lo hace el CMS, que además normaliza y quita EXIF); un 5xx tras guardar el archivo se resuelve en el reintento por 409 (sha256 único). No cubre la visibilidad de media de borradores (D1) ni el retiro de `featuredImageUrl` (D4, tarea aparte).
+
+### 18.7 Correcciones tras la primera ejecución local (2026-10-28)
+
+- **Editar contenido publicado:** el CMS responde 422 si se guarda `featuredImage`/`gallery` de una noticia publicada sin guardarla como borrador (`apps/cms/src/hooks/editorial/transitions.ts:274`). La fase 2 ahora hace `PATCH /api/noticias/:id?draft=true` con `{featuredImage, gallery, _status: 'draft'}`, lleva el flujo (revisión, aprobación, publicación) y **verifica** que la versión pública (`draft=false`) tenga la imagen; si no, cuenta un error no reintentable y deja la noticia como `escrita`.
+- **`--limit=N` en la fase 2** cuenta noticias con trabajo real (escritura, avance de flujo, conflicto, error); las ya `completa` se saltan sin red (`reanudadas`) y `sin_imagen`/`sin_cambios`/`pendiente` no consumen cupo.
+- **Texto alternativo:** `pickAlt` normaliza con NFKC, descarta textos pobres (`isPoorAlt`: una sola palabra o nombre de archivo, «Noticia N», IMG_…, solo dígitos) y elige: alt del cuerpo > alt/título del adjunto > título de la noticia > «Imagen de la noticia»; máx. 150 caracteres. `--check-alt` informa y `--fix-alt` corrige por `PATCH {alt}` las filas con `sourcePath` ya cargadas.

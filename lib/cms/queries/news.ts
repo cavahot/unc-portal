@@ -1,6 +1,7 @@
 import { cmsFetch } from '../client'
 import { demoFallbackAllowed, isCmsNotFound } from '../errors'
 import { PayloadResponse } from '../types'
+import { resolveMediaUrl } from '../mediaUrl'
 
 function lexical(text: string) {
   return { root: { type: 'root', children: [{ type: 'paragraph', children: [{ type: 'text', text, format: 0 }] }] } }
@@ -56,6 +57,30 @@ export const DEMO_NEWS: NewsItem[] = [
     tags: [{ tag: 'calidad' }, { tag: 'excelencia' }, { tag: 'premio' }],
   },
 ]
+
+/**
+ * MIG-IMG: normaliza las imágenes de una noticia que devuelve Payload. Qué hace: pasa `featuredImage.url` y cada
+ * `gallery[].image.url` por `resolveMediaUrl` (URL absoluta del origen del CMS). Por qué: con la ruta relativa
+ * `/api/media/file/x.jpg`, `next/image` la resolvía contra el origen del PORTAL (404). Amenaza que evita: URLs
+ * inseguras (`//host`, `javascript:`, `..`) llegando al optimizador. Si la URL no es segura, la imagen se descarta
+ * (destacada -> null, elemento de galería eliminado) y la página usa `featuredImageUrl` (hotlink WordPress) o su
+ * imagen por defecto. `featuredImageUrl` no se toca. Límite: solo valida la forma de la URL, no que el archivo exista.
+ */
+function normalizeNewsMedia<T extends { featuredImage?: any; gallery?: any }>(doc: T): T {
+  const out: any = { ...doc }
+  const fi = doc.featuredImage
+  if (fi && typeof fi === 'object') {
+    const url = resolveMediaUrl(fi.url)
+    out.featuredImage = url ? { ...fi, url } : null
+  }
+  if (Array.isArray(doc.gallery)) {
+    out.gallery = doc.gallery.flatMap((g: any) => {
+      const url = resolveMediaUrl(g?.image?.url)
+      return url ? [{ ...g, image: { ...g.image, url } }] : []
+    })
+  }
+  return out as T
+}
 
 export interface NewsItem {
   id: number
@@ -138,9 +163,10 @@ export async function getNews(options: {
       }
     }
 
-    return await cmsFetch<PayloadResponse<NewsListItem>>(`/noticias?${params.toString()}`, {
+    const res = await cmsFetch<PayloadResponse<NewsListItem>>(`/noticias?${params.toString()}`, {
       tags: ['noticias'],
     })
+    return { ...res, docs: res.docs.map(normalizeNewsMedia) }
   } catch (error) {
     if (!demoFallbackAllowed()) throw error
     let docs = DEMO_NEWS
@@ -168,7 +194,7 @@ export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
       tags: [`noticias:${slug}`],
     })
 
-    return res.docs[0] ?? null
+    return res.docs[0] ? normalizeNewsMedia(res.docs[0]) : null
   } catch (error) {
     if (isCmsNotFound(error)) return null
     if (demoFallbackAllowed()) return DEMO_NEWS.find((n) => n.slug === slug) ?? null
@@ -200,7 +226,7 @@ export async function getNewsBySlugDraft(
     authToken,
   })
 
-  return res.docs[0] || null
+  return res.docs[0] ? normalizeNewsMedia(res.docs[0]) : null
 }
 
 /**
@@ -245,9 +271,10 @@ export async function getNewsByQuery(
     params.append('depth', '1')
     for (const field of LIST_SELECT_FIELDS) params.append(`select[${field}]`, 'true')
 
-    return await cmsFetch<PayloadResponse<NewsListItem>>(`/noticias?${params.toString()}`, {
+    const res = await cmsFetch<PayloadResponse<NewsListItem>>(`/noticias?${params.toString()}`, {
       tags: ['noticias-search'],
     })
+    return { ...res, docs: res.docs.map(normalizeNewsMedia) }
   } catch (error) {
     if (!demoFallbackAllowed()) throw error
     const lower = q.toLowerCase()
