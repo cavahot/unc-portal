@@ -217,6 +217,59 @@ en staging antes de confiar en ella. Nota: `.github/workflows/backup.yml` sube e
 artefacto de GitHub Actions; en un repositorio PÚBLICO eso expone el dump a quien pueda descargar
 artefactos (riesgo registrado en la spec MIG-IMG §16.5; no se modificó en esta tarea).
 
+### Respaldo cifrado de BD + media y copia externa (BACKUP-MEDIA-01)
+
+Spec: `docs/specs/backup/BACKUP-MEDIA-01.md`. Reemplaza al paso manual 2b para producción.
+
+**Cómo funciona.** `scripts/backup/backup-prod.sh` (cron diario, ver `scripts/backup/crontab.example`):
+1. `pg_dump -Fc` de `unc-postgres-prod` canalizado a gpg → `db-<UTC>.dump.gpg`.
+2. `scripts/backup/backup-media.sh`: `docker exec unc-cms-prod tar -czf - -C /app/media .` canalizado a gpg →
+   `media-<UTC>.tar.gz.gpg`. Ningún `.tar`/`.dump` en claro toca el disco. Se verifica descifrando y listando.
+3. `scripts/backup/offsite-push.sh` sube **solo** los `.gpg` a `BACKUP_REMOTE` (si está configurado).
+
+**Dónde viven.** `${BACKUP_LOCAL_DIR:-/opt/unc-portal/backups}` (directorio 700, archivos 600; puede ser otro
+montaje). **Retención:** `BACKUP_RETENTION_DAYS` (14); cada script borra solo sus patrones `db-*.gpg` / `media-*.gpg`.
+El deploy (`deploy.yml`) ejecuta `backup-media.sh` tras el `pg_dump` y antes de migrar; si falla, el deploy aborta.
+**Modos de lectura:** con el CMS en marcha usa `docker exec unc-cms-prod tar`; con el CMS caído (p. ej. el deploy que lo repara)
+usa un contenedor desechable con el volumen en solo lectura (`docker run --rm -v unc_cms_media_prod:/app/media:ro`). La imagen
+se toma de las ya presentes en el host (nunca se descarga en un deploy): `BACKUP_MEDIA_IMAGE`, la del contenedor del CMS,
+`ghcr.io/cavahot/unc-portal-cms:$IMAGE_TAG`, o `postgres:16-alpine` / `nginx:1.27-alpine` / `alpine` / `busybox`. Si no hay ninguna, falla cerrado.
+
+**Configuración** en `/opt/unc-portal/.env.backup` (modo 600, fuera de git): `BACKUP_ENCRYPTION_PASSPHRASE`
+(>= 20 caracteres), y opcionalmente `BACKUP_LOCAL_DIR`, `BACKUP_RETENTION_DAYS`, `BACKUP_REMOTE`, `BACKUP_SSH_KEY`.
+
+**Copia externa (asistente).** Mientras `BACKUP_REMOTE` esté vacío, cada corrida imprime «COPIA EXTERNA NO
+CONFIGURADA» y registra `state=not_configured`. Para configurarla:
+
+```bash
+bash scripts/backup/configure-offsite.sh            # pregunta, prueba la conexión y recién entonces guarda
+bash scripts/backup/configure-offsite.sh --check    # estado (ok / failed / not_configured), sin secretos
+```
+
+El asistente solo guarda si la prueba de conexión pasa (ssh con BatchMode, o `rclone lsd`). Una llave SSH dedicada
+debe estar ya autorizada en el servidor remoto.
+
+**Restaurar BD + media juntas (orden obligatorio).**
+
+```bash
+# 0. Tener a mano la frase de paso (BACKUP_ENCRYPTION_PASSPHRASE). Sin ella NO hay restauración posible.
+# 1. Verificar integridad (en el directorio de respaldos):
+sha256sum -c media-<UTC>.tar.gz.gpg.sha256 && sha256sum -c db-<UTC>.dump.gpg.sha256
+# 2. BD primero (aprobación humana; sobrescribe datos): descifrar a una tubería y restaurar con pg_restore.
+printf '%s' "$BACKUP_ENCRYPTION_PASSPHRASE" | gpg --batch --pinentry-mode loopback --passphrase-fd 0 -d db-<UTC>.dump.gpg \
+  | docker exec -i unc-postgres-prod pg_restore -U <usuario> -d <base> --clean --if-exists
+# 3. Media después (el CMS debe correr): verifica, descifra, extrae en /app/media y corrige dueño a 1001:1001.
+BACKUP_ENCRYPTION_PASSPHRASE=... bash scripts/backup/restore-media.sh /opt/unc-portal/backups/media-<UTC>.tar.gz.gpg
+# 4. Comprobar GET /api/media/file/<archivo conocido> = 200.
+```
+
+**Límites honestos.**
+- Mientras no haya `BACKUP_REMOTE`, los respaldos comparten disco y destino con el servidor: no protegen de perder el VPS.
+- La copia de la media es **en caliente**: un archivo subido durante el `tar` puede quedar a medias.
+- **Perder la frase de paso = respaldos ilegibles.** Guardarla fuera del servidor (gestor de contraseñas del dueño).
+- El `pg_dump` pre-deploy (`backups/pre-deploy-*.dump`) sigue en claro (DEP-08). El rollback de imagen no restaura media.
+- No se ejecutó contra Docker/gpg reales del VPS: probar una restauración completa en staging antes de confiar.
+
 ### Scenario 3: Corrupción completa
 
 ```bash

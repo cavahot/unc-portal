@@ -84,6 +84,11 @@ else
   echo -e "${YELLOW}⚠ S3 snapshot no encontrado, omitiendo${NC}"
 fi
 
+# BACKUP-MEDIA-01: este script restaura el formato LEGADO (carpeta backup_*/ con database.sql.gz). Los respaldos
+# cifrados de producción (db-*.dump.gpg y media-*.tar.gz.gpg) se restauran con el procedimiento de
+# docs/BACKUP_RECOVERY.md (BD con pg_restore y, DESPUÉS, la media con scripts/backup/restore-media.sh, que
+# verifica sha256, descifra, extrae en /app/media del CMS y corrige el dueño a 1001:1001). Restaurar solo la BD
+# deja filas `media` sin archivo.
 echo ""
 echo -e "${GREEN}[✓] Restauración completada${NC}"
 echo ""
