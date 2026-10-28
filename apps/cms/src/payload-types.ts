@@ -1112,7 +1112,7 @@ export interface TribunalDocumento {
     | 'proclamacion';
   descripcion?: string | null;
   /**
-   * URL de Google Drive, MinIO, o cualquier enlace público al documento.
+   * URL de Google Drive, almacenamiento S3, o cualquier enlace público al documento.
    */
   driveUrl?: string | null;
   orden?: number | null;
