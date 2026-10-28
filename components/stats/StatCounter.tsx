@@ -10,55 +10,58 @@ export interface StatCounterProps {
   suffix?: string
 }
 
+/** Duración de la cuenta animada, en ms. */
+const COUNT_DURATION_MS = 1200
+
 function easeOutQuart(t: number): number {
   return 1 - Math.pow(1 - t, 4)
 }
 
-function useCountUp(target: number, duration: number, active: boolean): number {
-  const [count, setCount] = useState(0)
-  const rafRef = useRef<number>(0)
-
-  useEffect(() => {
-    if (!active) return
-    const start = performance.now()
-    const tick = (now: number) => {
-      const elapsed = now - start
-      const progress = Math.min(elapsed / duration, 1)
-      setCount(Math.round(easeOutQuart(progress) * target))
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(tick)
-      }
-    }
-    rafRef.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [active, target, duration])
-
-  return count
-}
-
+/**
+ * Cifra de las estadísticas institucionales.
+ *
+ * Qué hace: muestra SIEMPRE el valor real en el HTML inicial (servidor, buscadores, sin JavaScript) y, solo en el
+ * navegador y cuando la cifra entra en pantalla, la cuenta de 0 al valor.
+ * Por qué: antes el estado inicial era 0, así que el HTML publicaba «0» en las seis cifras hasta que el visitante
+ * llegaba a la sección, y la cuenta animada se ejecutaba aunque pidiera movimiento reducido.
+ * Límite: con movimiento reducido o sin IntersectionObserver la cuenta no se anima y queda el valor final; si la
+ * cifra ya está visible al montar, se verá un instante el reinicio a 0 antes de contar.
+ */
 export default function StatCounter({ value, label, prefix, suffix }: StatCounterProps) {
-  const [active, setActive] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const count = useCountUp(value, 1200, active)
+  const [count, setCount] = useState(value)
   const format = useFormatter()
 
   useEffect(() => {
-    if (!('IntersectionObserver' in window)) {
-      setActive(true)
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      setCount(value)
       return
     }
+
+    let raf = 0
+    setCount(0)
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setActive(true)
-          observer.disconnect()
+        if (!entry.isIntersecting) return
+        observer.disconnect()
+        const start = performance.now()
+        const tick = (now: number) => {
+          const progress = Math.min((now - start) / COUNT_DURATION_MS, 1)
+          setCount(Math.round(easeOutQuart(progress) * value))
+          if (progress < 1) raf = requestAnimationFrame(tick)
         }
+        raf = requestAnimationFrame(tick)
       },
       { threshold: 0.2 },
     )
     if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
+
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(raf)
+    }
+  }, [value])
 
   return (
     <div

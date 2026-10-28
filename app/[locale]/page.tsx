@@ -243,145 +243,13 @@ export default async function Home({
       <CinematicHero />
 
       {/* =====================================================
-          ACCESOS RÁPIDOS
-          ===================================================== */}
-
-      <section
-  id="accesos"
-  aria-labelledby="quick-links-title"
-  className="
-    relative z-20
-    -mt-[18svh]
-    overflow-hidden
-    bg-[linear-gradient(to_bottom,rgba(244,247,245,0)_0%,rgba(244,247,245,0.42)_18%,rgba(244,247,245,0.82)_38%,#F4F7F5_56%,#F4F7F5_100%)]
-    pb-24
-    pt-[27svh]
-    sm:-mt-[20svh]
-    sm:pb-28
-    sm:pt-[30svh]
-  "
->
-        <div
-  aria-hidden="true"
-  className="pointer-events-none absolute left-1/2 top-[20svh] h-80 w-[70rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(0,163,0,0.08),transparent_68%)]"
-/>
-
-        <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <header className="mx-auto max-w-3xl text-center">
-              <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
-                {t('quickLinks.sectionLabel')}
-              </span>
-
-              <h2
-                id="quick-links-title"
-                className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#09231D] sm:text-5xl lg:text-6xl"
-              >
-                {t('quickLinks.title')}
-              </h2>
-
-              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
-                {t('quickLinks.description')}
-              </p>
-            </header>
-          </Reveal>
-
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {quickLinks.map((item, index) => {
-              const content = (
-                <div className="relative z-10 flex h-full flex-col [transform:translateZ(24px)]">
-                  <div className="mb-7 flex items-center justify-between">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E6FFE6] text-sm font-extrabold text-[#004700] transition-colors duration-300 group-hover:bg-[#00A300] group-hover:text-white">
-                      {String(index + 1).padStart(
-                        2,
-                        '0',
-                      )}
-                    </span>
-
-                    <span className="text-[#008000] transition-all duration-300 group-hover:translate-x-1.5 group-hover:text-[#00A300]">
-                      {item.external ? (
-                        <ExternalLinkIcon />
-                      ) : (
-                        <ArrowIcon />
-                      )}
-                    </span>
-                  </div>
-
-                  <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-[#008000]">
-                    {item.label}
-                  </span>
-
-                  <h3 className="mt-3 text-xl font-bold leading-tight text-[#09231D]">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-6 text-[#6C7B76]">
-                    {item.description}
-                  </p>
-
-                  <span className="mt-auto inline-flex items-center gap-2 pt-8 text-xs font-bold text-[#008000] transition-colors duration-300 group-hover:text-[#004700]">
-                    {item.action}
-
-                    <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
-                </div>
-              );
-
-              return (
-                <Reveal
-                  key={item.title}
-                  className="h-full"
-                  delay={index * 80}
-                >
-                  <TiltCard
-                    containerClassName="h-full"
-                    className="
-                      h-full rounded-[1.35rem]
-                      border border-[#D7E0DB]
-                      bg-white p-7
-                      shadow-[0_18px_48px_rgba(7,42,15,0.08)]
-                      hover:border-[#37D448]
-                      hover:shadow-[0_30px_65px_rgba(0,71,0,0.18)]
-                      focus-within:border-[#37D448]
-                      focus-within:shadow-[0_30px_65px_rgba(0,71,0,0.18)]
-                    "
-                  >
-                    {item.external ? (
-                      <a
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${item.title}`}
-                        className="group block h-full rounded-[1rem] focus-visible:outline-none"
-                      >
-                        {content}
-                      </a>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className="group block h-full rounded-[1rem] focus-visible:outline-none"
-                      >
-                        {content}
-                      </Link>
-                    )}
-                  </TiltCard>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <InstitutionalAccessSection />
-
-      {/* =====================================================
           NOTICIAS
           ===================================================== */}
 
       <section
         id="noticias"
         aria-labelledby="news-title"
-        className="relative isolate overflow-hidden bg-[#00A300] py-24 text-[#001A00] sm:py-28"
+        className="relative z-20 isolate -mt-2 overflow-hidden bg-[linear-gradient(to_bottom,#F4F7F5_0,#BFEFBF_7svh,#00A300_24svh,#00A300_100%)] pb-24 pt-[26svh] text-[#001A00] sm:pb-28 sm:pt-[28svh]"
       >
         <div
           aria-hidden="true"
@@ -421,7 +289,7 @@ export default async function Home({
                   bg-[#001A00] px-6 py-3.5
                   text-sm font-extrabold text-white
                   shadow-[0_14px_32px_rgba(0,26,0,0.24)]
-                  transition-all duration-300
+                  transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-300
                   hover:-translate-y-1
                   hover:bg-[#004700]
                   hover:shadow-[0_20px_42px_rgba(0,26,0,0.3)]
@@ -513,7 +381,7 @@ export default async function Home({
                             : ''}
                         </time>
 
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E6FFE6] text-[#008000] transition-all duration-300 group-hover:translate-x-1 group-hover:bg-[#00A300] group-hover:text-white">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E6FFE6] text-[#008000] transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-300 group-hover:translate-x-1 group-hover:bg-[#00A300] group-hover:text-white">
                           <ArrowIcon />
                         </span>
                       </div>
@@ -527,6 +395,128 @@ export default async function Home({
       </section>
 
       <StatsBlock locale={locale} stats={stats} />
+
+      {/* =====================================================
+          ACCESOS RÁPIDOS
+          ===================================================== */}
+
+      <section
+  id="accesos"
+  aria-labelledby="quick-links-title"
+  className="relative overflow-hidden bg-[#F4F7F5] py-24 sm:py-28"
+>
+        <div
+  aria-hidden="true"
+  className="pointer-events-none absolute left-1/2 top-4 h-80 w-[70rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(0,163,0,0.08),transparent_68%)]"
+/>
+
+        <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <header className="mx-auto max-w-3xl text-center">
+              <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#008000]">
+                {t('quickLinks.sectionLabel')}
+              </span>
+
+              <h2
+                id="quick-links-title"
+                className="mt-4 font-serif text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[#09231D] sm:text-5xl lg:text-6xl"
+              >
+                {t('quickLinks.title')}
+              </h2>
+
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
+                {t('quickLinks.description')}
+              </p>
+            </header>
+          </Reveal>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            {quickLinks.map((item, index) => {
+              const content = (
+                <div className="relative z-10 flex h-full flex-col [transform:translateZ(24px)]">
+                  <div className="mb-7 flex items-center justify-between">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E6FFE6] text-sm font-extrabold text-[#004700] transition-colors duration-300 group-hover:bg-[#00A300] group-hover:text-white">
+                      {String(index + 1).padStart(
+                        2,
+                        '0',
+                      )}
+                    </span>
+
+                    <span className="text-[#008000] transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-300 group-hover:translate-x-1.5 group-hover:text-[#00A300]">
+                      {item.external ? (
+                        <ExternalLinkIcon />
+                      ) : (
+                        <ArrowIcon />
+                      )}
+                    </span>
+                  </div>
+
+                  <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-[#008000]">
+                    {item.label}
+                  </span>
+
+                  <h3 className="mt-3 text-xl font-bold leading-tight text-[#09231D]">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-6 text-[#6C7B76]">
+                    {item.description}
+                  </p>
+
+                  <span className="mt-auto inline-flex items-center gap-2 pt-8 text-xs font-bold text-[#008000] transition-colors duration-300 group-hover:text-[#004700]">
+                    {item.action}
+
+                    <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </div>
+              );
+
+              return (
+                <Reveal
+                  key={item.title}
+                  className="h-full"
+                  delay={index * 80}
+                >
+                  <TiltCard
+                    containerClassName="h-full"
+                    className="
+                      h-full rounded-[1.35rem]
+                      border border-[#D7E0DB]
+                      bg-white p-7
+                      shadow-[0_18px_48px_rgba(7,42,15,0.08)]
+                      hover:border-[#37D448]
+                      hover:shadow-[0_30px_65px_rgba(0,71,0,0.18)]
+                      focus-within:border-[#37D448]
+                      focus-within:shadow-[0_30px_65px_rgba(0,71,0,0.18)]
+                    "
+                  >
+                    {item.external ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${item.title}`}
+                        className="group block h-full rounded-[1rem] focus-visible:outline-none"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="group block h-full rounded-[1rem] focus-visible:outline-none"
+                      >
+                        {content}
+                      </Link>
+                    )}
+                  </TiltCard>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <InstitutionalAccessSection />
 
       {/* =====================================================
           TRANSPARENCIA
@@ -588,7 +578,7 @@ export default async function Home({
                       <span
                         className={`
                           flex h-14 w-14 items-center justify-center rounded-2xl
-                          transition-all duration-300
+                          transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-300
                           ${
                             item.featured
                               ? 'bg-[#00A300] text-white'
@@ -612,7 +602,7 @@ export default async function Home({
                         </small>
                       </span>
 
-                      <span className="text-[#008000] transition-all duration-300 group-hover:translate-x-1.5 group-hover:text-[#00A300]">
+                      <span className="text-[#008000] transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-300 group-hover:translate-x-1.5 group-hover:text-[#00A300]">
                         <ArrowIcon className="h-5 w-5" />
                       </span>
                     </Link>
@@ -631,7 +621,7 @@ export default async function Home({
                   rounded-full border border-[#008000]
                   bg-transparent px-6 py-3.5
                   text-sm font-extrabold text-[#004700]
-                  transition-all duration-300
+                  transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-300
                   hover:-translate-y-1
                   hover:bg-[#008000]
                   hover:text-white

@@ -28,13 +28,13 @@ export default async function StatsBlock({
   ]
 
   return (
-    <section className="bg-slate-900 py-20">
+    <section aria-labelledby="stats-title" className="bg-slate-900 py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <p className="text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">
             {t('stats.sectionLabel')}
           </p>
-          <h2 className="mt-2 text-3xl font-bold text-white">
+          <h2 id="stats-title" className="mt-2 text-3xl font-bold text-white">
             {t('stats.title')}
           </h2>
         </div>
