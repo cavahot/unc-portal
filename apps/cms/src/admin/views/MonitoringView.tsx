@@ -104,7 +104,7 @@ export const MonitoringView: React.FC = () => {
   const services = [
     { key: 'cms',      name: 'CMS (Payload)' },
     { key: 'database', name: 'Base de Datos' },
-    { key: 'minio',    name: 'MinIO S3' },
+    { key: 's3',       name: 'Almacenamiento S3' },
     { key: 'portal',   name: 'Portal Web' },
   ]
 

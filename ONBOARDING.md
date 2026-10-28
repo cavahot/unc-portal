@@ -100,7 +100,7 @@ cp apps/cms/.env.example apps/cms/.env
 
 ### 4. Levantar la infraestructura
 
-Inicia PostgreSQL, MinIO y Mailpit en Docker:
+Inicia PostgreSQL, el almacén S3 (SeaweedFS) y Mailpit en Docker. El servicio `s3` necesita `S3_ACCESS_KEY_ID` y `S3_SECRET_ACCESS_KEY` en `infrastructure/docker/.env` (se niega a arrancar sin ellas; mín. 16 y 32 caracteres, `openssl rand -hex 16` / `openssl rand -hex 32`). Después crea el bucket con `node scripts/s3/setup-bucket.mjs`:
 
 ```bash
 npm run infra:up
@@ -112,7 +112,7 @@ Verificá que los tres contenedores estén healthy:
 docker ps
 ```
 
-Deberías ver `unc-postgres-local`, `unc-minio-local` y `unc-mailpit-local` con estado `healthy`.
+Deberías ver `unc-postgres-local`, `unc-s3-local` y `unc-mailpit-local` con estado `healthy`.
 
 ### 5. Restaurar la base de datos
 
@@ -152,7 +152,7 @@ CMS     ▶ Ready on http://localhost:3002
 | Portal | http://localhost:3000 | Sitio web institucional |
 | CMS Admin | http://localhost:3002/accesoSeguro | Panel de administración |
 | Mailpit | http://localhost:8025 | Bandeja de emails locales |
-| MinIO Console | http://localhost:9101 | Administrador de archivos S3 |
+| API S3 (SeaweedFS) | http://localhost:9100 | Endpoint S3 local (sin consola web; `/healthz` responde 200) |
 
 ---
 
@@ -174,7 +174,7 @@ CMS     ▶ Ready on http://localhost:3002
 npm run dev:all          # Levanta portal + CMS + infra
 npm run dev:portal       # Solo el portal (puerto 3000)
 npm run dev:cms          # Solo el CMS (puerto 3002)
-npm run infra:up         # Levanta Docker (postgres, minio, mailpit)
+npm run infra:up         # Levanta Docker (postgres, s3, mailpit)
 npm run infra:status     # Estado de los contenedores
 
 npm run setup:db         # Restaura la BD desde el seed

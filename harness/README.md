@@ -20,5 +20,5 @@ El runner imprime JSON con cada comando, estado de salida y resumen corto. `--fu
 ## Siguientes incrementos
 
 - Una vez aprobada SEC-03, añadir pruebas de acceso por rol sobre fixtures con `overrideAccess: false` y REST/GraphQL.
-- Con Docker Desktop activo o staging aislado, ejecutar pruebas de integración contra PostgreSQL/MinIO sintéticos, verificar backup/restauración y reproducir ataques no destructivos de `docs/security/ATTACK-BOUNDARIES.md`.
+- Con Docker Desktop activo o staging aislado, ejecutar pruebas de integración contra PostgreSQL/S3 (SeaweedFS) sintéticos, verificar backup/restauración y reproducir ataques no destructivos de `docs/security/ATTACK-BOUNDARIES.md`.
 - No convertir los chequeos de texto o un escáner de dependencias en una certificación de seguridad.

@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  guardTrackedSecrets, guardMinioSecrets, guardApiCoverage, guardRouteRoles, guardJsonld,
+  guardTrackedSecrets, guardS3Secrets, guardApiCoverage, guardRouteRoles, guardJsonld,
   guardEnvParity, guardMediaVolume, guardBackupEncrypted, ENV_IGNORED, parseComposeEnvironments, guardDeploySteps, guardI18nParity, guardSecretRequired, guardSeedPasswords,
   GUARD_IDS, runGuards, RATE_LIMITED_API_ROUTES, PUBLIC_API_ROUTES, collectInputs,
 } from './guards.mjs'
@@ -108,7 +108,7 @@ const ENV_COMPOSE = [
   '    NODE_ENV: production',
   '    CMS_ONLY: ${CMS_ONLY}',
   '    NEXT_PUBLIC_SERVER_URL: ${CMS_PUBLIC_URL}',
-  '    S3_ENDPOINT: http://minio:9000',
+  '    S3_ENDPOINT: http://s3:8333',
   '',
   'services:',
   '  postgres:',
@@ -230,7 +230,7 @@ test('guard-deploy-steps: exige migración, backup, rollback y sin :latest', () 
   assert.equal(bad.findings.length, 4)
   const good = guardDeploySteps({
     workflow: 'run: pg_dump > b.sql\nrun: payload migrate\nrun: ./rollback.sh',
-    compose: 'image: ghcr.io/x/app:${IMAGE_TAG}\nimage: minio:RELEASE.2025',
+    compose: 'image: ghcr.io/x/app:${IMAGE_TAG}\nimage: chrislusf/seaweedfs:4.51@sha256:f7a49e3f3972ebed5be2ed4befa4a0c68eb7bdddba6e692d42729ceb545134b8',
   })
   assert.equal(good.passed, true)
   assert.equal(guardDeploySteps({ workflow: null, compose: null }).passed, false)
@@ -254,16 +254,12 @@ test('guard-route-roles: /api/health/ready está en PUBLIC_API_ROUTES y el repo 
   assert.equal(guardRouteRoles(inputs.routes).passed, true)
 })
 
-// DEP-09: contra el repo real, deploy.yml ya tiene rollback y el compose ya no usa :latest propio,
-// pero el :latest de MinIO (DEP-11) NO se oculta.
-test('guard-deploy-steps sobre el repo real: sin «falta rollback» ni :latest propios; MinIO sigue visible', () => {
+// DEP-09 / S3-SEAWEEDFS-01: contra el repo real, deploy.yml tiene rollback y el compose ya no usa ningún
+// :latest (la imagen de S3 quedó fijada por digest, cerrando el DEP-11 que dejaba el guard en rojo a propósito).
+test('guard-deploy-steps sobre el repo real: sin hallazgos (sin «falta rollback» y sin :latest)', () => {
   const r = guardDeploySteps(collectInputs().deploy)
-  assert.ok(!r.findings.some((f) => /rollback/.test(f)), r.findings.join(' | '))
-  assert.equal(r.findings.length, 1, r.findings.join(' | '))
-  assert.match(r.findings[0], /usa :latest/)
-  const compose = collectInputs().deploy.compose.split('\n')
-  const line = Number(r.findings[0].match(/:(\d+) usa/)[1])
-  assert.match(compose[line - 1], /minio/)
+  assert.deepEqual(r.findings, [])
+  assert.equal(r.passed, true)
 })
 
 test('guard-i18n-parity: faltante sin fallback declarado es rojo; directorio ausente también', () => {
@@ -436,28 +432,31 @@ test('el plan expone los 12 guards y runGuards devuelve un resultado por guard',
   assert.ok(results.every((r) => r.passed === false), 'entradas ausentes no deben lanzar ni pasar')
 })
 
-// SEC-MINIO-01: guard de claves de MinIO/S3 literales en scripts y docs versionados (fixtures sintéticas).
-test('guard-minio-secrets: detecta literales largos y no revela el valor', () => {
+// SEC-MINIO-01 / S3-SEAWEEDFS-01: guard de claves S3 literales en scripts y docs versionados (fixtures sintéticas).
+test('guard-s3-secrets: detecta literales largos y no revela el valor', () => {
   const fake = 'a'.repeat(32) // valor sintético, no es una credencial real
-  const bad = guardMinioSecrets({
+  const bad = guardS3Secrets({
     'scripts/a.sh': `MINIO_SECRET_KEY="${fake}"`,
     'scripts/b.ps1': `$SecretKey = "${fake}"`,
     'docs/c.md': `AWS_SECRET_ACCESS_KEY='${fake}'`,
+    'scripts/d.sh': `export S3_SECRET_ACCESS_KEY="${fake}"`,
+    'docs/e.md': `"secretKey": "${fake}"`,
   })
-  assert.equal(bad.id, 'guard-minio-secrets')
+  assert.equal(bad.id, 'guard-s3-secrets')
   assert.equal(bad.passed, false)
-  assert.equal(bad.findings.length, 3)
+  assert.equal(bad.findings.length, 5)
   assert.ok(bad.findings.every((f) => !f.includes(fake)), 'los findings no contienen el valor')
-  const good = guardMinioSecrets({
-    'scripts/a.sh': 'MINIO_SECRET_KEY="${MINIO_SECRET_KEY:?falta}"',
-    'scripts/b.ps1': '$SecretKey = $env:MINIO_SECRET_KEY',
-    'docs/c.md': 'Secret Key: <MINIO_SECRET_KEY>',
+  const good = guardS3Secrets({
+    'scripts/a.sh': 'S3_SECRET_ACCESS_KEY="${S3_SECRET_ACCESS_KEY:?falta}"',
+    'scripts/b.ps1': '$SecretKey = $env:S3_SECRET_ACCESS_KEY',
+    'docs/c.md': 'Secret Key: <S3_SECRET_ACCESS_KEY>',
+    'docs/d.md': '"secretKey": "<REEMPLAZAR>"',
   })
   assert.equal(good.passed, true)
-  assert.equal(guardMinioSecrets(null).passed, false)
+  assert.equal(guardS3Secrets(null).passed, false)
 })
 
-test('guard-minio-secrets sobre el repo real pasa', () => {
-  const r = guardMinioSecrets(collectInputs().minioFiles)
+test('guard-s3-secrets sobre el repo real pasa', () => {
+  const r = guardS3Secrets(collectInputs().s3Files)
   assert.deepEqual(r.findings, [])
 })

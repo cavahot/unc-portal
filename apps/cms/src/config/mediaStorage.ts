@@ -6,7 +6,7 @@
  * entorno) para poder probarla sin Payload.
  *
  * Por qué existe: antes el plugin S3 se activaba solo por la presencia de dos variables
- * (`S3_ACCESS_KEY_ID` y `S3_SECRET_ACCESS_KEY`). Con el MinIO caído, toda subida fallaba con
+ * (`S3_ACCESS_KEY_ID` y `S3_SECRET_ACCESS_KEY`). Con el almacén S3 caído, toda subida fallaba con
  * ECONNREFUSED («Failed to save 1 files») y un `.env` heredado cambiaba el destino de los archivos
  * sin que nadie lo decidiera. Ahora S3 exige `MEDIA_STORAGE=s3` explícito; por defecto es disco local.
  *

@@ -33,22 +33,22 @@ x-cms-env: &cms-env
     PORTAL_URL:             ${PORTAL_PUBLIC_URL}
 
     # MIG-IMG fase 1: almacenamiento de `media`. Por defecto DISCO LOCAL en un volumen persistente
-    # (cms_media montado en MEDIA_DIR). S3/MinIO solo si se fija MEDIA_STORAGE=s3 de forma explícita:
+    # (cms_media montado en MEDIA_DIR). S3 (SeaweedFS) solo si se fija MEDIA_STORAGE=s3 de forma explícita:
     # las claves S3_* de abajo ya NO activan S3 por sí solas. MEDIA_DIR debe ser absoluto y coincidir con el
     # montaje del servicio `cms` (lo vigila el guard `guard-media-volume`). Quien usaba S3 debe fijar s3.
     MEDIA_STORAGE:   ${MEDIA_STORAGE:-local}
     MEDIA_DIR:       /app/media
     MEDIA_MAX_BYTES: ${MEDIA_MAX_BYTES:-10485760}
 
-    # S3 / MinIO — var names must match what payload.config.ts reads
-    # MIN-01: MinIO es OPCIONAL (perfil `s3`). Con el perfil apagado estas variables no se usan, por eso
+    # S3 (SeaweedFS) — var names must match what payload.config.ts reads
+    # MIN-01 / S3-SEAWEEDFS-01: el almacén S3 es OPCIONAL (perfil `s3`). Con el perfil apagado estas variables no se usan, por eso
     # llevan default vacío: sin él Compose avisaría de variable sin definir en cada `up`. Con
     # MEDIA_STORAGE=s3 el CMS valida que no estén vacías y, si lo están, no arranca (mediaStorage.ts).
     S3_BUCKET:          ${S3_BUCKET:-}
-    S3_ACCESS_KEY_ID:   ${MINIO_ROOT_USER:-}
-    S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-}
+    S3_ACCESS_KEY_ID:   ${S3_ACCESS_KEY_ID:-}
+    S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
     # Internal endpoint for uploads (container-to-container)
-    S3_ENDPOINT:        http://minio:9000
+    S3_ENDPOINT:        http://s3:8333
     S3_REGION:          us-east-1
     # Public-facing URL used by generateFileURL — what browsers actually load
     S3_PUBLIC_URL:      ${S3_PUBLIC_URL:-}
@@ -97,39 +97,40 @@ services:
 
     stop_grace_period: 30s
 
-  # ── MinIO S3 (OPCIONAL, perfil `s3`) ───────────────────────────────────────────
-  # MIN-01: ya no forma parte del despliegue por defecto (MEDIA_STORAGE=local usa el volumen cms_media).
-  # Un `docker compose up` normal NO lo arranca, no lo espera y el CMS no depende de él. Para usarlo:
-  # MEDIA_STORAGE=s3 en .env.prod y `docker compose --profile s3 up -d minio` (ver DEPLOY.md y
-  # docs/specs/migration/MIG-IMG-imagenes-de-noticias.md §16.8). NO nombrar `minio` en el `up -d` de
-  # deploy.yml: nombrar un servicio con perfil activa ese perfil (docs.docker.com/compose/how-tos/profiles/).
-  # DEP-11 pendiente: la imagen sigue SIN fijar (`latest` y quay.io no disponible); no se inventa un tag
-  # porque no se puede verificar sin red. guard-deploy-steps lo sigue reportando a propósito: queda rojo
-  # solo por esta imagen del perfil opcional, no por el despliegue por defecto.
-  minio:
+  # ── S3 / SeaweedFS (OPCIONAL, perfil `s3`) ─────────────────────────────────────
+  # MIN-01 / S3-SEAWEEDFS-01: no forma parte del despliegue por defecto (MEDIA_STORAGE=local usa el volumen
+  # cms_media). Un `docker compose up` normal NO lo arranca, no lo espera y el CMS no depende de él. Para usarlo:
+  # MEDIA_STORAGE=s3 en .env.prod y `docker compose --profile s3 up -d s3`, luego crear el bucket con
+  # scripts/s3/setup-bucket.mjs (ver DEPLOY.md y docs/specs/storage/S3-SEAWEEDFS-01.md). NO nombrar `s3` en el
+  # `up -d` de deploy.yml: nombrar un servicio con perfil activa ese perfil
+  # (docs.docker.com/compose/how-tos/profiles/). Sustituye a MinIO (quay.io/minio/minio devuelve 401).
+  # Imagen fijada por digest sha256 (cierra DEP-11 para este servicio); cómo actualizarla: ver la spec.
+  # Sin puertos publicados: nginx (files.*) y el CMS lo alcanzan por la red `internal` en s3:8333.
+  # Las claves salen de S3_ACCESS_KEY_ID / S3_SECRET_ACCESS_KEY de .env.prod; el entrypoint genera el JSON de
+  # identidades al arrancar (no se versiona) y falla cerrado si faltan. S3_PUBLIC_READ=1 abre GET anónimo de
+  # objetos del bucket (necesario para servir files.* sin firmar); por defecto 0.
+  s3:
     profiles: ["s3"]
-    image: quay.io/minio/minio:latest
-    container_name: unc-minio-prod
+    image: chrislusf/seaweedfs:4.51@sha256:f7a49e3f3972ebed5be2ed4befa4a0c68eb7bdddba6e692d42729ceb545134b8
+    container_name: unc-s3-prod
     restart: unless-stopped
     networks: [internal]
 
-    command:
-      - server
-      - /data
-      - --address
-      - ":9000"
-      - --console-address
-      - ":9001"
+    entrypoint: ["/bin/sh", "/s3-entrypoint.sh"]
 
     environment:
-      MINIO_ROOT_USER:     ${MINIO_ROOT_USER:-}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-}
+      S3_ACCESS_KEY_ID:     ${S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+      S3_BUCKET:            ${S3_BUCKET:-unc-media}
+      S3_PUBLIC_READ:       ${S3_PUBLIC_READ:-0}
 
     volumes:
-      - minio_data:/data
+      - s3_data:/data
+      - ./s3/entrypoint.sh:/s3-entrypoint.sh:ro
 
+    # /healthz responde 200 sin credenciales; GET / devuelve 403 (exige firma), por eso no se sondea la raíz.
     healthcheck:
-      test:         ["CMD", "mc", "ready", "local"]
+      test:         ["CMD", "wget", "-qO-", "http://127.0.0.1:8333/healthz"]
       interval:     10s
       timeout:      5s
       retries:      10
@@ -153,10 +154,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      # MIN-01: sin `depends_on: minio`. Con MEDIA_STORAGE=local no se usa, y un depends_on a un servicio
+      # MIN-01: sin `depends_on: s3`. Con MEDIA_STORAGE=local no se usa, y un depends_on a un servicio
       # de un perfil apagado haría fallar `up` («depends on undefined service»); `required: false` lo evitaría
       # pero exige Compose >= 2.20 y DEPLOY.md solo pide «v2.x». Con el perfil s3 el CMS puede arrancar antes
-      # que MinIO: el cliente S3 conecta al subir, y MinIO tiene restart: unless-stopped.
+      # que el almacén S3: el cliente conecta al subir, y s3 tiene restart: unless-stopped.
       # DEP-07 (C8): el CMS no arranca (no sirve tráfico) si la migración no terminó con éxito.
       cms-migrate:
         condition: service_completed_successfully
@@ -278,8 +279,9 @@ services:
 volumes:
   postgres_data:
     name: unc_postgres_data_prod
-  minio_data:
-    name: unc_minio_data_prod
+  # No se migra el volumen anterior unc_minio_data_prod (formato distinto); ver docs/specs/storage/S3-SEAWEEDFS-01.md.
+  s3_data:
+    name: unc_s3_data_prod
   # MIG-IMG fase 1: archivos de `media` (almacenamiento local persistente del CMS).
   cms_media:
     name: unc_cms_media_prod

@@ -28,35 +28,37 @@ services:
 
     stop_grace_period: 30s
 
-  minio:
-    image: quay.io/minio/minio:latest
-    container_name: unc-minio-local
+  # ── Almacén S3 local (SeaweedFS) — S3-SEAWEEDFS-01 ───────────────────────────────
+  # Sustituye a MinIO (sus imágenes comunitarias ya no se descargan: quay.io devuelve 401). Es OPCIONAL para
+  # el CMS: solo se usa con MEDIA_STORAGE=s3. Imagen fijada por digest (nunca latest); para actualizarla ver
+  # docs/specs/storage/S3-SEAWEEDFS-01.md. Las claves salen de S3_ACCESS_KEY_ID / S3_SECRET_ACCESS_KEY (archivo
+  # .env de esta carpeta, fuera de git): sin ellas el entrypoint se niega a arrancar (falla cerrado). El JSON de
+  # identidades se genera al arrancar, no se versiona. S3_PUBLIC_READ=1 abre lectura anónima SOLO de objetos del
+  # bucket (por defecto cerrado). Crear el bucket con: node scripts/s3/setup-bucket.mjs
+  s3:
+    image: chrislusf/seaweedfs:4.51@sha256:f7a49e3f3972ebed5be2ed4befa4a0c68eb7bdddba6e692d42729ceb545134b8
+    container_name: unc-s3-local
     restart: unless-stopped
 
-    command:
-      - server
-      - /data
-      - --console-address
-      - ":9001"
+    entrypoint: ["/bin/sh", "/s3-entrypoint.sh"]
 
-    env_file:
-      - ./.env
+    environment:
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+      S3_BUCKET: ${S3_BUCKET:-unc-media}
+      S3_PUBLIC_READ: ${S3_PUBLIC_READ:-0}
 
+    # Solo loopback: el puerto 9100 del host nunca se expone a la red local.
     ports:
-      - "127.0.0.1:9100:9000"
-      - "127.0.0.1:9101:9001"
+      - "127.0.0.1:9100:8333"
 
     volumes:
-      - minio_data:/data
+      - s3_data:/data
+      - ./s3/entrypoint.sh:/s3-entrypoint.sh:ro
 
+    # /healthz responde 200 sin credenciales; GET / devuelve 403 (exige firma), por eso no se sondea la raíz.
     healthcheck:
-      test:
-        [
-          "CMD",
-          "mc",
-          "ready",
-          "local"
-        ]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8333/healthz"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -85,8 +87,9 @@ volumes:
   postgres_data:
     name: unc_postgres_data
 
-  minio_data:
-    name: unc_minio_data
+  # No se migra el volumen anterior unc_minio_data (formato distinto); ver docs/specs/storage/S3-SEAWEEDFS-01.md.
+  s3_data:
+    name: unc_s3_data
 
   mailpit_data:
     name: unc_mailpit_data

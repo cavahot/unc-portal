@@ -32,7 +32,7 @@ function imgHosts(): string {
   return [...origins].join(' ')
 }
 
-/** CMS and MinIO origins for client-side fetch / WebSocket (dev HMR) */
+/** Orígenes del CMS y del almacén S3 local (SeaweedFS, puerto 9100) para fetch / WebSocket en desarrollo (HMR). */
 const CONNECT_DEV = [
   'http://localhost:3002',
   'http://127.0.0.1:3002',

@@ -41,3 +41,11 @@ La clave **sigue en el historial público de git** (commits `c331a50`, `b44e3a4`
 3. Confirmar que el bucket de producción solo aloja `media` (si no, definir prefijo).
 4. Probar en staging autorizado que el listado anónimo está denegado.
 5. Revisar si MinIO estuvo alguna vez expuesto en Internet con esa clave (logs de acceso).
+
+---
+
+> **Nota (2026-10-27, S3-SEAWEEDFS-01):** el cambio de almacén (MinIO -> SeaweedFS) sustituye a `scripts/minio/*`,
+> `scripts/setup/init-minio.sh`, `guard-minio-secrets` (ahora `guard-s3-secrets`) y `tests/unit/sec-minio-01.spec.ts`
+> (ahora `sec-s3-01.spec.ts`); la política pública pasa de `mc anonymous` / `MINIO_PUBLIC_READ` a la identidad
+> `anonymous` (`Read:<bucket>`) y `S3_PUBLIC_READ=1` (ver `docs/specs/storage/S3-SEAWEEDFS-01.md`). Los hechos sobre la
+> clave filtrada (commits `c331a50` y `b44e3a4`, rotación pendiente) **siguen vigentes**.

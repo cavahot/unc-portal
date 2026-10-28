@@ -55,7 +55,7 @@ const databaseURL = getDatabaseURL()
 
 // MIG-IMG fase 1: el almacenamiento de `media` se elige de forma EXPLÍCITA con MEDIA_STORAGE
 // ('local' por defecto | 's3'). Falla cerrada al arrancar si 's3' queda a medio configurar. Antes el
-// plugin S3 se activaba solo por tener dos variables y, con el MinIO caído, toda subida fallaba.
+// plugin S3 se activaba solo por tener dos variables y, con el almacén S3 caído, toda subida fallaba.
 // Límite: despliegues que usaban S3 solo por tener las claves deben fijar MEDIA_STORAGE=s3.
 const mediaStorage = resolveMediaStorage(process.env)
 
@@ -240,13 +240,13 @@ export default buildConfig({
             bucket: process.env.S3_BUCKET || 'unc-media',
             collections: {
               media: {
-                // Serve files directly from MinIO/CDN — bypass Payload's auth proxy.
+                // Servir los archivos directo desde el almacén S3 (SeaweedFS) / CDN, sin pasar por el proxy con auth de Payload.
                 // The bucket policy already enforces public read; no extra gate needed.
                 disablePayloadAccessControl: true,
 
                 // Build the public URL that gets stored in the DB and returned to the portal.
-                // S3_PUBLIC_URL:  https://files.unc.edu.py    (production — nginx → MinIO)
-                // S3_ENDPOINT:    http://127.0.0.1:9100       (local dev — MinIO path-style)
+                // S3_PUBLIC_URL:  https://files.unc.edu.py    (production — nginx → almacén S3, solo GET)
+                // S3_ENDPOINT:    http://127.0.0.1:9100       (local dev — SeaweedFS path-style)
                 generateFileURL: ({ filename, prefix }) => {
                   const base   = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || 'http://127.0.0.1:9100'
                   const bucket = process.env.S3_BUCKET || 'unc-media'
@@ -263,7 +263,8 @@ export default buildConfig({
                 accessKeyId:     process.env.S3_ACCESS_KEY_ID as string, // validadas por resolveMediaStorage('s3')
                 secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
               },
-              // Always the internal/direct MinIO endpoint for uploads (not the public URL).
+              // Siempre el endpoint interno/directo del almacén S3 para subidas (no la URL pública).
+              // SeaweedFS exige forcePathStyle y región us-east-1 (verificado en el spike 12/12).
               endpoint:      process.env.S3_ENDPOINT || 'http://127.0.0.1:9100',
               forcePathStyle: true,
               region:         process.env.S3_REGION || 'us-east-1',

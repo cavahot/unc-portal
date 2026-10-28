@@ -303,7 +303,7 @@ export const PortalDashboard: React.FC<AdminViewProps> = async () => {
               {[
                 { label: 'CMS (Payload)', key: 'cms' },
                 { label: 'Base de Datos', key: 'database' },
-                { label: 'MinIO S3', key: 'minio' },
+                { label: 'Almacenamiento S3', key: 's3' },
                 { label: 'Portal Web', key: 'portal' },
               ].map(({ label }) => (
                 <div key={label} style={{

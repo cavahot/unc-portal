@@ -261,7 +261,7 @@ test('(1) sin residuo, la limpieza previa no es un error ni imprime avisos de fa
   cleanup(dir);
 });
 
-// MIN-01: los servicios con `profiles` (minio, perfil s3) no se listan: nombrarlos activaría su perfil.
+// MIN-01: los servicios con `profiles` (s3, perfil s3) no se listan: nombrarlos activaría su perfil.
 test('(1) el up -d lista exactamente los servicios del compose por defecto menos cms-migrate', () => {
   const dir = makeWorkdir();
   const a = deploy(dir);

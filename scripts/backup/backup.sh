@@ -48,23 +48,26 @@ mkdir -p "$BACKUP_PATH"
     echo "✓ PostgreSQL backed up (via Docker)"
   fi
 
-  # 2. Backup de MinIO (solo MEDIA_STORAGE=s3; MinIO es un perfil opcional y por defecto el medio es local).
+  # 2. Backup del almacén S3 (SeaweedFS; solo MEDIA_STORAGE=s3: es un perfil opcional y por defecto el medio es local).
   # Amenaza que evita: con `set -e`, un `docker exec` contra un contenedor ausente abortaba TODO el backup
   # (BD y media local incluidas). Límite: con s3 el fallo del paso se avisa pero no detiene la copia de la BD.
+  # La copia por API S3 (aws s3 sync) es consistente a nivel de objeto; el tar de /data es una instantánea EN
+  # CALIENTE de los archivos de volumen de SeaweedFS (puede no ser consistente si hay subidas en curso). Ninguna
+  # sustituye una copia fuera del servidor (el disco comparte destino con Postgres).
   echo ""
-  echo "[2/3] Backing up MinIO storage..."
+  echo "[2/3] Backing up S3 (SeaweedFS) storage..."
   if [ "${MEDIA_STORAGE:-local}" = "s3" ]; then
-    if command -v mc &> /dev/null; then
-      mc cp --recursive "minio/unc-media" "$BACKUP_PATH/media/" 2>&1 || echo "⚠ MinIO backup via mc skipped"
-      echo "✓ MinIO backed up"
+    mkdir -p "$BACKUP_PATH/media"
+    if command -v aws &> /dev/null && [ -n "${S3_ACCESS_KEY_ID:-}" ] && [ -n "${S3_SECRET_ACCESS_KEY:-}" ]; then
+      AWS_ACCESS_KEY_ID="$S3_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$S3_SECRET_ACCESS_KEY" AWS_DEFAULT_REGION="${S3_REGION:-us-east-1}"         aws s3 sync --endpoint-url "${S3_ENDPOINT:-http://127.0.0.1:9100}" "s3://${S3_BUCKET:-unc-media}" "$BACKUP_PATH/media/s3/" 2>&1 || echo "⚠ S3 backup via aws skipped"
+      echo "✓ S3 backed up"
     else
-      echo "⚠ mc not found, creating snapshot"
-      mkdir -p "$BACKUP_PATH/media"
-      docker exec unc-minio-local bash -c "tar -czf - /data/unc-media" > "$BACKUP_PATH/media/minio-snapshot.tar.gz" 2>&1 || echo "⚠ MinIO snapshot FAILED (container unc-minio-local not running?)"
-      echo "✓ MinIO snapshot step finished"
+      echo "⚠ aws CLI or S3_* credentials not available, creating volume snapshot"
+      docker exec unc-s3-local sh -c "tar -czf - -C / data" > "$BACKUP_PATH/media/s3-snapshot.tar.gz" 2>&1 || echo "⚠ S3 snapshot FAILED (container unc-s3-local not running?)"
+      echo "✓ S3 snapshot step finished"
     fi
   else
-    echo "– MEDIA_STORAGE=${MEDIA_STORAGE:-local}: MinIO step skipped (media is covered by step 2b)"
+    echo "– MEDIA_STORAGE=${MEDIA_STORAGE:-local}: S3 step skipped (media is covered by step 2b)"
   fi
 
   # 2b. Backup de media en disco local (MIG-IMG fase 1, MEDIA_STORAGE=local).

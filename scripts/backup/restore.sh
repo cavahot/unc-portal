@@ -66,15 +66,22 @@ else
   exit 1
 fi
 
-# Restaurar MinIO
+# Restaurar el almacén S3 (SeaweedFS). Los snapshots antiguos de MinIO (minio-snapshot.tar.gz) NO son
+# compatibles: el formato de volumen es distinto; si existen, restaurarlos con `aws s3 sync` hacia un MinIO
+# temporal o recuperar los objetos por otra vía. Amenaza: extraer archivos de volumen con el servidor encendido
+# corrompe el almacén, por eso se detiene el contenedor antes y se arranca después. Límite: restaura la
+# instantánea completa de /data (sobrescribe lo actual).
 echo ""
 echo "[3/3] Restaurando almacenamiento..."
-if [ -f "$BACKUP_PATH/media/minio-snapshot.tar.gz" ]; then
-  echo "Restaurando MinIO desde snapshot..."
-  docker exec unc-minio-local bash -c "tar -xzf - -C /data" < "$BACKUP_PATH/media/minio-snapshot.tar.gz" 2>&1
+if [ -f "$BACKUP_PATH/media/s3-snapshot.tar.gz" ]; then
+  echo "Restaurando S3 (SeaweedFS) desde snapshot..."
+  S3_IMAGE="$(docker inspect -f '{{.Config.Image}}' unc-s3-local)"
+  docker stop unc-s3-local
+  docker run --rm -i --volumes-from unc-s3-local --entrypoint tar "$S3_IMAGE" -xzf - -C / < "$BACKUP_PATH/media/s3-snapshot.tar.gz" 2>&1
+  docker start unc-s3-local
   echo -e "${GREEN}✓ Almacenamiento restaurado${NC}"
 else
-  echo -e "${YELLOW}⚠ MinIO snapshot no encontrado, omitiendo${NC}"
+  echo -e "${YELLOW}⚠ S3 snapshot no encontrado, omitiendo${NC}"
 fi
 
 echo ""

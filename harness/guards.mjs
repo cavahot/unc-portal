@@ -60,23 +60,25 @@ export function guardTrackedSecrets(trackedFiles) {
 }
 
 // ---------------------------------------------------------------------------
-// SEC-MINIO-01. guard-minio-secrets
+// SEC-MINIO-01 / S3-SEAWEEDFS-01. guard-s3-secrets (antes guard-minio-secrets)
 // ---------------------------------------------------------------------------
 
 /**
- * Detecta asignaciones de una clave secreta de MinIO/S3 con un literal largo en scripts y docs versionados.
+ * Detecta asignaciones de una clave secreta S3 (cualquier almacén compatible) con un literal largo en scripts y
+ * docs versionados, incluida la forma JSON de identidades ("secretKey": "..."). Los nombres MINIO_* se siguen
+ * vigilando porque el historial y los scripts antiguos los usaron.
  * Amenaza: una credencial en git queda legible para siempre en el historial (la de SEC-MINIO-01 así se filtró).
  * Límite: patrón heurístico por nombre de variable; no ve claves sin nombre típico ni el historial previo, y
  * solo informa ruta:línea (NUNCA el valor). `files` = { ruta: contenido } de .sh/.ps1/.md/.yml versionados.
  */
-export function guardMinioSecrets(files) {
-  const id = 'guard-minio-secrets'
+export function guardS3Secrets(files) {
+  const id = 'guard-s3-secrets'
   if (!files || typeof files !== 'object') return missing(id, 'scripts y docs versionados')
-  const literal = /(MINIO_SECRET_KEY|MINIO_ROOT_PASSWORD|S3_SECRET_ACCESS_KEY|AWS_SECRET_ACCESS_KEY|\$SecretKey)\s*=\s*["'][A-Za-z0-9+/_-]{16,}["']/
+  const literal = /(\w*(?:SECRET_ACCESS_KEY|SECRET_KEY)|MINIO_ROOT_PASSWORD|\$SecretKey)\s*=\s*["'][A-Za-z0-9+/_-]{16,}["']|"secretKey"\s*:\s*"[A-Za-z0-9+/_-]{16,}"/
   const findings = []
   for (const [file, content] of Object.entries(files)) {
     ;(content ?? '').split('\n').forEach((line, i) => {
-      if (literal.test(line)) findings.push(`${file}:${i + 1} (clave secreta de MinIO/S3 con valor literal)`)
+      if (literal.test(line)) findings.push(`${file}:${i + 1} (clave secreta S3 con valor literal)`)
     })
   }
   return result(id, findings)
@@ -147,12 +149,12 @@ export function guardApiCoverage(proxyText, handlers) {
  * aquí con decisión documentada.
  * - health (DEP-04, RDD-DEP-12): pública SOLO porque el healthcheck de Docker y el
  *   portal la llaman sin sesión. Límite: el anónimo recibe una respuesta constante
- *   `{status:'ok'}`; el detalle (BD/MinIO/portal) exige superadmin o auditor. Readiness
+ *   `{status:'ok'}`; el detalle (BD/S3/portal) exige superadmin o auditor. Readiness
  *   real y rate limit quedan en DEP-09 y DEP-06.
  * - health/ready (DEP-09, RDD-DEP-27): pública SIN sesión porque la consultan el healthcheck de Docker
  *   y el gate del deploy desde la red interna, donde no hay cookie. Límite: el cuerpo es constante
  *   (`ready` / `unavailable` / `rate_limited`, sin host ni errores), el resultado se cachea 5 s y hay
- *   un limitador por IP (30/min, en memoria por proceso); solo prueba `SELECT 1`, no esquema ni MinIO.
+ *   un limitador por IP (30/min, en memoria por proceso); solo prueba `SELECT 1`, no esquema ni S3.
  */
 export const PUBLIC_API_ROUTES = [
   'apps/cms/src/app/api/health/route.ts',
@@ -605,7 +607,7 @@ export function guardBackupEncrypted(input) {
 }
 
 export const GUARD_IDS = [
-  'guard-tracked-secrets', 'guard-minio-secrets', 'guard-api-coverage', 'guard-route-roles', 'guard-jsonld',
+  'guard-tracked-secrets', 'guard-s3-secrets', 'guard-api-coverage', 'guard-route-roles', 'guard-jsonld',
   'guard-env-parity', 'guard-deploy-steps', 'guard-i18n-parity', 'guard-secret-required',
   'guard-seed-passwords', 'guard-media-volume', 'guard-backup-encrypted',
 ]
@@ -674,8 +676,8 @@ export function collectInputs(root = ROOT) {
 
   return {
     trackedFiles,
-    // SEC-MINIO-01: scripts y docs versionados, insumo de guard-minio-secrets.
-    minioFiles: readMap(root, (trackedFiles ?? []).filter((f) => /\.(sh|ps1|md|ya?ml)$/.test(f) && existsSync(path.join(root, f)))),
+    // SEC-MINIO-01: scripts y docs versionados, insumo de guard-s3-secrets.
+    s3Files: readMap(root, (trackedFiles ?? []).filter((f) => /\.(sh|ps1|md|ya?ml)$/.test(f) && existsSync(path.join(root, f)))),
     proxy: readText(root, 'proxy.ts'),
     apiHandlers: readMap(root, RATE_LIMITED_API_ROUTES),
     routes: readMap(root, cmsRoutes),
@@ -705,7 +707,7 @@ export function collectInputs(root = ROOT) {
 export function runGuards(inputs = {}) {
   return [
     guardTrackedSecrets(inputs.trackedFiles),
-    guardMinioSecrets(inputs.minioFiles),
+    guardS3Secrets(inputs.s3Files),
     guardApiCoverage(inputs.proxy, inputs.apiHandlers),
     guardRouteRoles(inputs.routes),
     guardJsonld(inputs.jsonldFiles),

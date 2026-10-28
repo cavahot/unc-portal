@@ -148,8 +148,9 @@ cuyo código la lee. Si el código lee una variable que su servicio no recibe, e
 | `POSTGRES_PASSWORD` | postgres | Secreto aleatorio (comando de abajo); **la misma** contraseña va dentro de `DATABASE_URI` |
 | `DATABASE_URI` | cms, cms-migrate | `postgresql://USUARIO:CONTRASEÑA@postgres:5432/BASE`; usuario/base = `POSTGRES_USER`/`POSTGRES_DB`; si la contraseña lleva caracteres reservados, percent-encoding (`@`→`%40`, `:`→`%3A`, `/`→`%2F`, `#`→`%23`, `?`→`%3F`, `%`→`%25`). Único nombre válido (ya no existe `DATABASE_URL`) |
 | `POSTGRES_SSL` | cms, cms-migrate | `false` dentro de la red de Compose; `true` solo con una BD gestionada externa con TLS |
-| `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` | minio (**opcional**, perfil `s3`); el CMS las recibe como `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` (se separarán en DEP-11) | Access key (mín. 3 caracteres) y secret key (mín. 8). Solo se necesitan con `MEDIA_STORAGE=s3` (MIN-01); con `local` pueden quedar vacías |
-| `MEDIA_STORAGE` | cms, cms-migrate | MIG-IMG fase 1: `local` (por defecto; volumen persistente `cms_media` en `/app/media`) o `s3` (MinIO, explícito). **Quien dependía de S3 solo por tener las claves debe fijar `MEDIA_STORAGE=s3`**; tener `S3_*` ya no activa S3 |
+| `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | s3 (**opcional**, perfil `s3`) y cms | Claves del almacén S3 (SeaweedFS): mín. 16 y 32 caracteres, solo `A-Z a-z 0-9 + / = _ . -`; el contenedor se niega a arrancar si faltan o son cortas. Generar con `openssl rand -hex 16` y `openssl rand -hex 32`. Solo con `MEDIA_STORAGE=s3` (MIN-01); con `local` pueden quedar vacías. Reemplazan a `MINIO_ROOT_USER`/`MINIO_ROOT_PASSWORD` |
+| `S3_BUCKET`, `S3_PUBLIC_READ` | s3, cms | Nombre del bucket (por defecto `unc-media`) y `1` para permitir **GET anónimo** de objetos del bucket (necesario para servir `files.unc.edu.py`; el listado, la subida y el borrado anónimos siguen denegados). Por defecto `0` |
+| `MEDIA_STORAGE` | cms, cms-migrate | MIG-IMG fase 1: `local` (por defecto; volumen persistente `cms_media` en `/app/media`) o `s3` (SeaweedFS, explícito). **Quien dependía de S3 solo por tener las claves debe fijar `MEDIA_STORAGE=s3`**; tener `S3_*` ya no activa S3 |
 | `MEDIA_MAX_BYTES` | cms, cms-migrate | Tope por archivo subido en bytes (por defecto `10485760` = 10 MiB; techo 11 MiB por el límite del proxy de Next). Los mayores se rechazan con 413, no se truncan |
 | `S3_BUCKET` | cms | `unc-media` (debe existir; ver `POST /api/setup/create-bucket`). Solo con `MEDIA_STORAGE=s3` |
 | `S3_PUBLIC_URL` | cms | `https://files.unc.edu.py` |
@@ -169,7 +170,7 @@ cuyo código la lee. Si el código lee una variable que su servicio no recibe, e
 | `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` | solo build (no llegan a ningún contenedor) | Los pasa `deploy.yml` como `build-args` desde secrets de GitHub; el token se crea en Sentry |
 
 Constantes del compose que **no** se configuran en `.env.prod`: `CMS_URL=http://cms:3000` (portal → CMS por la red
-interna), `S3_ENDPOINT=http://minio:9000`, `S3_REGION=us-east-1`. `IMAGE_TAG` lo fija el pipeline (`sha-xxxxxxx`).
+interna), `S3_ENDPOINT=http://s3:8333`, `S3_REGION=us-east-1`. `IMAGE_TAG` lo fija el pipeline (`sha-xxxxxxx`).
 Nombres que ya **no** existen: `SMTP_PASS`, `SMTP_FROM`, `DATABASE_URL`, `MINIO_ENDPOINT`.
 
 Para generar valores aleatorios seguros (alfanuméricos, sin caracteres que exijan percent-encoding):
@@ -268,28 +269,34 @@ y repite. Nunca ejecutes `migrate:down`, `migrate:reset`, `migrate:refresh` ni `
 producción. Si la base tiene una fila `batch = -1` en `payload_migrations` (esquema creado por push en
 dev), el deploy se rechaza: requiere intervención manual.
 
-### Paso 14 — Inicializar MinIO (OPCIONAL: solo si usas `MEDIA_STORAGE=s3`)
+### Paso 14 — Inicializar el almacén S3 / SeaweedFS (OPCIONAL: solo si usas `MEDIA_STORAGE=s3`)
 
-**MIN-01:** MinIO ya no forma parte del despliegue por defecto. Con `MEDIA_STORAGE=local` (valor por defecto) los
-archivos van al volumen `cms_media` y **debes omitir este paso**: `docker compose up` no arranca ni espera a MinIO,
+**MIN-01 / S3-SEAWEEDFS-01:** el almacén S3 (SeaweedFS; sustituye a MinIO, cuyas imágenes ya no se descargan) no forma parte del despliegue por defecto. Con `MEDIA_STORAGE=local` (valor por defecto) los
+archivos van al volumen `cms_media` y **debes omitir este paso**: `docker compose up` no arranca ni espera al servicio `s3`,
 y el CMS no depende de él. `files.unc.edu.py` responderá 502 mientras no exista el contenedor (esperado).
 
-Para activar el almacenamiento S3 (requiere una imagen de MinIO descargable y fijada, DEP-11 pendiente):
+Para activar el almacenamiento S3 (imagen `chrislusf/seaweedfs` fijada por digest; ver `docs/specs/storage/S3-SEAWEEDFS-01.md`):
 
 ```bash
-# 1. En .env.prod: MEDIA_STORAGE=s3, MINIO_ROOT_USER, MINIO_ROOT_PASSWORD, S3_BUCKET, S3_PUBLIC_URL
+# 1. En .env.prod: MEDIA_STORAGE=s3, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET, S3_PUBLIC_READ=1, S3_PUBLIC_URL
 # 2. Levantar el perfil s3 (el perfil se activa con --profile; no basta con editar .env.prod):
-$COMPOSE --profile s3 up -d minio   # MinIO aún no corre: el paso 13 solo levantó Postgres
-bash scripts/setup/init-minio.sh
+$COMPOSE --profile s3 up -d s3   # el almacén aún no corre: el paso 13 solo levantó Postgres
+# Crear el bucket por la API S3 (idempotente) ANTES de recrear el CMS. En prod el puerto 8333 no se publica:
+# ejecutar el script desde un host/contenedor con el repo y node_modules que alcance S3_ENDPOINT (p. ej. un
+# contenedor temporal unido a la red `internal`). Límite: este paso no se ha ejercitado en producción real
+# (sí en un proyecto Compose aislado local, S3-SEAWEEDFS-01). Con --check solo verifica.
+S3_ENDPOINT=http://s3:8333 node scripts/s3/setup-bucket.mjs
 # 3. Recrear el CMS para que lea MEDIA_STORAGE=s3:
 $COMPOSE up -d --no-deps cms
 ```
 
-El `up -d` de `deploy.yml` **no** nombra `minio` (nombrar un servicio con perfil activaría ese perfil y arrastraría su
-imagen sin fijar); un despliegue con S3 debe arrancar/actualizar MinIO a mano con el comando de arriba.
+El `up -d` de `deploy.yml` **no** nombra `s3` (nombrar un servicio con perfil activaría ese perfil); un despliegue con S3 debe
+arrancar/actualizar el servicio `s3` a mano con el comando de arriba. Los datos del volumen anterior de MinIO
+(`unc_minio_data_prod`) **no se migran**: MinIO nunca se usó en producción; si hubiera datos, copiarlos con
+`aws s3 sync` o `rclone` hacia el nuevo endpoint.
 
-Crea el bucket `unc-media` y habilita acceso público de lectura (necesario para que
-los navegadores carguen las imágenes directamente desde MinIO/CDN).
+El script crea el bucket `unc-media`; la lectura pública de objetos la da `S3_PUBLIC_READ=1` (identidad anónima
+con solo `Read:<bucket>`), necesaria para que los navegadores carguen las imágenes desde `files.unc.edu.py`.
 
 ### Paso 15 — Cargar los datos iniciales (solo primera vez)
 
@@ -319,7 +326,7 @@ docker ps
 ```
 
 Deberías ver 4 contenedores con estado `healthy` (`unc-postgres-prod`, `unc-cms-prod`, `unc-portal-prod`,
-`unc-nginx-prod`; `unc-minio-prod` solo si activaste el perfil `s3`, MIN-01); `unc-cms-migrate-prod` queda en estado `Exited (0)` (es un servicio de
+`unc-nginx-prod`; `unc-s3-prod` solo si activaste el perfil `s3`, MIN-01); `unc-cms-migrate-prod` queda en estado `Exited (0)` (es un servicio de
 un solo uso y `cms` no arranca sin que termine bien).
 
 ### Paso 16b — Sembrar el tag sano (DEP-09)
@@ -350,7 +357,7 @@ curl -s https://cms.unc.edu.py/api/health/ready
 
 # Media con MEDIA_STORAGE=local (por defecto): una imagen subida se sirve por el CMS
 #   curl -sI https://cms.unc.edu.py/api/media/file/<archivo>   -> 200
-# Media con el perfil s3 (MIN-01; verifica MinIO y nginx). Sin el perfil, files.* responde 502 a propósito
+# Media con el perfil s3 (MIN-01; verifica el almacén S3 y nginx). Sin el perfil, files.* responde 502 a propósito
 curl -sI https://files.unc.edu.py
 # Debe responder: HTTP/2 200 o 403 (403 es correcto si el bucket está vacío)
 ```
@@ -443,10 +450,10 @@ que el contenedor `unc-postgres-prod` esté en estado `healthy`.
 ### Las imágenes no cargan
 
 Solo con `MEDIA_STORAGE=s3` (perfil `s3`, MIN-01): verificar que `S3_PUBLIC_URL=https://files.unc.edu.py` esté en `.env.prod` y que
-el bucket `unc-media` exista con política pública:
+el bucket `unc-media` exista y `S3_PUBLIC_READ=1` esté fijado (lectura anónima solo de objetos):
 
 ```bash
-bash scripts/setup/init-minio.sh
+S3_ENDPOINT=http://s3:8333 node scripts/s3/setup-bucket.mjs --check
 ```
 
 ### Ver logs en tiempo real

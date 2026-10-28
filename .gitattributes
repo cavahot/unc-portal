@@ -1,0 +1,7 @@
+# S3-SEAWEEDFS-01: el entrypoint se ejecuta con sh dentro del contenedor Linux; un CRLF (autocrlf en Windows) lo rompe.
+infrastructure/docker/s3/entrypoint.sh text eol=lf
+
+# Scripts y módulos ejecutables: siempre LF. Con core.autocrlf=true Git de Windows los reescribe en CRLF y una
+# línea shebang `#!/usr/bin/env node\r` rompe Vitest/Node (falló tests/unit/fac01-seed.spec.ts) y los .sh en Linux.
+*.sh  text eol=lf
+*.mjs text eol=lf

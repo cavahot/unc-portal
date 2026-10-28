@@ -15,7 +15,7 @@ Cada backup incluye:
 ```
 backup_YYYYMMDD_HHMMSS/
 ├── database.sql.gz              # PostgreSQL completa (comprimida)
-├── media-snapshot.tar.gz        # MinIO S3 snapshot (solo si MEDIA_STORAGE=s3)
+├── media-snapshot.tar.gz        # S3 (SeaweedFS) snapshot de /data (solo si MEDIA_STORAGE=s3)
 ├── media-volume.tar.gz          # Volumen local de media del CMS (MEDIA_STORAGE=local, MIG-IMG fase 1)
 ├── metadata.txt                 # Información del backup
 ├── checksums.sha256             # Validación de integridad
@@ -44,8 +44,8 @@ cd /path/to/unc-portal
 [Backup] Iniciando backup: backup_20260727_150000
 [1/3] Backing up PostgreSQL...
 ✓ PostgreSQL backed up
-[2/3] Backing up MinIO storage...
-✓ MinIO backed up
+[2/3] Backing up S3 (SeaweedFS) storage...
+✓ S3 snapshot step finished
 [3/3] Backing up configuration...
 ✓ Configuration backed up
 [✓] Backup completado exitosamente
@@ -175,19 +175,22 @@ npm run dev:all
 curl http://localhost:3002/api/auditoria?limit=10
 ```
 
-### Scenario 2: Pérdida de archivos (MinIO)
+### Scenario 2: Pérdida de archivos (almacén S3 / SeaweedFS)
+
+> S3-SEAWEEDFS-01: SeaweedFS sustituye a MinIO. El volumen anterior (`unc_minio_data`) **no se migra**; los
+> snapshots antiguos `minio-snapshot.tar.gz` no son compatibles. Aplica solo con `MEDIA_STORAGE=s3`.
 
 ```bash
-# El backup restaura automáticamente MinIO
-# Solo restaurar la parte de almacenamiento:
+# `scripts/backup/restore.sh` restaura la instantánea s3-snapshot.tar.gz: detiene el contenedor, extrae /data
+# en su volumen y lo arranca de nuevo. Hacerlo con el servidor encendido corrompería los archivos de volumen.
+bash scripts/backup/restore.sh ./backups/backup_20260727_150000
 
-# Copiar snapshot de media
-tar -xzf ./backups/backup_20260727_150000/media-snapshot.tar.gz \
-  -C docker/
-
-# Reiniciar MinIO
-docker-compose restart unc-minio-local
+# Alternativa por API (copia consistente por objeto, si se respaldó con `aws s3 sync` en media/s3/):
+aws s3 sync ./backups/backup_20260727_150000/media/s3/ s3://unc-media --endpoint-url http://127.0.0.1:9100
 ```
+
+Límites: la instantánea de `/data` se toma **en caliente** (puede no ser consistente con subidas en curso) y el disco
+comparte destino con Postgres: sigue haciendo falta una copia fuera del servidor.
 
 ### Scenario 2b: Pérdida del volumen de media local (MEDIA_STORAGE=local)
 

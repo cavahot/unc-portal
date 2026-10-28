@@ -339,7 +339,7 @@ describe('DEP-04: /api/health', () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true })))
   })
 
-  it('anónimo recibe solo {status:"ok"} sin tocar BD ni MinIO', async () => {
+  it('anónimo recibe solo {status:"ok"} sin tocar BD ni el almacén S3', async () => {
     asAnonymous()
     vi.stubEnv('DATABASE_URI', dbURL)
     const response = await getHealth(req('/api/health'))
@@ -366,6 +366,11 @@ describe('DEP-04: /api/health', () => {
       const body = await response.json()
       expect(response.status).toBe(200)
       expect(body.services.database.status).toBe('up')
+      // S3-AGN: el almacén S3 (SeaweedFS) se sondea en /healthz y se reporta como `s3` (ya no `minio`).
+      expect(body.services.s3.status).toBe('up')
+      expect(body.services).not.toHaveProperty('minio')
+      const urls = (fetch as unknown as { mock: { calls: unknown[][] } }).mock.calls.map((c) => String(c[0]))
+      expect(urls.some((u) => u.endsWith('/healthz'))).toBe(true)
       expect(m.poolCtor).toHaveBeenCalledWith(expect.objectContaining({ connectionString: dbURL }))
     })
   }
@@ -413,7 +418,7 @@ describe('DEP-04: POST /api/setup/create-bucket', () => {
 
   it('superadmin crea el bucket sin devolver la respuesta cruda de S3 ni imprimir el endpoint', async () => {
     asRole('superadmin')
-    vi.stubEnv('S3_ENDPOINT', 'http://minio-interno.example:9000')
+    vi.stubEnv('S3_ENDPOINT', 'http://s3-interno.example:9000')
     m.s3Send.mockResolvedValue({ Location: '/unc-media', $metadata: { httpStatusCode: 200 } })
     const response = await post()
     const body = await response.json()
@@ -422,7 +427,7 @@ describe('DEP-04: POST /api/setup/create-bucket', () => {
     expect(body).not.toHaveProperty('response')
     expect(JSON.stringify(body)).not.toContain('$metadata')
     const logged = JSON.stringify([...(console.log as any).mock.calls, ...(console.error as any).mock.calls])
-    expect(logged).not.toContain('minio-interno.example')
+    expect(logged).not.toContain('s3-interno.example')
   })
 
   it('bucket ya existente devuelve 200', async () => {
@@ -433,13 +438,21 @@ describe('DEP-04: POST /api/setup/create-bucket', () => {
     expect((await response.json()).success).toBe(true)
   })
 
+  // S3-AGN: SeaweedFS puede responder BucketAlreadyExists (no solo BucketAlreadyOwnedByYou) al repetir el alta.
+  it('bucket ya existente según SeaweedFS (BucketAlreadyExists) también devuelve 200', async () => {
+    asRole('superadmin')
+    m.s3Send.mockRejectedValue(Object.assign(new Error('exists'), { Code: 'BucketAlreadyExists' }))
+    const response = await post()
+    expect(response.status).toBe(200)
+  })
+
   it('error de S3 devuelve 500 genérico sin el texto interno', async () => {
     asRole('superadmin')
-    m.s3Send.mockRejectedValue(new Error(`${SECRET_TEXT} http://minio-interno.example:9000`))
+    m.s3Send.mockRejectedValue(new Error(`${SECRET_TEXT} http://s3-interno.example:9000`))
     const response = await post()
     expect(response.status).toBe(500)
     const text = await response.text()
     expect(text).not.toContain(SECRET_TEXT)
-    expect(text).not.toContain('minio-interno')
+    expect(text).not.toContain('s3-interno')
   })
 })
