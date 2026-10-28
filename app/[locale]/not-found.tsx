@@ -371,7 +371,7 @@ export default function NotFound() {
               animationDelay: '0.85s',
             }}
           >
-            ERR_ROUTE_NOT_FOUND · portal.unc.edu.py
+            ERR_ROUTE_NOT_FOUND · www.unc.edu.py
           </p>
         </div>
       </div>

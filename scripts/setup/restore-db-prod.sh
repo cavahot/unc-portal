@@ -170,7 +170,7 @@ echo "  ✅ BD de producción restaurada"
 echo "============================================"
 echo "  Noticias: $NOTICIA_COUNT"
 echo ""
-echo "  Verificá el portal: https://portal.unc.edu.py"
+echo "  Verificá el portal: https://www.unc.edu.py"
 echo "============================================"
 
 # El trap EXIT elimina setup/seed.dump; este rm queda como limpieza explícita en el camino feliz.

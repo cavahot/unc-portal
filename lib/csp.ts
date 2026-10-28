@@ -42,9 +42,11 @@ const CONNECT_DEV = [
   'wss://localhost:*',
 ].join(' ')
 
-const CONNECT_PROD = process.env.NEXT_PUBLIC_CMS_URL
-  ? process.env.NEXT_PUBLIC_CMS_URL
-  : ''
+// Decisión 2026-10-28: NEXT_PUBLIC_CMS_URL es ahora el origen público de los archivos (www, mismo origen que
+// el portal) y ya no el panel del CMS. El código cliente del portal no hace fetch al CMS (solo servidor, vía
+// CMS_URL interna), así que 'self' basta: connect-src NO concede ningún origen extra (menos superficie de
+// exfiltración y sin conceder cms.unc.edu.py al portal).
+const CONNECT_PROD = ''
 
 export function buildCSP(nonce: string): string {
   if (isDev) {

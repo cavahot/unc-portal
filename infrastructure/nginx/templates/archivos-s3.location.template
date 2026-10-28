@@ -1,0 +1,50 @@
+# DOMINIOS-SSL-01 / S3-SEAWEEDFS-01 — ruta pública de objetos S3 bajo el host www.unc.edu.py.
+# Qué es: plantilla de nginx. El entrypoint de la imagen nginx la renderiza con envsubst (SOLO la variable
+#   S3_BUCKET, ver NGINX_ENVSUBST_FILTER en compose.prod.yaml) a /etc/nginx/conf.d/archivos-s3.location, que
+#   nginx.conf incluye dentro del server de www. Por qué plantilla: nginx no lee variables de entorno y el
+#   nombre del bucket se configura en .env.prod (por defecto unc-media).
+# Se usa solo con MEDIA_STORAGE=s3 (perfil `s3`); sin el contenedor s3 esta ruta responde 502 y nada más.
+
+# Sin clave no hay objeto: evita pedir la raíz del bucket por esta puerta (no hay listado público).
+location = /archivos/ {
+    return 404;
+}
+
+location ^~ /archivos/ {
+    # Amenaza: escrituras o borrados por la puerta pública (el CMS sube por la red interna, nunca por aquí).
+    # Límite: la autorización real es la del almacén (la identidad anónima solo tiene Read:<bucket>);
+    # esto es una segunda barrera.
+    limit_except GET HEAD {
+        deny all;
+    }
+
+    # /archivos/<clave> -> /<bucket>/<clave>. `break` evita reevaluar locations; el .+ exige clave no vacía.
+    rewrite ^/archivos/(.+)$ /${S3_BUCKET}/$1 break;
+
+    # DNS interno de Docker por petición (resolver definido en el server): nginx arranca sin s3.
+    set $s3_backend unc-s3-prod:8333;
+    proxy_pass         http://$s3_backend;
+    proxy_http_version 1.1;
+    proxy_set_header   Connection "";
+    proxy_set_header   Host $s3_backend;
+    proxy_set_header   X-Real-IP $remote_addr;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Proto $scheme;
+    # Una cookie o firma del cliente no debe cambiar la identidad con la que se lee el almacén (anónima).
+    proxy_set_header   Cookie "";
+    proxy_set_header   Authorization "";
+
+    proxy_hide_header  x-amz-request-id;
+    proxy_hide_header  x-amz-id-2;
+    proxy_hide_header  x-amz-bucket-region;
+    proxy_hide_header  Set-Cookie;
+
+    # SeaweedFS no añade cabeceras de seguridad; un add_header dentro del location anula las del server,
+    # por eso se repiten aquí (HSTS incluido).
+    add_header         Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+    add_header         X-Content-Type-Options "nosniff" always;
+    add_header         Cache-Control "public, max-age=86400";
+
+    proxy_read_timeout  120s;
+    proxy_send_timeout  120s;
+}

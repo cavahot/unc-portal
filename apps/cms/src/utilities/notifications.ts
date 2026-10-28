@@ -3,7 +3,8 @@ import config from '../payload.config'
 import type { Payload } from 'payload'
 
 // DEP-10: nombres canónicos dentro del CMS. NEXT_PUBLIC_SERVER_URL = URL pública del CMS (convención de
-// Payload); PORTAL_URL = URL pública del portal. NEXT_PUBLIC_CMS_URL/NEXT_PUBLIC_SITE_URL son del portal.
+// Payload); PORTAL_URL = URL pública del portal. NEXT_PUBLIC_CMS_URL (origen público de /api/media/file/**, www) y
+// NEXT_PUBLIC_SITE_URL son del portal.
 const CMS_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3002'
 const PORTAL_URL = process.env.PORTAL_URL ?? 'http://localhost:3000'
 

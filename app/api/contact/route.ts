@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
         </td></tr>
         <!-- Footer -->
         <tr><td style="padding:16px 32px;background:#f4f7f5;border-top:1px solid #d7e0db;">
-          <p style="margin:0;font-size:11px;color:#9eac9e;">Enviado desde <a href="https://portal.unc.edu.py/contacto" style="color:#008000;">portal.unc.edu.py/contacto</a></p>
+          <p style="margin:0;font-size:11px;color:#9eac9e;">Enviado desde <a href="https://www.unc.edu.py/contacto" style="color:#008000;">www.unc.edu.py/contacto</a></p>
         </td></tr>
       </table>
     </td></tr>

@@ -18,7 +18,7 @@ describe('resolvePortalBaseUrl', () => {
   })
 
   it('normaliza barra final y camino sobrante (solo se usa el origen)', () => {
-    expect(resolvePortalBaseUrl('https://portal.unc.edu.py/')).toMatchObject({ ok: true, origin: 'https://portal.unc.edu.py' })
+    expect(resolvePortalBaseUrl('https://www.unc.edu.py/')).toMatchObject({ ok: true, origin: 'https://www.unc.edu.py' })
     expect(resolvePortalBaseUrl('http://portal:3000/es/algo?x=1')).toMatchObject({ ok: true, origin: 'http://portal:3000' })
   })
 

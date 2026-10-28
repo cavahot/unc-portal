@@ -7,7 +7,7 @@
  *     dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }} />
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.unc.edu.py'
 const SITE_NAME = 'Universidad Nacional de Concepción'
 
 // ---------------------------------------------------------------------------

@@ -3,14 +3,17 @@
 
 type Env = { [key: string]: string | undefined }
 
-/** Origen público del CMS en desarrollo, cuando NEXT_PUBLIC_CMS_URL no está definida. */
+/** Origen público de los archivos en desarrollo (CMS local), cuando NEXT_PUBLIC_CMS_URL no está definida. */
 const DEV_CMS_ORIGIN = 'http://localhost:3002'
 
 /** Nombre de archivo permitido tras /api/media/file/: sin barras, sin `?`/`#`, sin `\`. */
 const MEDIA_PATH = /^\/api\/media\/file\/[A-Za-z0-9._~%-]+$/
 
+/** Ruta pública del almacén S3 (nginx → S3): /archivos/<clave> con al menos un carácter tras la barra. */
+const S3_PATH = /^\/archivos\/[^?#\\]+$/
+
 /**
- * Origen público del CMS a partir de NEXT_PUBLIC_CMS_URL (solo el origen: se descartan ruta, query y
+ * Origen público de los archivos de media a partir de NEXT_PUBLIC_CMS_URL (solo el origen: se descartan ruta, query y
  * credenciales). Sin variable: localhost:3002 fuera de producción y `null` en producción (falla cerrada:
  * mejor sin foto que con una URL inventada). Variable inválida o no http(s): `null`.
  */
@@ -42,8 +45,8 @@ function hasSafeFilename(pathname: string): boolean {
  *
  * Qué hace: acepta (a) la ruta relativa que genera Payload con almacenamiento local
  * (`/api/media/file/<archivo>`) y le antepone el origen público del CMS; (b) la misma ruta absoluta
- * si ya apunta al origen del CMS; (c) una URL https del host `MEDIA_HOSTNAME` (almacenamiento S3 /
- * CDN, el mismo host que `next.config.mjs` permite a `next/image`). Todo lo demás da `null`.
+ * si ya apunta a ese origen; (c) una URL https del host `MEDIA_HOSTNAME` (almacenamiento S3, el mismo
+ * host que `next.config.mjs` permite a `next/image`) SOLO bajo `/archivos/`. Todo lo demás da `null`.
  *
  * Por qué: con `media.url` relativa, `next/image` y los `href` la resolverían contra el origen del
  * PORTAL (404). Amenazas que evita: `javascript:`/`data:`, `//host`, rutas fuera de /api/media/file/,
@@ -74,12 +77,19 @@ export function resolveMediaUrl(url: unknown, env: Env = process.env): string | 
   // Una ruta con `..` se normaliza en `new URL`; se compara con el texto original para detectarla.
   if (/\/\.\.?(\/|$)/.test(value) || /%2e|%2f|%5c/i.test(value)) return null
 
-  if (origin !== null && parsed.origin === origin) {
-    return MEDIA_PATH.test(parsed.pathname) && hasSafeFilename(parsed.pathname) ? `${origin}${parsed.pathname}` : null
+  if (origin !== null && parsed.origin === origin && MEDIA_PATH.test(parsed.pathname) && hasSafeFilename(parsed.pathname)) {
+    return `${origin}${parsed.pathname}`
   }
 
+  // S3 (SEC/decisión 2026-10-28): MEDIA_HOSTNAME puede ser el mismo www del portal, así que solo se acepta la
+  // ruta pública /archivos/<clave> (sin `..`, `%2f` ni barras finales); cualquier otra ruta del host da null.
   const mediaHost = env.MEDIA_HOSTNAME?.trim().toLowerCase()
-  if (mediaHost && parsed.protocol === 'https:' && parsed.hostname.toLowerCase() === mediaHost) {
+  if (
+    mediaHost &&
+    parsed.protocol === 'https:' &&
+    parsed.hostname.toLowerCase() === mediaHost &&
+    S3_PATH.test(parsed.pathname)
+  ) {
     return `${parsed.origin}${parsed.pathname}`
   }
   return null

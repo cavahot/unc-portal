@@ -59,11 +59,39 @@ describe('resolveMediaUrl', () => {
     expect(resolveMediaUrl('https://cms.example.test/api/media/file/a.jpg', ENV)).toBe('https://cms.example.test/api/media/file/a.jpg')
   })
 
-  it('acepta una absoluta https del host de MEDIA_HOSTNAME (almacenamiento S3), y solo https', () => {
+  it('acepta una absoluta https del host de MEDIA_HOSTNAME SOLO bajo /archivos/ (almacenamiento S3), y solo https', () => {
     const env = { ...ENV, MEDIA_HOSTNAME: 'files.example.test' }
-    expect(resolveMediaUrl('https://files.example.test/unc/a.jpg', env)).toBe('https://files.example.test/unc/a.jpg')
-    expect(resolveMediaUrl('http://files.example.test/unc/a.jpg', env)).toBeNull()
-    expect(resolveMediaUrl('https://otro.example.test/unc/a.jpg', env)).toBeNull()
-    expect(resolveMediaUrl('https://files.example.test/../x.jpg', env)).toBeNull()
+    expect(resolveMediaUrl('https://files.example.test/archivos/unc/a.jpg', env)).toBe('https://files.example.test/archivos/unc/a.jpg')
+    expect(resolveMediaUrl('http://files.example.test/archivos/unc/a.jpg', env)).toBeNull()
+    expect(resolveMediaUrl('https://otro.example.test/archivos/unc/a.jpg', env)).toBeNull()
+    expect(resolveMediaUrl('https://files.example.test/archivos/../x.jpg', env)).toBeNull()
+    expect(resolveMediaUrl('https://files.example.test/archivos/%2e%2e/x.jpg', env)).toBeNull()
+    expect(resolveMediaUrl('https://files.example.test/unc/a.jpg', env)).toBeNull()
+    expect(resolveMediaUrl('https://files.example.test/archivos/', env)).toBeNull()
+  })
+
+  // Decisión 2026-10-28: portal, archivos del CMS y S3 comparten el origen https://www.unc.edu.py.
+  describe('origen único www', () => {
+    const WWW = { NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'https://www.unc.edu.py', MEDIA_HOSTNAME: 'www.unc.edu.py' }
+
+    it('construye https://www.unc.edu.py/api/media/file/<nombre> desde la ruta relativa', () => {
+      expect(resolveMediaUrl('/api/media/file/rector.jpg', WWW)).toBe('https://www.unc.edu.py/api/media/file/rector.jpg')
+    })
+
+    it('acepta S3 bajo /archivos/ aunque coincida con el origen de media', () => {
+      expect(resolveMediaUrl('https://www.unc.edu.py/archivos/unc-media/a.jpg', WWW)).toBe('https://www.unc.edu.py/archivos/unc-media/a.jpg')
+    })
+
+    it('rechaza cualquier otra ruta del mismo host y los intentos de salir de /archivos/', () => {
+      expect(resolveMediaUrl('https://www.unc.edu.py/api/users/me', WWW)).toBeNull()
+      expect(resolveMediaUrl('https://www.unc.edu.py/accesoSeguro', WWW)).toBeNull()
+      expect(resolveMediaUrl('https://www.unc.edu.py/archivos/../api/users/me', WWW)).toBeNull()
+      expect(resolveMediaUrl('https://www.unc.edu.py/archivos/a%2fb.jpg', WWW)).toBeNull()
+    })
+
+    it('http se rechaza en producción', () => {
+      expect(resolveMediaUrl('http://www.unc.edu.py/api/media/file/a.jpg', WWW)).toBeNull()
+      expect(resolveMediaUrl('http://www.unc.edu.py/archivos/a.jpg', WWW)).toBeNull()
+    })
   })
 })
