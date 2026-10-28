@@ -7,17 +7,25 @@
 #   4. Verify: crontab -l
 #
 # Logs are written to /var/log/unc-backup.log
-# Backups are stored in $PROJECT_DIR/backups/
+# Backups (cifrados .gpg) se guardan en ${BACKUP_LOCAL_DIR:-$PROJECT_DIR/backups}.
+#
+# BACKUP-MEDIA-01: la configuración (BACKUP_ENCRYPTION_PASSPHRASE, BACKUP_REMOTE, BACKUP_SSH_KEY, BACKUP_LOCAL_DIR,
+# BACKUP_RETENTION_DAYS) NO va en esta línea de cron: los scripts la leen de $PROJECT_DIR/.env.backup (modo 600,
+# fuera de git). Para activar la copia EXTERNA ejecute una vez: bash scripts/backup/configure-offsite.sh
 
 PROJECT_DIR=/opt/unc-portal
 
-# ─── Daily full backup at 02:00 Paraguay time (server must be in UTC-4) ──────
-0 2 * * * cd $PROJECT_DIR && bash scripts/backup/backup.sh >> /var/log/unc-backup.log 2>&1
+# ─── Daily encrypted backup at 02:00 Paraguay time (server must be in UTC-4) ─────────────────────────
+# backup-prod.sh = BD cifrada (db-*.dump.gpg) + media cifrada (media-*.tar.gz.gpg) + copia externa (no fatal).
+# La retención (BACKUP_RETENTION_DAYS, 14 por defecto) la aplican los propios scripts sobre sus patrones.
+0 2 * * * cd $PROJECT_DIR && BACKUP_ENV_FILE=$PROJECT_DIR/.env.backup bash scripts/backup/backup-prod.sh >> /var/log/unc-backup.log 2>&1
 
-# ─── Weekly cleanup: keep only last 14 backups ───────────────────────────────
-0 3 * * 0 find $PROJECT_DIR/backups -maxdepth 1 -type d -mtime +14 -exec rm -rf {} + >> /var/log/unc-backup.log 2>&1
-
-# ─── Alert if last backup is older than 26 hours (backup missed) ─────────────
+# ─── Alert if the last encrypted DB backup is older than 26 hours (backup missed) ────────────────────
 # Requires: mailutils or similar for mail command
-0 4 * * * find $PROJECT_DIR/backups -maxdepth 2 -name "metadata.txt" -mtime -1 | grep -q . || \
-  echo "⚠ UNC backup missed at $(date)" | mail -s "ALERT: UNC backup missing" admin@unc.edu.py
+0 4 * * * find ${BACKUP_LOCAL_DIR:-$PROJECT_DIR/backups} -maxdepth 1 -name "db-*.dump.gpg" -mmin -1560 | grep -q . || \
+  echo "UNC backup missed at $(date)" | mail -s "ALERT: UNC backup missing" admin@unc.edu.py
+
+# ─── Alert if the OFF-HOST copy is not ok (not_configured / failed) ──────────────────────────────────
+# Lee .offsite-status; avisa si la copia externa no está en state=ok.
+30 4 * * * grep -qx 'state=ok' ${BACKUP_LOCAL_DIR:-$PROJECT_DIR/backups}/.offsite-status 2>/dev/null || \
+  echo "UNC: copia externa de respaldos NO OK. Ejecute: bash $PROJECT_DIR/scripts/backup/configure-offsite.sh --check" | mail -s "ALERT: UNC offsite backup" admin@unc.edu.py

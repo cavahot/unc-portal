@@ -157,7 +157,9 @@ jobs:
           username:    ${{ secrets.SSH_USER }}
           key:         ${{ secrets.SSH_PRIVATE_KEY }}
           port:        ${{ secrets.SSH_PORT || 22 }}
-          source:      "infrastructure/"
+          # BACKUP-MEDIA-01: además de infrastructure/ se copian los scripts de respaldo (backup-media.sh,
+          # encrypt-dump.sh, backup-lib.sh): el deploy los ejecuta en el host antes de migrar.
+          source:      "infrastructure/,scripts/backup/"
           target:      "/opt/unc-portal/"
           strip_components: 0
 
@@ -349,6 +351,29 @@ jobs:
                 exit 1
               fi
               echo "Primer deploy (sin volumen de Postgres): no se requiere backup."
+            fi
+
+            # BACKUP-MEDIA-01 (B): respaldo CIFRADO del volumen de media del CMS ANTES de migrar/levantar, con la
+            # misma política que el de la BD (falla cerrado). Amenaza: un deploy o rollback que dañe el volumen deja
+            # filas `media` sin archivo y, sin esta copia, sin forma de recuperarlas (el pg_dump no las incluye).
+            # Casos: sin volumen = primer deploy (se omite); volumen con CMS en marcha = `docker exec tar`; volumen
+            # con CMS caído = el script usa un contenedor desechable con el volumen en SOLO LECTURA (así el deploy que
+            # arregla un CMS caído no queda bloqueado); aborta solo si el respaldo falla (incluida la falta de
+            # BACKUP_ENCRYPTION_PASSPHRASE en .env.backup o de una imagen local con tar; no se descarga nada).
+            # Límites: copia en caliente en el mismo disco del host (copia externa: BACKUP_REMOTE, ver
+            # docs/BACKUP_RECOVERY.md); el rollback de imagen NO restaura media (restauración manual documentada).
+            if docker volume inspect unc_cms_media_prod > /dev/null 2>&1; then
+              if [ ! -f scripts/backup/backup-media.sh ]; then
+                echo "::error::Falta scripts/backup/backup-media.sh en el servidor (lo copia el paso «Copy compose»). Deploy abortado."
+                exit 1
+              fi
+              if ! BACKUP_ENV_FILE="$PWD/.env.backup" BACKUP_LOCAL_DIR="$PWD/backups" CMS_CONTAINER=unc-cms-prod \
+                  bash scripts/backup/backup-media.sh; then
+                echo "::error::El respaldo cifrado de la media falló (¿BACKUP_ENCRYPTION_PASSPHRASE en /opt/unc-portal/.env.backup?). Deploy abortado antes de migrar."
+                exit 1
+              fi
+            else
+              echo "Sin volumen de media (primer deploy): no se requiere respaldo de media."
             fi
 
             # DEP-07 (C3): paso explícito de esquema, solo hacia adelante. Un fallo aborta el deploy
