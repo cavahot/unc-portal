@@ -94,7 +94,7 @@ export default async function NoticiaDetailPage({
         : noticia.category)
     : null
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.unc.edu.py'
   const newsArticleSchema = buildNewsArticleSchema({
     title: noticia.title,
     description: noticia.summary,

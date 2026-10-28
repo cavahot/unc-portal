@@ -537,8 +537,10 @@ jobs:
             # Give containers 20s to finish starting before health check
             sleep 20
 
+            # DOMINIOS-SSL-01: el portal responde en www.unc.edu.py (cert Sectigo) y el CMS en cms.unc.edu.py;
+            # el host portal.* ya no existe. Si www falla con error TLS, revisar www_fullchain.pem/www_privkey.pem.
             portal_status=$(curl -s -o /dev/null -w "%{http_code}" \
-              --max-time 10 https://portal.unc.edu.py/api/health || echo "000")
+              --max-time 10 https://www.unc.edu.py/api/health || echo "000")
 
             cms_status=$(curl -s -o /dev/null -w "%{http_code}" \
               --max-time 10 https://cms.unc.edu.py/api/health || echo "000")
@@ -568,7 +570,7 @@ jobs:
           port:     ${{ secrets.SSH_PORT || 22 }}
           script: |
             cd /opt/unc-portal || { echo "::warning::warm-up: no existe /opt/unc-portal"; exit 0; }
-            BASE="https://portal.unc.edu.py"
+            BASE="https://www.unc.edu.py"
             SECRET="$(grep -E '^REVALIDATION_SECRET=' infrastructure/docker/.env.prod | tail -n1 | cut -d= -f2- | tr -d "\r\"' ")"
             WARM_TAGS="autoridades convenios marco-legal linea-tiempo aranceles-rectorado aranceles-facultad facultades carreras acreditaciones reconocimientos transparencia-items ley5189 ley5282 noticias"
             if [ -z "$SECRET" ]; then

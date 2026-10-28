@@ -245,7 +245,7 @@ export default buildConfig({
                 disablePayloadAccessControl: true,
 
                 // Build the public URL that gets stored in the DB and returned to the portal.
-                // S3_PUBLIC_URL:  https://files.unc.edu.py    (production — nginx → almacén S3, solo GET)
+                // S3_PUBLIC_URL:  https://www.unc.edu.py/archivos    (production — nginx → almacén S3, solo GET)
                 // S3_ENDPOINT:    http://127.0.0.1:9100       (local dev — SeaweedFS path-style)
                 generateFileURL: ({ filename, prefix }) => {
                   const base   = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || 'http://127.0.0.1:9100'

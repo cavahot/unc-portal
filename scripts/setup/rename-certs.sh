@@ -7,7 +7,7 @@
 #   bash scripts/setup/rename-certs.sh
 #
 # Requiere:
-#   - Haber corrido certbot previamente para los 3 dominios
+#   - Haber corrido certbot previamente para cms.unc.edu.py (Let's Encrypt)
 #   - Ejecutar desde la raíz del repositorio
 #   - Permisos de root (certbot almacena las claves en /etc/letsencrypt/)
 # =============================================================
@@ -18,10 +18,13 @@ CERTS_DIR="infrastructure/nginx/certs"
 
 # Mapa de dominio → nombre de archivo en nginx.conf
 declare -A DOMAINS=(
-  ["portal.unc.edu.py"]="portal"
+  ["www.unc.edu.py"]="www"
   ["cms.unc.edu.py"]="cms"
-  ["files.unc.edu.py"]="files"
 )
+
+# DOMINIOS-SSL-01: www.unc.edu.py usa un certificado comercial Sectigo, NO de Let's Encrypt: no hay carpeta
+# en /etc/letsencrypt. Se copia a mano como www_fullchain.pem (certificado + intermedios, en ese orden) y
+# www_privkey.pem, que nunca se versionan. Aquí solo se verifica que ya estén, para no fallar en falso.
 
 echo "============================================"
 echo "  Copiando certificados SSL → nginx/certs"
@@ -36,10 +39,24 @@ for domain in "${!DOMAINS[@]}"; do
   name="${DOMAINS[$domain]}"
   src="$LE_BASE/$domain"
 
+  if [[ "$name" == "www" ]]; then
+    if [[ -f "$CERTS_DIR/${name}_fullchain.pem" ]] && [[ -f "$CERTS_DIR/${name}_privkey.pem" ]]; then
+      EXPIRY=$(openssl x509 -noout -enddate -in "$CERTS_DIR/${name}_fullchain.pem" 2>/dev/null | cut -d= -f2 || echo "desconocido")
+      echo "✓  $domain (Sectigo, copia manual ya presente)"
+      echo "   Vence: $EXPIRY  — renovación manual anual: reemplazar www_fullchain.pem y www_privkey.pem"
+      echo ""
+    else
+      echo "✗  Falta el certificado Sectigo de $domain en $CERTS_DIR"
+      echo "   Esperados: ${name}_fullchain.pem (cert + intermedios) y ${name}_privkey.pem (ver DEPLOY.md)"
+      ERRORS=$((ERRORS + 1))
+    fi
+    continue
+  fi
+
   if [[ ! -d "$src" ]]; then
     echo "✗  No se encontró el certificado para $domain"
     echo "   Esperado en: $src"
-    echo "   Ejecutá: certbot certonly --standalone -d $domain"
+    echo "   Ejecutá: certbot certonly --standalone -d $domain   (con nginx detenido, puerto 80 libre)"
     ERRORS=$((ERRORS + 1))
     continue
   fi

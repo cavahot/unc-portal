@@ -6,7 +6,7 @@ import { getPageSlugs } from '@/lib/cms/queries/pages'
 
 export const revalidate = 3600
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.unc.edu.py'
 
 const LOCALES = ['es', 'en', 'pt-BR', 'gn'] as const
 

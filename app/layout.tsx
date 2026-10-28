@@ -5,7 +5,7 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.unc.edu.py'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

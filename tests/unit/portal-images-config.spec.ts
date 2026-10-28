@@ -14,7 +14,10 @@ type Pattern = { protocol?: string; hostname: string; port?: string; pathname?: 
 const allowed = (env: Record<string, string | undefined>, url: string) =>
   hasRemoteMatch([], buildImagesConfig(env).remotePatterns as Pattern[] as never, new URL(url))
 
-const PROD = { NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'https://cms.unc.edu.py' }
+// Decisión del dueño 2026-10-28: el certificado del VPS solo cubre www.unc.edu.py. Los archivos públicos de
+// `media` salen por nginx en https://www.unc.edu.py/api/media/file/** y el almacén S3 en /archivos/**; el panel
+// del CMS (cms.unc.edu.py) NO es origen de imágenes del portal.
+const PROD = { NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'https://www.unc.edu.py' }
 const DEV = { NODE_ENV: 'development' }
 
 describe('producción (negativos primero)', () => {
@@ -29,12 +32,17 @@ describe('producción (negativos primero)', () => {
     expect(allowed(PROD, 'http://localhost:9100/media/a.jpg')).toBe(false)
   })
 
-  it('del CMS público solo admite /api/media/file/** (no la API, el panel ni otro puerto o protocolo)', () => {
-    expect(allowed(PROD, 'https://cms.unc.edu.py/api/users/me')).toBe(false)
-    expect(allowed(PROD, 'https://cms.unc.edu.py/accesoSeguro')).toBe(false)
-    expect(allowed(PROD, 'https://cms.unc.edu.py:8443/api/media/file/a.jpg')).toBe(false)
-    expect(allowed(PROD, 'http://cms.unc.edu.py/api/media/file/a.jpg')).toBe(false)
+  it('del origen público solo admite /api/media/file/** (no la API, el panel ni otro puerto o protocolo)', () => {
+    expect(allowed(PROD, 'https://www.unc.edu.py/api/users/me')).toBe(false)
+    expect(allowed(PROD, 'https://www.unc.edu.py/accesoSeguro')).toBe(false)
+    expect(allowed(PROD, 'https://www.unc.edu.py:8443/api/media/file/a.jpg')).toBe(false)
+    expect(allowed(PROD, 'http://www.unc.edu.py/api/media/file/a.jpg')).toBe(false)
     expect(allowed(PROD, 'https://evil.example/api/media/file/a.jpg')).toBe(false)
+  })
+
+  it('el panel del CMS (cms.unc.edu.py) ya no es origen de imágenes del portal', () => {
+    expect(allowed(PROD, 'https://cms.unc.edu.py/api/media/file/a.jpg')).toBe(false)
+    expect(allowed({ NODE_ENV: 'production' }, 'https://cms.unc.edu.py/api/media/file/a.jpg')).toBe(false)
   })
 
   it('WordPress solo /wp-content/uploads/** y sin migracion.unc.edu.py', () => {
@@ -50,25 +58,32 @@ describe('producción (negativos primero)', () => {
     }
   })
 
-  it('permite la foto del CMS público (https, puerto por defecto)', () => {
-    expect(allowed(PROD, 'https://cms.unc.edu.py/api/media/file/premio-calidad-conacyt.jpg')).toBe(true)
+  it('permite la foto servida por nginx en el origen público (https, puerto por defecto)', () => {
+    expect(allowed(PROD, 'https://www.unc.edu.py/api/media/file/premio-calidad-conacyt.jpg')).toBe(true)
   })
 
-  it('sin NEXT_PUBLIC_CMS_URL en el build usa el host público canónico del CMS', () => {
-    expect(cmsPublicOrigin({ NODE_ENV: 'production' })).toBe('https://cms.unc.edu.py')
-    expect(allowed({ NODE_ENV: 'production' }, 'https://cms.unc.edu.py/api/media/file/a.jpg')).toBe(true)
+  it('sin NEXT_PUBLIC_CMS_URL en el build usa el origen público canónico (www)', () => {
+    expect(cmsPublicOrigin({ NODE_ENV: 'production' })).toBe('https://www.unc.edu.py')
+    expect(allowed({ NODE_ENV: 'production' }, 'https://www.unc.edu.py/api/media/file/a.jpg')).toBe(true)
   })
 
   it('en producción un NEXT_PUBLIC_CMS_URL http o inválido no abre nada', () => {
-    expect(cmsPublicOrigin({ NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'http://cms.unc.edu.py' })).toBeNull()
+    expect(cmsPublicOrigin({ NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'http://www.unc.edu.py' })).toBeNull()
     expect(cmsPublicOrigin({ NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'javascript:alert(1)' })).toBeNull()
-    expect(allowed({ NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'http://cms.unc.edu.py' }, 'http://cms.unc.edu.py/api/media/file/a.jpg')).toBe(false)
+    expect(allowed({ NODE_ENV: 'production', NEXT_PUBLIC_CMS_URL: 'http://www.unc.edu.py' }, 'http://www.unc.edu.py/api/media/file/a.jpg')).toBe(false)
   })
 
-  it('MEDIA_HOSTNAME válido (S3/CDN) se admite solo por https', () => {
-    const env = { ...PROD, MEDIA_HOSTNAME: 'files.unc.edu.py' }
-    expect(allowed(env, 'https://files.unc.edu.py/unc-media/a.jpg')).toBe(true)
-    expect(allowed(env, 'http://files.unc.edu.py/unc-media/a.jpg')).toBe(false)
+  it('MEDIA_HOSTNAME válido (S3) se admite solo por https y SOLO bajo /archivos/**', () => {
+    const env = { ...PROD, MEDIA_HOSTNAME: 'www.unc.edu.py' }
+    expect(allowed(env, 'https://www.unc.edu.py/archivos/unc-media/a.jpg')).toBe(true)
+    expect(allowed(env, 'http://www.unc.edu.py/archivos/unc-media/a.jpg')).toBe(false)
+    // Sin esto el optimizador sería un proxy hacia cualquier ruta del portal/nginx.
+    expect(allowed(env, 'https://www.unc.edu.py/api/users/me')).toBe(false)
+    expect(allowed(env, 'https://www.unc.edu.py/accesoSeguro')).toBe(false)
+    expect(allowed(env, 'https://www.unc.edu.py/otra/a.jpg')).toBe(false)
+    const otro = { ...PROD, MEDIA_HOSTNAME: 'cdn.example.test' }
+    expect(allowed(otro, 'https://cdn.example.test/archivos/a.jpg')).toBe(true)
+    expect(allowed(otro, 'https://cdn.example.test/x/a.jpg')).toBe(false)
   })
 })
 
@@ -99,14 +114,16 @@ describe('cableado', () => {
     expect(cfg).not.toMatch(/remotePatterns\s*:/)
   })
 
-  it('la CSP de producción permite el origen público del CMS en img-src y ya no migracion.unc.edu.py', async () => {
+  it('la CSP de producción permite el origen público (www) en img-src, no concede el panel del CMS y ya no migracion.unc.edu.py', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_CMS_URL', 'https://cms.unc.edu.py')
+    vi.stubEnv('NEXT_PUBLIC_CMS_URL', 'https://www.unc.edu.py')
     try {
       vi.resetModules()
       const { buildCSP } = await import('../../lib/csp')
-      const img = buildCSP('n').split(';').map((d) => d.trim()).find((d) => d.startsWith('img-src')) ?? ''
-      expect(img.split(/\s+/)).toContain('https://cms.unc.edu.py')
+      const csp = buildCSP('n')
+      expect(csp).not.toContain('cms.unc.edu.py')
+      const img = csp.split(';').map((d) => d.trim()).find((d) => d.startsWith('img-src')) ?? ''
+      expect(img.split(/\s+/)).toContain('https://www.unc.edu.py')
       expect(img).not.toContain('migracion.unc.edu.py')
       expect(img).not.toMatch(/localhost|127\.0\.0\.1/)
     } finally {

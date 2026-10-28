@@ -1,4 +1,4 @@
-// NGX-01 — Límites de subida y de tasa del nginx del CMS (MIG-IMG §16.3) + upstream de S3 (SeaweedFS) perezoso.
+// NGX-01 — Límites de subida y de tasa del nginx del CMS (MIG-IMG §16.3) + ruta /archivos/ de S3 (SeaweedFS) perezosa.
 // Qué hace: parsea el TEXTO de infrastructure/nginx/nginx.conf (llaves balanceadas, sin ejecutar nginx) y
 //   exige: (1) client_max_body_size del CMS = 12m (>= proxyClientMaxBodySize de Next y > techo de 11 MiB
 //   de media, para que el usuario vea primero el 413 limpio de la app); (2) limit_req_zone declarada en el
@@ -96,19 +96,23 @@ test('(5) la zona cms_media solo se usa en /api/media; el login conserva cms_log
   assert.match(locationBody(CMS, /location\s+\/api\/users\/login\s*\{/), /limit_req\s+zone=cms_login\s+burst=3\s+nodelay;/);
 });
 
-test('(6) S3 opcional: sin `upstream` estático a s3; files.* resuelve en tiempo de petición', () => {
+// DOMINIOS-SSL-01: la ruta pública de S3 ya no es un host propio sino `/archivos/` del host www, generada desde
+// infrastructure/nginx/templates/archivos-s3.location.template (la cubre dominios-ssl-01.test.mjs en detalle).
+const TPL = readFileSync(resolve(ROOT, 'infrastructure', 'nginx', 'templates', 'archivos-s3.location.template'), 'utf8')
+  .replace(/\r\n/g, '\n').split('\n').map((l) => l.replace(/(^|\s)#.*$/, '')).join('\n');
+
+test('(6) S3 opcional: sin `upstream` estático a s3; /archivos/ resuelve en tiempo de petición', () => {
   assert.doesNotMatch(CONF, /server\s+(s3|unc-s3-prod|minio):\d+/, 'un upstream estático impide arrancar nginx si el contenedor s3 no existe');
   assert.match(CONF, /resolver\s+127\.0\.0\.11\b/);
-  assert.match(CONF, /set\s+\$s3_backend\s+unc-s3-prod:8333;/);
-  assert.match(CONF, /proxy_pass\s+http:\/\/\$s3_backend;/);
+  assert.match(TPL, /set\s+\$s3_backend\s+unc-s3-prod:8333;/);
+  assert.match(TPL, /proxy_pass\s+http:\/\/\$s3_backend;/);
 });
 
-// S3-SEAWEEDFS-01: el dominio público de archivos solo sirve GET/HEAD y conserva las cabeceras de seguridad
+// S3-SEAWEEDFS-01: la ruta pública de archivos solo sirve GET/HEAD y conserva las cabeceras de seguridad
 // (SeaweedFS no las añade; un add_header en el location anula los del server, por eso se repiten allí).
-test('(7) files.*: limit_except GET HEAD con deny all y cabeceras de seguridad en el location', () => {
-  const FILES = CONF.slice(CONF.indexOf('server_name files.unc.edu.py'));
-  assert.match(FILES, /limit_except\s+GET\s+HEAD\s*\{\s*deny\s+all;\s*\}/);
-  assert.match(FILES, /add_header\s+X-Content-Type-Options\s+"nosniff"\s+always;/);
-  assert.match(FILES, /add_header\s+Strict-Transport-Security\s+"[^"]+"\s+always;[\s\S]*proxy_pass/);
-  assert.doesNotMatch(CONF, /minio/i);
+test('(7) /archivos/: limit_except GET HEAD con deny all y cabeceras de seguridad en el location', () => {
+  assert.match(TPL, /limit_except\s+GET\s+HEAD\s*\{\s*deny\s+all;\s*\}/);
+  assert.match(TPL, /add_header\s+X-Content-Type-Options\s+"nosniff"\s+always;/);
+  assert.match(TPL, /add_header\s+Strict-Transport-Security\s+"[^"]+"\s+always;/);
+  assert.doesNotMatch(CONF + TPL, /minio/i);
 });

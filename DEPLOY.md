@@ -56,39 +56,66 @@ git clone https://github.com/cavahot/unc-portal.git .
 
 ### Paso 4 — Configurar DNS
 
-En el panel del proveedor DNS, crear 3 registros A apuntando a la IP del VPS:
+DOMINIOS-SSL-01: el VPS tiene **un único certificado comercial (Sectigo) válido solo para `www.unc.edu.py`**. Por eso
+el portal vive en `www`, el panel del CMS en `cms` (certificado gratuito Let's Encrypt) y **no existe** un host
+`files.unc.edu.py`: la media pública se sirve bajo rutas del host `www` (`/api/media/file/` y, con S3, `/archivos/`).
+Spec: `docs/specs/infra/DOMINIOS-SSL-01.md`.
+
+En el panel del proveedor DNS, crear 2 registros A apuntando a la IP del VPS (los registros `portal` y `files`
+antiguos se eliminan):
 
 | Nombre | Tipo | Valor |
 |--------|------|-------|
-| `portal.unc.edu.py` | A | `<IP_DEL_VPS>` |
+| `www.unc.edu.py` | A | `<IP_DEL_VPS>` |
 | `cms.unc.edu.py` | A | `<IP_DEL_VPS>` |
-| `files.unc.edu.py` | A | `<IP_DEL_VPS>` |
 
 Verificar propagación antes de continuar (puede tardar hasta 24h, usualmente minutos):
 
 ```bash
-dig +short portal.unc.edu.py
+dig +short www.unc.edu.py
 dig +short cms.unc.edu.py
-dig +short files.unc.edu.py
 ```
 
-Los tres deben devolver la misma IP del VPS.
+Los dos deben devolver la misma IP del VPS.
 
-### Paso 5 — Obtener certificados SSL (Let's Encrypt)
+### Paso 5 — Certificados SSL
 
-Instalar certbot y obtener un certificado por dominio:
+**5a. `www.unc.edu.py` — Sectigo (comercial, renovación MANUAL anual).** Con los archivos que entrega Sectigo
+(certificado del servidor + paquete de intermedios `.ca-bundle`) y la clave privada con que se generó el CSR:
+
+```bash
+cd /opt/unc-portal/infrastructure/nginx/certs
+# fullchain = certificado del servidor PRIMERO, intermedios DESPUÉS (este orden exacto)
+cat www_unc_edu_py.crt www_unc_edu_py.ca-bundle > www_fullchain.pem
+cp  <clave_privada_del_CSR>.key www_privkey.pem
+chmod 640 www_privkey.pem
+```
+
+La clave privada **nunca** va a git (la carpeta `certs/` está en `.gitignore`) ni a chats o tickets. Verificar que
+cadena y clave se corresponden: `openssl x509 -noout -modulus -in www_fullchain.pem | openssl md5` debe dar el mismo
+resumen que `openssl rsa -noout -modulus -in www_privkey.pem | openssl md5`.
+
+**5b. `cms.unc.edu.py` — Let's Encrypt (gratuito, renovación automática).** Primera emisión, con el puerto 80 libre
+(nginx todavía sin levantar):
 
 ```bash
 apt install -y certbot
-
-certbot certonly --standalone -d portal.unc.edu.py
+mkdir -p /var/www/certbot            # webroot que nginx monta en el contenedor (compose.prod.yaml)
 certbot certonly --standalone -d cms.unc.edu.py
-certbot certonly --standalone -d files.unc.edu.py
 ```
 
-### Paso 6 — Copiar certificados al directorio de nginx
+Para que las renovaciones funcionen con nginx en marcha, cambiar el método a webroot (la location
+`/.well-known/acme-challenge/` del puerto 80 sirve `/var/www/certbot`) una vez que nginx esté levantado:
 
-El script copia cada cert con el nombre exacto que nginx espera:
+```bash
+certbot reconfigure --cert-name cms.unc.edu.py --authenticator webroot --webroot-path /var/www/certbot
+certbot renew --dry-run
+```
+
+### Paso 6 — Copiar el certificado de Let's Encrypt al directorio de nginx
+
+El script copia el cert del CMS con el nombre exacto que nginx espera y comprueba que el de `www` (Sectigo, paso 5a)
+ya esté en su sitio:
 
 ```bash
 cd /opt/unc-portal
@@ -98,16 +125,16 @@ bash scripts/setup/rename-certs.sh
 Resultado esperado:
 
 ```
-✓  portal.unc.edu.py → infrastructure/nginx/certs/portal_fullchain.pem + portal_privkey.pem
-✓  cms.unc.edu.py    → infrastructure/nginx/certs/cms_fullchain.pem    + cms_privkey.pem
-✓  files.unc.edu.py  → infrastructure/nginx/certs/files_fullchain.pem  + files_privkey.pem
+✓  www.unc.edu.py (Sectigo, copia manual ya presente)
+✓  cms.unc.edu.py → infrastructure/nginx/certs/cms_fullchain.pem + cms_privkey.pem
 ✅ Certs copiados correctamente
 ```
 
 ### Paso 7 — Configurar renovación automática
 
-Certbot se renueva automáticamente via systemd. Solo hay que agregar un deploy hook
-para que nginx recargue la configuración después de cada renovación:
+Certbot (solo `cms.unc.edu.py`) se renueva automáticamente via systemd. Solo hay que agregar un deploy hook
+para que se copie el cert renovado y nginx recargue la configuración después de cada renovación
+(`certbot renew` + `nginx -s reload`):
 
 ```bash
 cat > /etc/letsencrypt/renewal-hooks/deploy/unc-portal.sh << 'EOF'
@@ -123,6 +150,12 @@ EOF
 
 chmod +x /etc/letsencrypt/renewal-hooks/deploy/unc-portal.sh
 ```
+
+**Renovación del certificado Sectigo de `www` (manual, cada año).** Antes del vencimiento (`openssl x509 -noout
+-enddate -in infrastructure/nginx/certs/www_fullchain.pem`), emitir/descargar el nuevo certificado, regenerar
+`www_fullchain.pem` con el `cat` del paso 5a (y `www_privkey.pem` si se generó un CSR nuevo) y recargar nginx con
+`docker compose -f infrastructure/docker/compose.prod.yaml --env-file infrastructure/docker/.env.prod exec nginx nginx -s reload`.
+Un certificado vencido en `www` deja el portal inaccesible por HTTPS (HSTS de 2 años): poner un recordatorio.
 
 ---
 
@@ -149,17 +182,18 @@ cuyo código la lee. Si el código lee una variable que su servicio no recibe, e
 | `DATABASE_URI` | cms, cms-migrate | `postgresql://USUARIO:CONTRASEÑA@postgres:5432/BASE`; usuario/base = `POSTGRES_USER`/`POSTGRES_DB`; si la contraseña lleva caracteres reservados, percent-encoding (`@`→`%40`, `:`→`%3A`, `/`→`%2F`, `#`→`%23`, `?`→`%3F`, `%`→`%25`). Único nombre válido (ya no existe `DATABASE_URL`) |
 | `POSTGRES_SSL` | cms, cms-migrate | `false` dentro de la red de Compose; `true` solo con una BD gestionada externa con TLS |
 | `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | s3 (**opcional**, perfil `s3`) y cms | Claves del almacén S3 (SeaweedFS): mín. 16 y 32 caracteres, solo `A-Z a-z 0-9 + / = _ . -`; el contenedor se niega a arrancar si faltan o son cortas. Generar con `openssl rand -hex 16` y `openssl rand -hex 32`. Solo con `MEDIA_STORAGE=s3` (MIN-01); con `local` pueden quedar vacías. Reemplazan a `MINIO_ROOT_USER`/`MINIO_ROOT_PASSWORD` |
-| `S3_BUCKET`, `S3_PUBLIC_READ` | s3, cms | Nombre del bucket (por defecto `unc-media`) y `1` para permitir **GET anónimo** de objetos del bucket (necesario para servir `files.unc.edu.py`; el listado, la subida y el borrado anónimos siguen denegados). Por defecto `0` |
+| `S3_BUCKET`, `S3_PUBLIC_READ` | s3, cms | Nombre del bucket (por defecto `unc-media`) y `1` para permitir **GET anónimo** de objetos del bucket (necesario para servir `/archivos/` del host `www`; el listado, la subida y el borrado anónimos siguen denegados). Por defecto `0` |
 | `MEDIA_STORAGE` | cms, cms-migrate | MIG-IMG fase 1: `local` (por defecto; volumen persistente `cms_media` en `/app/media`) o `s3` (SeaweedFS, explícito). **Quien dependía de S3 solo por tener las claves debe fijar `MEDIA_STORAGE=s3`**; tener `S3_*` ya no activa S3 |
 | `MEDIA_MAX_BYTES` | cms, cms-migrate | Tope por archivo subido en bytes (por defecto `10485760` = 10 MiB; techo 11 MiB por el límite del proxy de Next). Los mayores se rechazan con 413, no se truncan |
 | `S3_BUCKET` | cms | `unc-media` (debe existir; ver `POST /api/setup/create-bucket`). Solo con `MEDIA_STORAGE=s3` |
-| `S3_PUBLIC_URL` | cms | `https://files.unc.edu.py` |
+| `S3_PUBLIC_URL` | cms | `https://www.unc.edu.py/archivos` (ruta de nginx hacia s3, sin barra final) |
 | `PAYLOAD_SECRET` | cms, cms-migrate | Secreto aleatorio, mínimo 32 caracteres. DEP-16: el CMS **no arranca** si falta, es corto o conserva un valor de ejemplo (`REEMPLAZAR_`, `changeme`, `change-this`…) |
 | `PREVIEW_SECRET` | **portal y cms** (mismo valor) | Secreto aleatorio, mínimo 32 caracteres. DEP-16: firma tokens de preview de 5 min (nunca viaja en la URL); débil o ausente → `/api/preview` responde 503 |
 | `REVALIDATION_SECRET` | **portal y cms** (mismo valor) | Secreto aleatorio, mínimo 32 caracteres. DEP-16: débil o ausente → `/api/revalidate` responde 503 |
-| `PORTAL_PUBLIC_URL` | portal como `NEXT_PUBLIC_SITE_URL`; cms como `PORTAL_URL` | `https://portal.unc.edu.py` |
-| `CMS_PUBLIC_URL` | portal como `NEXT_PUBLIC_CMS_URL`; cms como `NEXT_PUBLIC_SERVER_URL` | `https://cms.unc.edu.py` |
-| `MEDIA_HOSTNAME` | portal | `files.unc.edu.py` (imágenes y CSP) |
+| `PORTAL_PUBLIC_URL` | portal como `NEXT_PUBLIC_SITE_URL`; cms como `PORTAL_URL` | `https://www.unc.edu.py` |
+| `CMS_PUBLIC_URL` | **solo** cms, como `NEXT_PUBLIC_SERVER_URL` | `https://cms.unc.edu.py` |
+| `MEDIA_PUBLIC_ORIGIN` | portal como `NEXT_PUBLIC_CMS_URL` (origen donde se sirve `/api/media/file/**`; **obligatoria**, el compose falla si falta) | `https://www.unc.edu.py` |
+| `MEDIA_HOSTNAME` | portal | `www.unc.edu.py` (imágenes y CSP; solo relevante con S3) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE` | portal y cms | Datos del relay de la UNC; `SMTP_SECURE=true` solo con TLS implícito (465) |
 | `SMTP_USER`, `SMTP_PASSWORD` | portal y cms | Credenciales del relay; ambas vacías si no exige autenticación |
 | `SMTP_FROM_ADDRESS` | portal y cms | Remitente (p. ej. `noreply@unc.edu.py`) |
@@ -273,7 +307,7 @@ dev), el deploy se rechaza: requiere intervención manual.
 
 **MIN-01 / S3-SEAWEEDFS-01:** el almacén S3 (SeaweedFS; sustituye a MinIO, cuyas imágenes ya no se descargan) no forma parte del despliegue por defecto. Con `MEDIA_STORAGE=local` (valor por defecto) los
 archivos van al volumen `cms_media` y **debes omitir este paso**: `docker compose up` no arranca ni espera al servicio `s3`,
-y el CMS no depende de él. `files.unc.edu.py` responderá 502 mientras no exista el contenedor (esperado).
+y el CMS no depende de él. `https://www.unc.edu.py/archivos/...` responderá 502 mientras no exista el contenedor (esperado; el resto del sitio no se afecta).
 
 Para activar el almacenamiento S3 (imagen `chrislusf/seaweedfs` fijada por digest; ver `docs/specs/storage/S3-SEAWEEDFS-01.md`):
 
@@ -296,7 +330,7 @@ arrancar/actualizar el servicio `s3` a mano con el comando de arriba. Los datos 
 `aws s3 sync` o `rclone` hacia el nuevo endpoint.
 
 El script crea el bucket `unc-media`; la lectura pública de objetos la da `S3_PUBLIC_READ=1` (identidad anónima
-con solo `Read:<bucket>`), necesaria para que los navegadores carguen las imágenes desde `files.unc.edu.py`.
+con solo `Read:<bucket>`), necesaria para que los navegadores carguen las imágenes desde la ruta `/archivos/` de `www.unc.edu.py`.
 
 ### Paso 15 — Cargar los datos iniciales (solo primera vez)
 
@@ -344,7 +378,7 @@ echo "$IMAGE_TAG" > /opt/unc-portal/.deploy-previous-tag
 
 ```bash
 # Portal público
-curl -s -o /dev/null -w "%{http_code}" https://portal.unc.edu.py/api/health
+curl -s -o /dev/null -w "%{http_code}" https://www.unc.edu.py/api/health
 # Debe responder: 200
 
 # CMS admin (liveness: no prueba la BD)
@@ -357,9 +391,15 @@ curl -s https://cms.unc.edu.py/api/health/ready
 
 # Media con MEDIA_STORAGE=local (por defecto): una imagen subida se sirve por el CMS
 #   curl -sI https://cms.unc.edu.py/api/media/file/<archivo>   -> 200
-# Media con el perfil s3 (MIN-01; verifica el almacén S3 y nginx). Sin el perfil, files.* responde 502 a propósito
-curl -sI https://files.unc.edu.py
-# Debe responder: HTTP/2 200 o 403 (403 es correcto si el bucket está vacío)
+# DOMINIOS-SSL-01: la media pública pasa por el host www (GET/HEAD; cualquier otro método da 403)
+curl -sI https://www.unc.edu.py/api/media/file/<archivo>            # -> 200 con nosniff y HSTS
+curl -s -o /dev/null -w "%{http_code}" -X POST https://www.unc.edu.py/api/media/file/x   # -> 403
+curl -s -o /dev/null -w "%{http_code}" https://www.unc.edu.py/api/users/me               # -> lo responde el PORTAL, nunca el CMS
+# Hairpin (el optimizador del portal baja la imagen por la IP pública): la imagen optimizada debe cargar
+curl -sI "https://www.unc.edu.py/_next/image?url=<URL_DE_UNA_IMAGEN>&w=640&q=75"          # -> 200
+# Media con el perfil s3 (MIN-01; verifica el almacén S3 y nginx). Sin el perfil, /archivos/ responde 502 a propósito
+curl -sI https://www.unc.edu.py/archivos/<archivo>
+# Debe responder: HTTP/2 200 o 404 (404 es correcto si el objeto no existe)
 ```
 
 ---
@@ -449,7 +489,7 @@ que el contenedor `unc-postgres-prod` esté en estado `healthy`.
 
 ### Las imágenes no cargan
 
-Solo con `MEDIA_STORAGE=s3` (perfil `s3`, MIN-01): verificar que `S3_PUBLIC_URL=https://files.unc.edu.py` esté en `.env.prod` y que
+Solo con `MEDIA_STORAGE=s3` (perfil `s3`, MIN-01): verificar que `S3_PUBLIC_URL=https://www.unc.edu.py/archivos` esté en `.env.prod` y que
 el bucket `unc-media` exista y `S3_PUBLIC_READ=1` esté fijado (lectura anónima solo de objetos):
 
 ```bash

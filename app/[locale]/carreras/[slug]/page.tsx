@@ -52,7 +52,7 @@ export default async function CarreraDetailPage({
     ? (modalidadColors[carrera.modalidad] ?? 'bg-white/5 text-white/50 border-white/10')
     : ''
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portal.unc.edu.py'
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.unc.edu.py'
   const courseSchema = buildCourseSchema({
     name: carrera.nombre,
     description: carrera.descripcion ?? null,
