@@ -62,7 +62,7 @@ const TribunalDocumentos: CollectionConfig = {
       type:  'text',
       label: 'URL del documento',
       admin: {
-        description: 'URL de Google Drive, MinIO, o cualquier enlace público al documento.',
+        description: 'URL de Google Drive, almacenamiento S3, o cualquier enlace público al documento.',
       },
     },
     {

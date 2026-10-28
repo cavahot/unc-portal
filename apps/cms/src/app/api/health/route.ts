@@ -20,7 +20,7 @@ interface HealthStatus {
       responseTime: number
       connections: number
     }
-    minio: {
+    s3: {
       status: 'up' | 'down'
       responseTime: number
     }
@@ -42,7 +42,7 @@ interface HealthStatus {
  * DEP-04 (RDD-DEP-12): salud del CMS.
  * Pública a propósito SOLO en su forma mínima: anónimo y cualquier sesión sin rol de monitoreo
  * reciben `{ status: 'ok' }` constante, porque el healthcheck de Docker y el portal la llaman sin
- * sesión. El detalle (BD, MinIO, portal) queda para superadmin y auditor.
+ * sesión. El detalle (BD, almacenamiento S3, portal) queda para superadmin y auditor.
  * Amenaza: mapear la infraestructura interna desde Internet. Límite: la respuesta mínima NO prueba
  * que la BD esté viva: eso lo hace `/api/health/ready` (DEP-09); este endpoint es liveness para monitores
  * y no cambia de contrato; sin rate limit (DEP-06).
@@ -69,7 +69,7 @@ export async function GET(request: Request) {
     services: {
       cms: { status: 'up', responseTime: 0, version: '3.0.0' },
       database: { status: 'up', responseTime: 0, connections: 0 },
-      minio: { status: 'up', responseTime: 0 },
+      s3: { status: 'up', responseTime: 0 },
       portal: { status: 'up', responseTime: 0 },
     },
     metrics: {
@@ -87,7 +87,7 @@ export async function GET(request: Request) {
   const results = await Promise.allSettled([
     checkCMS(),
     checkDatabase(),
-    checkMinIO(),
+    checkS3(),
     checkPortal(),
   ])
 
@@ -106,9 +106,9 @@ export async function GET(request: Request) {
   }
 
   if (results[2].status === 'fulfilled' && results[2].value) {
-    health.services.minio = results[2].value
+    health.services.s3 = results[2].value
   } else {
-    health.services.minio.status = 'down'
+    health.services.s3.status = 'down'
     health.status = 'degraded'
   }
 
@@ -172,13 +172,18 @@ async function checkDatabase(): Promise<{ status: 'up' | 'down'; responseTime: n
   }
 }
 
-async function checkMinIO(): Promise<{ status: 'up' | 'down'; responseTime: number } | null> {
+/**
+ * Sonda del almacenamiento S3 (SeaweedFS). Qué hace: `GET <S3_ENDPOINT>/healthz`, que responde 200 sin
+ * credenciales. Por qué: `GET /` devuelve 403 en el almacén, así que nunca sirve como sonda.
+ * Límite: prueba que el proceso está vivo, no que el bucket exista ni que las claves sean válidas.
+ */
+async function checkS3(): Promise<{ status: 'up' | 'down'; responseTime: number } | null> {
   try {
     const start = Date.now()
-    // DEP-10: endpoint S3 interno = S3_ENDPOINT (el mismo que usa el almacenamiento); MINIO_ENDPOINT era un segundo nombre.
-    const minioUrl = process.env.S3_ENDPOINT || 'http://localhost:9000'
+    // DEP-10: endpoint S3 interno = S3_ENDPOINT (el mismo que usa el almacenamiento).
+    const s3Url = process.env.S3_ENDPOINT || 'http://127.0.0.1:9100'
     const response = await Promise.race([
-      fetch(`${minioUrl}/minio/health/live`, { method: 'GET' }),
+      fetch(`${s3Url}/healthz`, { method: 'GET' }),
       new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),
     ])
 

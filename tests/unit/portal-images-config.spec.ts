@@ -23,7 +23,7 @@ describe('producción (negativos primero)', () => {
     expect(buildImagesConfig({ NODE_ENV: 'production' }).dangerouslyAllowLocalIP).not.toBe(true)
   })
 
-  it('no permite el CMS de desarrollo ni MinIO local', () => {
+  it('no permite el CMS de desarrollo ni el almacén S3 local', () => {
     expect(allowed(PROD, 'http://localhost:3002/api/media/file/a.jpg')).toBe(false)
     expect(allowed(PROD, 'http://127.0.0.1:3002/api/media/file/a.jpg')).toBe(false)
     expect(allowed(PROD, 'http://localhost:9100/media/a.jpg')).toBe(false)

@@ -1,10 +1,10 @@
-// NGX-01 — Límites de subida y de tasa del nginx del CMS (MIG-IMG §16.3) + upstream de MinIO perezoso.
+// NGX-01 — Límites de subida y de tasa del nginx del CMS (MIG-IMG §16.3) + upstream de S3 (SeaweedFS) perezoso.
 // Qué hace: parsea el TEXTO de infrastructure/nginx/nginx.conf (llaves balanceadas, sin ejecutar nginx) y
 //   exige: (1) client_max_body_size del CMS = 12m (>= proxyClientMaxBodySize de Next y > techo de 11 MiB
 //   de media, para que el usuario vea primero el 413 limpio de la app); (2) limit_req_zone declarada en el
 //   contexto http, con clave vacía para métodos distintos de POST, y referenciada solo por
 //   `POST /api/media`; (3) esa location conserva las directivas de proxy de la genérica; (4) no hay un
-//   `upstream` estático hacia minio (nginx no arrancaría sin el contenedor al ser MinIO opcional).
+//   `upstream` estático hacia s3 (nginx no arrancaría sin el contenedor al ser el almacén opcional).
 // Por qué: con 100m un archivo enorme consumía ancho de banda antes de ser rechazado; sin límite de tasa
 //   un editor comprometido podía llenar el volumen de media. Límite: no prueba nginx real (nginx -t y
 //   curl requieren Docker, que este paso no ejecuta); la tasa es por IP, no por usuario.
@@ -96,9 +96,19 @@ test('(5) la zona cms_media solo se usa en /api/media; el login conserva cms_log
   assert.match(locationBody(CMS, /location\s+\/api\/users\/login\s*\{/), /limit_req\s+zone=cms_login\s+burst=3\s+nodelay;/);
 });
 
-test('(6) MinIO opcional: sin `upstream` estático a minio; files.* resuelve en tiempo de petición', () => {
-  assert.doesNotMatch(CONF, /server\s+minio:\d+/, 'un upstream estático impide arrancar nginx si el contenedor minio no existe');
+test('(6) S3 opcional: sin `upstream` estático a s3; files.* resuelve en tiempo de petición', () => {
+  assert.doesNotMatch(CONF, /server\s+(s3|unc-s3-prod|minio):\d+/, 'un upstream estático impide arrancar nginx si el contenedor s3 no existe');
   assert.match(CONF, /resolver\s+127\.0\.0\.11\b/);
-  assert.match(CONF, /set\s+\$minio_backend\s+minio:9000;/);
-  assert.match(CONF, /proxy_pass\s+http:\/\/\$minio_backend;/);
+  assert.match(CONF, /set\s+\$s3_backend\s+unc-s3-prod:8333;/);
+  assert.match(CONF, /proxy_pass\s+http:\/\/\$s3_backend;/);
+});
+
+// S3-SEAWEEDFS-01: el dominio público de archivos solo sirve GET/HEAD y conserva las cabeceras de seguridad
+// (SeaweedFS no las añade; un add_header en el location anula los del server, por eso se repiten allí).
+test('(7) files.*: limit_except GET HEAD con deny all y cabeceras de seguridad en el location', () => {
+  const FILES = CONF.slice(CONF.indexOf('server_name files.unc.edu.py'));
+  assert.match(FILES, /limit_except\s+GET\s+HEAD\s*\{\s*deny\s+all;\s*\}/);
+  assert.match(FILES, /add_header\s+X-Content-Type-Options\s+"nosniff"\s+always;/);
+  assert.match(FILES, /add_header\s+Strict-Transport-Security\s+"[^"]+"\s+always;[\s\S]*proxy_pass/);
+  assert.doesNotMatch(CONF, /minio/i);
 });

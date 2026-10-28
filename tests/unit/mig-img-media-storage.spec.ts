@@ -1,6 +1,6 @@
 // MIG-IMG fase 1: selector explícito y con falla cerrada del almacenamiento de `media`.
-// Amenaza: activar S3/MinIO solo porque existen dos variables (decisión implícita y frágil: con el
-// MinIO caído toda subida daba ECONNREFUSED), o guardar archivos en la capa efímera del contenedor.
+// Amenaza: activar S3 solo porque existen dos variables (decisión implícita y frágil: con el
+// almacén S3 caído toda subida daba ECONNREFUSED), o guardar archivos en la capa efímera del contenedor.
 // Límite: son pruebas de la función pura; no prueban permisos reales del volumen ni el plugin S3.
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'

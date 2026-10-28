@@ -1,5 +1,5 @@
 /**
- * SEC-MINIO-01: credencial de MinIO fuera del código versionado, lint sin `next lint` y
+ * SEC-MINIO-01 (renombrado sec-s3-01 en S3-SEAWEEDFS-01): credencial S3 fuera del código versionado, lint sin `next lint` y
  * política pública del bucket acotada.
  *
  * Amenazas: (1) una clave S3 literal en git es legible por cualquiera con acceso al repo; (2) un
@@ -67,41 +67,41 @@ describe('SEC-MINIO-01 B: sin secretos de MinIO en archivos versionados', () => 
     // Lee todos los archivos versionados: con la máquina cargada supera los 5 s por defecto de vitest (falso rojo
     // observado en harness --quick). El límite amplio no debilita el control: solo evita el corte por tiempo.
   }, 60_000)
-
-  it('ningún script versionado asigna un literal largo a MINIO_SECRET_KEY / SecretKey', () => {
-    const literal = /(MINIO_SECRET_KEY|S3_SECRET_ACCESS_KEY|\$SecretKey|AWS_SECRET_ACCESS_KEY)\s*=\s*["'][A-Za-z0-9+/_-]{16,}["']/
+  it('ningún script versionado asigna un literal largo a una clave secreta S3 / MinIO / SecretKey', () => {
+    const literal = /(\w*(?:SECRET_ACCESS_KEY|SECRET_KEY)|MINIO_ROOT_PASSWORD|\$SecretKey)\s*=\s*["'][A-Za-z0-9+/_-]{16,}["']|"secretKey"\s*:\s*"[A-Za-z0-9+/_-]{16,}"/
     const hits = tracked.filter((f) => /\.(sh|ps1|md|ya?ml)$/.test(f) && existsSync(path.join(ROOT, f)) && literal.test(read(f)))
     expect(hits).toEqual([])
   })
 
-  it('los helpers exigen credenciales por entorno y fallan con mensaje claro', () => {
-    expect(read('scripts/minio/setup-bucket.sh')).toMatch(/MINIO_SECRET_KEY:\?/)
-    expect(read('scripts/minio/setup-bucket.sh')).toMatch(/MINIO_ACCESS_KEY:\?/)
-    expect(read('scripts/minio/check-minio.ps1')).toMatch(/env:MINIO_SECRET_KEY/)
-    expect(read('scripts/minio/check-minio.ps1')).not.toMatch(/Login:/)
+  // S3-SEAWEEDFS-01: los scripts de MinIO se eliminaron; los equivalentes exigen las claves del entorno.
+  it('los scripts de MinIO ya no existen y los nuevos exigen credenciales por entorno', () => {
+    expect(existsSync(path.join(ROOT, 'scripts/minio'))).toBe(false)
+    expect(existsSync(path.join(ROOT, 'scripts/setup/init-minio.sh'))).toBe(false)
+    const setup = read('scripts/s3/setup-bucket.mjs')
+    expect(setup).toMatch(/process\.env\.S3_ACCESS_KEY_ID/)
+    expect(setup).toMatch(/process\.env\.S3_SECRET_ACCESS_KEY/)
+    expect(setup).not.toMatch(/\$\{\s*(secretAccessKey|accessKeyId)\b|console\.\w+\(\s*(secretAccessKey|accessKeyId)\b/)
+    const entry = read('infrastructure/docker/s3/entrypoint.sh')
+    expect(entry).toMatch(/S3_ACCESS_KEY_ID:-/)
+    expect(entry).toMatch(/S3_SECRET_ACCESS_KEY:-/)
   })
 })
 
-describe('SEC-MINIO-01 C: política pública acotada', () => {
+describe('SEC-MINIO-01 C: política pública acotada (ahora en el JSON de identidades de SeaweedFS)', () => {
   const stripShellComments = (t: string) => t.split('\n').filter((l) => !/^\s*#/.test(l)).join('\n')
 
-  it('el helper de desarrollo no publica el bucket salvo MINIO_PUBLIC_READ=1', () => {
-    const text = stripShellComments(read('scripts/minio/setup-bucket.sh'))
-    const lines = text.split('\n')
-    const idx = lines.findIndex((l) => /mc\s+(policy\s+set\s+public|anonymous\s+set\s+(download|public))/.test(l))
-    expect(idx).toBeGreaterThan(-1)
-    const before = lines.slice(Math.max(0, idx - 6), idx).join('\n')
-    expect(before).toMatch(/MINIO_PUBLIC_READ/)
-    expect(text).toMatch(/ADVERTENCIA|WARNING/i)
+  it('el entrypoint solo crea la identidad anónima con S3_PUBLIC_READ=1 y limitada a Read:<bucket>', () => {
+    const text = stripShellComments(read('infrastructure/docker/s3/entrypoint.sh'))
+    expect(text).toMatch(/S3_PUBLIC_READ:-0}" = "1"/)
+    const anonLine = text.split('\n').find((l) => /"name":"anonymous"/.test(l)) ?? ''
+    expect(anonLine).not.toBe('')
+    expect(anonLine).toMatch(/"actions":\["Read:'"\$BUCKET"'"\]/)
+    // La identidad anónima nunca recibe Write/List/Admin/Tagging.
+    expect(anonLine).not.toMatch(/Write|List|Admin|Tagging/)
   })
 
-  it('la inicialización de producción acota la lectura anónima a un prefijo explícito', () => {
-    const text = stripShellComments(read('scripts/setup/init-minio.sh'))
-    const policyLine = text.split('\n').find((l) => /mc\s+anonymous\s+set\s+download/.test(l)) ?? ''
-    expect(policyLine).not.toBe('')
-    // No debe terminar en el bucket pelado: exige el opt-in y un prefijo.
-    expect(text).toMatch(/MINIO_PUBLIC_MEDIA_PREFIX/)
-    expect(policyLine).toMatch(/\$S3_BUCKET\/\$\{?MINIO_PUBLIC_MEDIA_PREFIX/)
-    expect(text).toMatch(/MINIO_PUBLIC_READ/)
+  it('el script de bucket no escribe políticas públicas ni ACL', () => {
+    const text = read('scripts/s3/setup-bucket.mjs').split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n')
+    expect(text).not.toMatch(/PutBucketPolicy|PutBucketAcl|public-read/)
   })
 })

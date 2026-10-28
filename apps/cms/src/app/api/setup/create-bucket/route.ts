@@ -39,7 +39,9 @@ export async function POST(request: Request) {
         message: `Bucket '${bucketName}' created successfully`,
       })
     } catch (error: any) {
-      if (error?.Code === 'BucketAlreadyOwnedByYou') {
+      // SeaweedFS (S3): crear el bucket exige la identidad Admin; al repetir el alta puede responder
+      // BucketAlreadyOwnedByYou o BucketAlreadyExists. Ambos significan «ya existe»: operación idempotente.
+      if (error?.Code === 'BucketAlreadyOwnedByYou' || error?.Code === 'BucketAlreadyExists') {
         return Response.json({
           success: true,
           message: `Bucket '${bucketName}' already exists`,

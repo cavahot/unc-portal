@@ -1,3 +1,7 @@
+> **SUPERSEDIDO (2026-10-27, S3-SEAWEEDFS-01).** Este diagnóstico describe el almacén MinIO, cuyas imágenes comunitarias ya
+> no se descargan (`quay.io/minio/minio` devuelve 401). El almacén S3 opcional pasó a SeaweedFS; ver
+> `docs/specs/storage/S3-SEAWEEDFS-01.md`. Se conserva el contenido como registro histórico.
+
 # Fase 4 - MinIO S3: Diagnóstico del Problema
 
 **Fecha:** 2026-07-27  

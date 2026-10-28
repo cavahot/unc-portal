@@ -262,14 +262,13 @@ test('migrate falla: aborta ANTES de up (la versión anterior sigue sirviendo, s
 
 // ---- Comprobaciones estáticas ------------------------------------------------------------------
 
-test('(16) compose: cms, cms-migrate y portal usan ${IMAGE_TAG:?…}; sin :latest salvo MinIO (DEP-11)', () => {
+test('(16) compose: cms, cms-migrate y portal usan ${IMAGE_TAG:?…}; sin :latest en ninguna imagen (S3 fijada por digest)', () => {
   const imageLines = COMPOSE.split('\n').filter((l) => /^\s*image:/.test(l));
   const own = imageLines.filter((l) => /ghcr\.io\/cavahot\//.test(l));
   assert.equal(own.length, 3, own.join('\n'));
   for (const l of own) assert.match(l, /\$\{IMAGE_TAG:\?[^}]+\}/, l);
   const latest = COMPOSE.split('\n').filter((l) => /:latest\b/.test(l) && !/^\s*#/.test(l));
-  assert.equal(latest.length, 1, latest.join('\n'));
-  assert.match(latest[0], /minio/);
+  assert.equal(latest.length, 0, latest.join('\n'));
   assert.doesNotMatch(noComments(COMPOSE), /CMS_IMAGE_TAG/);
 });
 

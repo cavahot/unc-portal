@@ -1,7 +1,7 @@
 // ISR / MIN-01: (1) el deploy calienta las páginas CMS tras el gate; (2) un guard previo impide el cambio
-// silencioso de S3 a volumen local cuando .env.prod tiene MINIO_ROOT_USER pero no MEDIA_STORAGE.
+// silencioso de S3 a volumen local cuando .env.prod tiene S3_ACCESS_KEY_ID pero no MEDIA_STORAGE.
 // Amenaza que evita: (1) HTML horneado en «no disponible» tras un build sin CMS; (2) subidas nuevas al volumen local
-// mientras el catálogo apunta a objetos en MinIO. Límite: (1) análisis estático del workflow; (2) la función se
+// mientras el catálogo apunta a objetos en el almacén S3. Límite: (1) análisis estático del workflow; (2) la función se
 // extrae del workflow y se ejecuta con bash sobre archivos .env temporales (sin Docker ni red).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -29,25 +29,25 @@ function runGuard(envText) {
   return r;
 }
 
-test('guard: MINIO_ROOT_USER definido y MEDIA_STORAGE ausente -> falla', () => {
-  const r = runGuard('POSTGRES_DB=x\nMINIO_ROOT_USER=admin\n');
+test('guard: S3_ACCESS_KEY_ID definido y MEDIA_STORAGE ausente -> falla', () => {
+  const r = runGuard('POSTGRES_DB=x\nS3_ACCESS_KEY_ID=admin\n');
   assert.notEqual(r.status, 0);
   assert.match(r.stdout + r.stderr, /MEDIA_STORAGE/);
   assert.ok(!(r.stdout + r.stderr).includes('admin'), 'no debe imprimir el valor');
 });
 
 test('guard: MEDIA_STORAGE vacío cuenta como ausente -> falla', () => {
-  assert.notEqual(runGuard('MINIO_ROOT_USER=admin\nMEDIA_STORAGE=\n').status, 0);
+  assert.notEqual(runGuard('S3_ACCESS_KEY_ID=admin\nMEDIA_STORAGE=\n').status, 0);
 });
 
-test('guard: MINIO_ROOT_USER definido y MEDIA_STORAGE=s3 o local -> pasa', () => {
-  assert.equal(runGuard('MINIO_ROOT_USER=admin\nMEDIA_STORAGE=s3\n').status, 0);
-  assert.equal(runGuard('MINIO_ROOT_USER=admin\r\nMEDIA_STORAGE="local"\r\n').status, 0);
+test('guard: S3_ACCESS_KEY_ID definido y MEDIA_STORAGE=s3 o local -> pasa', () => {
+  assert.equal(runGuard('S3_ACCESS_KEY_ID=admin\nMEDIA_STORAGE=s3\n').status, 0);
+  assert.equal(runGuard('S3_ACCESS_KEY_ID=admin\r\nMEDIA_STORAGE="local"\r\n').status, 0);
 });
 
-test('guard: sin MINIO_ROOT_USER (o vacío) -> pasa', () => {
+test('guard: sin S3_ACCESS_KEY_ID (o vacío) -> pasa', () => {
   assert.equal(runGuard('POSTGRES_DB=x\n').status, 0);
-  assert.equal(runGuard('MINIO_ROOT_USER=\n').status, 0);
+  assert.equal(runGuard('S3_ACCESS_KEY_ID=\n').status, 0);
 });
 
 test('el guard se invoca antes del pull, de migrate y del up', () => {

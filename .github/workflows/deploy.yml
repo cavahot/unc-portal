@@ -260,17 +260,17 @@ jobs:
             fi
             echo "Deploy de $IMAGE_TAG; tag previo sano (destino de rollback): $PREV_TAG"
 
-            # MIN-01 (guard): un entorno que usaba S3/MinIO (MINIO_ROOT_USER definido) pero no fija MEDIA_STORAGE
+            # MIN-01 / S3-SEAWEEDFS-01 (guard): un entorno que usaba S3 (S3_ACCESS_KEY_ID definido) pero no fija MEDIA_STORAGE
             # cambiaría EN SILENCIO al volumen local (el valor por defecto del compose es `local`). Amenaza: subidas
-            # nuevas al disco mientras el catálogo apunta a objetos en MinIO. Aborta ANTES de pull/migrate/up y no
+            # nuevas al disco mientras el catálogo apunta a objetos en el almacén S3. Aborta ANTES de pull/migrate/up y no
             # imprime ningún valor del archivo. Límite: solo mira el archivo de entorno; no valida que S3 responda.
             media_storage_guard() {
-              local f="$1" minio media
+              local f="$1" s3key media
               # `|| true` dentro del grupo: sin coincidencia grep sale 1 y con `set -e -o pipefail` abortaría.
-              minio="$({ grep -E '^MINIO_ROOT_USER=' "$f" || true; } | tail -n1 | cut -d= -f2- | tr -d "\r\"' ")"
+              s3key="$({ grep -E '^S3_ACCESS_KEY_ID=' "$f" || true; } | tail -n1 | cut -d= -f2- | tr -d "\r\"' ")"
               media="$({ grep -E '^MEDIA_STORAGE=' "$f" || true; } | tail -n1 | cut -d= -f2- | tr -d "\r\"' ")"
-              if [ -n "$minio" ] && [ -z "$media" ]; then
-                echo "::error::MINIO_ROOT_USER está definido pero MEDIA_STORAGE no: el deploy cambiaría de S3 al volumen local sin avisar. Fije MEDIA_STORAGE=s3 (o local, de forma explícita) en $f. Deploy abortado antes de tocar nada."
+              if [ -n "$s3key" ] && [ -z "$media" ]; then
+                echo "::error::S3_ACCESS_KEY_ID está definido pero MEDIA_STORAGE no: el deploy cambiaría de S3 al volumen local sin avisar. Fije MEDIA_STORAGE=s3 (o local, de forma explícita) en $f. Deploy abortado antes de tocar nada."
                 return 1
               fi
               return 0
@@ -415,7 +415,7 @@ jobs:
             # (SELECT 1 a Postgres); el portal por su liveness. `wget` sale != 0 ante 503/429/sin conexión.
             # Reintentos configurables: DEP09_READY_RETRIES (12) x DEP09_READY_INTERVAL (5 s) ≈ 60 s.
             # Amenaza: dejar en producción una versión que no responde o sin BD. Límite: prueba conectividad
-            # a Postgres, no el esquema ni MinIO; no se ha ejercitado con Docker real (busybox wget).
+            # a Postgres, no el esquema ni el almacén S3; no se ha ejercitado con Docker real (busybox wget).
             READY_RETRIES="${DEP09_READY_RETRIES:-12}"
             READY_INTERVAL="${DEP09_READY_INTERVAL:-5}"
             # SEC-REVIEW (ARR-01 expand/contract): smoke de datos. /api/health/ready solo hace SELECT 1; no detecta un
@@ -457,7 +457,7 @@ jobs:
             # normal volvería a lanzar el migrador SIN timeout y lo dejaría Exited con nombre fijo (el
             # siguiente deploy chocaría). Con `--no-deps` y la lista explícita de los demás servicios,
             # el esquema solo se toca en el paso de arriba (con timeout y backup previo). Se listan
-            # también postgres (y NO minio: MIN-01, perfil s3; nombrarlo lo activaría) para que un cambio de su configuración en el compose siga
+            # también postgres (y NO s3: MIN-01, perfil s3; nombrarlo lo activaría) para que un cambio de su configuración en el compose siga
             # aplicándose. Si se añade un servicio al compose, hay que añadirlo aquí (lo vigila
             # tests/deploy/dep19a-deploy-fixes.test.mjs). Límite: con --no-deps Compose no espera los
             # `depends_on: service_healthy` de los servicios no listados; postgres ya está sano (el
@@ -471,7 +471,7 @@ jobs:
             if [ "$UP_RC" -ne 0 ] || ! dep09_wait_ready; then
               echo "::error::La versión $IMAGE_TAG no pasó el gate de readiness (up rc=$UP_RC). Rollback de imagen a $PREV_TAG."
               # DEP-09 (D): vuelve al tag previo SOLO para cms y portal, sin dependencias (no relanza
-              # cms-migrate ni toca Postgres/MinIO/nginx). NUNCA se ejecuta `down` ni se revierten migraciones.
+              # cms-migrate ni toca Postgres/S3/nginx). NUNCA se ejecuta `down` ni se revierten migraciones.
               ROLLBACK_RC=0
               IMAGE_TAG="$PREV_TAG" docker compose \
                 -f infrastructure/docker/compose.prod.yaml \
