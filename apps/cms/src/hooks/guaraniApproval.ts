@@ -2,7 +2,8 @@
 // Qué hace: exige superadmin, traducción, fuente oficial y confianza A/B antes de publicar una glosa.
 // Amenaza: evita que una entrada incompleta o un rol editorial impacte el portal sin revisión.
 // Límite: la revisión lingüística sigue siendo responsabilidad del hablante nativo/PO; el hook valida el proceso.
-import type { CollectionBeforeChangeHook } from 'payload'
+import { APIError } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionBeforeDeleteHook } from 'payload'
 
 export type GuaraniApprovalInput = {
   data: Record<string, unknown>
@@ -12,30 +13,30 @@ export type GuaraniApprovalInput = {
 
 export function validateGuaraniApproval({ data, originalDoc = {}, role }: GuaraniApprovalInput): void {
   if (originalDoc.revisado === true && role !== 'superadmin') {
-    throw new Error('La entrada ya está aprobada y solo un superadmin puede modificarla.')
+    throw new APIError('La entrada ya está aprobada y solo un superadmin puede modificarla.', 403, undefined, true)
   }
 
   const approving = data.estadoRevision === 'aprobado' || data.revisado === true
   if (approving && role !== 'superadmin') {
-    throw new Error('Solo un superadmin puede aprobar una traducción guaraní para publicarla en el portal.')
+    throw new APIError('Solo un superadmin puede aprobar una traducción guaraní para publicarla en el portal.', 403, undefined, true)
   }
 
   if (!approving) return
   if (typeof data.terminoGn !== 'string' || !data.terminoGn.trim()) {
-    throw new Error('No se puede aprobar una entrada sin traducción en guaraní.')
+    throw new APIError('No se puede aprobar una entrada sin traducción en guaraní.', 400, undefined, true)
   }
   if (data.oficial !== true || typeof data.fuenteUrl !== 'string' || !data.fuenteUrl.trim()) {
-    throw new Error('La aprobación necesita una fuente oficial y su URL.')
+    throw new APIError('La aprobación necesita una fuente oficial y su URL.', 400, undefined, true)
   }
   if (data.confianza !== 'A' && data.confianza !== 'B') {
-    throw new Error('La aprobación necesita confianza A o B.')
+    throw new APIError('La aprobación necesita confianza A o B.', 400, undefined, true)
   }
 }
 
 type EstadoRevision = 'pendiente' | 'aprobado' | 'rechazado'
 
-/** Estado de revisión que tenía el documento antes del cambio (`pendiente` si es nuevo o no se puede deducir). */
-function previousState(originalDoc: Record<string, unknown>): EstadoRevision {
+/** Estado de revisión de un documento (también lo usa la auditoría); antes del cambio (`pendiente` si es nuevo o no se puede deducir). */
+export function reviewStateOf(originalDoc: Record<string, unknown>): EstadoRevision {
   if (originalDoc.estadoRevision === 'aprobado' || originalDoc.estadoRevision === 'rechazado') return originalDoc.estadoRevision
   return originalDoc.revisado === true ? 'aprobado' : 'pendiente'
 }
@@ -49,7 +50,7 @@ function previousState(originalDoc: Record<string, unknown>): EstadoRevision {
  * Límite: el panel envía el documento completo, por eso se compara contra el original y no solo se mira `data`.
  */
 function resolveNextState(data: Record<string, unknown>, original: Record<string, unknown>): EstadoRevision {
-  const previous = previousState(original)
+  const previous = reviewStateOf(original)
   const requested = data.estadoRevision
   if ((requested === 'pendiente' || requested === 'aprobado' || requested === 'rechazado') && requested !== previous) {
     return requested
@@ -76,7 +77,7 @@ const idOf = (value: unknown): unknown =>
 export const enforceGuaraniApproval: CollectionBeforeChangeHook = ({ data, originalDoc, req }) => {
   const original = (originalDoc as Record<string, unknown> | undefined) ?? {}
   const next = resolveNextState(data as Record<string, unknown>, original)
-  const wasApproved = previousState(original) === 'aprobado'
+  const wasApproved = reviewStateOf(original) === 'aprobado'
 
   // Se valida el estado FINAL (no el solicitado): un rechazo/revocación no exige fuente ni confianza.
   validateGuaraniApproval({
@@ -104,4 +105,25 @@ export const enforceGuaraniApproval: CollectionBeforeChangeHook = ({ data, origi
   }
 
   return data
+}
+
+/**
+ * GLO-GN-APPROVAL-03: guarda de borrado de la colección `glosario-guarani`.
+ * Qué hace: impide que un rol distinto de superadmin borre una glosa aprobada (o heredada con `revisado`).
+ * Amenaza: el acceso de la colección deja borrar a web-admin; sin esta guarda, el invariante «una glosa
+ * aprobada solo la modifica un superadmin» se evadía borrándola y retirando una traducción publicada sin revisión.
+ * Límite: la consulta usa `req` (misma sesión y transacción); un borrado interno sin usuario también se rechaza.
+ */
+export const enforceGuaraniDeleteGuard: CollectionBeforeDeleteHook = async ({ id, req }) => {
+  const doc = (await req.payload.findByID({
+    collection: 'glosario-guarani',
+    id,
+    depth: 0,
+    req,
+    overrideAccess: true,
+  })) as unknown as Record<string, unknown>
+  const approved = reviewStateOf(doc) === 'aprobado' || doc.revisado === true
+  if (approved && req.user?.role !== 'superadmin') {
+    throw new APIError('Una glosa aprobada solo puede borrarla un superadmin.', 403, undefined, true)
+  }
 }
