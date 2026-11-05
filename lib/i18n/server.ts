@@ -1,4 +1,5 @@
 import { createTranslator, createFormatter, type AbstractIntlMessages } from 'next-intl'
+import { applyApprovedGuaraniDictionary, getApprovedGuaraniDictionary } from './guaraniDynamic'
 
 const NAMESPACES = [
   'common', 'nav', 'accessibility',
@@ -36,6 +37,11 @@ export async function loadMessages(locale: string): Promise<AbstractIntlMessages
       cursor = cursor[parts[i]] as Record<string, unknown>
     }
     cursor[parts[parts.length - 1]] = mod.default
+  }
+  if (locale === 'gn') {
+    // Solo se actualizan etiquetas que todavía son idénticas al español; las frases traducidas siguen siendo editoriales.
+    const [messagesEs, dictionary] = await Promise.all([loadMessages('es'), getApprovedGuaraniDictionary()])
+    return applyApprovedGuaraniDictionary(messages as AbstractIntlMessages, messagesEs, dictionary)
   }
   return messages as AbstractIntlMessages
 }

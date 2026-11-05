@@ -45,6 +45,8 @@ import { hasRole } from './access/roles'
 import { resolvePayloadSecret } from './config/secrets'
 import { ADMIN_ROUTE } from './config/adminRoute'
 import { signPreviewToken } from './utilities/previewToken'
+import { guaraniDictionaryEndpoint } from './endpoints/guaraniDictionary'
+import { guaraniApprovalEndpoint } from './endpoints/guaraniApproval'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -79,6 +81,7 @@ export default buildConfig({
   routes: {
     admin: ADMIN_ROUTE,
   },
+  endpoints: [guaraniDictionaryEndpoint, guaraniApprovalEndpoint],
   admin: {
     user: Users.slug,
     importMap: {

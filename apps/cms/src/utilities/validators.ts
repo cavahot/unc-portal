@@ -95,6 +95,7 @@ export const GLOSARIO_OFFICIAL_HOSTS = [
   'repositorio.conacyt.gov.py',
   'spl.gov.py',
   'www.spl.gov.py',
+  'corpus.spl.gov.py',
 ] as const
 
 /**

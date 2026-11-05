@@ -33,14 +33,14 @@ export default function CarrerasList({ items, labels, compact = false }: { items
             className="lt-reveal grid gap-5 rounded-[1.25rem] bg-white p-5 sm:p-7 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-10 print:break-inside-avoid print:border print:border-black/30"
           >
             <div>
-              <h3 className={`font-serif font-bold leading-tight tracking-[-0.02em] text-[#001A00] ${compact ? 'text-xl sm:text-[1.4rem]' : 'text-2xl sm:text-[1.85rem]'}`}>
+              <h3 className="break-words text-balance font-serif font-bold leading-tight tracking-[-0.02em] text-[#001A00] text-xl sm:text-[1.4rem]">
                 {c.nombre}
               </h3>
               {meta.length > 0 && (
                 <p className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[0.95rem] text-[#3E4A45]">
                   {meta.map((m) => (
-                    <span key={m.value}>
-                      {m.term && <span className="sr-only">{m.term}: </span>}
+                    <span key={m.value} className={m.term === '' ? 'whitespace-nowrap' : undefined}>
+                      {m.term && <span className="font-semibold">{m.term}: </span>}
                       {m.value}
                     </span>
                   ))}
@@ -56,7 +56,7 @@ export default function CarrerasList({ items, labels, compact = false }: { items
             </div>
             {c.resoluciones.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 md:justify-end">
-                <span className="mr-1 text-sm text-[#3E4A45]">{labels.resLabel}</span>
+                <span className="mr-1 whitespace-nowrap text-sm text-[#3E4A45]">{labels.resLabel}</span>
                 {c.resoluciones.map((r) =>
                   r.href ? (
                     <a
@@ -64,7 +64,7 @@ export default function CarrerasList({ items, labels, compact = false }: { items
                       href={safeHref(r.href)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={labels.resOpen(r.numero)}
+                      aria-label={`${labels.resOpen(r.numero)}${r.detalle ? `, ${r.detalle}` : ''}`}
                       className={`group inline-flex min-h-11 items-center gap-2 rounded-full bg-[#E3F3E6] px-4 font-serif text-lg font-bold tabular-nums text-[#004700] transition-colors hover:bg-[#004700] hover:text-white ${focus}`}
                     >
                       {r.numero}

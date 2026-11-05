@@ -41,12 +41,11 @@ function assertAllowed(url: string): string {
 }
 
 /**
- * URL del iframe (formato de inserción sin clave: `maps?q=…&output=embed`).
- * Sin parámetros a propósito: no existe entrada de usuario que pueda alterar el destino.
- * Se omite `t=k` (satélite) porque no está documentado oficialmente.
+ * URL del iframe en vista satélite (formato de inserción sin clave: `maps?q=…&t=k&output=embed`).
+ * La vista `t=k` es la que corresponde a la imagen aérea solicitada; no se agregan coordenadas ni claves.
  */
 export function buildCampusEmbedUrl(): string {
-  return assertAllowed(`${GOOGLE_ORIGIN}/maps?q=${encodeURIComponent(CAMPUS_MAP_QUERY)}&z=16&output=embed`)
+  return assertAllowed(`${GOOGLE_ORIGIN}/maps?q=${encodeURIComponent(CAMPUS_MAP_QUERY)}&t=k&z=16&output=embed`)
 }
 
 /** Enlace "Cómo llegar" (Maps URLs oficial: `dir/?api=1&destination=`). Sin parámetros, ver arriba. */

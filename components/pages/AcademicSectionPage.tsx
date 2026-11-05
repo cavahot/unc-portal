@@ -42,9 +42,10 @@ export interface AcademicSectionPageProps {
   contactEmail?: string
   contactLabel?: string
 
+  // Visual direction per section: permite que Investigación tenga una composición propia sin alterar otras páginas académicas.
+  visualVariant?: 'default' | 'research'
   // Extra slot for future rich sections
   afterAreas?: ReactNode
-
   // State flag — shows tasteful "in development" chip
   underConstruction?: boolean
 }
@@ -82,13 +83,14 @@ function IconMail() {
    AREA CARD
    ========================================================= */
 
-function AreaCard({ area, index }: { area: WorkArea; index: number }) {
+function AreaCard({ area, index, research }: { area: WorkArea; index: number; research: boolean }) {
   return (
     <Reveal delay={index * 60}>
-      <div className="flex h-full flex-col rounded-[1.25rem] border border-[#D7E0DB] bg-white p-6 shadow-[0_8px_28px_rgba(7,42,15,0.06)] transition-all duration-300 hover:border-[#37D448]/60 hover:shadow-[0_18px_44px_rgba(0,71,0,0.11)]">
-        <span className="text-3xl leading-none" aria-hidden="true">{area.icon}</span>
-        <h3 className="mt-4 font-serif text-lg font-bold text-[#09231D]">{area.title}</h3>
+      <div className={`group flex h-full flex-col rounded-[1.25rem] border p-6 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-1 ${research ? 'border-[#CDE8D2] bg-white/90 shadow-[0_14px_38px_rgba(0,71,0,0.07)] hover:border-[#37D448]/70 hover:shadow-[0_20px_48px_rgba(0,71,0,0.13)]' : 'border-[#D7E0DB] bg-white shadow-[0_8px_28px_rgba(7,42,15,0.06)] hover:border-[#37D448]/60 hover:shadow-[0_18px_44px_rgba(0,71,0,0.11)]'}`}>
+        <span className={`flex h-11 w-11 items-center justify-center rounded-2xl text-2xl leading-none ${research ? 'bg-[#E6FFE6] ring-1 ring-[#B8FFB8]' : ''}`} aria-hidden="true">{area.icon}</span>
+        <h3 className="mt-5 font-serif text-lg font-bold text-[#09231D]">{area.title}</h3>
         <p className="mt-2 flex-1 text-sm leading-6 text-[#6C7B76]">{area.description}</p>
+        {research && <span className="mt-5 h-px w-10 bg-[#37D448] transition-[width] duration-200 group-hover:w-16" aria-hidden="true" />}
       </div>
     </Reveal>
   )
@@ -110,7 +112,9 @@ export default function AcademicSectionPage({
   contactLabel = '¿Consultas sobre esta área?',
   afterAreas,
   underConstruction = false,
+  visualVariant = 'default',
 }: AcademicSectionPageProps) {
+  const research = visualVariant === 'research'
   const defaultBreadcrumb = [{ label: 'Inicio', href: '/' }, ...breadcrumb]
 
   return (
@@ -118,7 +122,8 @@ export default function AcademicSectionPage({
       {/* =======================================================
           HERO
           ======================================================= */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300] pb-20 pt-28 text-white sm:pt-32">
+      <section className={`relative overflow-hidden pb-20 pt-28 text-white sm:pt-32 ${research ? 'research-hero bg-gradient-to-br from-[#003B05] via-[#005C08] to-[#10A51A]' : 'bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300]'}`}>
+        {research && <div aria-hidden="true" className="research-hero-grid pointer-events-none absolute inset-0 opacity-35" />}
         <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-0 h-[28rem] w-[28rem] rounded-full bg-[#001A00]/40 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 bottom-0 h-[22rem] w-[22rem] rounded-full bg-[#5CFF5C]/10 blur-3xl" />
 
@@ -159,7 +164,7 @@ export default function AcademicSectionPage({
               )}
             </div>
 
-            <h1 className="mt-4 font-serif text-4xl font-bold leading-[0.95] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl">
+            <h1 className={`mt-4 font-serif font-bold tracking-[-0.045em] text-white ${research ? 'text-[clamp(3.5rem,8vw,6.5rem)] leading-[0.88]' : 'text-4xl leading-[0.95] sm:text-5xl lg:text-6xl'}`}>
               {title}
             </h1>
 
@@ -197,7 +202,7 @@ export default function AcademicSectionPage({
           ======================================================= */}
       <section
         aria-labelledby="areas-title"
-        className="bg-[#F4F7F5] py-16 sm:py-20"
+        className={`${research ? 'research-areas bg-[#F1F8F2]' : 'bg-[#F4F7F5]'} py-16 sm:py-20`}
       >
         <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
           {areas.length > 0 ? (
@@ -213,7 +218,7 @@ export default function AcademicSectionPage({
 
               <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {areas.map((area, i) => (
-                  <AreaCard key={area.title} area={area} index={i} />
+                  <AreaCard key={area.title} area={area} index={i} research={research} />
                 ))}
               </div>
             </>

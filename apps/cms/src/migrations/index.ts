@@ -12,6 +12,7 @@ import * as migration_20261025_200000_fac_01_facultad_detalle from './20261025_2
 import * as migration_20261026_100000_trans_01_leyes_natural_key from './20261026_100000_trans_01_leyes_natural_key';
 import * as migration_20261026_200000_trans_02_items from './20261026_200000_trans_02_items';
 import * as migration_20261026_220000_dep_sec_01_users_reset_password from './20261026_220000_dep_sec_01_users_reset_password';
+import * as migration_20261105_120000_glo_gn_02_approval_workflow from './20261105_120000_glo_gn_02_approval_workflow';
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20261026_220000_dep_sec_01_users_reset_password.up,
     down: migration_20261026_220000_dep_sec_01_users_reset_password.down,
     name: '20261026_220000_dep_sec_01_users_reset_password'
+  },
+  {
+    up: migration_20261105_120000_glo_gn_02_approval_workflow.up,
+    down: migration_20261105_120000_glo_gn_02_approval_workflow.down,
+    name: '20261105_120000_glo_gn_02_approval_workflow'
   },
 ];

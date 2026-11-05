@@ -13,6 +13,7 @@ export const OFFICIAL_HOSTS = Object.freeze([
   'repositorio.conacyt.gov.py',
   'spl.gov.py',
   'www.spl.gov.py',
+  'corpus.spl.gov.py',
 ])
 
 /**
@@ -63,14 +64,25 @@ export const GLOSARIO_SOURCES = Object.freeze([
     minIntervalMs: 3_000,
   }),
   Object.freeze({
-    id: 'spl-portal-diccionarios',
-    nombre: 'Portal de diccionarios de la SPL',
-    institucion: 'Secretaría de Políticas Lingüísticas (SPL)',
-    url: 'https://spl.gov.py/diccionarios',
+    id: 'spl-diccionario-alg',
+    nombre: 'Diccionario guaraní paraguayo — ALG/SPL',
+    institucion: 'Academia de la Lengua Guaraní y Secretaría de Políticas Lingüísticas',
+    url: 'https://spl.gov.py/es/diccionario-guarani-paraguayo/',
+    kind: 'page',
+    parser: null,
+    formato: 'html/pdf',
+    licencia: 'Consulta oficial; el recurso indica restricciones de reproducción. No se descarga ni se importa automáticamente.',
+    minIntervalMs: 3_000,
+  }),
+  Object.freeze({
+    id: 'spl-coreguapa',
+    nombre: 'COREGUAPA — Corpus de Referencia del Guaraní Paraguayo Actual',
+    institucion: 'Secretaría de Políticas Lingüísticas',
+    url: 'https://corpus.spl.gov.py/py/',
     kind: 'page',
     parser: null,
     formato: 'html',
-    licencia: 'No verificada (el PO no pudo abrir el portal desde la red de la UNC)',
+    licencia: 'Consulta oficial; corpus de referencia para revisión, no fuente automática de publicación.',
     minIntervalMs: 3_000,
   }),
 ])

@@ -18,13 +18,14 @@ describe('campusMapUrls', () => {
     expect(CAMPUS_MAP_QUERY).not.toMatch(/-?\d{1,3}\.\d{3,}/)
   })
 
-  it('embed: https, host exacto www.google.com, q codificado, sin t=k ni claves', () => {
+  it('embed: https, host exacto www.google.com, q codificado y vista satélite sin claves', () => {
     const u = new URL(buildCampusEmbedUrl())
     expect(u.protocol).toBe('https:')
     expect(u.host).toBe('www.google.com')
     expect(u.pathname).toBe('/maps')
     expect(u.searchParams.get('q')).toBe(CAMPUS_MAP_QUERY)
     expect(u.searchParams.get('output')).toBe('embed')
+    expect(u.searchParams.get('t')).toBe('k')
     expect(u.searchParams.get('z')).toBe('16')
     expect(u.searchParams.has('key')).toBe(false)
   })

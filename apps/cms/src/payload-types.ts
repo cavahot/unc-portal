@@ -1425,6 +1425,16 @@ export interface GlosarioGuarani {
    * El actualizador solo modifica sus propias filas.
    */
   origen?: ('glosario-po' | 'actualizador' | 'panel') | null;
+  /**
+   * La aprobación exige superadmin, traducción, fuente oficial y confianza A/B. El portal solo usa aprobados.
+   */
+  estadoRevision?: ('pendiente' | 'aprobado' | 'rechazado') | null;
+  aprobadoPor?: (number | null) | User;
+  fechaAprobacion?: string | null;
+  /**
+   * Motivo de aprobación, rechazo o solicitud de corrección.
+   */
+  comentarioRevision?: string | null;
   fechaConsulta?: string | null;
   /**
    * Acepción, advertencias, «Pendiente de revisión: …».
@@ -2200,6 +2210,10 @@ export interface GlosarioGuaraniSelect<T extends boolean = true> {
   revisado?: T;
   activo?: T;
   origen?: T;
+  estadoRevision?: T;
+  aprobadoPor?: T;
+  fechaAprobacion?: T;
+  comentarioRevision?: T;
   fechaConsulta?: T;
   nota?: T;
   updatedAt?: T;

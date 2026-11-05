@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { canWriteInstitutional } from '../access/roles'
 import { makeAuditAfterChange, makeAuditAfterDelete } from '../hooks/audit/auditInstitutionalChange'
 import { validateHttpsUrl, validateOfficialSourceUrl } from '../utilities/validators'
+import { enforceGuaraniApproval } from '../hooks/guaraniApproval'
 
 // GLO-GN-01: glosario español → guaraní que usan los traductores del portal y el actualizador de fuentes
 // oficiales (scripts/update-glosario-guarani.mjs). Herramienta interna: NO se publica en el portal.
@@ -66,6 +67,7 @@ export const GlosarioGuarani: CollectionConfig = {
   indexes: [{ fields: ['terminoEs', 'fuente'], unique: true }],
   // Rastro de auditoría de cada cambio. Sin revalidación: el portal no lee esta colección.
   hooks: {
+    beforeChange: [enforceGuaraniApproval],
     afterChange: [makeAuditAfterChange('glosario-guarani', 'Término del glosario guaraní')],
     afterDelete: [makeAuditAfterDelete('glosario-guarani', 'Término del glosario guaraní')],
   },
@@ -214,6 +216,42 @@ export const GlosarioGuarani: CollectionConfig = {
           admin: { width: '25%', description: 'El actualizador solo modifica sus propias filas.' },
         },
       ],
+    },
+    {
+      name: 'estadoRevision',
+      type: 'select',
+      label: 'Estado de revisión',
+      defaultValue: 'pendiente',
+      index: true,
+      options: [
+        { label: 'Pendiente de aprobación', value: 'pendiente' },
+        { label: 'Aprobado por superadmin', value: 'aprobado' },
+        { label: 'Rechazado', value: 'rechazado' },
+      ],
+      admin: {
+        description: 'La aprobación exige superadmin, traducción, fuente oficial y confianza A/B. El portal solo usa aprobados.',
+      },
+    },
+    {
+      name: 'aprobadoPor',
+      type: 'relationship',
+      relationTo: 'users',
+      label: 'Aprobado por',
+      admin: { readOnly: true },
+    },
+    {
+      name: 'fechaAprobacion',
+      type: 'date',
+      label: 'Fecha de aprobación',
+      admin: { readOnly: true, date: { pickerAppearance: 'dayOnly' } },
+    },
+    {
+      name: 'comentarioRevision',
+      type: 'textarea',
+      label: 'Comentario de revisión',
+      maxLength: MAX_NOTA,
+      validate: maxLen(MAX_NOTA),
+      admin: { description: 'Motivo de aprobación, rechazo o solicitud de corrección.' },
     },
     {
       name: 'fechaConsulta',

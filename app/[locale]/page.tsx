@@ -144,8 +144,11 @@ export default async function Home({
   const [t, format, featuredResult, latestResult, stats, recognitions, accreditationGroups] = await Promise.all([
     getT(locale, 'pages.home'),
     getF(locale),
-    getNews({ featured: true, limit: 6 }),
-    getNews({ limit: 6 }),
+    // HOME-NEWS: la portada muestra tres tarjetas para mantener la jerarquía visual y el contrato E2E.
+    // Amenaza: pedir seis y renderizarlas duplica la sección visible y degrada la lectura en móvil.
+    // Límite: el resto de noticias sigue disponible en /noticias.
+    getNews({ featured: true, limit: 3 }),
+    getNews({ limit: 3 }),
     getStatsGlobal(),
     // PRA-02: ambas consultas devuelven [] si el CMS cae o no hay filas activas+verificadas (la sección se oculta).
     getRecognitions(),
