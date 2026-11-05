@@ -2,7 +2,8 @@ import type { CollectionConfig } from 'payload'
 import { canWriteInstitutional } from '../access/roles'
 import { makeAuditAfterChange, makeAuditAfterDelete } from '../hooks/audit/auditInstitutionalChange'
 import { validateHttpsUrl, validateOfficialSourceUrl } from '../utilities/validators'
-import { enforceGuaraniApproval } from '../hooks/guaraniApproval'
+import { enforceGuaraniApproval, enforceGuaraniDeleteGuard } from '../hooks/guaraniApproval'
+import { auditGuaraniReviewTransition } from '../hooks/guaraniReviewAudit'
 
 // GLO-GN-01: glosario español → guaraní que usan los traductores del portal y el actualizador de fuentes
 // oficiales (scripts/update-glosario-guarani.mjs). Herramienta interna: NO se publica en el portal.
@@ -65,10 +66,16 @@ export const GlosarioGuarani: CollectionConfig = {
   // GLO-GN-01: un término por fuente. Evita filas duplicadas al re-ejecutar la siembra o el actualizador;
   // el mismo término puede tener varias filas si vienen de fuentes distintas (así se ven los conflictos).
   indexes: [{ fields: ['terminoEs', 'fuente'], unique: true }],
-  // Rastro de auditoría de cada cambio. Sin revalidación: el portal no lee esta colección.
+  // Rastro de auditoría de cada cambio y, aparte, de cada decisión de revisión (GLO-GN-APPROVAL-03).
+  // Sin revalidación activa: el portal lee solo las glosas aprobadas por /guarani-dictionary con caché corta
+  // (ver ese endpoint); retirar una aprobación tarda en verse el tiempo de esa caché.
   hooks: {
     beforeChange: [enforceGuaraniApproval],
-    afterChange: [makeAuditAfterChange('glosario-guarani', 'Término del glosario guaraní')],
+    beforeDelete: [enforceGuaraniDeleteGuard],
+    afterChange: [
+      auditGuaraniReviewTransition,
+      makeAuditAfterChange('glosario-guarani', 'Término del glosario guaraní'),
+    ],
     afterDelete: [makeAuditAfterDelete('glosario-guarani', 'Término del glosario guaraní')],
   },
   fields: [

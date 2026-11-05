@@ -21,12 +21,17 @@ const labels = {
   address: 'Km 210, Ruta PY05, Concepción, Paraguay',
 }
 
+// `next/image` no deja el `src` literal en el HTML: lo reescribe a `/_next/image?url=<ruta codificada>&w=…`.
+// Se comprueba la ruta del recurso en esa forma codificada (la que realmente llega al navegador), no el texto
+// literal. Límite: no verifica que el archivo exista en `public/` (ninguna otra prueba lo hace hoy).
+const SATELLITE_SRC = encodeURIComponent('/images/campus-map-satellite.png')
+
 describe('CampusMap (estado inicial)', () => {
   const html = renderToStaticMarkup(createElement(CampusMap, { labels }))
 
   it('muestra el preview satelital solicitado y no monta Google antes del clic', () => {
     expect(html).not.toContain('<iframe')
-    expect(html).toContain('/images/campus-map-satellite.png')
+    expect(html).toContain(SATELLITE_SRC)
     expect(html).toContain('Ver mapa interactivo')
   })
   it('mantiene dirección y enlaces seguros', () => {
@@ -37,7 +42,7 @@ describe('CampusMap (estado inicial)', () => {
     expect(html).toContain('https://www.google.com/maps/search/?api=1')
   })
   it('expone el preview satelital con etiqueta accesible y contraste institucional', () => {
-    expect(html).toContain('/images/campus-map-satellite.png')
+    expect(html).toContain(SATELLITE_SRC)
     expect(html).toContain('alt="Ilustración del campus con la ubicación del Rectorado"')
     expect(html).toContain('bg-[#39FF88]/12')
   })

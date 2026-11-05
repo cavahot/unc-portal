@@ -15,10 +15,22 @@ export const guaraniApprovalEndpoint: Endpoint = {
     const id = req.routeParams?.id as string | number | undefined
     if (!id) return Response.json({ message: 'Falta el identificador del término.' }, { status: 400 })
 
-    const doc = (await req.payload.findByID({ collection: 'glosario-guarani', id, depth: 0 })) as unknown as Record<string, unknown>
+    // GLO-GN-APPROVAL-02: `req` DEBE viajar en cada llamada local. Sin él, Payload crea una petición sin usuario
+    // y el hook `enforceGuaraniApproval` no reconoce al superadmin (rechaza la aprobación o borra `aprobadoPor`).
+    let doc: Record<string, unknown>
+    try {
+      doc = (await req.payload.findByID({ collection: 'glosario-guarani', id, depth: 0, req })) as unknown as Record<string, unknown>
+    } catch (error) {
+      // Solo «no existe» se traduce a 404; cualquier otro fallo (base caída, etc.) no debe disfrazarse de 404.
+      if ((error as { status?: number })?.status === 404) {
+        return Response.json({ message: 'No existe ese término del glosario.' }, { status: 404 })
+      }
+      throw error
+    }
     const updated = (await req.payload.update({
       collection: 'glosario-guarani',
       id,
+      req,
       overrideAccess: true,
       data: {
         revisado: true,
