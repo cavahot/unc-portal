@@ -17,10 +17,10 @@ Spec: `docs/specs/portal/INSTITUCIONAL-TRANSPARENCIA.md`.
 
 ## Tasks
 
-- [ ] T0 Spec y documento ODD (S1-S8) · inline · commit: pendiente
-- [ ] T1 Global `informacion-publica` + migración + validadores + auditoría (S1, S4) · inline · commit: pendiente
-- [ ] T2 Consulta, semilla y página `/informacion-publica` con error y mensajes (S1, S5-S8) · inline · commit: pendiente
-- [ ] T3 Global `institucional` + consulta + semilla + página `/institucional` (S2, S4-S8) · inline · commit: pendiente
+- [x] T0 Spec y documento ODD (S1-S8) · inline · commit: 26276ee
+- [x] T1 Globals `informacion-publica` e `institucional` + migración + validadores + auditoría (S1, S2, S4) · inline · commit: 5239375
+- [x] T2 Consulta, semilla y página `/informacion-publica` con error y mensajes (S1, S5-S8) · inline · commit: pendiente-T2
+- [ ] T3 Consulta + página `/institucional` (S2, S5-S8; el global y la semilla ya existen) · inline · commit: pendiente
 - [ ] T4 Rediseño de `/transparencia` con el enlace a Información Pública (S3, S5-S7) · inline · commit: pendiente
 - [ ] T5 Verificación final: suite, detector de diseño, navegador, docs (S1-S8) · inline · commit: pendiente
 
@@ -32,3 +32,5 @@ Ruta: todas inline (unidades dependientes y de ~400 líneas cada una; sin razón
 - L2 (2026-11-06) Respuesta del usuario al alcance: «Las 3 (Recomendado)» = `/transparencia`, `/informacion-publica` e `/institucional`.
 - L3 (2026-11-06) Evidencia: `/informacion-publica` tiene `CHANNELS` y `REQUIRED_DATA` en el código y fondo `slate-950` con voseo; `/institucional` lee `about`, `sections` y `values` de mensajes; `/transparencia` ya lee las leyes del CMS. Patrón: `TITULOS.md`.
 - L4 Hipótesis: el contenido del CMS es solo español (sin localización en `payload.config.ts`), como en `/titulos`.
+- L5 (2026-11-06) Hallazgo en T3: las tarjetas de `/institucional` enlazan a `/institucional/historia` y `/institucional/mision`, rutas que no existen; las reales son `/historia` y `/mision-vision-y-valores`. La lista cerrada de destinos del global lo corrige.
+- L6 Evidencia T1: migración verificada en base sintética (subir, repetir, `down` rechazado con contenido); 25 pruebas del CMS. Evidencia T2: 26 pruebas de la página; detector de diseño sin hallazgos; sin desbordamiento horizontal a 375 px; semilla local idempotente. No se observó RED previo para el esquema de los globals (se escribió junto con sus pruebas).
