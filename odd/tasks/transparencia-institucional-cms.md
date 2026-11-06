@@ -20,7 +20,7 @@ Spec: `docs/specs/portal/INSTITUCIONAL-TRANSPARENCIA.md`.
 - [x] T0 Spec y documento ODD (S1-S8) · inline · commit: 26276ee
 - [x] T1 Globals `informacion-publica` e `institucional` + migración + validadores + auditoría (S1, S2, S4) · inline · commit: 5239375
 - [x] T2 Consulta, semilla y página `/informacion-publica` con error y mensajes (S1, S5-S8) · inline · commit: 80b9a15
-- [ ] T3 Consulta + página `/institucional` (S2, S5-S8; el global y la semilla ya existen) · inline · commit: pendiente
+- [x] T3 Consulta + página `/institucional` (S2, S5-S8; el global y la semilla ya existen) · inline · commit: pendiente-T3
 - [ ] T4 Rediseño de `/transparencia` con el enlace a Información Pública (S3, S5-S7) · inline · commit: pendiente
 - [ ] T5 Verificación final: suite, detector de diseño, navegador, docs (S1-S8) · inline · commit: pendiente
 
@@ -34,3 +34,4 @@ Ruta: todas inline (unidades dependientes y de ~400 líneas cada una; sin razón
 - L4 Hipótesis: el contenido del CMS es solo español (sin localización en `payload.config.ts`), como en `/titulos`.
 - L5 (2026-11-06) Hallazgo en T3: las tarjetas de `/institucional` enlazan a `/institucional/historia` y `/institucional/mision`, rutas que no existen; las reales son `/historia` y `/mision-vision-y-valores`. La lista cerrada de destinos del global lo corrige.
 - L6 Evidencia T1: migración verificada en base sintética (subir, repetir, `down` rechazado con contenido); 25 pruebas del CMS. Evidencia T2: 26 pruebas de la página; detector de diseño sin hallazgos; sin desbordamiento horizontal a 375 px; semilla local idempotente. No se observó RED previo para el esquema de los globals (se escribió junto con sus pruebas).
+- L7 Evidencia T3: 35 pruebas del hub (mapeo con lista cerrada, consulta, render, errores, mensajes); detector de diseño sin hallazgos; los 4 destinos responden 200 en el portal local (`/historia`, `/mision-vision-y-valores`, `/autoridades`, `/organigrama`) con prefijo de idioma; se retiraron 2 excepciones obsoletas de la guarda `safe-url`.
