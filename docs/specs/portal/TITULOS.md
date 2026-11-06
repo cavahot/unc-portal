@@ -48,6 +48,20 @@ Semilla idempotente `scripts/seed-titulos.mjs` con el contenido hoy publicado: 3
 ### 2.5 Diseño
 Patrón visual del portal (verdes institucionales, componentes como los de facultades), no el `slate-950` actual. Criterios: jerarquía clara (tipo de universidad → requisitos → procedimiento → plazo y arancel), contraste AA, foco visible, pasos como lista ordenada, `prefers-reduced-motion`, móvil primero. Se aplican las skills `impeccable`, `redesign-skill` y `ui-ux-pro-max`.
 
+### 2.6 Errores capturados en el diseño (S9)
+Decisión: los errores se muestran **en línea, de forma accesible y con una salida**, nunca como ventana modal que interrumpa y atrape el foco (el patrón de SweetAlert2). Es el mismo principio del middleware centralizado de errores de un servidor, aplicado a esta pila:
+
+| Nivel | Dónde ocurre | Qué se hace |
+| --- | --- | --- |
+| Captura | `getTitulosInscripcion` (consulta al CMS) | `try/catch`: nunca lanza; devuelve `unavailable` o `empty`. |
+| Registro | La misma consulta | `console.error` con el **nombre** del error y el código HTTP; jamás el mensaje (puede llevar la URL del CMS o credenciales). |
+| Aviso al usuario | `page.tsx` | Panel en línea (`role="status"`) con «Intentar de nuevo» (vuelve a pedir la página) y «Contacto». |
+| Error inesperado de render | `app/[locale]/titulos/error.tsx` | Límite de error con el estilo del portal, textos traducidos, botón «Intentar de nuevo», enlace a Contacto y solo la **referencia (`digest`)** para soporte; sin mensaje ni stack. Reporta la excepción a Sentry. |
+| Escritura en el CMS | Validadores del global | Mensajes claros por campo; los rechazos de reglas son 4xx (`APIError`), no 500. |
+
+Alternativas evaluadas: ventana modal tipo SweetAlert2 (se descarta: interrumpe y atrapa el foco para algo que no lo necesita) y avisos emergentes (toasts, Sonner, ya probado en el prototipo `/prototipos/sonner`). Los toasts quedan como alternativa documentada para confirmaciones de acciones del usuario (formularios), **pendiente de aprobación del patrón**; no se usan en esta página porque un fallo de carga no es una acción que confirmar.
+Límites: el estado `unavailable` solo aparece si nunca hubo una respuesta buena (la caché de datos de Next sigue sirviendo la última). No hay `instrumentation.ts` con `onRequestError`: los errores de render del servidor llegan a Sentry por el límite de error y por la integración de Next, no por un manejador propio.
+
 ## 3. Criterios de aceptación (Given / When / Then)
 
 1. **Given** el global con 3 tipos y 8 pasos, **When** se abre `/es/titulos`, **Then** se ven los 3 tipos con sus requisitos y los 8 pasos en orden, tomados del CMS.
@@ -57,6 +71,8 @@ Patrón visual del portal (verdes institucionales, componentes como los de facul
 5. **Given** que el CMS no responde, **When** se abre la página, **Then** responde 200 con aviso neutro, no 500.
 6. **Given** un rol sin permiso de global (distinto de superadmin y web-admin), **When** intenta modificar el global por REST, **Then** recibe 403.
 7. **Given** un `acento` fuera de la lista o una URL de CONES con host no permitido, **When** se intenta guardar, **Then** se rechaza.
+8. **Given** que el CMS no responde y nunca hubo una respuesta buena, **When** se abre `/titulos`, **Then** se ve un aviso en línea con «Intentar de nuevo» y «Contacto», sin ventana modal, y el fallo queda registrado sin secretos.
+9. **Given** un error inesperado al pintar la página, **When** ocurre, **Then** se muestra el límite de error del portal con una referencia para soporte y sin mensaje ni stack del error.
 
 ## 4. Pruebas (TDD)
 Esquema y acceso del global; validadores (plazo, URL, acento); consulta con estados `ok`/`empty`/`unavailable`; render de la página por estado; relación al arancel; semilla idempotente; revalidación por etiqueta; ausencia de datos fijos en `page.tsx` (prueba que falla si reaparecen `UNIVERSITY_TYPES`, `STEPS` o `200.000`).
