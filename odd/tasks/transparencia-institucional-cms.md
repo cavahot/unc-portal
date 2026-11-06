@@ -19,7 +19,7 @@ Spec: `docs/specs/portal/INSTITUCIONAL-TRANSPARENCIA.md`.
 
 - [x] T0 Spec y documento ODD (S1-S8) · inline · commit: 26276ee
 - [x] T1 Globals `informacion-publica` e `institucional` + migración + validadores + auditoría (S1, S2, S4) · inline · commit: 5239375
-- [x] T2 Consulta, semilla y página `/informacion-publica` con error y mensajes (S1, S5-S8) · inline · commit: pendiente-T2
+- [x] T2 Consulta, semilla y página `/informacion-publica` con error y mensajes (S1, S5-S8) · inline · commit: 80b9a15
 - [ ] T3 Consulta + página `/institucional` (S2, S5-S8; el global y la semilla ya existen) · inline · commit: pendiente
 - [ ] T4 Rediseño de `/transparencia` con el enlace a Información Pública (S3, S5-S7) · inline · commit: pendiente
 - [ ] T5 Verificación final: suite, detector de diseño, navegador, docs (S1-S8) · inline · commit: pendiente
