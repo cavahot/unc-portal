@@ -118,7 +118,11 @@ describe('TITULOS-01 mapeo puro', () => {
 })
 
 describe('TITULOS-01 consulta con estados', () => {
-  beforeEach(() => cmsFetch.mockReset())
+  beforeEach(() => {
+    cmsFetch.mockReset()
+    // La consulta registra los fallos (se prueba en titulos-error-handling.spec.ts); aquí se silencia el ruido.
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
 
   it('ok: devuelve los datos mapeados', async () => {
     cmsFetch.mockResolvedValue(raw())

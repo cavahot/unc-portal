@@ -1,4 +1,5 @@
 import { cmsFetch } from '../client'
+import { CmsError } from '../errors'
 import { isPlainObject, mapTitulosInscripcion, type TitulosInscripcionData } from '../titulos'
 
 export type { TitulosInscripcionData, TituloTipo, TituloPaso, TituloAcento } from '../titulos'
@@ -32,10 +33,17 @@ export async function getTitulosInscripcion(): Promise<TitulosResult> {
       tags: ['titulos-inscripcion', 'aranceles-rectorado'],
       next: { revalidate: SAFETY_REVALIDATE_SECONDS },
     })
-  } catch {
+  } catch (error) {
+    // Se registra el NOMBRE del error y, si lo hay, el código HTTP: nunca el mensaje, que puede llevar la URL del
+    // CMS o credenciales. Así una caída no queda muda en los registros y el visitante ve el aviso en el diseño.
+    const detail = error instanceof CmsError ? `${error.name} ${error.status}` : error instanceof Error ? error.name : 'desconocido'
+    console.error(`[TITULOS] No se pudo leer el CMS (${detail}); se muestra el aviso de no disponible.`)
     return { status: 'unavailable' }
   }
-  if (!isPlainObject(raw)) return { status: 'unavailable' }
+  if (!isPlainObject(raw)) {
+    console.error('[TITULOS] Respuesta inesperada del CMS (no es un objeto); se muestra el aviso de no disponible.')
+    return { status: 'unavailable' }
+  }
   const data = mapTitulosInscripcion(raw)
   return data ? { status: 'ok', data } : { status: 'empty' }
 }
