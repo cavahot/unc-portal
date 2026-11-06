@@ -128,7 +128,27 @@ describe('GLO-GN-02 plan de carga', () => {
     expect(created.data.terminoGn).toBe("Ñeha'ãha") // ’ → '
   })
 
-  it('las frases largas (sección 3) NO van al glosario: son para messages/gn', () => {
-    expect(plan.actions.some((a: { data: { terminoEs: string } }) => a.data.terminoEs === '{count} conceptos')).toBe(false)
+  it('las frases largas (sección 3) también entran al glosario como localización pendiente', () => {
+    const [a] = byEs('{count} conceptos')
+    expect(a.op).toBe('create')
+    expect(a.data).toMatchObject({ terminoGn: "{count} mba'e rehegua", tipo: 'localizacion', estadoRevision: 'pendiente', oficial: false, revisado: false })
+  })
+
+  it('una frase que excede el máximo del campo se omite y se informa (el CMS la rechazaría)', () => {
+    const largo = 'x'.repeat(201)
+    const md = MD.replace('| 1     | {count} conceptos |', `| 1     | ${largo} |`)
+    const out = planCompletado({ parsed: parseCompletado(md), existing })
+    expect(out.actions.some((a: { data: { terminoEs: string } }) => a.data.terminoEs === largo)).toBe(false)
+    expect(out.skipped.some((s: { reason: string }) => /excede/.test(s.reason))).toBe(true)
+  })
+
+  it('aplica la corrección documentada a una fila ya cargada sin revisar (padrón → terarysýi)', () => {
+    const es = 'Oficialización de Padrón Electoral'
+    const row = { id: 7, terminoEs: es, terminoGn: 'Oñemoneĩ jeporavo rysýi', fuente: FUENTE_UI, revisado: false, estadoRevision: 'pendiente', nota: 'x' }
+    const out = planCompletado({ parsed: { sec1: [], sec2: [], sec3: [], sec4: [] }, existing: [row] })
+    expect(out.actions).toHaveLength(1)
+    expect(out.actions[0]).toMatchObject({ op: 'update', id: 7, data: { terminoGn: 'Terarysýi jeporavo rehegua ñemoneĩ' } })
+    // Si alguien ya la revisó, no se toca.
+    expect(planCompletado({ parsed: { sec1: [], sec2: [], sec3: [], sec4: [] }, existing: [{ ...row, revisado: true }] }).actions).toHaveLength(0)
   })
 })

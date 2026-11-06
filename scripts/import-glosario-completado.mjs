@@ -2,7 +2,7 @@
  * import-glosario-completado.mjs — GLO-GN-02
  *
  * Carga al glosario guaraní del CMS las propuestas del documento «UNC-Glosario-Guarani-completado.md»
- * (secciones 1 y 2). La sección 3 (frases largas) NO se carga: va a messages/gn y requiere revisión.
+ * (secciones 1, 2 y 3). Las frases largas (sección 3) también entran al glosario; además se aplican a messages/gn con apply-gn-translations.mjs.
  *
  * Uso:
  *   CMS_EMAIL=... CMS_PASSWORD=... node scripts/import-glosario-completado.mjs --file <ruta.md>           # dry-run
@@ -45,7 +45,7 @@ export async function run({ file, apply = false, allowRemote = false, deps = {} 
   const pace = deps.pace ?? sleep
 
   const parsed = parseCompletado(readFileSync(file, 'utf8'))
-  log(`Documento: sección 1 = ${parsed.sec1.length}, sección 2 = ${parsed.sec2.length}, sección 3 = ${parsed.sec3.length} (no se carga), sección 4 = ${parsed.sec4.length} (no se toca)`)
+  log(`Documento: sección 1 = ${parsed.sec1.length}, sección 2 = ${parsed.sec2.length}, sección 3 = ${parsed.sec3.length}, sección 4 = ${parsed.sec4.length} (no se toca)`)
 
   const { api } = await openCmsSession({ allowRemote, env, doFetch, log })
   const existing = await loadExisting(api)

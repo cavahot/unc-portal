@@ -1,16 +1,16 @@
 {
-  "pageTitle": "Transparencia — UNC",
-  "pageDescription": "Información institucional de cumplimiento legal según las Leyes N° 5.189/2014 y N° 5.282/2014 de la Universidad Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
-  "heading": "Transparencia Institucional",
-  "description": "En cumplimiento de las Leyes de Transparencia de la República del Paraguay, la Universidad Nacional de Concepción pone a disposición de la ciudadanía la siguiente información institucional.",
+  "pageTitle": "Tembiapo hesakãva — UNC",
+  "pageDescription": "Universidad Nacional de Concepción rembiapo renda rehegua marandu, omoañetéva Léi N° 5.189/2014 ha Léi N° 5.282/2014.",
+  "portalLabel": "UNC ñanduti renda",
+  "heading": "Tembiapo renda rembiapo hesakãva",
+  "description": "Omoañetévo Paraguái Retã léi tembiapo hesakãva rehegua, Universidad Nacional de Concepción ome'ẽ tetãyguakuérape ko tembiapo renda rehegua marandu.",
   "ley5189": {
-    "heading": "Ley N° 5.189/2014",
-    "description": "Que establece la obligatoriedad de la provisión de informaciones en los organismos, entidades e instituciones del Estado."
+    "heading": "Léi N° 5.189/2014",
+    "description": "Omohendáva marandu ñeme'ẽ katuete tetã rembiapo rendakuéra ha remimoĩmbykuérape."
   },
   "ley5282": {
-    "heading": "Ley N° 5.282/2014",
-    "description": "De libre acceso ciudadano a la información pública y gubernamental."
+    "heading": "Léi N° 5.282/2014",
+    "description": "Tetãygua jeike sãso marandu opavavépe ha tetã ñemboguata reheguápe."
   },
   "viewLabel": "Ehecha kuatia",
   "progress": "{withDocs} {total}-gui categoría-pe oĩ kuatia oñemoherakuãva",

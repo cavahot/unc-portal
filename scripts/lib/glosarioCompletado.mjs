@@ -12,6 +12,19 @@ import { normalizeGn } from './glosarioGn.mjs'
 /** Fuente común de las etiquetas de interfaz: junto con terminoEs forma la clave única de la colección. */
 export const FUENTE_UI = 'Propuesta UNC · etiquetas de interfaz (documento de trabajo 2026-11-06)'
 const MAX_NOTA = 2000
+// Máximos de la colección (apps/cms/src/collections/GlosarioGuarani.ts): el CMS rechaza lo que los excede.
+const MAX_ES = 200
+const MAX_GN = 300
+
+/**
+ * Correcciones documentadas sobre lo que trae el documento (clave: texto español).
+ * «Oficialización de Padrón Electoral»: el documento proponía «jeporavo rysýi», pero el vocabulario oficial de
+ * la SPL (confianza A) traduce «padrón» como «terarysýi» y la prueba de coherencia del catálogo lo exige.
+ * Sigue siendo una propuesta: requiere revisión nativa.
+ */
+export const CORRECCIONES = Object.freeze({
+  'Oficialización de Padrón Electoral': 'Terarysýi jeporavo rehegua ñemoneĩ',
+})
 const AVISO = 'Propuesta de trabajo pendiente de revisión lingüística; no es una equivalencia oficial ni está aprobada.'
 
 /** Devuelve los textos de una fila de tabla Markdown (sin las barras de los extremos). */
@@ -116,12 +129,22 @@ export function planCompletado({ parsed, existing }) {
     }
   }
 
-  // Sección 2: etiquetas de interfaz → filas nuevas de localización (una por texto español).
-  for (const r of parsed.sec2) {
+  // Secciones 2 y 3: etiquetas y frases de interfaz → filas nuevas de localización (una por texto español).
+  for (const r of [...parsed.sec2, ...parsed.sec3]) {
     if (!r.terminoGn) { skip(r.terminoEs, 'sin traducción en el documento'); continue }
+    const gn = normalizeGn(CORRECCIONES[r.terminoEs] ?? r.terminoGn)
+    if (r.terminoEs.length > MAX_ES || gn.length > MAX_GN) { skip(r.terminoEs.slice(0, 60), `excede el máximo del campo (${MAX_ES} es / ${MAX_GN} gn)`); continue }
     if (taken.has(key(r.terminoEs, FUENTE_UI))) { skip(r.terminoEs, 'ya cargado'); continue }
     taken.add(key(r.terminoEs, FUENTE_UI))
-    actions.push({ op: 'create', data: baseRow(r, normalizeGn(r.terminoGn), 'localizacion') })
+    actions.push({ op: 'create', data: baseRow(r, gn, 'localizacion') })
+  }
+
+  // Correcciones sobre filas ya cargadas de esta fuente y aún sin revisar ni aprobar.
+  for (const row of existing) {
+    const fix = CORRECCIONES[row.terminoEs]
+    if (!fix || row.fuente !== FUENTE_UI || row.revisado || row.estadoRevision === 'aprobado') continue
+    if (normalizeGn(row.terminoGn ?? '') === normalizeGn(fix)) continue
+    actions.push({ op: 'update', id: row.id, data: { terminoEs: row.terminoEs, terminoGn: normalizeGn(fix) } })
   }
   return { actions, skipped }
 }
