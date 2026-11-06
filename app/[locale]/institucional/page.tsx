@@ -44,7 +44,12 @@ export default async function InstitucionalPage({ params }: { params: Promise<{ 
         <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
           {data ? (
             <div className="flex flex-col gap-20">
-              <HubSecciones title={t('sections.title')} intro={t('sections.description')} secciones={data.secciones} prefix={prefix} />
+              <HubSecciones
+                title={t('sections.title')}
+                intro={t('sections.description')}
+                items={data.secciones.map((s) => ({ key: s.destino, ruta: s.ruta, titulo: s.titulo, descripcion: s.descripcion, accion: s.accion }))}
+                prefix={prefix}
+              />
 
               <section aria-labelledby="inst-sobre" className="rounded-2xl bg-white p-6 sm:p-8 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16">
                 <div>

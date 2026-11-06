@@ -21,8 +21,8 @@ Spec: `docs/specs/portal/INSTITUCIONAL-TRANSPARENCIA.md`.
 - [x] T1 Globals `informacion-publica` e `institucional` + migración + validadores + auditoría (S1, S2, S4) · inline · commit: 5239375
 - [x] T2 Consulta, semilla y página `/informacion-publica` con error y mensajes (S1, S5-S8) · inline · commit: 80b9a15
 - [x] T3 Consulta + página `/institucional` (S2, S5-S8; el global y la semilla ya existen) · inline · commit: ce0718b
-- [ ] T4 Rediseño de `/transparencia` con el enlace a Información Pública (S3, S5-S7) · inline · commit: pendiente
-- [ ] T5 Verificación final: suite, detector de diseño, navegador, docs (S1-S8) · inline · commit: pendiente
+- [x] T4 Rediseño de `/transparencia` con el enlace a Información Pública (S3, S5-S7) · inline · commit: pendiente-T4
+- [x] T5 Verificación final: suite, tipos, detector de diseño, HTML servido, docs (S1-S8) · inline · commit: pendiente-T4
 
 Ruta: todas inline (unidades dependientes y de ~400 líneas cada una; sin razón de escritor delegado).
 
@@ -35,3 +35,5 @@ Ruta: todas inline (unidades dependientes y de ~400 líneas cada una; sin razón
 - L5 (2026-11-06) Hallazgo en T3: las tarjetas de `/institucional` enlazan a `/institucional/historia` y `/institucional/mision`, rutas que no existen; las reales son `/historia` y `/mision-vision-y-valores`. La lista cerrada de destinos del global lo corrige.
 - L6 Evidencia T1: migración verificada en base sintética (subir, repetir, `down` rechazado con contenido); 25 pruebas del CMS. Evidencia T2: 26 pruebas de la página; detector de diseño sin hallazgos; sin desbordamiento horizontal a 375 px; semilla local idempotente. No se observó RED previo para el esquema de los globals (se escribió junto con sus pruebas).
 - L7 Evidencia T3: 35 pruebas del hub (mapeo con lista cerrada, consulta, render, errores, mensajes); detector de diseño sin hallazgos; los 4 destinos responden 200 en el portal local (`/historia`, `/mision-vision-y-valores`, `/autoridades`, `/organigrama`) con prefijo de idioma; se retiraron 2 excepciones obsoletas de la guarda `safe-url`.
+- L8 Evidencia T4/T5: `/transparencia` pasa a la misma lista de filas del hub institucional (3 filas, estado por ley, Información Pública desde el CMS); 12 pruebas nuevas. Suite completa: 141 archivos, 2386 pruebas verdes; `tsc --noEmit` sin errores; detector de diseño sin hallazgos en los archivos nuevos (marca `InstitutionalAccessSection.tsx`, preexistente, con degradado violeta: fuera de alcance). Se actualizó la guarda `legal-references` porque el texto «Quiénes somos» pasó de mensajes al CMS (ahora comprueba la semilla). HTML servido verificado por curl en es/en/gn: las tres páginas leen del CMS.
+- L9 NO verificado: aspecto visual en navegador. El panel no dibuja capturas y el servidor dev dejó de completar el intercambio de streaming (también en `/titulos`, no tocada) por el `EBUSY` de `.next`; falta revisar el aspecto, el foco y el móvil a ojo con un servidor limpio. Queda también `app/[locale]/loading.tsx` con fondo `slate-950` (esqueleto global distinto del sistema visual) fuera de este alcance.
