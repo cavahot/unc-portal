@@ -26,6 +26,8 @@ vi.mock('../../apps/cms/src/utilities/audit', () => ({ logAudit, getClientIP: ()
 
 import { TitulosInscripcion } from '../../apps/cms/src/globals/TitulosInscripcion'
 import { canUpdateGlobal } from '../../apps/cms/src/access/roles'
+import { CONES_HOSTS as CMS_CONES_HOSTS } from '../../apps/cms/src/utilities/validators'
+import { ACENTOS, CONES_HOSTS as PORTAL_CONES_HOSTS } from '../../lib/cms/titulos'
 
 type F = {
   name?: string
@@ -122,6 +124,14 @@ describe('TITULOS-01: campos', () => {
     const pasos = f('pasos')!
     expect(pasos.type).toBe('array')
     for (const n of ['responsable', 'descripcion']) expect(f(n, pasos.fields)?.required, n).toBe(true)
+  })
+})
+
+describe('TITULOS-01: paridad portal ↔ CMS', () => {
+  it('las listas cerradas del portal (acentos y hosts del CONES) coinciden con las del CMS', () => {
+    const acento = f('acento', f('tipos')!.fields)!
+    expect([...ACENTOS]).toEqual(acento.options!.map((o) => o.value))
+    expect([...PORTAL_CONES_HOSTS]).toEqual([...CMS_CONES_HOSTS])
   })
 })
 
