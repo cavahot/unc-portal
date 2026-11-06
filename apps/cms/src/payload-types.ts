@@ -136,12 +136,14 @@ export interface Config {
     transparencia: Transparencia;
     'enlaces-externos': EnlacesExterno;
     estadisticas: Estadistica;
+    'titulos-inscripcion': TitulosInscripcion;
   };
   globalsSelect: {
     navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
     transparencia: TransparenciaSelect<false> | TransparenciaSelect<true>;
     'enlaces-externos': EnlacesExternosSelect<false> | EnlacesExternosSelect<true>;
     estadisticas: EstadisticasSelect<false> | EstadisticasSelect<true>;
+    'titulos-inscripcion': TitulosInscripcionSelect<false> | TitulosInscripcionSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2374,6 +2376,110 @@ export interface Estadistica {
   createdAt?: string | null;
 }
 /**
+ * Contenido de la página /titulos: tipos de universidad y sus requisitos, pasos del procedimiento, plazo y nota del CONES. El arancel se toma de «Aranceles del Rectorado».
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "titulos-inscripcion".
+ */
+export interface TitulosInscripcion {
+  id: number;
+  /**
+   * Encabezado principal. Ejemplo: «Inscripción de títulos».
+   */
+  titulo: string;
+  /**
+   * Resumen del servicio que aparece bajo el título (máximo 400 caracteres).
+   */
+  descripcion: string;
+  /**
+   * Dependencia que tramita la inscripción. Ejemplo: «Secretaría General — UNC».
+   */
+  unidad: string;
+  /**
+   * Número entero de horas hábiles. Ejemplo: 8.
+   */
+  plazoMinHoras: number;
+  /**
+   * Número entero, igual o mayor que el mínimo. Ejemplo: 24.
+   */
+  plazoMaxHoras: number;
+  /**
+   * Elija la fila de «Aranceles del Rectorado» (por ejemplo «Inscripción de Títulos Universitarios»). El monto se toma de allí: no se escribe en esta página.
+   */
+  arancel?: (number | null) | ArancelesRectorado;
+  /**
+   * Aviso sobre el reconocimiento previo de títulos extranjeros. Déjelo vacío si no corresponde.
+   */
+  notaCones?: {
+    /**
+     * Qué debe saber la persona antes de presentarse.
+     */
+    texto?: string | null;
+    /**
+     * Solo https://www.cones.gov.py o https://cones.gov.py.
+     */
+    url?: string | null;
+  };
+  /**
+   * Cada tipo (extranjera, nacional pública, nacional privada) con los documentos que debe presentar. El orden del panel es el orden en la página.
+   */
+  tipos?:
+    | {
+        /**
+         * Letras minúsculas, números y guiones. Debe ser único. Ejemplo: universidad-extranjera.
+         */
+        slug: string;
+        /**
+         * Rótulo breve sobre el título. Ejemplo: «Internacional».
+         */
+        etiqueta: string;
+        /**
+         * Ejemplo: «Universidades extranjeras».
+         */
+        titulo: string;
+        /**
+         * Ejemplo: «Títulos de grado y/o posgrado».
+         */
+        subtitulo?: string | null;
+        /**
+         * Solo estos tres colores; el portal los aplica con su propia paleta.
+         */
+        acento: 'verde' | 'azul' | 'violeta';
+        /**
+         * Un documento o condición por fila, en el orden en que se muestran.
+         */
+        requisitos?:
+          | {
+              /**
+               * Máximo 600 caracteres.
+               */
+              texto: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * En orden: el número del paso lo pone el portal según la posición en esta lista.
+   */
+  pasos?:
+    | {
+        /**
+         * Quién realiza el paso. Ejemplo: «Mesa de Entrada / Atención al Usuario».
+         */
+        responsable: string;
+        /**
+         * Qué ocurre en este paso (máximo 800 caracteres).
+         */
+        descripcion: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navegacion_select".
  */
@@ -2449,6 +2555,50 @@ export interface EstadisticasSelect<T extends boolean = true> {
   totalEgresados?: T;
   totalCarrerasAcreditadas?: T;
   totalFacultades?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "titulos-inscripcion_select".
+ */
+export interface TitulosInscripcionSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  unidad?: T;
+  plazoMinHoras?: T;
+  plazoMaxHoras?: T;
+  arancel?: T;
+  notaCones?:
+    | T
+    | {
+        texto?: T;
+        url?: T;
+      };
+  tipos?:
+    | T
+    | {
+        slug?: T;
+        etiqueta?: T;
+        titulo?: T;
+        subtitulo?: T;
+        acento?: T;
+        requisitos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  pasos?:
+    | T
+    | {
+        responsable?: T;
+        descripcion?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

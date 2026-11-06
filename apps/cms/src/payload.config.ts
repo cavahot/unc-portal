@@ -39,6 +39,7 @@ import { Navegacion } from './globals/Navegacion'
 import { Transparencia } from './globals/Transparencia'
 import { EnlacesExternos } from './globals/EnlacesExternos'
 import { Estadisticas } from './globals/Estadisticas'
+import { TitulosInscripcion } from './globals/TitulosInscripcion'
 import { getDatabaseURL } from './config/database'
 import { buildUploadOptions, resolveMediaStorage } from './config/mediaStorage'
 import { hasRole } from './access/roles'
@@ -177,7 +178,7 @@ export default buildConfig({
     GlosarioGuarani,
   ],
 
-  globals: [Navegacion, Transparencia, EnlacesExternos, Estadisticas],
+  globals: [Navegacion, Transparencia, EnlacesExternos, Estadisticas, TitulosInscripcion],
 
   editor: lexicalEditor(),
 

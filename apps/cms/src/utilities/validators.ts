@@ -109,6 +109,19 @@ export function validateOfficialSourceUrl(value: unknown, options: { required?: 
 }
 
 /**
+ * TITULOS-01: hosts EXACTOS del CONES aceptados en la nota de reconocimiento de títulos extranjeros.
+ * Amenaza que evita: que un editor (o un texto pegado) enlace la nota «Títulos extranjeros» a un sitio ajeno
+ * con la marca UNC (`cones.gov.py.evil.example`, `?u=https://www.cones.gov.py`). Límite: confía en lo que
+ * sirva el propio CONES; no comprueba que la página siga existiendo.
+ */
+export const CONES_HOSTS = ['www.cones.gov.py', 'cones.gov.py'] as const
+
+/** TITULOS-01: URL https de host exacto del CONES; vacía es válida (la nota es opcional). */
+export function validateConesUrl(value: unknown, options: { required?: boolean } = {}): true | string {
+  return validateAllowedHostUrl(value, { allowedHosts: CONES_HOSTS, required: options.required })
+}
+
+/**
  * FAC-01: hosts EXACTOS de los documentos de resoluciones CONES de una carrera (spec FACULTADES.md §3.2).
  * Por qué estos: la página oficial de la UNC enlaza las resoluciones a Google Drive; el resto son sitios propios
  * de la universidad y de la Facultad de Odontología. La misma lista vive en lib/cms/facultad.ts (lo comprueba un test).
