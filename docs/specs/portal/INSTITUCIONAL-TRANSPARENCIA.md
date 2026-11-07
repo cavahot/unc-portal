@@ -38,7 +38,7 @@ Las URL de `accion` pueden ser **internas** (ruta que empieza con `/`) o **exter
 | --- | --- | --- |
 | `titulo`, `descripcion` | texto | obligatorios (máx. 120 / 400) |
 | `sobre` | `{ titulo, texto, datos[] }` | `datos[]` de 1 a 4 pares `{ valor, etiqueta }` (año de fundación, sede, tipo) |
-| `secciones[]` | lista (1–8) | `destino` (**lista cerrada**: historia, mision-vision, autoridades, organigrama, transparencia, informacion-publica, marco-legal), `etiqueta`, `titulo`, `descripcion`, `accion` |
+| `secciones[]` | lista (1–8) | `destino` (**lista cerrada** de rutas reales del portal: historia, mision-vision-y-valores, autoridades, organigrama, marco-legal, aseguramiento-calidad, transparencia, informacion-publica), `etiqueta`, `titulo`, `descripcion`, `accion` |
 | `valores[]` | lista (1–8) | `titulo`, `descripcion` |
 
 El destino es una lista cerrada y no una URL libre: así una tarjeta nunca apunta a una ruta inexistente ni a un sitio externo.
