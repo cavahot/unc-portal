@@ -1,10 +1,8 @@
 {
   "pageTitle": "Ejerure Título — UNC",
   "pageDescription": "Ejerure nde título universitario gestión Universidad Nacional de Concepción-pe formulario oficial rupive.",
-  "portalLabel": "UNC ñanduti renda",
   "heading": "Título Universitario jerure",
   "description": "Emoñepyrũ nde diploma universitario gestión online formulario oficial Universidad Nacional de Concepción-pegua rupive.",
-  "ctaLabel": "Emoñepyrũ ko'ág̃a",
   "ctaHeading": "¿Ndesako'ípa ejerure hag̃ua nde título?",
   "ctaNote": "Ko formulario ojepe'a Google Forms-pe, tendayke pyahúpe.",
   "ctaButton": "Emoñepyrũ jerure",
@@ -26,5 +24,22 @@
       "title": "Título ñeme'ẽ",
       "description": "Oñemboaje rire, romomarandúta ndéve ára ha tenda oñeme'ẽtaha nde diploma universitario."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Solicitar título"
+  },
+  "newTab": "(se abre en una pestaña nueva)",
+  "states": {
+    "unavailable": "No pudimos cargar el enlace del formulario. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }
