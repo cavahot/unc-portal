@@ -18,6 +18,7 @@ import * as migration_20261106_224807_transparencia_institucional_01 from './202
 import * as migration_20261107_172140_tramites_01_coleccion from './20261107_172140_tramites_01_coleccion';
 import * as migration_20261107_182316_calendario_01_coleccion from './20261107_182316_calendario_01_coleccion';
 import * as migration_20261107_191247_legales_01_globals from './20261107_191247_legales_01_globals';
+import * as migration_20261107_200336_legalizaciones_01_global from './20261107_200336_legalizaciones_01_global';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20261107_191247_legales_01_globals.up,
     down: migration_20261107_191247_legales_01_globals.down,
-    name: '20261107_191247_legales_01_globals'
+    name: '20261107_191247_legales_01_globals',
+  },
+  {
+    up: migration_20261107_200336_legalizaciones_01_global.up,
+    down: migration_20261107_200336_legalizaciones_01_global.down,
+    name: '20261107_200336_legalizaciones_01_global'
   },
 ];

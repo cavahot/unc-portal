@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
       'calendario-academico',
       'politica-privacidad',
       'declaracion-accesibilidad',
+      'legalizaciones',
       'tramites',
       'convenios',
       'tribunal-miembros',

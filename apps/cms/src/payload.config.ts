@@ -11,6 +11,7 @@ import sharp from 'sharp'
 import { Carreras } from './collections/Carreras'
 import { PoliticaPrivacidad } from './globals/PoliticaPrivacidad'
 import { DeclaracionAccesibilidad } from './globals/DeclaracionAccesibilidad'
+import { Legalizaciones } from './globals/Legalizaciones'
 import { Tramites } from './collections/Tramites'
 import { CalendarioAcademico } from './collections/CalendarioAcademico'
 import { Facultades } from './collections/Facultades'
@@ -209,6 +210,7 @@ export default buildConfig({
     Institucional,
     PoliticaPrivacidad,
     DeclaracionAccesibilidad,
+    Legalizaciones,
   ],
 
   editor: lexicalEditor(),
