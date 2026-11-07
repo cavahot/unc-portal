@@ -115,7 +115,6 @@ const STATIC_DATA_EXCEPTIONS: Record<string, { reason: string; cmsImport?: boole
   'app/[locale]/contacto/page.tsx': { reason: 'maps/tel/mailto fijos definidos en el archivo' },
   'app/[locale]/contacto/dependencias/page.tsx': { reason: 'directorio de dependencias literal en el archivo (web/maps)' },
   'app/[locale]/mapa-sitio/page.tsx': { reason: 'mapa del sitio literal' },
-  'app/[locale]/noticias/page.tsx': { reason: 'paginación `?page=N` calculada con enteros; importa getNews pero no pone campos del CMS en href', cmsImport: true },
   'app/[locale]/page.tsx': { reason: 'accesos rápidos y transparencia literales; las noticias usan `/noticias/${slug}`', cmsImport: true },
   'components/institutional/InstitutionalAccessSection.tsx': { reason: 'accesos institucionales literales' },
   'components/layout/LocaleSwitcher.tsx': { reason: '`pathname` del router de next-intl, no del CMS' },
