@@ -163,7 +163,8 @@ export interface CarreraItem {
 const NUMERO = /^\d{1,4}\/\d{2,4}$/
 const DEFAULT_ORDEN = 99
 
-function mapResoluciones(row: Raw): Resolucion[] {
+/** Resoluciones CONES de una fila de `carreras` (número con forma válida; enlace solo si el host está permitido). */
+export function mapResoluciones(row: Raw): Resolucion[] {
   const out: Resolucion[] = []
   if (Array.isArray(row.resoluciones)) {
     for (const r of row.resoluciones) {
