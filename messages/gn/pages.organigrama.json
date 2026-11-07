@@ -3,10 +3,13 @@
     "title": "Organigrama Institucional — Universidad Nacional de Concepción",
     "description": "Universidad Nacional de Concepción rehegua ñemombyky: Consejo Superior, Rectorado, Vicerrectorados, Secretarías ha Mbo'ehao pytyvõrãnguéra."
   },
-  "breadcrumb": { "home": "Ñepyrũ", "page": "Organigrama" },
+  "breadcrumb": {
+    "home": "Ñepyrũ",
+    "page": "Tembiapo renda ñemohenda ra'ãnga"
+  },
   "hero": {
     "label": "Mbo'ehao ñemombyky",
-    "title": "Organigrama Institucional",
+    "title": "Tembiapo renda ñemohenda ra'ãnga",
     "description": "Universidad Nacional de Concepción rehegua mba'apohára ñemombyky"
   },
   "chart": {

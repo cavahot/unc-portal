@@ -59,7 +59,7 @@ export function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
   }));
 }
 
-const fallbackMenuData: MenuItem[] = [
+export const fallbackMenuData: MenuItem[] = [
   {
     label: 'Inicio',
     href: '/',
@@ -68,6 +68,8 @@ const fallbackMenuData: MenuItem[] = [
     label: 'Institucional',
     href: '/institucional',
     children: [
+      // INST-01: «Quiénes somos» lleva a esa sección del hub /institucional (id `inst-sobre`).
+      { label: 'Quiénes somos', href: '/institucional#inst-sobre' },
       { label: 'Historia', href: '/historia' },
       { label: 'Misión, Visión y Valores', href: '/mision-vision-y-valores' },
       { label: 'Marco Legal', href: '/marco-legal' },

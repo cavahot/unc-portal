@@ -4,11 +4,11 @@
   "homeAriaLabel": "Eho Universidad Nacional de Concepción ñepyrũme",
   "logoAlt": "Universidad Nacional de Concepción logotipo oficial",
   "brandName": "Universidad Nacional",
-  "brandLocation": "de Concepción",
-  "brandTagline": "Marcando el Norte",
+  "brandLocation": "Concepción pegua",
+  "brandTagline": "Yvate gotyo ñanderape",
   "searchAriaLabel": "Eheka portal institucional-pe",
   "searchTitle": "Eheka",
-  "aulaVirtual": "Aula Virtual",
+  "aulaVirtual": "Mbo'esyry ñandutípe",
   "aulaVirtualAriaLabel": "Eike Aula Virtual-pe. Ojepe'a tendayke pyahúpe",
   "intranet": "Intranet",
   "intranetAriaLabel": "Eike Intranet-pe. Ojepe'a tendayke pyahúpe",
@@ -26,22 +26,22 @@
     "noticias": "Marandu",
     "preguntasFrecuentes": "Porandu py'ỹiguáva",
     "contactos": "Ñomongeta",
-    "academia": "Academia"
+    "academia": "Ñemoarandu"
   },
   "institutional": {
     "historia": "Tembiasakue",
     "misionVisionValores": "Misión, Visión ha Valores",
-    "marcoLegal": "Marco Legal",
-    "organigrama": "Organigrama",
+    "marcoLegal": "Léi ñemopyenda",
+    "organigrama": "Tembiapo renda ñemohenda ra'ãnga",
     "autoridades": "Mburuvichakuéra",
     "transparenciaLey5189": "Transparencia Léi 5.189",
     "transparenciaLey5282": "Transparencia Léi 5.282",
     "informacionPublica": "Tetãgua marandu",
-    "tramites": "Trámites",
+    "tramites": "Trámite-kuéra",
     "titulos": "Título-kuéra",
     "solicitarTitulo": "Ejerure título",
-    "legalizaciones": "Legalizaciones",
-    "convenios": "Convenios",
+    "legalizaciones": "Kuatia ñemoneĩ",
+    "convenios": "Ñe'ẽme'ẽnguéra",
     "tribunalElectoral": "Tribunal Electoral"
   },
   "facultades": {
@@ -51,19 +51,19 @@
     "cienciasExactas": "Facultad de Ciencias Exactas y Tecnológicas",
     "humanidades": "Facultad de Humanidades y Ciencias de la Educación",
     "cienciasEconomicas": "Facultad de Ciencias Económicas y Administrativas",
-    "arancelesRectorado": "Aranceles Rectorado"
+    "arancelesRectorado": "Rectorado repykue"
   },
   "contactos": {
     "porDependencia": "Ñomongeta dependencia rupi"
   },
   "academia": {
     "direccionAcademica": "Dirección General Académica",
-    "aseguramientoCalidad": "Aseguramiento de la Calidad",
+    "aseguramientoCalidad": "Calidad ñemoañete",
     "investigacion": "Jeporekapy",
-    "extensionVinculacion": "Extensión y Vinculación",
-    "bienestarInstitucional": "Bienestar Institucional",
-    "revistasAcademicas": "Revistas Académicas",
-    "bibliotecaDigital": "Biblioteca Digital"
+    "extensionVinculacion": "Ñemoasãi ha joaju",
+    "bienestarInstitucional": "Tembiapo renda tekoporã",
+    "revistasAcademicas": "Ñemoarandu kuatiahaipyre",
+    "bibliotecaDigital": "Aranduka renda ñandutípe"
   },
   "footer": {
     "institutional": {
@@ -72,21 +72,21 @@
       "autoridades": "Mburuvichakuéra",
       "historia": "Tembiasakue",
       "misionVision": "Misión ha Visión",
-      "organigrama": "Organigrama"
+      "organigrama": "Tembiapo renda ñemohenda ra'ãnga"
     },
     "services": {
       "title": "Pytyvõkuéra",
       "ariaLabel": "Temimoĩmby pytyvõkuéra",
       "carreras": "Carrera-kuéra",
-      "tramites": "Trámites",
-      "transparencia": "Transparencia",
+      "tramites": "Trámite-kuéra",
+      "transparencia": "Tembiapo hesakãva",
       "contacto": "Ñomongeta"
     },
     "academia": {
-      "title": "Academia",
+      "title": "Ñemoarandu",
       "ariaLabel": "Joaju académico-kuéra",
       "investigacion": "Jeporekapy",
-      "extension": "Extensión universitaria",
+      "extension": "Mbo'ehaovusu rembiapo ñemoasãi",
       "noticias": "Marandu",
       "calendarioAcademico": "Arapapaha académico"
     }

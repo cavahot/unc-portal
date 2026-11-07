@@ -34,10 +34,20 @@ describe('Ley de creación de la UNC', () => {
     expect(offenders).toEqual([])
   })
 
-  it('la descripción institucional cita la Ley N° 3.201/2007 en los cuatro idiomas', () => {
+  // INST-01: el texto «Quiénes somos» ya no está en los mensajes: vive en el global `institucional` del CMS. La semilla
+  // es el estado inicial que se carga en el CMS, así que debe citar la ley correcta (el contenido ya publicado en el CMS
+  // lo corrige el editor desde el panel).
+  it('la semilla del global institucional cita la Ley N° 3.201/2007 y ningún número equivocado', async () => {
+    const { INSTITUCIONAL_SEED } = await import('../../scripts/seed-institucional.mjs')
+    const texto = JSON.stringify(INSTITUCIONAL_SEED)
+    expect(texto).toMatch(/3[.,]201\/2007/)
+    expect(texto).not.toMatch(WRONG)
+  })
+
+  it('los mensajes de la página institucional no repiten la ley (el contenido vive en el CMS)', () => {
     for (const locale of ['es', 'en', 'pt-BR', 'gn']) {
       const raw = readFileSync(path.join(ROOT, 'messages', locale, 'pages.institucional.json'), 'utf8')
-      expect(raw, locale).toMatch(/3[.,]201\/2007/)
+      expect(raw, locale).not.toMatch(WRONG)
     }
   })
 })
