@@ -1,59 +1,60 @@
 {
   "meta": {
-    "title": "Legalizações | Universidad Nacional de Concepción",
-    "description": "Serviço de autenticação e legalização de documentos universitários da UNC: diplomas, certificados de estudos e históricos."
+    "title": "Legalizações | UNC",
+    "description": "Documentos a apresentar, taxa, prazo e etapas para legalizar na Universidade Nacional de Concepción títulos, históricos escolares e processos de ingresso."
   },
-  "breadcrumb": { "home": "Início", "page": "Legalizações" },
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Legalizações"
+  },
   "hero": {
-    "label": "Secretaria Geral",
-    "title": "Legalizações",
-    "description": "Autenticação e legalização de documentos universitários"
+    "titulo": "Legalização de documentos",
+    "updated": "Última atualização: {date}"
   },
-  "services": {
-    "label": "Serviços disponíveis",
-    "title": "Quais documentos posso legalizar?",
-    "description": "A Secretaria Geral da UNC oferece o serviço de legalização dos documentos emitidos pela instituição para uso oficial em nível nacional e internacional.",
-    "s1": {
-      "eyebrow": "Serviço 01",
-      "title": "Legalização de Diplomas",
-      "description": "Autenticação oficial do diploma de graduação ou pós-graduação emitido pela UNC, para uso perante órgãos públicos, empregadores e instituições do exterior.",
-      "req1": "Diploma original emitido pela UNC",
-      "req2": "Documento de identidade vigente do titular",
-      "req3": "Fotocópia simples do diploma",
-      "req4": "Formulário de solicitação completo",
-      "req5": "Comprovante de pagamento da taxa vigente",
-      "reqsLabel": "Requisitos"
-    },
-    "s2": {
-      "eyebrow": "Serviço 02",
-      "title": "Legalização de Certificados de Estudos",
-      "description": "Certificação oficial do histórico acadêmico do estudante, com carimbo e assinatura da autoridade competente da instituição.",
-      "req1": "Certificado de estudos original emitido pela UNC",
-      "req2": "Documento de identidade vigente",
-      "req3": "Formulário de solicitação completo",
-      "req4": "Comprovante de pagamento da taxa vigente",
-      "reqsLabel": "Requisitos"
-    },
-    "s3": {
-      "eyebrow": "Serviço 03",
-      "title": "Legalização de Histórico Escolar",
-      "description": "Autenticação do histórico analítico de notas para uso em processos de admissão, bolsas ou reconhecimento de estudos no exterior.",
-      "req1": "Histórico analítico original",
-      "req2": "Documento de identidade vigente",
-      "req3": "Formulário de solicitação completo",
-      "req4": "Comprovante de pagamento da taxa vigente",
-      "reqsLabel": "Requisitos"
-    },
-    "requestBtn": "Solicitar"
+  "facts": {
+    "label": "Dados do procedimento",
+    "plazo": "Prazo",
+    "plazoValue": "{min} a {max} horas úteis",
+    "arancel": "Taxa",
+    "arancelPending": "Consulte o valor vigente",
+    "arancelLink": "Ver as taxas da Reitoria",
+    "unidad": "Unidade responsável"
   },
-  "contact": {
-    "label": "Contato",
-    "title": "Informações de atendimento",
-    "description": "Para consultas sobre o processo de legalização de documentos, dirija-se pessoalmente a:",
-    "office": "Secretaria Geral",
-    "address1": "Rectorado — Universidad Nacional de Concepción",
-    "address2": "Concepción, Paraguai",
-    "hours": "Horário de atendimento: segunda a sexta-feira, das 07:00 às 13:00.",
-    "link": "Ver todos os procedimentos"
+  "index": {
+    "label": "Escolha a categoria do seu documento",
+    "countOne": "1 requisito",
+    "countOther": "{count} requisitos"
+  },
+  "documents": {
+    "title": "Documentos a apresentar",
+    "intro": "Os requisitos mudam conforme a categoria do documento que você quer legalizar. Identifique o seu caso e reúna esses documentos antes de comparecer.",
+    "listLabel": "Requisitos: {tipo}"
+  },
+  "procedure": {
+    "title": "Passo a passo",
+    "intro": "A legalização é processada em {unidad}.",
+    "total": "Tempo total estimado: {min} a {max} horas úteis.",
+    "step": "Etapa {number}",
+    "responsible": "Responsável"
+  },
+  "states": {
+    "empty": "As informações deste trâmite ainda não foram publicadas. Volte a consultar mais tarde ou entre em contato com a Universidade.",
+    "unavailable": "Não foi possível carregar as informações deste trâmite agora. Tente novamente em alguns minutos.",
+    "retry": "Tentar novamente",
+    "contact": "Ir para Contato"
+  },
+  "error": {
+    "title": "Não foi possível exibir esta página",
+    "body": "Ocorreu um problema ao carregar as informações do procedimento. Você pode tentar novamente ou entrar em contato com a Universidade.",
+    "retry": "Tentar novamente",
+    "contact": "Ir para Contato",
+    "reference": "Referência para o suporte: {digest}"
+  },
+  "cta": {
+    "title": "Precisa registrar um título?",
+    "description": "O registro de títulos é outro trâmite. Você também pode consultar as taxas da Reitoria ou escrever para nós.",
+    "titulos": "Ver registro de títulos",
+    "aranceles": "Taxas da Reitoria",
+    "contacto": "Contato"
   }
 }
