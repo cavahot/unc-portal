@@ -45,7 +45,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
     'pages.tramites',
     'pages.facultades.odontologia',
     'pages.facultades.medicina',
-    'pages.facultades.agrarias',
     'pages.facultades.humanidades',
     'pages.facultades.ciencias-exactas',
     'pages.facultades.ciencias-economicas',

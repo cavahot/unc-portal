@@ -27,6 +27,10 @@ describe('registro de fuentes', () => {
     expect(isOfficialUrl('https://www.datos.gov.py.evil.example/x')).toBe(false)
     expect(isOfficialUrl('http://www.datos.gov.py/x')).toBe(false)
   })
+  it('registra diccionario ALG y corpus oficial como fuentes manuales, no como importación automática', () => {
+    expect(GLOSARIO_SOURCES.find((s) => s.id === 'spl-diccionario-alg')).toMatchObject({ kind: 'page', parser: null })
+    expect(GLOSARIO_SOURCES.find((s) => s.id === 'spl-coreguapa')).toMatchObject({ kind: 'page', parser: null })
+  })
   it('un registro con host ajeno falla cerrado (negativo)', () => {
     expect(() => loadSources([{ ...SPL, id: 'malo', url: 'https://github.com/pln-fing-udelar/jojajovai' }])).toThrow(/no oficial/)
     expect(() => loadSources([SPL, SPL])).toThrow(/repetido/)

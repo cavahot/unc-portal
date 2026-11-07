@@ -40,7 +40,7 @@ export default async function StatsBlock({
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {items.map((item) => (
-            <StatCounter key={item.label} value={item.value} label={item.label} />
+            <StatCounter key={item.label} value={item.value} label={item.label} locale={locale} />
           ))}
         </div>
       </div>

@@ -76,6 +76,7 @@
     "aranceles": {
       "title": "Aranceles",
       "intro": "Montos en guaraníes publicados por la facultad.",
+      "limite": "La página no indica la vigencia de estos montos; confirme el valor con la facultad antes de pagar.",
       "concept": "Concepto",
       "amount": "Monto",
       "currencyName": "guaraníes",
