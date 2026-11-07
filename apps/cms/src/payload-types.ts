@@ -75,6 +75,7 @@ export interface Config {
     tesis: Tesis;
     facultades: Facultade;
     carreras: Carrera;
+    'calendario-academico': CalendarioAcademico;
     tramites: Tramite;
     'marco-legal': MarcoLegal;
     'linea-tiempo': LineaTiempo;
@@ -107,6 +108,7 @@ export interface Config {
     tesis: TesisSelect<false> | TesisSelect<true>;
     facultades: FacultadesSelect<false> | FacultadesSelect<true>;
     carreras: CarrerasSelect<false> | CarrerasSelect<true>;
+    'calendario-academico': CalendarioAcademicoSelect<false> | CalendarioAcademicoSelect<true>;
     tramites: TramitesSelect<false> | TramitesSelect<true>;
     'marco-legal': MarcoLegalSelect<false> | MarcoLegalSelect<true>;
     'linea-tiempo': LineaTiempoSelect<false> | LineaTiempoSelect<true>;
@@ -675,6 +677,54 @@ export interface Carrera {
    */
   sede?: string | null;
   activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Fechas de semestres y mesas de exámenes que se publican en /calendario-academico. El portal muestra el año más reciente.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "calendario-academico".
+ */
+export interface CalendarioAcademico {
+  id: number;
+  /**
+   * Ej.: 1er Semestre 2026.
+   */
+  titulo: string;
+  tipo: 'semestre' | 'examenes';
+  /**
+   * El portal muestra solo el año más reciente entre los bloques activos.
+   */
+  anio: number;
+  /**
+   * Número menor = aparece primero.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultarlo del portal sin borrarlo.
+   */
+  activa?: boolean | null;
+  /**
+   * Una fila por fecha o período, en el orden en que se muestran.
+   */
+  entradas: {
+    /**
+     * Obligatorio en un semestre. En las mesas de exámenes se deja vacío: el período sale de las fechas.
+     */
+    evento?:
+      ('inicio-clases' | 'inscripcion-tardia' | 'parciales-1' | 'parciales-2' | 'cierre-semestre' | 'otro') | null;
+    /**
+     * Solo si el evento es «Otro». Solo se publica en español.
+     */
+    descripcion?: string | null;
+    inicio: string;
+    /**
+     * Opcional. Déjela vacía si es un solo día.
+     */
+    fin?: string | null;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -1550,6 +1600,10 @@ export interface PayloadLockedDocument {
         value: number | Carrera;
       } | null)
     | ({
+        relationTo: 'calendario-academico';
+        value: number | CalendarioAcademico;
+      } | null)
+    | ({
         relationTo: 'tramites';
         value: number | Tramite;
       } | null)
@@ -1951,6 +2005,28 @@ export interface CarrerasSelect<T extends boolean = true> {
   tipo?: T;
   sede?: T;
   activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "calendario-academico_select".
+ */
+export interface CalendarioAcademicoSelect<T extends boolean = true> {
+  titulo?: T;
+  tipo?: T;
+  anio?: T;
+  orden?: T;
+  activa?: T;
+  entradas?:
+    | T
+    | {
+        evento?: T;
+        descripcion?: T;
+        inicio?: T;
+        fin?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

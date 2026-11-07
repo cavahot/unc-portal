@@ -16,7 +16,7 @@ Spec: `docs/specs/portal/CALENDARIO.md`.
 
 ## Tasks
 
-- [ ] T0 Spec y documento ODD (S1-S7) · inline · commit:
+- [x] T0 Spec y documento ODD (S1-S7) · inline · commit: 79ee6d5
 - [ ] T1 Colección + migración idempotente + etiqueta de revalidación + tipos (S1-S3) · inline · commit:
 - [ ] T2 Modelo, formato de fechas y consulta con estados (S4) · inline · commit:
 - [ ] T3 Siembra desde las fechas actuales (S5) · inline · commit:
@@ -32,3 +32,4 @@ Ruta: todas inline (unidades dependientes; sin razón de escritor delegado). Ris
 - L3 Evidencia: las fechas (2 semestres de 5 eventos y 4 mesas de exámenes finales) están en `messages/{es,gn,en,pt-BR}/pages.calendario-academico.json`; la página las lee con `t()` y solo pinta. No existe colección de calendario en el CMS, ni documento fuente en `docs/` u `odd/`; entraron en el commit masivo `c6c5d6b` (2026-08-07). Los textos dicen «fechas orientativas»: **no se pueden verificar como oficiales**.
 - L4 Decisión de diseño: fechas estructuradas (inicio y fin) y no texto libre, para formatearlas con el idioma de la persona (antes cada idioma las traducía a mano) y poder ordenarlas y validarlas. Los cinco eventos estándar de un semestre son un `select` con etiquetas traducibles en los mensajes; `otro` admite una descripción libre (solo en español: el CMS no tiene localización). Las mesas de exámenes no llevan etiqueta: el período sale de las fechas («diciembre de 2025»).
 - L5 Riesgo conocido y no resuelto por mí: la siembra publica las fechas actuales tal cual; alguien de Secretaría Académica debe confirmarlas antes de publicar.
+- L6 Evidencia T1: migración generada con `migrate:create` (primer intento falló por mi comentario: `messages/*/` contiene `*/` y cerró el JSDoc de `validators.ts`; reescrito). Vuelta idempotente y con el `prevId` del snapshot corregido a mano (salió en cero, igual que en trámites; ahora una prueba lo comprueba). Verificada en una base sintética (`unc_calendario_chk`, ya borrada): (0) la cadena completa sube desde vacío; (1) reaplicar el SQL de `up` no da errores; (2) `down` con una fila se rechaza y deja tabla y fila; (3) `down` sin filas borra tablas, enumerados y columna de bloqueo sin tocar `tramites`; (4) volver a subir funciona. 17 pruebas nuevas (migración, colección, acceso, revalidación y tres validadores); suite completa: 155 archivos, 2577 pruebas; `tsc` del CMS sin errores. RED: las pruebas se escribieron junto con el código.

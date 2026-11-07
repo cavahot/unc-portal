@@ -10,6 +10,7 @@ import sharp from 'sharp'
 
 import { Carreras } from './collections/Carreras'
 import { Tramites } from './collections/Tramites'
+import { CalendarioAcademico } from './collections/CalendarioAcademico'
 import { Facultades } from './collections/Facultades'
 import { MarcoLegal } from './collections/MarcoLegal'
 // LT-01: hitos de la línea de tiempo de /historia (docs/specs/portal/LINEA-TIEMPO.md).
@@ -163,6 +164,7 @@ export default buildConfig({
     Tesis,
     Facultades,
     Carreras,
+    CalendarioAcademico,
     Tramites,
     MarcoLegal,
     LineaTiempo,

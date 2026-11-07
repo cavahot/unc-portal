@@ -189,3 +189,48 @@ export function validateRedUrl(value: unknown, options?: { siblingData?: { red?:
   if (!hosts) return 'Elija primero la red social.'
   return validateAllowedHostUrl(value, { allowedHosts: hosts, required: true })
 }
+
+// ── INST-07: calendario académico (spec docs/specs/portal/CALENDARIO.md §2.1) ────────────────────────────────────
+
+/** Eventos estándar de un semestre. Las etiquetas traducidas viven en el archivo `pages.calendario-academico.json` de cada idioma. */
+export const CALENDARIO_EVENTOS = ['inicio-clases', 'inscripcion-tardia', 'parciales-1', 'parciales-2', 'cierre-semestre', 'otro'] as const
+
+/** Convierte un valor de fecha (texto ISO o `Date`) a milisegundos, o `null` si no es una fecha válida. */
+function toTime(value: unknown): number | null {
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value.getTime()
+  if (typeof value !== 'string' || !value.trim()) return null
+  const t = Date.parse(value)
+  return Number.isNaN(t) ? null : t
+}
+
+/**
+ * INST-07: `fin` es opcional, pero si existe debe ser una fecha válida y no anterior a `inicio` (misma fila).
+ * Amenaza que evita: publicar un período con las fechas invertidas («28 mar – 16 mar»), que confundiría a estudiantes.
+ * Límite: compara instantes; el campo es de día completo, así que no hay horas que considerar.
+ */
+export function validateCalendarioFin(value: unknown, options?: { siblingData?: { inicio?: unknown } }): true | string {
+  if (value === undefined || value === null || value === '') return true
+  const fin = toTime(value)
+  if (fin === null) return 'La fecha de fin no es válida.'
+  const inicio = toTime(options?.siblingData?.inicio)
+  if (inicio !== null && fin < inicio) return 'La fecha de fin no puede ser anterior a la de inicio.'
+  return true
+}
+
+/**
+ * INST-07: el evento es obligatorio en un semestre (las mesas de exámenes no llevan evento: el período sale de las fechas).
+ * `options.data.tipo` es el tipo del bloque. Límite: no impide cargar un evento en un bloque de exámenes (el portal lo ignora).
+ */
+export function validateCalendarioEvento(value: unknown, options?: { data?: { tipo?: unknown } }): true | string {
+  if (options?.data?.tipo !== 'semestre') return true
+  if (typeof value !== 'string' || !(CALENDARIO_EVENTOS as readonly string[]).includes(value)) return 'Elija un evento para cada fila de un semestre.'
+  return true
+}
+
+/** INST-07: la descripción es obligatoria cuando el evento es «otro» (misma fila) y se limita a 160 caracteres. */
+export function validateCalendarioDescripcion(value: unknown, options?: { siblingData?: { evento?: unknown } }): true | string {
+  const texto = typeof value === 'string' ? value.trim() : ''
+  if (texto.length > 160) return 'La descripción admite hasta 160 caracteres.'
+  if (options?.siblingData?.evento === 'otro' && !texto) return 'Escriba la descripción del evento.'
+  return true
+}
