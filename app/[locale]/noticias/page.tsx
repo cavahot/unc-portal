@@ -12,6 +12,7 @@ import NewsList, { type NewsListItem } from '@/components/news/NewsList'
 import NewsPagination from '@/components/news/NewsPagination'
 import { getT, getF } from '@/lib/i18n/server'
 import { getNews } from '@/lib/cms/queries/news'
+import { toNewsListItem } from '@/lib/cms/newsListItem'
 import { CmsError } from '@/lib/cms/errors'
 
 // ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible»/«vacío» cuando el build
@@ -73,21 +74,12 @@ export default async function NoticiasPage({
 
   if (!unavailable && docs.length === 0 && page > 1 && totalDocs > 0) notFound()
 
-  const items: NewsListItem[] = docs.map((n) => {
-    const image = n.featuredImage?.url || n.featuredImageUrl || null
-    return {
-      id: n.id,
-      slug: n.slug,
-      title: n.title,
-      summary: n.summary,
-      imageUrl: image,
-      imageAlt: n.featuredImage?.alt || null,
-      blurDataURL: (n.featuredImage as { blurDataURL?: string } | null | undefined)?.blurDataURL ?? null,
+  const items: NewsListItem[] = docs.map((n) =>
+    toNewsListItem(n, {
       categoryText: n.category ? (KNOWN_CATEGORIES.has(n.category) ? t(`categories.${n.category}`) : n.category) : null,
-      dateTime: n.publishedAt ?? null,
       dateText: n.publishedAt ? format.dateTime(new Date(n.publishedAt), { year: 'numeric', month: 'long', day: 'numeric' }) : null,
-    }
-  })
+    }),
+  )
 
   return (
     <>

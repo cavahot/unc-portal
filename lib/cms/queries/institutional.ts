@@ -1,5 +1,4 @@
 import { cmsFetch } from '../client'
-import { PayloadResponse } from '../types'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -18,38 +17,6 @@ export interface EnlacesExternos {
   formularioTitulos?: string | null
   urlPortalInfoPublica?: string | null
   contenidoInfoPublica?: any | null
-}
-
-export interface Tesis {
-  id: number
-  titulo: string
-  autor: string
-  anio: number
-  resumen?: string | null
-  /** Nombre de la facultad, extraído de la relación con `depth=1`. */
-  facultad: string
-  urlPdf: string
-}
-
-/** Raw shape returned by the Payload API before population is extracted. */
-interface TesisRaw {
-  id: number
-  titulo: string
-  autor: string
-  anio: number
-  resumen?: string | null
-  facultad?: { nombre: string; slug: string } | number | null
-  urlPdf: string
-}
-
-function normalizeTesis(raw: TesisRaw): Tesis {
-  return {
-    ...raw,
-    facultad:
-      typeof raw.facultad === 'object' && raw.facultad !== null
-        ? raw.facultad.nombre
-        : String(raw.facultad ?? ''),
-  }
 }
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
@@ -78,43 +45,3 @@ export async function getEnlacesExternos(): Promise<EnlacesExternos> {
   }
 }
 
-const DEMO_TESIS: Tesis[] = []
-
-export async function getTesisByQuery(
-  q: string,
-  options: { limit?: number } = {},
-): Promise<PayloadResponse<Tesis>> {
-  const limit = options.limit ?? 12
-  try {
-    const params = new URLSearchParams()
-    params.append('where[or][0][titulo][like]', q)
-    params.append('where[or][1][autor][like]', q)
-    params.append('sort', '-anio')
-    params.append('limit', String(limit))
-
-    const raw = await cmsFetch<PayloadResponse<TesisRaw>>(
-      `/tesis?${params.toString()}&depth=1`,
-      { tags: ['tesis'] },
-    )
-    return { ...raw, docs: raw.docs.map(normalizeTesis) }
-  } catch {
-    const lower = q.toLowerCase()
-    const docs = DEMO_TESIS.filter(
-      (t) =>
-        t.titulo.toLowerCase().includes(lower) ||
-        t.autor.toLowerCase().includes(lower),
-    )
-    return {
-      docs,
-      totalDocs: docs.length,
-      limit,
-      totalPages: 1,
-      page: 1,
-      pagingCounter: 1,
-      hasNextPage: false,
-      hasPrevPage: false,
-      prevPage: null,
-      nextPage: null,
-    }
-  }
-}
