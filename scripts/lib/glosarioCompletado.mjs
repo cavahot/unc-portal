@@ -11,6 +11,10 @@ import { normalizeGn } from './glosarioGn.mjs'
 
 /** Fuente común de las etiquetas de interfaz: junto con terminoEs forma la clave única de la colección. */
 export const FUENTE_UI = 'Propuesta UNC · etiquetas de interfaz (documento de trabajo 2026-11-06)'
+/** Fuente de los términos de la sección 1 que estaban «Sin evidencia» y ahora tienen una propuesta. */
+export const FUENTE_TERMINOS = 'Propuesta UNC · términos del glosario (documento de trabajo 2026-11-06)'
+/** «Sin evidencia» describe una fila sin traducción; deja de ser cierto cuando se completa. */
+const SIN_EVIDENCIA = /^Sin evidencia/i
 const MAX_NOTA = 2000
 // Máximos de la colección (apps/cms/src/collections/GlosarioGuarani.ts): el CMS rechaza lo que los excede.
 const MAX_ES = 200
@@ -116,6 +120,8 @@ export function planCompletado({ parsed, existing }) {
           terminoGn: gn,
           // X = sin evidencia. Con una propuesta documentada pasa a C; A/B ya indican respaldo y no se bajan.
           confianza: target.confianza && target.confianza !== 'X' ? target.confianza : 'C',
+          // Una fuente real (diccionario, corpus) se conserva; «Sin evidencia» ya no describe la fila.
+          ...(SIN_EVIDENCIA.test(target.fuente ?? '') ? { fuente: FUENTE_TERMINOS } : {}),
           nota: composeNota({ previa: (target.nota ?? '').trim(), apoyo: r.apoyo, criterio: r.criterio }),
         },
       })
@@ -145,6 +151,12 @@ export function planCompletado({ parsed, existing }) {
     if (!fix || row.fuente !== FUENTE_UI || row.revisado || row.estadoRevision === 'aprobado') continue
     if (normalizeGn(row.terminoGn ?? '') === normalizeGn(fix)) continue
     actions.push({ op: 'update', id: row.id, data: { terminoEs: row.terminoEs, terminoGn: normalizeGn(fix) } })
+  }
+  // Reparación: filas que este documento ya completó pero quedaron con «Sin evidencia» (se reconocen por el aviso en la nota).
+  for (const row of existing) {
+    if (!SIN_EVIDENCIA.test(row.fuente ?? '') || !(row.terminoGn ?? '').trim()) continue
+    if (row.revisado || row.estadoRevision === 'aprobado' || !(row.nota ?? '').includes(AVISO)) continue
+    actions.push({ op: 'update', id: row.id, data: { terminoEs: row.terminoEs, fuente: FUENTE_TERMINOS } })
   }
   return { actions, skipped }
 }
