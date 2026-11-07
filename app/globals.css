@@ -1207,10 +1207,102 @@
   }
 }
 
-/* LT-01: aparición de cada hito de la línea de tiempo de /historia al entrar en pantalla.
-   Mejora progresiva solo con CSS: sin soporte de `animation-timeline`, sin JS o con
-   `prefers-reduced-motion: reduce`, los hitos se ven desde el inicio (no repite RDD-MLG-05).
-   Solo opacidad y desplazamiento; en impresión no hay animación. */
+/* PROTO-SONNER-01: estilo de prueba alineado a la paleta UNC; se reutiliza solo en el playground. */
+.sonner-demo-button {
+  min-height: 3rem;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease, border-color 160ms ease;
+}
+
+.sonner-demo-button:active { transform: scale(0.97); }
+
+.sonner-unc-toast {
+  border: 1px solid #CDE8D2 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 18px 45px rgba(0, 71, 0, 0.14) !important;
+}
+
+.sonner-unc-title { color: #09231D !important; font-weight: 800 !important; }
+.sonner-unc-description { color: #56655F !important; }
+.sonner-unc-action { background: #004700 !important; color: #FFFFFF !important; border-radius: 999px !important; }
+.sonner-unc-cancel { background: #E9F4EA !important; color: #004700 !important; border-radius: 999px !important; }
+
+/* RES-01: textura y composición visual exclusiva de Investigación. */
+.research-hero-grid {
+  background-image: linear-gradient(rgba(184, 255, 184, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(184, 255, 184, 0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .research-hero-grid { mask-image: none; }
+}
+
+
+.marco-legal-hero-grid {
+  background-image: linear-gradient(rgba(184, 255, 184, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(184, 255, 184, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 88%);
+}
+
+.legal-tier {
+  position: relative;
+  transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1), background-color 180ms ease, border-color 180ms ease;
+}
+
+.legal-tier::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -0.45rem;
+  width: 1px;
+  height: 0.45rem;
+  background: rgba(184, 255, 184, 0.32);
+}
+
+.legal-tier:first-child::before { display: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .legal-tier:hover {
+    transform: translateY(-3px);
+    border-color: rgba(184, 255, 184, 0.35);
+    background-color: rgba(138, 255, 138, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .legal-tier-in {
+    animation: legal-tier-in 520ms cubic-bezier(0.23, 1, 0.32, 1) both;
+    animation-delay: var(--legal-tier-delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legal-tier,
+  .legal-tier-in { animation: none; transition: none; }
+}
+
+@keyframes legal-tier-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+@keyframes campus-map-sheen {
+  from { transform: translateX(-75%); }
+  to { transform: translateX(75%); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .campus-map-sheen {
+    animation: campus-map-sheen 7s ease-in-out infinite alternate;
+  }
+}
+
+
 @keyframes lt-rise {
   from {
     opacity: 0;

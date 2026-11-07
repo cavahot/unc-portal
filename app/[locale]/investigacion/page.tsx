@@ -1,62 +1,39 @@
+// I18N-GN-INV-01: la página consume el catálogo por locale y no conserva textos de contenido en código.
+// Qué hace: construye la vista con messages/{locale}/pages.investigacion.json.
+// Amenaza: evita que /gn muestre contenido español por literales hardcodeados y permite actualizar el catálogo de forma trazable.
 import type { Metadata } from 'next'
+import { getLocale, getTranslations } from 'next-intl/server'
 import AcademicSectionPage from '@/components/pages/AcademicSectionPage'
 
-export const metadata: Metadata = {
-  title: 'Investigación',
-  description:
-    'La Universidad Nacional de Concepción promueve la investigación científica y tecnológica orientada al desarrollo regional y al avance del conocimiento.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pages.investigacion.meta')
+  return { title: t('title'), description: t('description') }
 }
 
-const AREAS = [
-  {
-    icon: '🔬',
-    title: 'Investigación científica',
-    description:
-      'Proyectos de investigación básica y aplicada en ciencias naturales, exactas, de la salud y humanidades, financiados por fondos nacionales e internacionales.',
-  },
-  {
-    icon: '🏛️',
-    title: 'Instituto de Investigación',
-    description:
-      'Centro interdisciplinario que coordina la agenda investigativa de la universidad, articula grupos y gestiona publicaciones científicas.',
-  },
-  {
-    icon: '🌍',
-    title: 'Cooperación internacional',
-    description:
-      'Redes de investigación con universidades de América Latina, Europa y organismos internacionales para el intercambio académico y científico.',
-  },
-  {
-    icon: '📊',
-    title: 'Transferencia tecnológica',
-    description:
-      'Articulación con el sector público y privado para la aplicación de resultados de investigación en soluciones concretas para la sociedad.',
-  },
-  {
-    icon: '📰',
-    title: 'Publicaciones científicas',
-    description:
-      'Revistas académicas y repositorios institucionales que difunden el conocimiento generado por investigadores de la UNC.',
-  },
-  {
-    icon: '🎓',
-    title: 'Formación de investigadores',
-    description:
-      'Programas de postgrado y semilleros de investigación para estudiantes avanzados que deseen desarrollar una carrera científica.',
-  },
-]
+export default async function InvestigacionPage() {
+  const locale = await getLocale()
+  const t = await getTranslations('pages.investigacion')
+  const areaKeys = ['a1', 'a2', 'a3', 'a4'] as const
+  const icons = ['🔬', '🌱', '⚙️', '🏛️']
 
-export default function InvestigacionPage() {
+  const areas = areaKeys.map((key, index) => ({
+    icon: icons[index],
+    title: t(`areas.${key}.area`),
+    // Las tres líneas del catálogo se mantienen juntas para no perder información editorial.
+    description: [t(`areas.${key}.p1`), t(`areas.${key}.p2`), t(`areas.${key}.p3`)].join(' · '),
+  }))
+
   return (
     <AcademicSectionPage
-      title="Investigación"
-      label="Academia · Investigación"
-      description="La UNC impulsa la producción de conocimiento científico comprometido con el desarrollo sostenible del norte paraguayo y la mejora de la calidad de vida de sus comunidades."
-      breadcrumb={[{ label: 'Academia', href: '#' }]}
-      areas={AREAS}
-      areasTitle="Líneas de trabajo"
+      title={t('hero.title')}
+      label={t('hero.label')}
+      description={t('hero.description')}
+      breadcrumb={[{ label: t('breadcrumb'), href: `/${locale}` }]}
+      areas={areas}
+      areasTitle={t('lines.title')}
       contactEmail="secgral@unc.edu.py"
-      contactLabel="¿Interesado en proyectos de investigación?"
+      contactLabel={t('cta.title')}
+      visualVariant="research"
     />
   )
 }

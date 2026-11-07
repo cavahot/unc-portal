@@ -1,10 +1,10 @@
 {
   "hero": {
-    "tagline": "Marcando el Norte",
+    "tagline": "Yvate gotyo ñanderape",
     "imageAlt": "Universidad Nacional de Concepción jeikeha guasu",
     "title1": "Peguahẽ porãite",
     "title2": "Universidad Nacional",
-    "title3": "de Concepción",
+    "title3": "Concepción pegua",
     "description": "Tetã mbo'ehaovusu ombojoajúva identidad, excelencia académica, jeporekapy, innovación ha compromiso Paraguái yvate jekakuaa sostenible ndive.",
     "ctaExplore": "Eheka carrera-kuéra",
     "ctaAbout": "Eikuaa UNC",
@@ -24,7 +24,7 @@
       "carreras": {
         "title": "Carrera-kuéra",
         "description": "Ehecha oferta académica facultad ha nivel rupi.",
-        "label": "Oferta académica"
+        "label": "Ñemoarandu oñekuave'ẽva"
       },
       "calendario": {
         "title": "Arapapaha Académico",
@@ -34,10 +34,10 @@
       "titulos": {
         "title": "Título-kuéra ha Legalizaciones",
         "description": "Marandu trámite ha kuatia académico rehegua.",
-        "label": "Gestiones académicas"
+        "label": "Ñemoarandu rehegua trámite"
       },
       "aulaVirtual": {
-        "title": "Aula Virtual",
+        "title": "Mbo'esyry ñandutípe",
         "description": "Eike plataforma institucional ñehekombo'e reheguápe.",
         "label": "Plataforma tekombo'e rehegua"
       }
@@ -64,8 +64,8 @@
     }
   },
   "transparency": {
-    "sectionLabel": "Gestión pública",
-    "title": "Transparencia activa",
+    "sectionLabel": "Tetã rembiapo ñemboguata",
+    "title": "Tembiapo marandu ñemoherakuã",
     "description": "Eike Universidad Nacional de Concepción kuatia, normativa ha tetãgua marandúpe.",
     "viewPortal": "Ehecha portal de transparencia",
     "items": {
@@ -89,16 +89,16 @@
     "externalHint": "ojepe'a tendayke pyahúpe",
     "editionsTitle": "Edición ojehechakuaa hag̃uépe UNC",
     "distinction": {
-      "premio": "Premio",
+      "premio": "Jopói",
       "premioCategoria": "Premio categoría rupi",
-      "mencionEspecial": "Mención especial",
+      "mencionEspecial": "Ñemomba'e hechapyrãva",
       "reconocimiento": "Jehechakuaa"
     },
     "accreditations": {
       "title": "Acreditación-kuéra",
       "body": "Agencia Nacional de Evaluación y Acreditación de la Educación Superior (ANEAES)",
       "model": {
-        "modeloNacional": "Modelo Nacional",
+        "modeloNacional": "Tetã modelo",
         "arcuSur": "ARCU-SUR"
       },
       "organism": {

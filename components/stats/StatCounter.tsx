@@ -1,11 +1,11 @@
 'use client'
 
-import { useFormatter } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
 export interface StatCounterProps {
   value: number
   label: string
+  locale: string
   prefix?: string
   suffix?: string
 }
@@ -27,10 +27,17 @@ function easeOutQuart(t: number): number {
  * Límite: con movimiento reducido o sin IntersectionObserver la cuenta no se anima y queda el valor final; si la
  * cifra ya está visible al montar, se verá un instante el reinicio a 0 antes de contar.
  */
-export default function StatCounter({ value, label, prefix, suffix }: StatCounterProps) {
+function getStableNumberLocale(locale: string): string {
+  // Guaraní (`gn`) no tiene un patrón numérico consistente entre ICU de Node y Chromium.
+  // Se fija el formato paraguayo para que SSR y cliente produzcan exactamente el mismo separador.
+  return locale === 'gn' ? 'es-PY' : locale
+}
+
+export default function StatCounter({ value, label, locale, prefix, suffix }: StatCounterProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [count, setCount] = useState(value)
-  const format = useFormatter()
+  // El locale canónico viaja desde el servidor para impedir que el navegador elija otro formato regional.
+  const numberFormatter = new Intl.NumberFormat(getStableNumberLocale(locale))
 
   useEffect(() => {
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -69,7 +76,7 @@ export default function StatCounter({ value, label, prefix, suffix }: StatCounte
       className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-8 text-center"
     >
       <span className="text-4xl font-bold tabular-nums text-[#5CFF5C] sm:text-5xl">
-        {prefix}{format.number(count)}{suffix}
+        {prefix}{numberFormatter.format(count)}{suffix}
       </span>
       <span className="mt-2 text-sm text-white/50">{label}</span>
     </div>

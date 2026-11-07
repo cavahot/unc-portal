@@ -1,62 +1,64 @@
 {
   "meta": {
-    "title": "Mbo'ehao Títuloguéra — Universidad Nacional de Concepción",
-    "description": "Marandu UNC omboguejy hag̃ua títuloguéra rehegua: ñemomba'e, mba'e oñeikotevẽva, aravo ha título ñemomba'e."
+    "title": "Inscripción de títulos | UNC",
+    "description": "Kuatiakuéra regueruva'erã, tepykue, arapaha ha tembiapo rape oñemboheraguapy hag̃ua Universidad Nacional de Concepción-pe ambue mbo'ehaovusu ome'ẽva título."
   },
   "breadcrumb": {
-    "home": "Ñepyrũ",
-    "page": "Títuloguéra"
+    "inicio": "Ñepyrũ",
+    "nombre": "Título ñemboheraguapy"
   },
   "hero": {
-    "label": "Secretaría General",
-    "title": "Mbo'ehao Títuloguéra",
-    "description": "Marandu UNC omboguejy hag̃ua títuloguéra rehegua"
+    "titulo": "Título ñemboheraguapy",
+    "updated": "Ñembopyahu paha: {date}"
   },
-  "infoCards": {
-    "c1": {
-      "label": "Aravo rehegua",
-      "value": "Eñemomba'e ventanillape",
-      "note": "Aravo ojejavy haguéicha ko'ẽ rupi ha mba'apohára rehe."
-    },
-    "c2": {
-      "label": "Kuatia oñeikotevẽva",
-      "value": "Ver lista completa",
-      "note": "Ñembokatú kuatia, CI ojurujáva, mbo'e kuatia ha viru rombo'u kuatia."
-    },
-    "c3": {
-      "label": "Arancel ojurujáva",
-      "value": "Eñemomba'e ventanillape",
-      "note": "Viru oñemboarandúva ára jave. Eheka aravo ojurujáva ventanillape."
-    }
+  "facts": {
+    "label": "Trámite rehegua marandu",
+    "plazo": "Arapaha",
+    "plazoValue": "{min} guive {max} aravo tembiapo rehegua peve",
+    "arancel": "Tepy",
+    "arancelPending": "Eporandu mboýpa ojehepyme'ẽ ko'ág̃a",
+    "arancelLink": "Ehecha Rectorado repykue",
+    "unidad": "Tembiapo renda oñangarekóva"
   },
-  "graduates": {
-    "label": "Graduadonguérape",
-    "title": "Título ñemomba'e",
-    "description": "Mba'éicha oñemomba'e título mbo'ehávarã ojejavy haguéicha oñemboguapyva mbo'e rehe.",
-    "s1": {
-      "title": "Ejerurea mbo'e ñeikotevẽva",
-      "description": "Ejerurea omboguapyva asignatura, mbo'e práctica ha tembiapo ipahague oñeikotevẽva rembo'epyrã rehe."
-    },
-    "s2": {
-      "title": "Emoñe'ẽ ñemomba'e",
-      "description": "Emboguapy título ñemomba'e rehegua Dirección General Académica-pe ha eñomongeta kuatia oñeikotevẽva ndive."
-    },
-    "s3": {
-      "title": "Arancel rembo'u",
-      "description": "Emoĩ viru oñeikotevẽva ojurujáva haguéicha. Eñemomba'e ventanillape viru mbaretépe."
-    },
-    "s4": {
-      "title": "Título emono'õ",
-      "description": "Oñemboavyva ñemomba'e rire, emoñe'ẽ Secretaría General-pe título emono'õ hag̃ua."
-    }
+  "index": {
+    "label": "Eiporavo título ome'ẽva mbo'ehaovusu reko",
+    "countOne": "1 mba'e oñeikotevẽva",
+    "countOther": "{count} mba'e oñeikotevẽva"
   },
-  "graduatesCta": "Emoñepyrũ título ñemomba'e",
-  "recognition": {
-    "label": "Trámite ykeguáva",
-    "title": "Título ñemomba'e tetã ambuégui",
-    "body1": "Tetã ambuégui oú título ñemomba'e, térã UNC título ñemomba'e tetã ha tetã ambuépe oĩva rehegua, oñemba'apo Dirección General Académica ndive Ministerio de Educación y Ciencias reheve.",
-    "body2": "Ko tembiapo ñepyrũ hag̃ua, oñeikotevẽ kuatia teete apostillado térã legalizado haguéicha, ha español ñe'ẽme traducción oficial mba'eve ambuépe oĩva reheve.",
-    "linkLegalizaciones": "Ehecha legalizaciones",
-    "linkTramites": "Ehecha trámite opavave"
+  "documents": {
+    "title": "Mba'e kuatiápa regueruva'erã",
+    "intro": "Mba'e oñeikotevẽva oñemoambue título ome'ẽva mbo'ehaovusu reko rupi. Ehechakuaa nde káso ha embyaty umi kuatia reho mboyve.",
+    "listLabel": "Mba'e oñeikotevẽva: {tipo}"
+  },
+  "cones": {
+    "link": "Ehecha trámite-kuéra CONES-pe",
+    "newTab": "(ojepe'a peteĩ tendayke pyahúpe)"
+  },
+  "procedure": {
+    "title": "Peteĩteĩ tembiapo",
+    "intro": "Ñemboheraguapy ojejapo {unidad}-pe.",
+    "total": "Tembiapo pukukue oñeimo'ãva: {min} guive {max} aravo tembiapo rehegua peve.",
+    "step": "Tembiapo {number}",
+    "responsible": "Oñangarekóva tembiapóre"
+  },
+  "states": {
+    "empty": "Ne'ĩra oñemoherakuã ko trámite rehegua marandu. Ehecha jey upe rire térã eñe'ẽ Mbo'ehaovusu ndive.",
+    "unavailable": "Ndaikatúi romoinge ko trámite rehegua marandu ko'ág̃a. Eñeha'ã jey sapy'ami rire.",
+    "retry": "Eñeha'ã jey",
+    "contact": "Eho Ñe'ẽmondópe"
+  },
+  "error": {
+    "title": "Ndaikatúi rohechauka ko togue",
+    "body": "Oiko peteĩ apañuãi oñemoingévo trámite rehegua marandu. Ikatu reñeha'ã jey térã reñe'ẽ Mbo'ehaovusu ndive.",
+    "retry": "Eñeha'ã jey",
+    "contact": "Eho Ñe'ẽmondópe",
+    "reference": "Pytyvõhára rehegua marandu: {digest}"
+  },
+  "cta": {
+    "title": "¿Reikotevẽpa título ñemoneĩ?",
+    "description": "Kuatia ñemoneĩ ha'e ambue trámite. Ikatu avei rehecha Rectorado repykue térã rehai oréve.",
+    "legalizaciones": "Ehecha kuatia ñemoneĩ",
+    "aranceles": "Rectorado repykue",
+    "contacto": "Ñe'ẽmondo"
   }
 }

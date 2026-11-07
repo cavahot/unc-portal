@@ -131,9 +131,11 @@ export default async function MarcoLegalPage({
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300] pb-24 pt-28 text-white sm:pt-32 lg:pb-28 print:bg-none print:pb-4 print:pt-0 print:text-black">
-        <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-0 h-[28rem] w-[28rem] rounded-full bg-[#001A00]/40 blur-3xl print:hidden" />
-        <div aria-hidden="true" className="pointer-events-none absolute -right-24 bottom-0 h-[22rem] w-[22rem] rounded-full bg-[#5CFF5C]/10 blur-3xl print:hidden" />
+      <section className="marco-legal-hero relative isolate min-h-[620px] overflow-hidden bg-gradient-to-br from-[#003B05] via-[#005C08] to-[#10A51A] pb-24 pt-28 text-white sm:pt-32 lg:pb-28 print:min-h-0 print:bg-none print:pb-4 print:pt-0 print:text-black">
+        {/* MLG-02: textura de retícula y halos para profundidad sin imágenes externas. */}
+        <div aria-hidden="true" className="marco-legal-hero-grid pointer-events-none absolute inset-0 opacity-40 print:hidden" />
+        <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-[-12rem] h-[36rem] w-[36rem] rounded-full bg-[#001A00]/45 blur-3xl print:hidden" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-32 bottom-[-10rem] h-[30rem] w-[30rem] rounded-full bg-[#8AFF8A]/15 blur-3xl print:hidden" />
 
         <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
           <nav aria-label="Breadcrumb" className="mb-8 print:hidden">
@@ -159,7 +161,7 @@ export default async function MarcoLegalPage({
               <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#B8FFB8] print:text-black">
                 {t('hero.eyebrow')}
               </span>
-              <h1 className="mt-4 text-balance font-serif text-5xl font-bold leading-[0.95] tracking-[-0.035em] text-white sm:text-6xl lg:text-7xl print:text-black">
+              <h1 className="mt-4 max-w-2xl text-balance font-serif text-[clamp(3.75rem,7vw,6.5rem)] font-bold leading-[0.88] tracking-[-0.055em] text-white print:text-black">
                 {t('hero.title')}
               </h1>
               <p className="mt-6 max-w-xl text-base leading-7 text-white/85 sm:text-lg sm:leading-8 print:text-black">
@@ -176,7 +178,7 @@ export default async function MarcoLegalPage({
                 </p>
                 <ol className="flex flex-col items-center gap-1.5">
                   {tiers.map((tier) => (
-                    <li key={tier.tier} className={`${TIER_WIDTH[tier.index]} ${TIER_TONE[tier.index]} rounded-xl px-4 py-2.5`}>
+                    <li key={tier.tier} className={`legal-tier legal-tier-in ${TIER_WIDTH[tier.index]} ${TIER_TONE[tier.index]} rounded-2xl border border-white/10 px-4 py-3 shadow-[0_16px_35px_-24px_rgba(0,0,0,0.8)] backdrop-blur-sm`} style={{ ['--legal-tier-delay' as string]: `${tier.index * 70}ms` }}>
                       <p className="text-center text-[0.8125rem] text-white/75">{t(`hierarchy.tiers.${tier.tier}`)}</p>
                       <ul className="mt-1.5 flex flex-wrap justify-center gap-1.5">
                         {tier.categories.map((c) => (

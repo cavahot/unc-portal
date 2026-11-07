@@ -1,13 +1,52 @@
 {
-  "pageTitle": "Informação Pública — UNC",
-  "pageDescription": "Acesso à informação pública da Universidade Nacional de Concepción conforme a Lei N° 5.282/2014.",
-  "portalLabel": "Portal UNC",
-  "heading": "Acesso à Informação Pública",
-  "description": "A Universidade Nacional de Concepción garante o acesso à informação pública em cumprimento à Lei N° 5.282/2014 de livre acesso cidadão.",
-  "fallbackParagraph1": "Toda pessoa tem direito a solicitar e receber informações completas, verdadeiras, adequadas e oportunas de qualquer instituição do Estado Paraguaio, conforme estabelecido na Lei N° 5.282/2014.",
-  "fallbackParagraph2": "Para exercer esse direito, você pode utilizar o Portal Unificado de Acesso à Informação Pública do Governo Nacional, disponível no link a seguir.",
-  "ctaLabel": "Acesso externo",
-  "ctaHeading": "Portal de Informação Pública do Paraguai",
-  "ctaNote": "Você será redirecionado ao portal oficial do Governo Nacional.",
-  "ctaButton": "Portal de Acesso à Informação Pública"
+  "meta": {
+    "title": "Acesso à informação pública — UNC",
+    "description": "Como solicitar informação pública à Universidad Nacional de Concepción conforme a Lei N° 5282/2014."
+  },
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Informação pública"
+  },
+  "hero": {
+    "titulo": "Acesso à informação pública"
+  },
+  "index": {
+    "label": "Escolha como solicitar"
+  },
+  "vias": {
+    "title": "Formas de solicitação",
+    "intro": "A lei permite apresentar o pedido de diferentes formas. Escolha a que for mais conveniente.",
+    "recommended": "Forma mais rápida"
+  },
+  "datos": {
+    "title": "Dados que deve fornecer",
+    "intro": "Tenha estes dados à mão ao apresentar o pedido, por qualquer das formas.",
+    "listLabel": "Dados exigidos para o pedido"
+  },
+  "correo": {
+    "title": "Pedidos por escrito",
+    "body": "Pode enviar o seu pedido escrito para o e-mail do escritório de acesso à informação."
+  },
+  "portal": {
+    "redirect": "O portal oficial do Governo da República do Paraguai será aberto.",
+    "open": "Ir ao portal oficial"
+  },
+  "newTab": "(abre em uma nova aba)",
+  "related": {
+    "text": "Procura documentos publicados pela universidade?",
+    "link": "Ver a página de Transparência"
+  },
+  "states": {
+    "unavailable": "Não foi possível carregar estas informações agora. Tente novamente em alguns minutos ou entre em contato conosco.",
+    "empty": "Estas informações ainda não estão disponíveis. Para solicitar informação pública, entre em contato com a universidade.",
+    "retry": "Tentar novamente",
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
+  }
 }
