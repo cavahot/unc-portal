@@ -6,7 +6,7 @@
 // o diéresis que rompen la búsqueda. Límite: sin red ni Payload; el CMS se prueba aparte.
 import { describe, expect, it } from 'vitest'
 // @ts-expect-error módulo .mjs sin tipos
-import { parseCompletado, planCompletado, FUENTE_UI } from '../../scripts/lib/glosarioCompletado.mjs'
+import { parseCompletado, planCompletado, FUENTE_UI, FUENTE_TERMINOS } from '../../scripts/lib/glosarioCompletado.mjs'
 
 const MD = `
 # 1. Términos del glosario sin traducción (3)
@@ -150,5 +150,26 @@ describe('GLO-GN-02 plan de carga', () => {
     expect(out.actions[0]).toMatchObject({ op: 'update', id: 7, data: { terminoGn: 'Terarysýi jeporavo rehegua ñemoneĩ' } })
     // Si alguien ya la revisó, no se toca.
     expect(planCompletado({ parsed: { sec1: [], sec2: [], sec3: [], sec4: [] }, existing: [{ ...row, revisado: true }] }).actions).toHaveLength(0)
+  })
+  it('al completar una fila cuya fuente decía «Sin evidencia», la fuente pasa a reflejar la propuesta', () => {
+    const rows = [{ id: 21, terminoEs: 'comparación', terminoGn: '', fuente: 'Sin evidencia', confianza: 'X', revisado: false, estadoRevision: 'pendiente' }]
+    const [a] = planCompletado({ parsed, existing: rows }).actions
+    expect(a.data.fuente).toBe(FUENTE_TERMINOS)
+  })
+
+  it('NO cambia una fuente real (diccionario, corpus) al completar la fila', () => {
+    const rows = [{ id: 22, terminoEs: 'comparación', terminoGn: '', fuente: 'Jojajovai (subset spl)', confianza: 'X', revisado: false, estadoRevision: 'pendiente' }]
+    const [a] = planCompletado({ parsed, existing: rows }).actions
+    expect(a.data).not.toHaveProperty('fuente')
+  })
+
+  it('repara filas ya completadas que quedaron con «Sin evidencia», solo si siguen sin revisar y llevan el aviso de propuesta', () => {
+    const stale = { id: 31, terminoEs: 'escala', terminoGn: "Ñeha'ãha", fuente: 'Sin evidencia', revisado: false, estadoRevision: 'pendiente', nota: 'Propuesta de trabajo pendiente de revisión lingüística; no es una equivalencia oficial ni está aprobada.' }
+    const empty = { parsed: { sec1: [], sec2: [], sec3: [], sec4: [] } }
+    const out = planCompletado({ ...empty, existing: [stale] })
+    expect(out.actions).toEqual([{ op: 'update', id: 31, data: { terminoEs: 'escala', fuente: FUENTE_TERMINOS } }])
+    // Una fila con «Sin evidencia» pero sin el aviso (no la cargó este documento) no se toca.
+    expect(planCompletado({ ...empty, existing: [{ ...stale, nota: 'otra' }] }).actions).toHaveLength(0)
+    expect(planCompletado({ ...empty, existing: [{ ...stale, revisado: true }] }).actions).toHaveLength(0)
   })
 })

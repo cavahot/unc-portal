@@ -1,13 +1,52 @@
 {
-  "pageTitle": "Marandu opavavépe g̃uarã — UNC",
-  "pageDescription": "Universidad Nacional de Concepción marandu opavavépe g̃uarã jeike, Léi N° 5.282/2014 he'iháicha.",
-  "portalLabel": "UNC ñanduti renda",
-  "heading": "Jeike marandu opavavépe g̃uarã",
-  "description": "Universidad Nacional de Concepción omoañete jeike marandu opavavépe g̃uarã, omoañetévo Léi N° 5.282/2014 opavave tetãyguápe g̃uarã jeike sãso rehegua.",
-  "fallbackParagraph1": "Mayma tapicha ikatu ojerure ha ohupyty marandu oĩmbáva, añeteguáva, hekopete ha hi'araitépe oimeraẽ Paraguái remimoĩmbygui, Léi N° 5.282/2014 he'iháicha.",
-  "fallbackParagraph2": "Eiporu hag̃ua ko nde derecho, ikatu reike Tetã Ruvicha marandu opavavépe g̃uarã jeikeha peteĩchaguápe, oĩva ko joajuhápe.",
-  "ctaLabel": "Jeike okáguio",
-  "ctaHeading": "Paraguái marandu opavavépe g̃uarã jeikeha",
-  "ctaNote": "Rehóta Tetã Ruvicha ñanduti renda teépe.",
-  "ctaButton": "Marandu opavavépe g̃uarã jeikeha"
+  "meta": {
+    "title": "Acceso a la información pública — UNC",
+    "description": "Cómo solicitar información pública a la Universidad Nacional de Concepción según la Ley N° 5282/2014."
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Información pública"
+  },
+  "hero": {
+    "titulo": "Acceso a la información pública"
+  },
+  "index": {
+    "label": "Elija cómo solicitar"
+  },
+  "vias": {
+    "title": "Vías de solicitud",
+    "intro": "La ley permite presentar la solicitud por distintas vías. Elija la que le resulte más conveniente.",
+    "recommended": "Vía más rápida"
+  },
+  "datos": {
+    "title": "Datos que debe aportar",
+    "intro": "Tenga estos datos a mano al presentar la solicitud, por cualquiera de las vías.",
+    "listLabel": "Datos requeridos para la solicitud"
+  },
+  "correo": {
+    "title": "Solicitudes por escrito",
+    "body": "Puede enviar su solicitud escrita al correo de la oficina de acceso a la información."
+  },
+  "portal": {
+    "redirect": "Se abrirá el portal oficial del Gobierno de la República del Paraguay.",
+    "open": "Ir al portal oficial"
+  },
+  "newTab": "(se abre en una pestaña nueva)",
+  "related": {
+    "text": "¿Busca documentos publicados por la universidad?",
+    "link": "Ver la página de Transparencia"
+  },
+  "states": {
+    "unavailable": "No pudimos cargar esta información en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "empty": "Esta información todavía no está disponible. Para solicitar información pública, comuníquese con la universidad.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
 }

@@ -14,6 +14,7 @@ import * as migration_20261026_200000_trans_02_items from './20261026_200000_tra
 import * as migration_20261026_220000_dep_sec_01_users_reset_password from './20261026_220000_dep_sec_01_users_reset_password';
 import * as migration_20261105_120000_glo_gn_02_approval_workflow from './20261105_120000_glo_gn_02_approval_workflow';
 import * as migration_20261106_012429_titulos_01_inscripcion from './20261106_012429_titulos_01_inscripcion';
+import * as migration_20261106_224807_transparencia_institucional_01 from './20261106_224807_transparencia_institucional_01';
 
 export const migrations = [
   {
@@ -94,6 +95,11 @@ export const migrations = [
   {
     up: migration_20261106_012429_titulos_01_inscripcion.up,
     down: migration_20261106_012429_titulos_01_inscripcion.down,
-    name: '20261106_012429_titulos_01_inscripcion'
+    name: '20261106_012429_titulos_01_inscripcion',
+  },
+  {
+    up: migration_20261106_224807_transparencia_institucional_01.up,
+    down: migration_20261106_224807_transparencia_institucional_01.down,
+    name: '20261106_224807_transparencia_institucional_01'
   },
 ];
