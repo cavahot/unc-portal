@@ -1,24 +1,68 @@
-import Image from 'next/image'
+// INST-10: /buscar en el sistema visual del portal, con la búsqueda como acción principal y estados por fuente.
+// Busca en dos fuentes del CMS: noticias (`getNewsByQuery`) y tesis (`getTesisCatalogo`). Cada fuente tiene su estado
+// (`ok`, `empty` o `unavailable`): antes una caída de una fuente se mostraba como «sin resultados», o la búsqueda caía a
+// la pantalla de error global. Ahora: con las dos caídas, «no disponible» con reintentar; si cae una, se muestran los
+// resultados de la otra con un aviso en línea; si ninguna tiene resultados, «sin resultados» con salidas útiles. Nunca un modal.
+// Sin término se listan las noticias más recientes (como antes) y no se consultan las tesis.
+// El término se normaliza (recortado, sin espacios repetidos, hasta 100 caracteres) antes de llegar al CMS, y el formulario
+// conserva el idioma (antes su `action` era `/buscar` y al buscar se perdía el prefijo).
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import PageHero from '@/components/pages/PageHero'
+import StatePanel from '@/components/pages/StatePanel'
+import NewsList from '@/components/news/NewsList'
+import TesisLista from '@/components/biblioteca/TesisLista'
 import { getT, getF } from '@/lib/i18n/server'
-import { Link } from '@/i18n/navigation'
 import { getNews, getNewsByQuery } from '@/lib/cms/queries/news'
-import { getTesisByQuery } from '@/lib/cms/queries/institutional'
-import ThesisCard from '@/components/institutional/ThesisCard'
-import { UNC_BLUR } from '@/lib/imagePlaceholder'
+import { getTesisCatalogo, type TesisCatalogoResult } from '@/lib/cms/queries/tesisCatalogo'
+import { MAX_QUERY_LENGTH, normalizeQuery } from '@/lib/cms/tesisCatalogo'
+import { toNewsListItem } from '@/lib/cms/newsListItem'
+import { CmsError } from '@/lib/cms/errors'
+import { safeHref } from '@/lib/security/safeUrl' // DEP-15: todo href pasa por la allowlist, aunque aquí se arme con el idioma
+
+// La página depende de `?q=`, así que se renderiza por petición; las consultas conservan sus etiquetas.
+const LIMIT = 12
+const enlace =
+  'rounded-sm text-sm font-bold text-[#004700] underline underline-offset-4 hover:text-[#005c00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00A300]'
+const KNOWN_CATEGORIES = new Set(['institucional', 'academica', 'investigacion', 'extension', 'eventos', 'comunicados'])
+
+/** Aviso en línea de una fuente caída cuando la otra sí tiene resultados (no sustituye a los resultados). */
+function AvisoFuente({ message }: { message: string }) {
+  return (
+    <p role="status" className="rounded-2xl border border-[#D7E0DB] bg-white px-6 py-4 text-base leading-7 text-[#3E4A45]">
+      {message}
+    </p>
+  )
+}
+
+type NewsResult = { status: 'ok'; docs: Awaited<ReturnType<typeof getNews>>['docs']; total: number } | { status: 'empty' } | { status: 'unavailable' }
+
+/** Noticias de la búsqueda (o las más recientes sin término); nunca lanza: una caída es `unavailable`, no «sin resultados». */
+async function leerNoticias(q: string): Promise<NewsResult> {
+  try {
+    const res = q ? await getNewsByQuery(q, { limit: LIMIT }) : await getNews({ limit: LIMIT })
+    const docs = res.docs ?? []
+    if (docs.length === 0) return { status: 'empty' }
+    return { status: 'ok', docs, total: typeof res.totalDocs === 'number' && res.totalDocs >= docs.length ? res.totalDocs : docs.length }
+  } catch (error) {
+    // Se registra el NOMBRE del error y el código HTTP, nunca el mensaje (puede llevar la URL del CMS).
+    const detail = error instanceof CmsError ? `${error.name} ${error.status}` : error instanceof Error ? error.name : 'desconocido'
+    console.error(`[BUSCAR] No se pudo leer las noticias del CMS (${detail}); se muestra el aviso de no disponible.`)
+    return { status: 'unavailable' }
+  }
+}
 
 export async function generateMetadata({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>
-  searchParams: Promise<{ q?: string }>
-}) {
-  const [{ locale }, { q }] = await Promise.all([params, searchParams])
+  searchParams: Promise<{ q?: string | string[] }>
+}): Promise<Metadata> {
+  const [{ locale }, sp] = await Promise.all([params, searchParams])
   const t = await getT(locale, 'pages.buscar')
-  return {
-    title: q ? t('pageTitleQuery', { q }) : t('pageTitleDefault'),
-    description: t('pageDescription'),
-  }
+  const q = normalizeQuery(sp.q)
+  return { title: q ? t('pageTitleQuery', { q }) : t('pageTitleDefault'), description: t('pageDescription') }
 }
 
 export default async function BuscarPage({
@@ -26,179 +70,138 @@ export default async function BuscarPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string | string[] }>
 }) {
-  const [{ locale }, { q }] = await Promise.all([params, searchParams])
-  const [t, format] = await Promise.all([
-    getT(locale, 'pages.buscar'),
-    getF(locale),
+  const [{ locale }, sp] = await Promise.all([params, searchParams])
+  const [t, tn, format] = await Promise.all([getT(locale, 'pages.buscar'), getT(locale, 'pages.noticias'), getF(locale)])
+  const prefix = locale === 'es' ? '' : `${locale}/`
+  const q = normalizeQuery(sp.q)
+  const here = `/${prefix}buscar`
+
+  const [noticias, tesis]: [NewsResult, TesisCatalogoResult | null] = await Promise.all([
+    leerNoticias(q),
+    q ? getTesisCatalogo({ q, limit: LIMIT }) : Promise.resolve(null),
   ])
 
-  const query = q?.trim() ?? ''
-
-  const [{ docs: results }, { docs: tesisResults }] = await Promise.all([
-    query ? getNewsByQuery(query, { limit: 12 }) : getNews({ limit: 12 }),
-    query ? getTesisByQuery(query, { limit: 12 }) : Promise.resolve({ docs: [] as Awaited<ReturnType<typeof getTesisByQuery>>['docs'] }),
-  ])
+  const items =
+    noticias.status === 'ok'
+      ? noticias.docs.map((n) =>
+          toNewsListItem(n, {
+            categoryText: n.category ? (KNOWN_CATEGORIES.has(n.category) ? tn(`categories.${n.category}`) : n.category) : null,
+            dateText: n.publishedAt ? format.dateTime(new Date(n.publishedAt), { year: 'numeric', month: 'long', day: 'numeric' }) : null,
+          }),
+        )
+      : []
+  const nTesis = tesis?.status === 'ok' ? tesis.total : 0
+  const nNoticias = noticias.status === 'ok' ? noticias.total : 0
+  const noticiasCaidas = noticias.status === 'unavailable'
+  const tesisCaidas = tesis?.status === 'unavailable'
+  const todoCaido = noticiasCaidas && (!q || tesisCaidas)
+  // Sin resultados solo si ninguna fuente tiene resultados y ninguna cayó (una caída no es «sin resultados»).
+  const sinResultados = noticias.status === 'empty' && (!q || tesis?.status === 'empty')
+  const retryHref = q ? `${here}?q=${encodeURIComponent(q)}` : here
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <>
+      <PageHero
+        homeHref={`/${locale === 'es' ? '' : locale}`}
+        homeLabel={t('breadcrumb.inicio')}
+        pageName={t('breadcrumb.nombre')}
+        title={t('heading')}
+        description={t('subheading')}
+        aside={
+          // Firma de la página: la búsqueda es la acción principal y vive en la cabecera.
+          <form method="GET" action={here} role="search" className="print:hidden">
+            <label htmlFor="buscar-q" className="mb-3 block text-sm font-semibold text-white/80">
+              {t('searchLabel')}
+            </label>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                id="buscar-q"
+                type="search"
+                name="q"
+                defaultValue={q}
+                maxLength={MAX_QUERY_LENGTH}
+                placeholder={t('searchPlaceholder')}
+                className="min-h-12 flex-1 rounded-full border-2 border-transparent bg-white px-6 text-base text-[#09231D] placeholder:text-[#3E4A45]/70 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#8AFF8A]"
+              />
+              <button
+                type="submit"
+                className="min-h-12 rounded-full bg-[#8AFF8A] px-7 text-sm font-bold text-[#001A00] transition-colors hover:bg-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
+              >
+                {t('searchButton')}
+              </button>
+            </div>
+          </form>
+        }
+      />
 
-        {/* Header */}
-        <div className="mb-10">
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('portalLabel')}</p>
-          <h1 className="text-4xl font-bold text-white">
-            {query ? (
-              <>{t('headingResults')} <span className="text-[#5CFF5C]">&ldquo;{query}&rdquo;</span></>
-            ) : (
-              t('headingExplore')
-            )}
-          </h1>
-          {query && (
-            <p className="mt-2 text-white/40">
-              {results.length + tesisResults.length}{' '}
-              {results.length + tesisResults.length === 1 ? t('resultsSingular') : t('resultsPlural')}
-            </p>
+      <section className="relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem] print:mt-0 print:bg-white print:pt-2">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          {todoCaido ? (
+            // Error capturado en el diseño: aviso en línea (no un modal), accesible y con una salida.
+            <StatePanel
+              message={t('states.unavailable')}
+              retry={{ href: retryHref, label: t('states.retry') }}
+              contact={{ href: `/${prefix}contacto`, label: t('states.contact') }}
+            />
+          ) : sinResultados ? (
+            <>
+              <StatePanel
+                message={q ? `${t('states.noResults', { query: q })} ${t('states.noResultsHint')}` : t('states.empty')}
+                contact={{ href: `/${prefix}contacto`, label: t('states.contact') }}
+              />
+              {q && (
+                <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2 print:hidden">
+                  <Link href={safeHref(`/${prefix}noticias`)} className={enlace}>
+                    {t('links.news')}
+                  </Link>
+                  <Link href={safeHref(`/${prefix}biblioteca`)} className={enlace}>
+                    {t('links.library')}
+                  </Link>
+                </p>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col gap-14">
+              {/* aria-live: al buscar sin recargar el foco, el resumen se anuncia. */}
+              <h2 aria-live="polite" className="font-serif text-3xl font-bold tracking-[-0.03em] text-[#004700] sm:text-4xl">
+                {q ? t('results.query', { count: nNoticias + nTesis, q }) : t('results.latest')}
+              </h2>
+
+              {noticiasCaidas && <AvisoFuente message={t('states.newsUnavailable')} />}
+              {items.length > 0 && (
+                <section aria-labelledby="buscar-noticias">
+                  {q && (
+                    <h3 id="buscar-noticias" className="mb-6 text-xl font-semibold text-[#09231D]">
+                      {t('sections.news')} <span className="font-normal text-[#3E4A45]">({nNoticias})</span>
+                    </h3>
+                  )}
+                  <NewsList items={items} lead={false} label={t('lists.news')} />
+                </section>
+              )}
+
+              {q && tesisCaidas && <AvisoFuente message={t('states.tesisUnavailable')} />}
+              {q && tesis?.status === 'ok' && (
+                <section aria-labelledby="buscar-tesis">
+                  <h3 id="buscar-tesis" className="mb-6 text-xl font-semibold text-[#09231D]">
+                    {t('sections.tesis')} <span className="font-normal text-[#3E4A45]">({nTesis})</span>
+                  </h3>
+                  <TesisLista items={tesis.docs} labels={{ lista: t('lists.tesis'), ver: t('verTesis'), nuevaPestana: t('newTab') }} />
+                </section>
+              )}
+
+              {q && (
+                <p className="flex flex-wrap gap-x-6 gap-y-2 print:hidden">
+                  <Link href={safeHref(here)} className={enlace}>
+                    {t('links.clear')}
+                  </Link>
+                </p>
+              )}
+            </div>
           )}
         </div>
-
-        {/* Search form */}
-        <form method="GET" action="/buscar" className="mb-12">
-          <div className="flex gap-2">
-            <input
-              type="search"
-              name="q"
-              defaultValue={query}
-              placeholder={t('searchPlaceholder')}
-              aria-label={t('searchAriaLabel')}
-              className="flex-1 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#5CFF5C]/50 focus:outline-none focus:ring-1 focus:ring-[#5CFF5C]/50"
-            />
-            <button
-              type="submit"
-              className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-5 py-3 text-sm font-medium text-white transition-colors hover:border-[#5CFF5C]/40 hover:bg-[#5CFF5C]/10 hover:text-[#5CFF5C]"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" strokeWidth={2} />
-                <path d="m21 21-4.35-4.35" strokeWidth={2} strokeLinecap="round" />
-              </svg>
-              {t('searchButton')}
-            </button>
-          </div>
-        </form>
-
-        {/* Results */}
-        {query && results.length === 0 && tesisResults.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
-              <svg className="h-8 w-8 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" strokeWidth={1.5} />
-                <path d="m21 21-4.35-4.35" strokeWidth={1.5} strokeLinecap="round" />
-              </svg>
-            </div>
-            <p className="text-lg font-semibold text-white/60">
-              {t('noResults', { query })}
-            </p>
-            <p className="mt-2 text-sm text-white/30">{t('noResultsHint')}</p>
-            <Link
-              href="/noticias"
-              className="mt-6 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm text-white/60 transition-all hover:border-[#5CFF5C]/40 hover:text-white"
-            >
-              {t('viewAllNews')}
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-12">
-            {/* News section */}
-            {results.length > 0 && (
-              <section aria-labelledby="resultados-noticias">
-                {query && (
-                  <h2 id="resultados-noticias" className="mb-6 text-lg font-semibold text-white/70">
-                    {t('sectionNews')}
-                    <span className="ml-2 text-sm font-normal text-white/30">({results.length})</span>
-                  </h2>
-                )}
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {results.map((n) => (
-                    <Link
-                      key={n.id}
-                      href={`/noticias/${n.slug}`}
-                      className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition-all duration-200 hover:border-[#5CFF5C]/30 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_-12px_rgba(0,200,0,0.18)]"
-                    >
-                      {n.featuredImage?.url ? (
-                        <div className="relative h-48 overflow-hidden">
-                          <Image
-                            src={n.featuredImage.url}
-                            alt={n.featuredImage.alt || n.title}
-                            fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            placeholder="blur"
-                            blurDataURL={UNC_BLUR}
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex h-48 items-center justify-center bg-[#004700]/30">
-                          <svg className="h-12 w-12 text-[#5CFF5C]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
-                              d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6" />
-                          </svg>
-                        </div>
-                      )}
-
-                      <div className="flex flex-1 flex-col p-5">
-                        {n.category && (
-                          <span className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#5CFF5C]">
-                            {n.category}
-                          </span>
-                        )}
-                        <h2 className="mb-2 line-clamp-3 text-[0.95rem] font-semibold leading-snug text-white transition-colors group-hover:text-[#8AFF8A]">
-                          {n.title}
-                        </h2>
-                        {n.summary && (
-                          <p className="mt-1 line-clamp-2 flex-1 text-sm text-white/45">{n.summary}</p>
-                        )}
-                        {n.publishedAt && (
-                          <p className="mt-4 text-xs text-white/30">
-                            {format.dateTime(new Date(n.publishedAt), {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Thesis section — only shown when a query is present */}
-            {query && tesisResults.length > 0 && (
-              <section aria-labelledby="resultados-tesis">
-                <h2 id="resultados-tesis" className="mb-6 text-lg font-semibold text-white/70">
-                  {t('sectionTesis')}
-                  <span className="ml-2 text-sm font-normal text-white/30">({tesisResults.length})</span>
-                </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {tesisResults.map((tesis) => (
-                    <ThesisCard
-                      key={tesis.id}
-                      titulo={tesis.titulo}
-                      autor={tesis.autor}
-                      anio={tesis.anio}
-                      facultad={tesis.facultad}
-                      urlPdf={tesis.urlPdf}
-                      resumen={tesis.resumen}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+      </section>
+    </>
   )
 }

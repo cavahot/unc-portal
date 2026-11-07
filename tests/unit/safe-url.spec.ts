@@ -190,7 +190,6 @@ describe('uso obligatorio de safeHref en href con datos del CMS', () => {
     'components/blocks/RichText.tsx',
     'components/faq/FAQAccordion.tsx',
     'components/institutional/DocumentCard.tsx',
-    'components/institutional/ThesisCard.tsx',
     'components/institutional/JournalCard.tsx',
     'components/institutional/ExternalCTA.tsx',
     'components/blocks/CTA.tsx',

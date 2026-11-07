@@ -2,17 +2,49 @@
   "pageTitleDefault": "Search — National University of Concepción",
   "pageTitleQuery": "Search: \"{q}\" — UNC",
   "pageDescription": "Search news and content on the National University of Concepción portal.",
-  "portalLabel": "UNC Portal",
-  "headingExplore": "Explore news",
-  "headingResults": "Results for",
-  "resultsSingular": "result",
-  "resultsPlural": "results",
-  "searchPlaceholder": "Search news...",
-  "searchAriaLabel": "Search the portal",
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Search"
+  },
+  "heading": "Search the portal",
+  "subheading": "Find news and theses from the National University of Concepción.",
+  "searchLabel": "Search news or theses",
+  "searchPlaceholder": "A word, a title or an author",
   "searchButton": "Search",
-  "noResults": "No results found for \"{query}\"",
-  "noResultsHint": "Try different keywords",
-  "viewAllNews": "View all news",
-  "sectionNews": "News",
-  "sectionTesis": "Theses"
+  "verTesis": "View thesis (PDF)",
+  "newTab": "(external document, opens in a new tab)",
+  "results": {
+    "query": "{count, plural, one {# result} other {# results}} for “{q}”",
+    "latest": "Latest news"
+  },
+  "sections": {
+    "news": "News",
+    "tesis": "Theses"
+  },
+  "lists": {
+    "news": "News",
+    "tesis": "Theses"
+  },
+  "links": {
+    "clear": "See the latest news",
+    "news": "See all news",
+    "library": "Go to the library"
+  },
+  "states": {
+    "unavailable": "We could not run the search right now. Please try again in a few minutes or contact us.",
+    "newsUnavailable": "We could not search the news right now.",
+    "tesisUnavailable": "We could not search the theses right now.",
+    "noResults": "We found no results for “{query}”.",
+    "noResultsHint": "Try different words.",
+    "empty": "No news has been published yet.",
+    "retry": "Try again",
+    "contact": "Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
+  }
 }
