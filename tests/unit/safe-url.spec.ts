@@ -114,7 +114,6 @@ const CMS_URL_FIELD = /(driveUrl|cvUrl|linkHref|urlPdf|urlOjs|ctaUrl|buttonUrl|e
 const STATIC_DATA_EXCEPTIONS: Record<string, { reason: string; cmsImport?: boolean }> = {
   'app/[locale]/contacto/page.tsx': { reason: 'maps/tel/mailto fijos definidos en el archivo' },
   'app/[locale]/contacto/dependencias/page.tsx': { reason: 'directorio de dependencias literal en el archivo (web/maps)' },
-  'app/[locale]/mapa-sitio/page.tsx': { reason: 'mapa del sitio literal' },
   'app/[locale]/page.tsx': { reason: 'accesos rápidos y transparencia literales; las noticias usan `/noticias/${slug}`', cmsImport: true },
   'components/institutional/InstitutionalAccessSection.tsx': { reason: 'accesos institucionales literales' },
   'components/layout/LocaleSwitcher.tsx': { reason: '`pathname` del router de next-intl, no del CMS' },
@@ -190,7 +189,6 @@ describe('uso obligatorio de safeHref en href con datos del CMS', () => {
     'components/blocks/RichText.tsx',
     'components/faq/FAQAccordion.tsx',
     'components/institutional/DocumentCard.tsx',
-    'components/institutional/JournalCard.tsx',
     'components/institutional/ExternalCTA.tsx',
     'components/blocks/CTA.tsx',
     'components/blocks/Hero.tsx',

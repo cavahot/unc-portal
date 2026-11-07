@@ -75,6 +75,7 @@ export interface Config {
     tesis: Tesis;
     facultades: Facultade;
     carreras: Carrera;
+    'calendario-academico': CalendarioAcademico;
     tramites: Tramite;
     'marco-legal': MarcoLegal;
     'linea-tiempo': LineaTiempo;
@@ -107,6 +108,7 @@ export interface Config {
     tesis: TesisSelect<false> | TesisSelect<true>;
     facultades: FacultadesSelect<false> | FacultadesSelect<true>;
     carreras: CarrerasSelect<false> | CarrerasSelect<true>;
+    'calendario-academico': CalendarioAcademicoSelect<false> | CalendarioAcademicoSelect<true>;
     tramites: TramitesSelect<false> | TramitesSelect<true>;
     'marco-legal': MarcoLegalSelect<false> | MarcoLegalSelect<true>;
     'linea-tiempo': LineaTiempoSelect<false> | LineaTiempoSelect<true>;
@@ -132,7 +134,8 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale:
+    ('false' | 'none' | 'null') | false | null | ('es' | 'en' | 'pt-BR' | 'gn') | ('es' | 'en' | 'pt-BR' | 'gn')[];
   globals: {
     navegacion: Navegacion;
     transparencia: Transparencia;
@@ -141,6 +144,9 @@ export interface Config {
     'titulos-inscripcion': TitulosInscripcion;
     'informacion-publica': InformacionPublica;
     institucional: Institucional;
+    'politica-privacidad': PoliticaPrivacidad;
+    'declaracion-accesibilidad': DeclaracionAccesibilidad;
+    legalizaciones: Legalizacione;
   };
   globalsSelect: {
     navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
@@ -150,8 +156,11 @@ export interface Config {
     'titulos-inscripcion': TitulosInscripcionSelect<false> | TitulosInscripcionSelect<true>;
     'informacion-publica': InformacionPublicaSelect<false> | InformacionPublicaSelect<true>;
     institucional: InstitucionalSelect<false> | InstitucionalSelect<true>;
+    'politica-privacidad': PoliticaPrivacidadSelect<false> | PoliticaPrivacidadSelect<true>;
+    'declaracion-accesibilidad': DeclaracionAccesibilidadSelect<false> | DeclaracionAccesibilidadSelect<true>;
+    legalizaciones: LegalizacionesSelect<false> | LegalizacionesSelect<true>;
   };
-  locale: null;
+  locale: 'es' | 'en' | 'pt-BR' | 'gn';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -675,6 +684,54 @@ export interface Carrera {
    */
   sede?: string | null;
   activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Fechas de semestres y mesas de exámenes que se publican en /calendario-academico. El portal muestra el año más reciente.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "calendario-academico".
+ */
+export interface CalendarioAcademico {
+  id: number;
+  /**
+   * Ej.: 1er Semestre 2026.
+   */
+  titulo: string;
+  tipo: 'semestre' | 'examenes';
+  /**
+   * El portal muestra solo el año más reciente entre los bloques activos.
+   */
+  anio: number;
+  /**
+   * Número menor = aparece primero.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultarlo del portal sin borrarlo.
+   */
+  activa?: boolean | null;
+  /**
+   * Una fila por fecha o período, en el orden en que se muestran.
+   */
+  entradas: {
+    /**
+     * Obligatorio en un semestre. En las mesas de exámenes se deja vacío: el período sale de las fechas.
+     */
+    evento?:
+      ('inicio-clases' | 'inscripcion-tardia' | 'parciales-1' | 'parciales-2' | 'cierre-semestre' | 'otro') | null;
+    /**
+     * Solo si el evento es «Otro». Solo se publica en español.
+     */
+    descripcion?: string | null;
+    inicio: string;
+    /**
+     * Opcional. Déjela vacía si es un solo día.
+     */
+    fin?: string | null;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -1550,6 +1607,10 @@ export interface PayloadLockedDocument {
         value: number | Carrera;
       } | null)
     | ({
+        relationTo: 'calendario-academico';
+        value: number | CalendarioAcademico;
+      } | null)
+    | ({
         relationTo: 'tramites';
         value: number | Tramite;
       } | null)
@@ -1951,6 +2012,28 @@ export interface CarrerasSelect<T extends boolean = true> {
   tipo?: T;
   sede?: T;
   activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "calendario-academico_select".
+ */
+export interface CalendarioAcademicoSelect<T extends boolean = true> {
+  titulo?: T;
+  tipo?: T;
+  anio?: T;
+  orden?: T;
+  activa?: T;
+  entradas?:
+    | T
+    | {
+        evento?: T;
+        descripcion?: T;
+        inicio?: T;
+        fin?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2703,6 +2786,156 @@ export interface Institucional {
   createdAt?: string | null;
 }
 /**
+ * Contenido de la página /privacidad: secciones de la política y fecha de la última actualización. Cada idioma tiene su propio texto; si falta uno, el portal muestra el español.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "politica-privacidad".
+ */
+export interface PoliticaPrivacidad {
+  id: number;
+  /**
+   * Fecha de la última revisión del texto. El portal muestra solo el mes y el año.
+   */
+  ultimaActualizacion: string;
+  /**
+   * Cada sección tiene un título y un texto. Un salto de línea doble separa párrafos.
+   */
+  secciones: {
+    /**
+     * Ejemplo: «Responsable del tratamiento».
+     */
+    titulo: string;
+    /**
+     * Texto de la sección (máximo 3000 caracteres).
+     */
+    contenido: string;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /accesibilidad: descripción, características de accesibilidad y correo para reportar problemas. Cada idioma tiene su propio texto; si falta uno, el portal muestra el español.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "declaracion-accesibilidad".
+ */
+export interface DeclaracionAccesibilidad {
+  id: number;
+  /**
+   * Texto que aparece bajo el título de la página (máximo 600 caracteres).
+   */
+  descripcion: string;
+  caracteristicas: {
+    /**
+     * Ejemplo: «Tamaño de texto ajustable».
+     */
+    titulo: string;
+    /**
+     * Qué ofrece esta característica (máximo 400 caracteres).
+     */
+    descripcion: string;
+    id?: string | null;
+  }[];
+  /**
+   * Correo al que se escribe para reportar un problema de accesibilidad.
+   */
+  correoContacto: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /legalizaciones: categorías de documentos y sus requisitos, pasos del procedimiento y plazo. El arancel se toma de «Aranceles del Rectorado».
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legalizaciones".
+ */
+export interface Legalizacione {
+  id: number;
+  /**
+   * Encabezado principal. Ejemplo: «Inscripción de títulos».
+   */
+  titulo: string;
+  /**
+   * Resumen del servicio que aparece bajo el título (máximo 400 caracteres).
+   */
+  descripcion: string;
+  /**
+   * Dependencia que tramita la inscripción. Ejemplo: «Secretaría General — UNC».
+   */
+  unidad: string;
+  /**
+   * Número entero de horas hábiles. Ejemplo: 8.
+   */
+  plazoMinHoras: number;
+  /**
+   * Número entero, igual o mayor que el mínimo. Ejemplo: 24.
+   */
+  plazoMaxHoras: number;
+  /**
+   * Elija la fila «Legalizaciones» de «Aranceles del Rectorado». El monto se toma de allí: no se escribe en esta página.
+   */
+  arancel?: (number | null) | ArancelesRectorado;
+  /**
+   * Cada categoría (títulos, certificados de estudios, expedientes de ingreso) con los documentos que debe presentar. El orden del panel es el orden en la página.
+   */
+  tipos?:
+    | {
+        /**
+         * Letras minúsculas, números y guiones. Debe ser único. Ejemplo: universidad-extranjera.
+         */
+        slug: string;
+        /**
+         * Rótulo breve sobre el título. Ejemplo: «Internacional».
+         */
+        etiqueta: string;
+        /**
+         * Ejemplo: «Universidades extranjeras».
+         */
+        titulo: string;
+        /**
+         * Ejemplo: «Títulos de grado y/o posgrado».
+         */
+        subtitulo?: string | null;
+        /**
+         * Solo estos tres colores; el portal los aplica con su propia paleta.
+         */
+        acento: 'verde' | 'azul' | 'violeta';
+        /**
+         * Un documento o condición por fila, en el orden en que se muestran.
+         */
+        requisitos?:
+          | {
+              /**
+               * Máximo 600 caracteres.
+               */
+              texto: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * En orden: el número del paso lo pone el portal según la posición en esta lista.
+   */
+  pasos?:
+    | {
+        /**
+         * Quién realiza el paso. Ejemplo: «Mesa de Entrada / Atención al Usuario».
+         */
+        responsable: string;
+        /**
+         * Qué ocurre en este paso (máximo 800 caracteres).
+         */
+        descripcion: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navegacion_select".
  */
@@ -2908,6 +3141,79 @@ export interface InstitucionalSelect<T extends boolean = true> {
     | T
     | {
         titulo?: T;
+        descripcion?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "politica-privacidad_select".
+ */
+export interface PoliticaPrivacidadSelect<T extends boolean = true> {
+  ultimaActualizacion?: T;
+  secciones?:
+    | T
+    | {
+        titulo?: T;
+        contenido?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "declaracion-accesibilidad_select".
+ */
+export interface DeclaracionAccesibilidadSelect<T extends boolean = true> {
+  descripcion?: T;
+  caracteristicas?:
+    | T
+    | {
+        titulo?: T;
+        descripcion?: T;
+        id?: T;
+      };
+  correoContacto?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legalizaciones_select".
+ */
+export interface LegalizacionesSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  unidad?: T;
+  plazoMinHoras?: T;
+  plazoMaxHoras?: T;
+  arancel?: T;
+  tipos?:
+    | T
+    | {
+        slug?: T;
+        etiqueta?: T;
+        titulo?: T;
+        subtitulo?: T;
+        acento?: T;
+        requisitos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  pasos?:
+    | T
+    | {
+        responsable?: T;
         descripcion?: T;
         id?: T;
       };

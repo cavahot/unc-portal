@@ -15,8 +15,9 @@ export interface TiposDocumentosProps {
   listLabel: (tipo: string) => string
   tipos: TituloTipo[]
   nota: { texto: string; url: string | null } | null
-  conesLink: string
-  newTab: string
+  /** Solo hace falta si hay nota con enlace (en /titulos); /legalizaciones no la tiene. */
+  conesLink?: string
+  newTab?: string
 }
 
 function IconCheck() {
