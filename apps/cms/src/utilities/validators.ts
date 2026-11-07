@@ -122,6 +122,29 @@ export function validateConesUrl(value: unknown, options: { required?: boolean }
 }
 
 /**
+ * INST-01: hosts EXACTOS del portal oficial de acceso a la información pública del Gobierno (Ley N° 5282/2014).
+ * Por qué estos: son los sitios a los que la UNC remite a quien solicita información; cualquier otro host sería
+ * un desvío (phishing con la marca de la UNC). Límite: confía en todo lo que sirva ese host.
+ */
+export const INFO_PUBLICA_HOSTS = ['informacionpublica.paraguay.gov.py'] as const
+
+/** INST-01: ruta interna del portal (empieza con una sola «/», sin esquema, sin «//» ni «\»). */
+const INTERNAL_PATH = /^\/(?!\/)[A-Za-z0-9\-._~/#?=&%]*$/
+
+/**
+ * INST-01: enlace de una acción editable: ruta interna del portal o https de host oficial permitido.
+ * Amenaza que evita: `javascript:`, `http:`, rutas protocolo-relativas (`//host`) y hosts ajenos.
+ */
+export function validateInfoPublicaUrl(value: unknown, options: { required?: boolean } = {}): true | string {
+  if (value === undefined || value === null || value === '') return options.required === false ? true : 'Indique el enlace.'
+  if (typeof value !== 'string') return 'El enlace debe ser texto.'
+  if (value.startsWith('/')) {
+    return INTERNAL_PATH.test(value) ? true : 'Ruta interna no válida. Use una ruta como /contacto.'
+  }
+  return validateAllowedHostUrl(value, { allowedHosts: INFO_PUBLICA_HOSTS, required: options.required })
+}
+
+/**
  * FAC-01: hosts EXACTOS de los documentos de resoluciones CONES de una carrera (spec FACULTADES.md §3.2).
  * Por qué estos: la página oficial de la UNC enlaza las resoluciones a Google Drive; el resto son sitios propios
  * de la universidad y de la Facultad de Odontología. La misma lista vive en lib/cms/facultad.ts (lo comprueba un test).

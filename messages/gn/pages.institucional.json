@@ -1,78 +1,36 @@
 {
   "meta": {
-    "title": "Mbo'ehao — Universidad Nacional de Concepción",
-    "description": "Eikuaa Universidad Nacional de Concepción rehegua: tembiasakue, mba'aporã, hekokatu ha tembiapo ñemombyky."
+    "title": "La Institución — Universidad Nacional de Concepción",
+    "description": "Conozca la Universidad Nacional de Concepción: historia, misión, visión, autoridades y estructura organizacional."
   },
   "breadcrumb": {
-    "home": "Óga",
-    "page": "Mbo'ehao"
+    "home": "Inicio",
+    "page": "La Institución"
   },
   "hero": {
-    "label": "Mbo'ehao ñemigua",
-    "title": "Mbo'ehao",
-    "description": "Tetã mbo'ehaovusu, oñemoĩva Paraguái yvate jekakuaa sostenible rehe, ombokatupyrýva profesional iporãitéva hetave 10 ary guive."
-  },
-  "about": {
-    "label": "Mba'éicha ore",
-    "title": "Mbo'ehao oñemoheñói",
-    "description": "Universidad Nacional de Concepción oñembokatúva Ley N° 3.201/2007 ndive ha Paraguái yvate-pegua mbo'ehao ñemiguáicha oĩva. Iñapytyvõ oñemomba'epyrã ñepyrũrã ára rehegua, hyakuã rehegua ha tembiapo rehegua.",
-    "founded": "2007",
-    "foundedLabel": "Ára oñembokatúva",
-    "location": "Concepción, PY",
-    "locationLabel": "Óga tuicha",
-    "status": "Ñemigua",
-    "statusLabel": "Mbo'ehao mba'e"
+    "title": "La Institución"
   },
   "sections": {
-    "title": "Eikuaa UNC rehegua mba'eve",
-    "description": "Eñemoheñói Universidad Nacional de Concepción rehegua mba'e.",
-    "items": {
-      "historia": {
-        "label": "Tembiasakue",
-        "title": "Mba'esyry",
-        "description": "2007 guive, UNC oikoporã oñemomba'e porã hag̃ua Paraguái yvate pegua mbo'ehaópe.",
-        "action": "Ehecha tembiasakue"
-      },
-      "mision": {
-        "label": "Mbo'ehao mba'aporã",
-        "title": "Mba'aporã ha Hekokatu",
-        "description": "Eikuaa mba'aporã, mba'e iporãva ha hekokatu péva oguerohecharã mbo'ehaope.",
-        "action": "Ehecha mba'aporã"
-      },
-      "autoridades": {
-        "label": "Mbo'ehao mba'epohã",
-        "title": "Mba'epohãnguéra",
-        "description": "Rector, Junta Superior ha mbo'ehao reheguáva oñemomba'e porãva mbo'ehaópe.",
-        "action": "Ehecha mba'epohãnguéra"
-      },
-      "organigrama": {
-        "label": "Mbo'ehao ñemombyky",
-        "title": "Tembiapo renda ñemohenda ra'ãnga",
-        "description": "Universidad Nacional de Concepción rehegua ñemombyky opa.",
-        "action": "Ehecha organigrama"
-      }
-    }
+    "title": "Conozca más sobre la UNC",
+    "description": "Explore las distintas dimensiones que conforman la identidad institucional de la universidad."
+  },
+  "about": {
+    "dataLabel": "Datos de la universidad"
   },
   "values": {
-    "label": "Mba'e oñepyrũ ore",
-    "title": "Mbo'ehao mba'e iporãva",
-    "items": {
-      "excelencia": {
-        "title": "Mbo'e iporã",
-        "description": "Mba'aporã porãite rehegua mbo'e ha ñeporandu rehegua."
-      },
-      "inclusion": {
-        "title": "Mbo'e opavavépe",
-        "description": "Mbo'epyrã opavapy rehe, mba'eve ndohekói mba'épa oñemomba'e."
-      },
-      "innovacion": {
-        "title": "Pyahu rehegua",
-        "description": "Ñeporandu ha ñemomba'e porã rehegua mba'eve oñepyrũ."
-      },
-      "compromiso": {
-        "title": "Tembiapo ñemomba'e",
-        "description": "Concepción ha Paraguái yvate pegua ñemomba'e porãite."
-      }
-    }
+    "title": "Valores institucionales"
+  },
+  "states": {
+    "unavailable": "No pudimos cargar esta información en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "empty": "Esta información todavía no está disponible. Si necesita datos de la universidad, comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }
