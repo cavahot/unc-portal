@@ -17,6 +17,7 @@ import * as migration_20261106_012429_titulos_01_inscripcion from './20261106_01
 import * as migration_20261106_224807_transparencia_institucional_01 from './20261106_224807_transparencia_institucional_01';
 import * as migration_20261107_172140_tramites_01_coleccion from './20261107_172140_tramites_01_coleccion';
 import * as migration_20261107_182316_calendario_01_coleccion from './20261107_182316_calendario_01_coleccion';
+import * as migration_20261107_191247_legales_01_globals from './20261107_191247_legales_01_globals';
 
 export const migrations = [
   {
@@ -112,6 +113,11 @@ export const migrations = [
   {
     up: migration_20261107_182316_calendario_01_coleccion.up,
     down: migration_20261107_182316_calendario_01_coleccion.down,
-    name: '20261107_182316_calendario_01_coleccion'
+    name: '20261107_182316_calendario_01_coleccion',
+  },
+  {
+    up: migration_20261107_191247_legales_01_globals.up,
+    down: migration_20261107_191247_legales_01_globals.down,
+    name: '20261107_191247_legales_01_globals'
   },
 ];

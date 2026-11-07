@@ -16,7 +16,7 @@ Spec completa: `docs/specs/portal/LEGALES.md`.
 
 ## Tasks
 
-- [ ] T1 Globals + localización + migración + revalidación + tipos (S2, S3, S7) · inline · commit:
+- [x] T1 Globals + localización + migración + revalidación + tipos (S2, S3, S7) · inline · commit: (siguiente)
 - [ ] T2 Modelo y consultas con estados (S4) · inline · commit:
 - [ ] T3 Siembra (S5) · inline · commit:
 - [ ] T4 Páginas, error, esqueleto y mensajes (S6) · inline · commit:
@@ -30,3 +30,4 @@ Ruta: todas inline (unidades dependientes; sin razón de escritor delegado; sin 
 - L2 (2026-11-07) Decisión del usuario sobre el origen del texto: «Pasar a CMS y rediseñar».
 - L3 (2026-11-07) Decisión del usuario sobre los idiomas: «CMS con un texto por idioma (Recomendado)».
 - L4 Evidencia: 7 secciones de privacidad y 6 características de accesibilidad en `messages/*/pages.{privacidad,accesibilidad}.json`; el correo `secgral@unc.edu.py` está escrito en `app/[locale]/accesibilidad/page.tsx`; el español de accesibilidad usa voseo («Podés», «Usá», «encontrás», «escribinos»). El CMS no tenía localización (los globals existentes, p. ej. `titulos-inscripcion`, son solo en español).
+- L5 Evidencia T1: al activar la localización, `migrate:create` generó además el enumerado `_locales` y, en las tablas de versiones `_noticias_v` y `_paginas_v`, las columnas nulas `snapshot` y `published_locale` (con índices y enumerados): es el único efecto sobre tablas existentes, aditivo y sin NOT NULL ni DEFAULT; una prueba lo fija. SQL vuelto idempotente y `prevId` del snapshot corregido a mano (salió en cero). Verificada en una base sintética (`unc_legales_chk`, ya borrada): (0) la cadena completa sube desde vacío; (1) reaplicar el SQL de `up` no da errores; (2) `down` con una fila se rechaza y deja tabla y fila; (3) `down` sin filas borra las tablas de los globals y las columnas de versiones sin tocar `noticias` ni `calendario_academico`; (4) volver a subir funciona. 11 pruebas nuevas; suite completa: 163 archivos, 2688 pruebas; `tsc` del CMS sin errores; tipos regenerados.
