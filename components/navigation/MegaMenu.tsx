@@ -11,53 +11,15 @@ import {
   useState,
 } from 'react';
 import type { Navegacion } from '@unc/cms-types';
+import { mapCmsNavigation, type MenuItem } from '@/lib/cms/navegacion';
 import { safeHref } from '@/lib/security/safeUrl';
-
-interface MenuItem {
-  label: string;
-  href: string;
-  description?: string;
-  children?: MenuItem[];
-}
 
 interface MegaMenuProps {
   navigation?: Navegacion;
 }
 
-/**
- * Resuelve un enlace de navegación del CMS a un href del portal (DEP-19b).
- * - `relationship`: `/<slug>` de la página relacionada.
- * - `manual`: la URL guardada, siempre filtrada por `safeHref`.
- * Amenaza que evita: quien edite el global Navegación (o una cuenta comprometida)
- * guarda `javascript:`/`data:`/`//host` y el clic ejecuta código o sale a otro origen.
- * Límite: no valida que el destino exista; una ruta relativa sin barra queda en `#`.
- */
-function resolveHref(link: {
-  type: 'manual' | 'relationship';
-  url?: string | null;
-  page?: number | { slug: string } | null;
-}): string {
-  if (link.type === 'relationship' && link.page && typeof link.page === 'object') {
-    return safeHref(`/${link.page.slug}`);
-  }
-
-  return safeHref(link.url);
-}
-
-/**
- * Convierte el global Navegación en elementos de menú con hrefs saneados (DEP-19b).
- * Se exporta para poder probar la defensa sin renderizar el menú completo.
- */
-export function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
-  return (navigation.links || []).map((link) => ({
-    label: link.label,
-    href: resolveHref(link),
-    children: (link.children || []).map((child) => ({
-      label: child.label,
-      href: resolveHref(child),
-    })),
-  }));
-}
+/** Reexporta el helper compartido (INST-09): el menú y el mapa del sitio usan la misma conversión y el mismo saneado. */
+export { mapCmsNavigation }
 
 export const fallbackMenuData: MenuItem[] = [
   {
