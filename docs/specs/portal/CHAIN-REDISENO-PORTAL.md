@@ -45,3 +45,21 @@ Las migraciones forman una cadena que no admite reordenar: `glo_gn_02` (02) → 
 - Guarda de producción para `/prototipos/sonner` (el playground sigue público si se despliega).
 - Ayuda al triage de 20 avisos moderados y bajos de `npm audit`.
 - Las 12 fotos en `media/` (PR 02): confirmar que son material público.
+
+## Pull requests
+
+| Rol | PR | Base |
+| --- | --- | --- |
+| Seguimiento (borrador) | [#13](https://github.com/cavahot/unc-portal/pull/13) | `main` |
+| 01 | [#14](https://github.com/cavahot/unc-portal/pull/14) | `chain/rediseno-portal` |
+| 02 | [#15](https://github.com/cavahot/unc-portal/pull/15) | `chain/01-facultades-agrarias` |
+| 03 | [#16](https://github.com/cavahot/unc-portal/pull/16) | `chain/02-facultades-y-flujo-guarani` |
+| 04 | [#17](https://github.com/cavahot/unc-portal/pull/17) | `chain/03-guarani-aprobacion-endurecida` |
+| 05 | [#18](https://github.com/cavahot/unc-portal/pull/18) | `chain/04-titulos-cms` |
+| 06 | [#19](https://github.com/cavahot/unc-portal/pull/19) | `chain/05-guarani-interfaz` |
+| 07 | [#20](https://github.com/cavahot/unc-portal/pull/20) | `chain/06-globals-institucional` |
+| 08 | [#21](https://github.com/cavahot/unc-portal/pull/21) | `chain/07-informacion-publica-componentes` |
+| 09 | [#22](https://github.com/cavahot/unc-portal/pull/22) | `chain/08-institucion-transparencia-menu` |
+| 10 | [#23](https://github.com/cavahot/unc-portal/pull/23) | `chain/09-seguridad-dependencias` |
+
+El PR #5 (`feat/desarrollo-pagina-referencia` → `main`) queda reemplazado por esta cadena. Los PR #6 y #12 apuntan a `feat/desarrollo-pagina-referencia` y no forman parte de la cadena: si se fusionan allí, hay que volver a comprobar la igualdad de árboles.
