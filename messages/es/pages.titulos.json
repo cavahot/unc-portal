@@ -1,35 +1,64 @@
 {
   "meta": {
-    "title": "Títulos Universitarios | Universidad Nacional de Concepción",
-    "description": "Información sobre los títulos habilitantes expedidos por la Universidad Nacional de Concepción: solicitud, requisitos, plazos y reconocimiento de títulos."
+    "title": "Inscripción de títulos | UNC",
+    "description": "Documentos que debe presentar, arancel, plazo y pasos para inscribir en la Universidad Nacional de Concepción un título expedido por otra universidad."
   },
-  "breadcrumb": { "home": "Inicio", "page": "Títulos" },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Inscripción de títulos"
+  },
   "hero": {
-    "label": "Secretaría General",
-    "title": "Títulos Universitarios",
-    "description": "Información sobre los títulos habilitantes expedidos por la UNC"
+    "titulo": "Inscripción de títulos",
+    "updated": "Última actualización: {date}"
   },
-  "infoCards": {
-    "c1": { "label": "Plazo de procesamiento", "value": "Consultar en ventanilla", "note": "El plazo puede variar según el período del año y la carga administrativa." },
-    "c2": { "label": "Requisitos documentales", "value": "Ver lista completa", "note": "Acta de nacimiento, CI vigente, documentación académica y comprobante de pago." },
-    "c3": { "label": "Arancel vigente", "value": "Consultar en ventanilla", "note": "Los montos se actualizan periódicamente. Consulte siempre la tarifa vigente." }
+  "facts": {
+    "label": "Datos del trámite",
+    "plazo": "Plazo",
+    "plazoValue": "{min} a {max} horas hábiles",
+    "arancel": "Arancel",
+    "arancelPending": "Consulte el monto vigente",
+    "arancelLink": "Ver los aranceles del Rectorado",
+    "unidad": "Unidad responsable"
   },
-  "graduates": {
-    "label": "Para graduados",
-    "title": "Solicitud de título",
-    "description": "Pasos para solicitar su diploma de graduado una vez completados los requisitos académicos.",
-    "s1": { "title": "Verificar requisitos académicos", "description": "Asegúrese de haber cumplido con todas las asignaturas, prácticas y el trabajo final requerido por su carrera." },
-    "s2": { "title": "Presentar solicitud formal", "description": "Completar el formulario de solicitud de título en la Dirección General Académica y adjuntar la documentación requerida." },
-    "s3": { "title": "Abono de aranceles", "description": "Realizar el pago del arancel correspondiente según la escala vigente. Consultar el monto actualizado en ventanilla." },
-    "s4": { "title": "Retiro del título habilitante", "description": "Una vez procesada la solicitud, recibirá notificación para concurrir al retiro del diploma en la Secretaría General." }
+  "index": {
+    "label": "Elija el tipo de universidad que expidió su título",
+    "countOne": "1 requisito",
+    "countOther": "{count} requisitos"
   },
-  "graduatesCta": "Iniciar solicitud de título",
-  "recognition": {
-    "label": "Trámite especial",
-    "title": "Reconocimiento de títulos",
-    "body1": "El reconocimiento de títulos expedidos por universidades extranjeras, o la validación de títulos de la UNC ante organismos nacionales e internacionales, se tramita a través de la Dirección General Académica en coordinación con el Ministerio de Educación y Ciencias de la República del Paraguay.",
-    "body2": "Para iniciar este proceso, los interesados deben presentar la documentación original debidamente apostillada o legalizada según corresponda, junto con la traducción oficial al idioma español cuando los documentos estén en otro idioma.",
-    "linkLegalizaciones": "Ver legalizaciones",
-    "linkTramites": "Ver todos los trámites"
+  "documents": {
+    "title": "Qué documentos presentar",
+    "intro": "Los requisitos cambian según el tipo de universidad que expidió el título. Identifique su caso y reúna esos documentos antes de presentarse.",
+    "listLabel": "Requisitos: {tipo}"
+  },
+  "cones": {
+    "link": "Ver los trámites en el CONES",
+    "newTab": "(se abre en una pestaña nueva)"
+  },
+  "procedure": {
+    "title": "Paso a paso",
+    "intro": "La inscripción se tramita en {unidad}.",
+    "total": "Tiempo total estimado: {min} a {max} horas hábiles.",
+    "step": "Paso {number}",
+    "responsible": "Responsable"
+  },
+  "states": {
+    "empty": "La información de este trámite todavía no está publicada. Vuelva a consultar más tarde o comuníquese con la Universidad.",
+    "unavailable": "No pudimos cargar la información de este trámite en este momento. Intente de nuevo en unos minutos.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema al cargar la información del trámite. Puede intentarlo de nuevo o comunicarse con la Universidad.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  },
+  "cta": {
+    "title": "¿Necesita legalizar su título?",
+    "description": "La legalización de documentos es otro trámite. También puede consultar los aranceles del Rectorado o escribirnos.",
+    "legalizaciones": "Ver legalizaciones",
+    "aranceles": "Aranceles del Rectorado",
+    "contacto": "Contacto"
   }
 }
