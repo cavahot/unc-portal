@@ -134,7 +134,8 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale:
+    ('false' | 'none' | 'null') | false | null | ('es' | 'en' | 'pt-BR' | 'gn') | ('es' | 'en' | 'pt-BR' | 'gn')[];
   globals: {
     navegacion: Navegacion;
     transparencia: Transparencia;
@@ -143,6 +144,8 @@ export interface Config {
     'titulos-inscripcion': TitulosInscripcion;
     'informacion-publica': InformacionPublica;
     institucional: Institucional;
+    'politica-privacidad': PoliticaPrivacidad;
+    'declaracion-accesibilidad': DeclaracionAccesibilidad;
   };
   globalsSelect: {
     navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
@@ -152,8 +155,10 @@ export interface Config {
     'titulos-inscripcion': TitulosInscripcionSelect<false> | TitulosInscripcionSelect<true>;
     'informacion-publica': InformacionPublicaSelect<false> | InformacionPublicaSelect<true>;
     institucional: InstitucionalSelect<false> | InstitucionalSelect<true>;
+    'politica-privacidad': PoliticaPrivacidadSelect<false> | PoliticaPrivacidadSelect<true>;
+    'declaracion-accesibilidad': DeclaracionAccesibilidadSelect<false> | DeclaracionAccesibilidadSelect<true>;
   };
-  locale: null;
+  locale: 'es' | 'en' | 'pt-BR' | 'gn';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -2779,6 +2784,65 @@ export interface Institucional {
   createdAt?: string | null;
 }
 /**
+ * Contenido de la página /privacidad: secciones de la política y fecha de la última actualización. Cada idioma tiene su propio texto; si falta uno, el portal muestra el español.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "politica-privacidad".
+ */
+export interface PoliticaPrivacidad {
+  id: number;
+  /**
+   * Fecha de la última revisión del texto. El portal muestra solo el mes y el año.
+   */
+  ultimaActualizacion: string;
+  /**
+   * Cada sección tiene un título y un texto. Un salto de línea doble separa párrafos.
+   */
+  secciones: {
+    /**
+     * Ejemplo: «Responsable del tratamiento».
+     */
+    titulo: string;
+    /**
+     * Texto de la sección (máximo 3000 caracteres).
+     */
+    contenido: string;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /accesibilidad: descripción, características de accesibilidad y correo para reportar problemas. Cada idioma tiene su propio texto; si falta uno, el portal muestra el español.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "declaracion-accesibilidad".
+ */
+export interface DeclaracionAccesibilidad {
+  id: number;
+  /**
+   * Texto que aparece bajo el título de la página (máximo 600 caracteres).
+   */
+  descripcion: string;
+  caracteristicas: {
+    /**
+     * Ejemplo: «Tamaño de texto ajustable».
+     */
+    titulo: string;
+    /**
+     * Qué ofrece esta característica (máximo 400 caracteres).
+     */
+    descripcion: string;
+    id?: string | null;
+  }[];
+  /**
+   * Correo al que se escribe para reportar un problema de accesibilidad.
+   */
+  correoContacto: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navegacion_select".
  */
@@ -2987,6 +3051,41 @@ export interface InstitucionalSelect<T extends boolean = true> {
         descripcion?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "politica-privacidad_select".
+ */
+export interface PoliticaPrivacidadSelect<T extends boolean = true> {
+  ultimaActualizacion?: T;
+  secciones?:
+    | T
+    | {
+        titulo?: T;
+        contenido?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "declaracion-accesibilidad_select".
+ */
+export interface DeclaracionAccesibilidadSelect<T extends boolean = true> {
+  descripcion?: T;
+  caracteristicas?:
+    | T
+    | {
+        titulo?: T;
+        descripcion?: T;
+        id?: T;
+      };
+  correoContacto?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

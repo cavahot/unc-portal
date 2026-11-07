@@ -9,6 +9,8 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 
 import { Carreras } from './collections/Carreras'
+import { PoliticaPrivacidad } from './globals/PoliticaPrivacidad'
+import { DeclaracionAccesibilidad } from './globals/DeclaracionAccesibilidad'
 import { Tramites } from './collections/Tramites'
 import { CalendarioAcademico } from './collections/CalendarioAcademico'
 import { Facultades } from './collections/Facultades'
@@ -148,6 +150,19 @@ export default buildConfig({
     },
   },
 
+  // INST-08: localización de contenido SOLO para los campos marcados `localized` (política de privacidad y declaración de
+  // accesibilidad: un texto por idioma). El resto del CMS no cambia. `fallback` devuelve el español si falta otro idioma.
+  localization: {
+    locales: [
+      { label: 'Español', code: 'es' },
+      { label: 'English', code: 'en' },
+      { label: 'Português (Brasil)', code: 'pt-BR' },
+      { label: 'Guaraní', code: 'gn' },
+    ],
+    defaultLocale: 'es',
+    fallback: true,
+  },
+
   i18n: {
     fallbackLanguage: 'es',
     supportedLanguages: {
@@ -184,7 +199,17 @@ export default buildConfig({
     GlosarioGuarani,
   ],
 
-  globals: [Navegacion, Transparencia, EnlacesExternos, Estadisticas, TitulosInscripcion, InformacionPublica, Institucional],
+  globals: [
+    Navegacion,
+    Transparencia,
+    EnlacesExternos,
+    Estadisticas,
+    TitulosInscripcion,
+    InformacionPublica,
+    Institucional,
+    PoliticaPrivacidad,
+    DeclaracionAccesibilidad,
+  ],
 
   editor: lexicalEditor(),
 
