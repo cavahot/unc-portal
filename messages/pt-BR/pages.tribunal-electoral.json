@@ -3,15 +3,18 @@
     "title": "Tribunal Eleitoral | UNC",
     "description": "Conheça a composição e os documentos oficiais do Tribunal Eleitoral da Universidade Nacional de Concepción."
   },
-  "breadcrumb": "Tribunal Eleitoral",
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Tribunal Eleitoral"
+  },
   "hero": {
-    "badge": "Governança Universitária",
     "title": "Tribunal Eleitoral",
     "description": "Órgão autônomo responsável por garantir a transparência e a legalidade dos processos eleitorais universitários."
   },
   "members": {
     "title": "Composição do Tribunal",
-    "subtitle": "Autoridades designadas para o período eleitoral em vigor"
+    "subtitle": "Autoridades designadas para o período eleitoral em vigor",
+    "empty": "Ainda não há membros publicados. Para consultar a composição vigente, entre em contato com a universidade."
   },
   "downloads": {
     "title": "Documentos Principais",
@@ -25,12 +28,23 @@
     "viewDoc": "Ver documento",
     "noDocuments": "Nenhum documento disponível nesta seção.",
     "tipos": {
-      "lista-inscriptos":  "Lista de Inscritos",
-      "formato-notas":     "Formato de Notas",
-      "padron-electoral":  "Oficialização do Cadastro Eleitoral",
-      "candidaturas":      "Divulgação de Movimentos e Candidaturas",
-      "oficializacion":    "Oficialização de Candidaturas",
-      "proclamacion":      "Proclamação de Candidatos"
+      "lista-inscriptos": "Lista de Inscritos",
+      "formato-notas": "Formato de Notas",
+      "padron-electoral": "Oficialização do Cadastro Eleitoral",
+      "candidaturas": "Divulgação de Movimentos e Candidaturas",
+      "oficializacion": "Oficialização de Candidaturas",
+      "proclamacion": "Proclamação de Candidatos"
     }
+  },
+  "newTab": "(abre em uma nova aba)",
+  "states": {
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
   }
 }

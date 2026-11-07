@@ -134,15 +134,30 @@ export const INSTITUCIONAL_SEED = {
   ],
 }
 
-/** Globals que siembra este guion: `slug` del CMS y documento inicial. */
+/**
+ * INST-02: enlace del formulario de /solicitar-titulo. Antes estaba escrito en el código de la página; ahora la
+ * página lo lee del global `enlaces-externos` (sin respaldo en el código), así que se siembra el mismo valor.
+ * Solo se envía este campo: `urlPortalInfoPublica` y `contenidoInfoPublica` del mismo global no se tocan.
+ */
+export const ENLACES_EXTERNOS_SEED = {
+  formularioTitulos: 'https://docs.google.com/forms/d/e/1FAIpQLSekLymnL6bc1Gg2mWFflwKTR0VW4Ui3Y6CkDAm8NtgTsSI0pA/viewform',
+}
+
+/** Globals que siembra este guion: `slug` del CMS, documento inicial y criterio de «ya tiene contenido». */
 export const GLOBALS = [
-  { slug: 'informacion-publica', label: 'Información pública', seed: INFORMACION_PUBLICA_SEED },
-  { slug: 'institucional', label: 'La Institución', seed: INSTITUCIONAL_SEED },
+  { slug: 'informacion-publica', label: 'Información pública', seed: INFORMACION_PUBLICA_SEED, filled: hasContent },
+  { slug: 'institucional', label: 'La Institución', seed: INSTITUCIONAL_SEED, filled: hasContent },
+  { slug: 'enlaces-externos', label: 'Enlaces externos', seed: ENLACES_EXTERNOS_SEED, filled: hasFormulario },
 ]
 
 /** El global «tiene contenido» si el editor ya cargó un título (no se pisa nunca). */
 export function hasContent(doc) {
   return Boolean(doc && typeof doc === 'object' && typeof doc.titulo === 'string' && doc.titulo.trim())
+}
+
+/** `enlaces-externos` está cargado si el editor ya puso la URL del formulario (no se pisa nunca). */
+export function hasFormulario(doc) {
+  return Boolean(doc && typeof doc === 'object' && typeof doc.formularioTitulos === 'string' && doc.formularioTitulos.trim())
 }
 
 /** Ejecuta la carga. `deps` permite inyectar env, fetch y log (pruebas). Por defecto es dry-run. */
@@ -167,7 +182,7 @@ export async function run({ apply = false, allowRemote = false, deps = {} } = {}
       log(`  ! ${g.slug}: no se pudo leer el global (HTTP ${current.status}).`)
       continue
     }
-    if (hasContent(current.data)) {
+    if (g.filled(current.data)) {
       counts.omitidos++
       log(`  = ${g.slug}: omitido, ya tiene contenido (no se modifica).`)
       continue

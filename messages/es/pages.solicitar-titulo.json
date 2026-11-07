@@ -1,30 +1,45 @@
 {
   "pageTitle": "Solicitar Título — UNC",
-  "pageDescription": "Solicita la gestión de tu título universitario en la Universidad Nacional de Concepción a través del formulario oficial.",
-  "portalLabel": "Portal UNC",
+  "pageDescription": "Solicite la gestión de su título universitario en la Universidad Nacional de Concepción a través del formulario oficial.",
   "heading": "Solicitud de Título Universitario",
-  "description": "Iniciá el proceso de gestión de tu diploma universitario de forma online a través del formulario oficial de la Universidad Nacional de Concepción.",
-  "ctaLabel": "Iniciar ahora",
-  "ctaHeading": "¿Listo para solicitar tu título?",
+  "description": "Inicie el proceso de gestión de su diploma universitario de forma online a través del formulario oficial de la Universidad Nacional de Concepción.",
+  "ctaHeading": "¿Listo para solicitar su título?",
   "ctaNote": "Este formulario abre en Google Forms en una nueva pestaña.",
   "ctaButton": "Iniciar solicitud",
   "processHeading": "Proceso de solicitud",
   "steps": {
     "step01": {
-      "title": "Completá el formulario",
-      "description": "Ingresá tus datos personales y la información de tu carrera."
+      "title": "Complete el formulario",
+      "description": "Ingrese sus datos personales y la información de su carrera."
     },
     "step02": {
-      "title": "Adjuntá la documentación",
-      "description": "Cédula de identidad, certificado de egreso y demás documentos requeridos según tu facultad."
+      "title": "Adjunte la documentación",
+      "description": "Cédula de identidad, certificado de egreso y demás documentos requeridos según su facultad."
     },
     "step03": {
       "title": "Seguimiento",
-      "description": "Recibirás notificaciones sobre el estado de tu solicitud a través del correo registrado."
+      "description": "Recibirá notificaciones sobre el estado de su solicitud a través del correo registrado."
     },
     "step04": {
       "title": "Retiro del título",
-      "description": "Una vez aprobado, te notificaremos la fecha y lugar de entrega de tu diploma universitario."
+      "description": "Una vez aprobado, le notificaremos la fecha y el lugar de entrega de su diploma universitario."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Solicitar título"
+  },
+  "newTab": "(se abre en una pestaña nueva)",
+  "states": {
+    "unavailable": "No pudimos cargar el enlace del formulario. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }
