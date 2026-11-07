@@ -9,6 +9,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 
 import { Carreras } from './collections/Carreras'
+import { Tramites } from './collections/Tramites'
 import { Facultades } from './collections/Facultades'
 import { MarcoLegal } from './collections/MarcoLegal'
 // LT-01: hitos de la línea de tiempo de /historia (docs/specs/portal/LINEA-TIEMPO.md).
@@ -162,6 +163,7 @@ export default buildConfig({
     Tesis,
     Facultades,
     Carreras,
+    Tramites,
     MarcoLegal,
     LineaTiempo,
     Auditoria,
