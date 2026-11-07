@@ -21,6 +21,13 @@
 - JSON no admite comentarios: documentar su significado en el `.md` vecino o en el código que lo usa. No incrustar secretos ni datos personales en ejemplos, tests, logs o comentarios.
 - Incluir referencia a la tarea (`SEC-XX`) y evidencia RDD cuando la regla cambie el acceso, la publicación, la retención o la privacidad.
 
+## SEC-027 — regla global de seguridad antes de publicar
+
+- Aplicar la skill global `security-27-gate` antes de aprobar cualquier aplicación, API, CMS, script o infraestructura.
+- No pasar a staging aprobado, producción ni publicación sin controles aplicables identificados, evidencia reproducible, pruebas de regresión, revisión independiente, backup/restore, rollback y autorización explícita.
+- Bloquear ante bypass de autorización, secretos o datos privados expuestos, validación server-side insuficiente, dependencias o imágenes no evaluadas, límites ausentes, auditoría insuficiente o hallazgos altos/críticos sin tratamiento aprobado.
+- La respuesta de una IA no cuenta como evidencia única: toda afirmación de seguridad debe contrastarse con código, configuración, prueba o comportamiento autorizado.
+
 ## Límites de las pruebas adversariales
 
 - Están permitidos análisis estáticos y pruebas controladas con cuentas y datos sintéticos en entorno local o staging autorizado. Probar anónimo y cada rol por REST, GraphQL, Local API y UI, incluyendo casos que **deben** devolver 401/403.

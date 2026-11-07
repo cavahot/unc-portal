@@ -4,6 +4,18 @@
 Generado el 25-10-2026. Hoja de cálculo equivalente (fuera del repositorio): `gn-revision.csv` en la carpeta de trabajo del agente.
 Spec: `docs/specs/i18n/GLOSARIO-GUARANI.md`.
 
+## Fuentes oficiales incorporadas al flujo
+
+- **Diccionario guaraní paraguayo — ALG/SPL:** `https://spl.gov.py/es/diccionario-guarani-paraguayo/`. Se usa como referencia lexicográfica oficial; el recurso enlazado advierte restricciones de reproducción, por lo que el actualizador no descarga ni copia masivamente su contenido.
+- **COREGUAPA — Corpus de Referencia del Guaraní Paraguayo Actual:** `https://corpus.spl.gov.py/py/`. Se usa para contraste de uso y revisión editorial; no se publica automáticamente como traducción.
+- **Repositorio CONACYT — Diccionario de informática guaraní:** `https://repositorio.conacyt.gov.py/handle/20.500.14066/2622`. Se mantiene como fuente técnica registrada y revisión manual.
+- **Datos Abiertos Paraguay:** el recurso histórico registrado por el proyecto responde actualmente con HTTP 404 en la API CKAN y en el CSV configurado; el actualizador informa el fallo y no escribe nada.
+
+## Traducción dinámica segura
+
+El CMS expone `/api/guarani-dictionary` solo con entradas `activo=true`, `oficial=true`, `revisado=true` y confianza `A/B`. El portal consulta ese endpoint con caché de 60 segundos y reemplaza únicamente etiquetas que siguen idénticas al catálogo español; las frases guaraníes ya traducidas permanecen bajo revisión editorial. Así una corrección aprobada del diccionario se refleja sin reemplazos masivos ni traducción automática de sintaxis.
+
+
 ## Cómo leer la incertidumbre
 
 | Nivel | Significado |

@@ -40,7 +40,7 @@
       "grado": "Aprenduka",
       "posgrado": "Posgrado",
       "decanato": "Decanato",
-      "acreditacion": "Acreditación",
+      "acreditacion": "Ñemoneĩ calidad rehegua",
       "aranceles": "Mboimba",
       "contacto": "Ñomongeta"
     },
@@ -54,8 +54,8 @@
       "posgradoIntro": "Especialización ha CONES resolución.",
       "resLabel": "Res. CONES",
       "resOpen": "CONES resolución {numero} (kuatia Google Drive-pe, ojeipe'a ambue pestaña-pe)",
-      "sede": "Sede",
-      "modalidad": "Modalidad",
+      "sede": "Tenda",
+      "modalidad": "Aporeko",
       "duracion": "{count, plural, one {# ary} other {# ary}}",
       "titulo": "Título",
       "perfil": "Egresado perfil",
@@ -68,7 +68,7 @@
       "correo": "Ehai decanato-pe"
     },
     "acreditacion": {
-      "title": "Acreditación",
+      "title": "Ñemoneĩ calidad rehegua",
       "badge": "{organismo} omoneĩva",
       "vigencia": "Oĩporã {anio} peve",
       "fuente": "Ehecha ñepyrũha"
@@ -76,9 +76,10 @@
     "aranceles": {
       "title": "Mboimba",
       "intro": "Viru guaraníes-pe facultad ohechaukáva.",
+      "limite": "Pe kuatia ndohechaukái araka'e peve ovale ko'ã montante; emoneĩ pe valor facultad ndive repaga mboyve.",
       "concept": "Mba'e",
       "amount": "Viru",
-      "currencyName": "guaraníes",
+      "currencyName": "guaraní",
       "caption": "{grupo}: mba'e ha viru",
       "grupos": {
         "multas": "Mba'e Jepysore ha ambue derecho",
@@ -94,7 +95,7 @@
       "telefono": "Pumbyry",
       "correo": "Ñe'ẽveve",
       "sitio": "Ñanduti renda",
-      "redes": "Redes sociales",
+      "redes": "Ñanduti joajuhakuéra",
       "nuevaPestana": "(ojeipe'a ambue pestaña-pe)",
       "redesNombres": {
         "facebook": "Facebook",

@@ -55,6 +55,8 @@ describe('getFacultadDetalle', () => {
     expect(byPath('carreras').get('where[activa][equals]')).toBe('true')
     expect(byPath('autoridades').get('where[type][equals]')).toBe('decano')
     expect(byPath('autoridades').get('where[active][equals]')).toBe('true')
+    expect(byPath('autoridades').get('where[faculty.slug][equals]')).toBe('facultad-de-odontologia')
+    expect(byPath('autoridades').get('where[facultad.slug][equals]')).toBeNull()
     expect(byPath('acreditaciones').get('where[verificado][equals]')).toBe('true')
     expect(byPath('aranceles-facultad').get('where[active][equals]')).toBe('true')
     for (const u of calls) expect(Number(u.searchParams.get('limit'))).toBeLessThanOrEqual(200)

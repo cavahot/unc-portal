@@ -76,6 +76,7 @@
     "aranceles": {
       "title": "Fees",
       "intro": "Amounts in guaraníes published by the faculty.",
+      "limite": "The page does not state the validity period of these amounts; confirm the value with the faculty before paying.",
       "concept": "Item",
       "amount": "Amount",
       "currencyName": "guaraníes",

@@ -32,13 +32,13 @@ export default function FacultadHero({ nombre, siglas, descripcion, logoSrc, log
         <nav aria-label="Breadcrumb" className="mb-10 print:hidden">
           <ol className="flex flex-wrap items-center gap-2 text-sm text-white/80">
             <li>
-              <Link href={safeHref(breadcrumb.inicioHref)} className={linkFocus}>
+              <Link href={safeHref(breadcrumb.inicioHref)} className={`${linkFocus} inline-flex min-h-11 items-center`}>
                 {breadcrumb.inicio}
               </Link>
             </li>
             <li aria-hidden="true" className="select-none text-white/50">/</li>
             <li>
-              <Link href={safeHref(breadcrumb.facultadesHref)} className={linkFocus}>
+              <Link href={safeHref(breadcrumb.facultadesHref)} className={`${linkFocus} inline-flex min-h-11 items-center`}>
                 {breadcrumb.facultades}
               </Link>
             </li>
@@ -67,30 +67,32 @@ export default function FacultadHero({ nombre, siglas, descripcion, logoSrc, log
             )}
           </div>
 
-          <aside aria-label={ficha.label} className="rounded-[1.75rem] bg-white p-6 text-[#001A00] shadow-none sm:p-8 print:border print:border-black">
-            {logoSrc && (
-              <div className="mb-6 flex items-center gap-4">
-                <Image src={logoSrc} alt={logoAlt} width={88} height={88} priority className="h-20 w-20 shrink-0 object-contain sm:h-[5.5rem] sm:w-[5.5rem]" />
-                <p className="text-sm font-semibold leading-5 text-[#3E4A45]">{ficha.label}</p>
-              </div>
-            )}
-            <dl className="grid gap-4">
-              {ficha.rows.map((r) =>
-                // Un valor largo (el nombre del decano) va debajo de su rótulo; un número, a la derecha.
-                r.value.length > 6 ? (
-                  <div key={r.term} className="rounded-2xl bg-[#F4F7F5] px-4 py-3">
-                    <dt className="text-sm text-[#3E4A45]">{r.term}</dt>
-                    <dd className="mt-1 font-serif text-xl font-bold leading-snug text-[#004700]">{r.value}</dd>
-                  </div>
-                ) : (
-                  <div key={r.term} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-4 rounded-2xl bg-[#F4F7F5] px-4 py-3">
-                    <dt className="text-sm text-[#3E4A45]">{r.term}</dt>
-                    <dd className="font-serif text-3xl font-bold tabular-nums leading-none text-[#004700]">{r.value}</dd>
-                  </div>
-                ),
+          {(logoSrc || ficha.rows.length > 0) && (
+            <aside aria-label={ficha.label} className="rounded-[1.75rem] bg-white p-6 text-[#001A00] shadow-none sm:p-8 print:border print:border-black">
+              {logoSrc && (
+                <div className="mb-6 flex items-center gap-4">
+                  <Image src={logoSrc} alt={logoAlt} width={88} height={88} priority className="h-20 w-20 shrink-0 object-contain sm:h-[5.5rem] sm:w-[5.5rem]" />
+                  <p className="text-sm font-semibold leading-5 text-[#3E4A45]">{ficha.label}</p>
+                </div>
               )}
-            </dl>
-          </aside>
+              <dl className="grid gap-4">
+                {ficha.rows.map((r) =>
+                  // Un valor largo (el nombre del decano) va debajo de su rótulo; un número, a la derecha.
+                  r.value.length > 6 ? (
+                    <div key={r.term} className="rounded-2xl bg-[#F4F7F5] px-4 py-3">
+                      <dt className="text-sm text-[#3E4A45]">{r.term}</dt>
+                      <dd className="mt-1 font-serif text-xl font-bold leading-snug text-[#004700]">{r.value}</dd>
+                    </div>
+                  ) : (
+                    <div key={r.term} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-4 rounded-2xl bg-[#F4F7F5] px-4 py-3">
+                      <dt className="text-sm text-[#3E4A45]">{r.term}</dt>
+                      <dd className="font-serif text-3xl font-bold tabular-nums leading-none text-[#004700]">{r.value}</dd>
+                    </div>
+                  ),
+                )}
+              </dl>
+            </aside>
+          )}
         </div>
       </div>
     </section>

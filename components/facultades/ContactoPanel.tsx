@@ -27,6 +27,40 @@ function Item({ term, children }: { term: string; children: React.ReactNode }) {
   )
 }
 
+function mapEmbedHref(direccion: string): string {
+  // FAC-08: la URL del iframe usa una consulta pública sin API key.
+  // Amenaza: evita guardar coordenadas inventadas o exponer secretos de Google Maps en el CMS.
+  // Límite: Google controla la cartografía y puede modificar el resultado del buscador.
+  const normalized = direccion.replace(/\.\s*$/, '')
+  const query = /paraguay/i.test(normalized) ? normalized : `${normalized}, Concepción, Paraguay`
+  return `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`
+}
+
+function InteractiveMap({ direccion, label }: { direccion: string; label: string }) {
+  return (
+    <div className="sm:col-span-2 rounded-2xl bg-white/[0.07] p-3 sm:p-4">
+      <div className="relative aspect-[16/9] min-h-64 overflow-hidden rounded-xl border border-[#8AFF8A]/25 bg-[#073B16] shadow-[0_0_40px_rgba(57,255,136,0.12)]">
+        {/* FAC-08: iframe real para conservar zoom, arrastre y controles nativos del mapa. */}
+        <iframe
+          title={label}
+          src={mapEmbedHref(direccion)}
+          loading="lazy"
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
+          className="h-full w-full grayscale"
+          style={{ filter: 'grayscale(0.28) saturate(1.45) hue-rotate(62deg) brightness(0.72) contrast(1.08)' }}
+        />
+        {/* FAC-08: capa visual no interactiva; pointer-events permite que el usuario arrastre el mapa debajo. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[#39FF88]/35 mix-blend-screen" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,transparent_20%,rgba(0,35,12,0.28)_100%)]" />
+        <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-[#00290D]/75 px-3 py-1 text-xs font-semibold text-[#C8FFCE] backdrop-blur-sm">
+          {label}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 export default function ContactoPanel({ facultad, mapHref, labels }: { facultad: FacultadDetalle; mapHref?: string; labels: ContactoLabels }) {
   const external = { target: '_blank', rel: 'noopener noreferrer' } as const
   return (
@@ -42,6 +76,7 @@ export default function ContactoPanel({ facultad, mapHref, labels }: { facultad:
           )}
         </Item>
       )}
+      {facultad.direccion && <InteractiveMap direccion={facultad.direccion} label={labels.mapa} />}
       {facultad.telefono && (
         <Item term={labels.telefono}>
           {facultad.telHref ? (

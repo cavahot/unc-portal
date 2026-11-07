@@ -21,7 +21,7 @@ type T = Awaited<ReturnType<typeof getT>>
 function SectionHeading({ id, title, intro }: { id: string; title: string; intro?: string }) {
   return (
     <div className="mb-8 max-w-3xl">
-      <h2 id={`${id}-title`} className="font-serif text-[2rem] font-bold leading-[1.05] tracking-[-0.03em] text-[#001A00] sm:text-[2.6rem]">
+      <h2 id={`${id}-title`} className="text-balance font-serif text-[2rem] font-bold leading-[1.05] tracking-[-0.03em] text-[#001A00] sm:text-[2.6rem]">
         {title}
       </h2>
       {intro && <p className="mt-3 text-lg leading-8 text-[#001A00]">{intro}</p>}
@@ -169,6 +169,7 @@ export default async function FacultadView({ slug, locale }: { slug: string; loc
             {show('aranceles') && (
               <section id="aranceles" aria-labelledby="aranceles-title" className={sectionClass}>
                 <SectionHeading id="aranceles" title={t('aranceles.title')} intro={t('aranceles.intro')} />
+                <p className="mb-5 max-w-3xl text-sm leading-6 text-[#3E4A45]">{t('aranceles.limite')}</p>
                 <ArancelesTable
                   groups={aranceles}
                   labels={{

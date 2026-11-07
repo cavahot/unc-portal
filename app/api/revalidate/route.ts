@@ -72,6 +72,10 @@ export async function POST(request: NextRequest) {
       'tribunal-miembros',
       'tribunal-documentos',
       'aranceles-rectorado',
+      // TITULOS-01: contenido de /titulos (global del CMS; el CMS la envía al guardar el global).
+      'titulos-inscripcion',
+      'informacion-publica',
+      'institucional',
       // FAC-01: aranceles de cada facultad (el CMS la envía al guardar/borrar un arancel de facultad).
       'aranceles-facultad',
       'estadisticas',

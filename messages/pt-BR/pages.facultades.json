@@ -75,7 +75,8 @@
     },
     "aranceles": {
       "title": "Taxas",
-      "intro": "Valores em guaranis publicados pela faculdade.",
+      "intro": "Montantes em guaranis publicados pela faculdade.",
+      "limite": "A página não informa a vigência desses montantes; confirme o valor com a faculdade antes de pagar.",
       "concept": "Item",
       "amount": "Valor",
       "currencyName": "guaranis",
