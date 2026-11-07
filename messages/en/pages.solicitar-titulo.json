@@ -1,10 +1,8 @@
 {
   "pageTitle": "Request Degree — UNC",
   "pageDescription": "Request your university degree at the National University of Concepción through the official form.",
-  "portalLabel": "UNC Portal",
   "heading": "University Degree Request",
   "description": "Start the process of obtaining your university diploma online through the official form of the National University of Concepción.",
-  "ctaLabel": "Start now",
   "ctaHeading": "Ready to request your degree?",
   "ctaNote": "This form opens in Google Forms in a new tab.",
   "ctaButton": "Start request",
@@ -26,5 +24,22 @@
       "title": "Degree pickup",
       "description": "Once approved, we will notify you of the date and place for collecting your university diploma."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Request degree"
+  },
+  "newTab": "(opens in a new tab)",
+  "states": {
+    "unavailable": "We could not load the form link. Please try again in a few minutes or contact us.",
+    "retry": "Try again",
+    "contact": "Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
   }
 }

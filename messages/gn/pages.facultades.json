@@ -1,18 +1,11 @@
 {
   "pageTitle": "Facultad — UNC",
   "pageDescription": "Eikuaa facultad Universidad Nacional de Concepción pegua.",
-  "portalLabel": "Tembiapo Apohára",
   "heading": "Ore Facultad",
   "subheading": "Tembiapo apohára Universidad Nacional de Concepción pegua",
   "verCarreras": "Ehecha aprenduka",
   "carrerasCount": "{count, plural, one {# aprenduka} other {# aprenduka}}",
   "empty": "Ndoikói facultad.",
-  "home": "Óga",
-  "facultades": "Facultad",
-  "decano": "Decano/a",
-  "contacto": "Ñomongeta",
-  "backToFacultades": "Jevy Facultad-pe",
-  "carrerasTitle": "Aprenduka ofrece",
   "detalle": {
     "meta": {
       "description": "Aprenduka, posgrado, decanato, mboimba ha ñomongeta {nombre} Universidad Nacional de Concepción pegua."
@@ -107,5 +100,25 @@
     "states": {
       "unavailable": "Ndaikatúi ojehupi facultad marandu ko'ág̃a. Eñeha'ã jey upéi."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Facultades"
+  },
+  "lista": {
+    "title": "Unidades académicas",
+    "intro": "Elija una facultad para ver sus carreras, autoridades, aranceles y contacto."
+  },
+  "states": {
+    "unavailable": "No pudimos cargar las facultades en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

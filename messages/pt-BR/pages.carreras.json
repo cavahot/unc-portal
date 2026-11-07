@@ -1,16 +1,52 @@
 {
   "pageTitle": "Cursos — UNC",
   "pageDescription": "Explore os cursos universitários da Universidade Nacional de Concepción.",
-  "portalLabel": "Oferta Acadêmica",
   "heading": "Nossos Cursos",
   "subheading": "Formação universitária de excelência em Concepción, Paraguai",
-  "duration": "{years} anos",
   "modalidad": "Modalidade",
   "titulo": "Título concedido",
   "verDetalle": "Ver curso",
   "verFacultad": "Ver faculdade",
   "empty": "Nenhum curso encontrado.",
-  "home": "Início",
-  "carreras": "Cursos",
-  "backToCarreras": "Voltar aos Cursos"
+  "backToCarreras": "Voltar aos Cursos",
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Cursos"
+  },
+  "summary": "{programs, plural, one {# programa} other {# programas}} em {faculties, plural, one {# faculdade} other {# faculdades}}",
+  "index": {
+    "label": "Ir para uma faculdade"
+  },
+  "tipos": {
+    "grado": "Cursos de graduação",
+    "posgrado": "Pós-graduação",
+    "otros": "Outros programas"
+  },
+  "sinFacultad": "Sem faculdade atribuída",
+  "sede": "Sede",
+  "duracion": "{count, plural, one {# ano} other {# anos}}",
+  "states": {
+    "unavailable": "Não foi possível carregar os cursos agora. Tente novamente em alguns minutos ou entre em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
+  },
+  "detalle": {
+    "tipo": "Nível",
+    "duracion": "Duração",
+    "fichaLabel": "Dados do programa",
+    "resoluciones": {
+      "title": "Resoluções do CONES",
+      "intro": "Documentos oficiais que habilitam o programa.",
+      "open": "Resolução CONES {numero} (documento externo, abre em uma nova aba)"
+    },
+    "perfil": "Perfil do egresso",
+    "facultadTexto": "Conheça a faculdade que oferece este programa: autoridades, taxas e contato."
+  }
 }
