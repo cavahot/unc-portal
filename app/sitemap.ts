@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getNews } from '@/lib/cms/queries/news'
 import { getCarreras } from '@/lib/cms/queries/carreras'
-import { getFacultades } from '@/lib/cms/queries/facultades'
+import { getFacultadesLista } from '@/lib/cms/queries/facultadesLista'
+import { rutaFacultad } from '@/lib/cms/facultadRutas'
 import { getPageSlugs } from '@/lib/cms/queries/pages'
 
 export const revalidate = 3600
@@ -61,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // PERF-DB: el sitemap solo necesita slug y fecha; el tope de 500 es explícito (maxLimit).
     getNews({ limit: 500, maxLimit: 500, depth: 0, select: ['slug', 'publishedAt'] }).catch(() => ({ docs: [] as Awaited<ReturnType<typeof getNews>>['docs'] })),
     getCarreras().catch(() => [] as Awaited<ReturnType<typeof getCarreras>>),
-    getFacultades().catch(() => [] as Awaited<ReturnType<typeof getFacultades>>),
+    getFacultadesLista(),
     getPageSlugs().catch(() => [] as string[]),
   ])
 
@@ -81,12 +82,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: { languages: localeAlternates(`/carreras/${c.slug}`) },
   }))
 
-  const facultadEntries: MetadataRoute.Sitemap = facultades.map((f) => ({
-    url: `${BASE_URL}/facultades/${f.slug}`,
+  // FAC-05: una sola dirección por facultad (la ruta pública), no el slug largo del CMS; sin CMS no se inventan entradas.
+  const facultadEntries: MetadataRoute.Sitemap = (facultades.status === 'ok' ? facultades.facultades : []).map((f) => ({
+    url: `${BASE_URL}${rutaFacultad(f.slug)}`,
     lastModified: now,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
-    alternates: { languages: localeAlternates(`/facultades/${f.slug}`) },
+    alternates: { languages: localeAlternates(rutaFacultad(f.slug)) },
   }))
 
   const pageEntries: MetadataRoute.Sitemap = pageSlugs.map((slug) => ({

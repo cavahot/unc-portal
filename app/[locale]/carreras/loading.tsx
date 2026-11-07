@@ -1,25 +1,26 @@
+// INST-04: esqueleto de /carreras y de /carreras/[slug] con la estructura de las páginas (cabecera verde y filas), para que
+// el cambio al contenido real no salte de un fondo oscuro a uno claro. `motion-reduce` quita el pulso.
 export default function CarrerasLoading() {
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-20 animate-pulse">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
-        <div className="mb-10">
-          <div className="h-9 w-40 rounded-lg bg-white/5 mb-3" />
-          <div className="h-4 w-64 rounded bg-white/5" />
+    <div aria-busy="true" aria-live="polite">
+      <div className="bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300] pb-24 pt-28 sm:pt-32 lg:pb-28">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <div className="mb-8 h-4 w-40 rounded bg-white/20" />
+          <div className="h-14 w-80 max-w-full rounded-lg bg-white/20 sm:h-16" />
+          <div className="mt-6 h-5 w-full max-w-xl rounded bg-white/15" />
         </div>
-
-        {/* Card list skeleton */}
-        <div className="space-y-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-white/5 bg-white/[0.03] p-6 flex items-center gap-6">
-              <div className="h-12 w-12 rounded-xl bg-white/5 shrink-0" />
-              <div className="flex-1 space-y-2">
-                <div className="h-5 w-3/5 rounded bg-white/5" />
-                <div className="h-4 w-2/5 rounded bg-white/5" />
-              </div>
-              <div className="h-6 w-20 rounded-full bg-white/5" />
-            </div>
-          ))}
+      </div>
+      <div className="relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem]">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8 animate-pulse motion-reduce:animate-none">
+          <div className="mb-8 h-9 w-72 max-w-full rounded bg-[#E3EDE7]" />
+          <ul className="divide-y divide-[#D7E0DB] overflow-hidden rounded-2xl bg-white">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li key={i} className="space-y-3 px-6 py-5 sm:px-8">
+                <div className="h-6 w-3/5 rounded bg-[#E3EDE7]" />
+                <div className="h-4 w-2/5 rounded bg-[#E3EDE7]" />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

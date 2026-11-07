@@ -1,12 +1,9 @@
 {
   "pageTitle": "News - National University of Concepción",
   "pageDescription": "Latest news and institutional announcements from UNC.",
-  "portalLabel": "UNC Portal",
   "heading": "News",
   "subheading": "Latest news and announcements from the National University of Concepción",
   "empty": "No news available at this time.",
-  "home": "Home",
-  "gallery": "Gallery",
   "backToNews": "View more news",
   "draftBanner": "Preview — this news item is not published",
   "draftExit": "Exit preview",
@@ -17,5 +14,31 @@
     "extension": "Extension",
     "eventos": "Events",
     "comunicados": "Announcements"
+  },
+  "pageTitlePaged": "{title} — Page {page}",
+  "listLabel": "News list",
+  "count": "{count, plural, one {# news item} other {# news items}} · page {page} of {total}",
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "News"
+  },
+  "tagsLabel": "Tags",
+  "pagination": {
+    "label": "News pagination",
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page {page}"
+  },
+  "states": {
+    "unavailable": "We could not load the news right now. Please try again in a few minutes or contact us.",
+    "retry": "Try again",
+    "contact": "Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
   }
 }

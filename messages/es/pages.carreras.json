@@ -1,16 +1,52 @@
 {
   "pageTitle": "Carreras — UNC",
   "pageDescription": "Explora las carreras universitarias de la Universidad Nacional de Concepción.",
-  "portalLabel": "Oferta Académica",
   "heading": "Nuestras Carreras",
   "subheading": "Formación universitaria de excelencia en Concepción, Paraguay",
-  "duration": "{years} años",
   "modalidad": "Modalidad",
   "titulo": "Título otorgado",
   "verDetalle": "Ver carrera",
   "verFacultad": "Ver facultad",
   "empty": "No se encontraron carreras disponibles.",
-  "home": "Inicio",
-  "carreras": "Carreras",
-  "backToCarreras": "Volver a Carreras"
+  "backToCarreras": "Volver a Carreras",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Carreras"
+  },
+  "summary": "{programs, plural, one {# programa} other {# programas}} en {faculties, plural, one {# facultad} other {# facultades}}",
+  "index": {
+    "label": "Ir a una facultad"
+  },
+  "tipos": {
+    "grado": "Carreras de grado",
+    "posgrado": "Posgrados",
+    "otros": "Otros programas"
+  },
+  "sinFacultad": "Sin facultad asignada",
+  "sede": "Sede",
+  "duracion": "{count, plural, one {# año} other {# años}}",
+  "states": {
+    "unavailable": "No pudimos cargar las carreras en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  },
+  "detalle": {
+    "tipo": "Tipo",
+    "duracion": "Duración",
+    "fichaLabel": "Datos del programa",
+    "resoluciones": {
+      "title": "Resoluciones del CONES",
+      "intro": "Documentos oficiales que habilitan el programa.",
+      "open": "Resolución CONES {numero} (documento externo, se abre en otra pestaña)"
+    },
+    "perfil": "Perfil del egresado",
+    "facultadTexto": "Conozca la facultad que ofrece este programa: autoridades, aranceles y contacto."
+  }
 }

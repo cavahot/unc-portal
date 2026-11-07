@@ -28,7 +28,7 @@ const render = async (locale = 'es') => renderToStaticMarkup(await SolicitarTitu
 const FORM = 'https://forms.example.org/solicitud'
 
 describe('INST-02 /solicitar-titulo', () => {
-  beforeEach(() => getEnlacesExternos.mockResolvedValue({ formularioTitulos: FORM }))
+  beforeEach(() => { getEnlacesExternos.mockResolvedValue({ formularioTitulos: FORM }) })
 
   it('un solo h1, cabecera compartida y fondo claro (sin el estilo oscuro anterior)', async () => {
     const html = await render()
