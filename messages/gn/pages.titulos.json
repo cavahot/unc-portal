@@ -1,64 +1,64 @@
 {
   "meta": {
     "title": "Inscripción de títulos | UNC",
-    "description": "Documentos que debe presentar, arancel, plazo y pasos para inscribir en la Universidad Nacional de Concepción un título expedido por otra universidad."
+    "description": "Kuatiakuéra regueruva'erã, tepykue, arapaha ha tembiapo rape oñemboheraguapy hag̃ua Universidad Nacional de Concepción-pe ambue mbo'ehaovusu ome'ẽva título."
   },
   "breadcrumb": {
-    "inicio": "Inicio",
-    "nombre": "Inscripción de títulos"
+    "inicio": "Ñepyrũ",
+    "nombre": "Título ñemboheraguapy"
   },
   "hero": {
-    "titulo": "Inscripción de títulos",
-    "updated": "Última actualización: {date}"
+    "titulo": "Título ñemboheraguapy",
+    "updated": "Ñembopyahu paha: {date}"
   },
   "facts": {
-    "label": "Datos del trámite",
-    "plazo": "Plazo",
-    "plazoValue": "{min} a {max} horas hábiles",
-    "arancel": "Arancel",
-    "arancelPending": "Consulte el monto vigente",
-    "arancelLink": "Ver los aranceles del Rectorado",
-    "unidad": "Unidad responsable"
+    "label": "Trámite rehegua marandu",
+    "plazo": "Arapaha",
+    "plazoValue": "{min} guive {max} aravo tembiapo rehegua peve",
+    "arancel": "Tepy",
+    "arancelPending": "Eporandu mboýpa ojehepyme'ẽ ko'ág̃a",
+    "arancelLink": "Ehecha Rectorado repykue",
+    "unidad": "Tembiapo renda oñangarekóva"
   },
   "index": {
-    "label": "Elija el tipo de universidad que expidió su título",
-    "countOne": "1 requisito",
-    "countOther": "{count} requisitos"
+    "label": "Eiporavo título ome'ẽva mbo'ehaovusu reko",
+    "countOne": "1 mba'e oñeikotevẽva",
+    "countOther": "{count} mba'e oñeikotevẽva"
   },
   "documents": {
-    "title": "Qué documentos presentar",
-    "intro": "Los requisitos cambian según el tipo de universidad que expidió el título. Identifique su caso y reúna esos documentos antes de presentarse.",
-    "listLabel": "Requisitos: {tipo}"
+    "title": "Mba'e kuatiápa regueruva'erã",
+    "intro": "Mba'e oñeikotevẽva oñemoambue título ome'ẽva mbo'ehaovusu reko rupi. Ehechakuaa nde káso ha embyaty umi kuatia reho mboyve.",
+    "listLabel": "Mba'e oñeikotevẽva: {tipo}"
   },
   "cones": {
-    "link": "Ver los trámites en el CONES",
-    "newTab": "(se abre en una pestaña nueva)"
+    "link": "Ehecha trámite-kuéra CONES-pe",
+    "newTab": "(ojepe'a peteĩ tendayke pyahúpe)"
   },
   "procedure": {
-    "title": "Paso a paso",
-    "intro": "La inscripción se tramita en {unidad}.",
-    "total": "Tiempo total estimado: {min} a {max} horas hábiles.",
-    "step": "Paso {number}",
-    "responsible": "Responsable"
+    "title": "Peteĩteĩ tembiapo",
+    "intro": "Ñemboheraguapy ojejapo {unidad}-pe.",
+    "total": "Tembiapo pukukue oñeimo'ãva: {min} guive {max} aravo tembiapo rehegua peve.",
+    "step": "Tembiapo {number}",
+    "responsible": "Oñangarekóva tembiapóre"
   },
   "states": {
-    "empty": "La información de este trámite todavía no está publicada. Vuelva a consultar más tarde o comuníquese con la Universidad.",
-    "unavailable": "No pudimos cargar la información de este trámite en este momento. Intente de nuevo en unos minutos.",
-    "retry": "Intentar de nuevo",
-    "contact": "Ir a Contacto"
+    "empty": "Ne'ĩra oñemoherakuã ko trámite rehegua marandu. Ehecha jey upe rire térã eñe'ẽ Mbo'ehaovusu ndive.",
+    "unavailable": "Ndaikatúi romoinge ko trámite rehegua marandu ko'ág̃a. Eñeha'ã jey sapy'ami rire.",
+    "retry": "Eñeha'ã jey",
+    "contact": "Eho Ñe'ẽmondópe"
   },
   "error": {
-    "title": "No pudimos mostrar esta página",
-    "body": "Ocurrió un problema al cargar la información del trámite. Puede intentarlo de nuevo o comunicarse con la Universidad.",
-    "retry": "Intentar de nuevo",
-    "contact": "Ir a Contacto",
-    "reference": "Referencia para soporte: {digest}"
+    "title": "Ndaikatúi rohechauka ko togue",
+    "body": "Oiko peteĩ apañuãi oñemoingévo trámite rehegua marandu. Ikatu reñeha'ã jey térã reñe'ẽ Mbo'ehaovusu ndive.",
+    "retry": "Eñeha'ã jey",
+    "contact": "Eho Ñe'ẽmondópe",
+    "reference": "Pytyvõhára rehegua marandu: {digest}"
   },
   "cta": {
-    "title": "¿Necesita legalizar su título?",
-    "description": "La legalización de documentos es otro trámite. También puede consultar los aranceles del Rectorado o escribirnos.",
-    "legalizaciones": "Ver legalizaciones",
-    "aranceles": "Aranceles del Rectorado",
-    "contacto": "Contacto"
+    "title": "¿Reikotevẽpa título ñemoneĩ?",
+    "description": "Kuatia ñemoneĩ ha'e ambue trámite. Ikatu avei rehecha Rectorado repykue térã rehai oréve.",
+    "legalizaciones": "Ehecha kuatia ñemoneĩ",
+    "aranceles": "Rectorado repykue",
+    "contacto": "Ñe'ẽmondo"
   }
 }

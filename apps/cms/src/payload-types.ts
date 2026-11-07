@@ -137,6 +137,8 @@ export interface Config {
     'enlaces-externos': EnlacesExterno;
     estadisticas: Estadistica;
     'titulos-inscripcion': TitulosInscripcion;
+    'informacion-publica': InformacionPublica;
+    institucional: Institucional;
   };
   globalsSelect: {
     navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
@@ -144,6 +146,8 @@ export interface Config {
     'enlaces-externos': EnlacesExternosSelect<false> | EnlacesExternosSelect<true>;
     estadisticas: EstadisticasSelect<false> | EstadisticasSelect<true>;
     'titulos-inscripcion': TitulosInscripcionSelect<false> | TitulosInscripcionSelect<true>;
+    'informacion-publica': InformacionPublicaSelect<false> | InformacionPublicaSelect<true>;
+    institucional: InstitucionalSelect<false> | InstitucionalSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2480,6 +2484,156 @@ export interface TitulosInscripcion {
   createdAt?: string | null;
 }
 /**
+ * Contenido de la página /informacion-publica: vías para solicitar información (Ley N° 5282), datos que debe aportar la persona, portal oficial y correo de la oficina.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "informacion-publica".
+ */
+export interface InformacionPublica {
+  id: number;
+  /**
+   * Encabezado principal. Ejemplo: «Acceso a la información pública».
+   */
+  titulo: string;
+  /**
+   * Resumen que aparece bajo el título (máximo 500 caracteres).
+   */
+  descripcion: string;
+  /**
+   * Ejemplo: «Ley N° 5282/2014 — Libre Acceso a la Información Pública».
+   */
+  leyReferencia: string;
+  /**
+   * Texto de la norma que sustenta cómo presentar la solicitud. Déjelo vacío si no corresponde.
+   */
+  cita?: {
+    texto?: string | null;
+    /**
+     * Ejemplo: «Ley N° 5282/2014, art. 12».
+     */
+    fuente?: string | null;
+  };
+  /**
+   * Cada forma de presentar la solicitud. El orden del panel es el orden en la página.
+   */
+  vias?:
+    | {
+        /**
+         * Letras minúsculas, números y guiones. Único. Ejemplo: solicitud-online.
+         */
+        slug: string;
+        /**
+         * Ejemplo: «Vía digital».
+         */
+        etiqueta: string;
+        titulo: string;
+        descripcion: string;
+        /**
+         * Marca la vía más rápida con un rótulo fijo de la interfaz (no es texto libre).
+         */
+        destacada?: boolean | null;
+        accion: {
+          texto: string;
+          /**
+           * Una ruta interna (p. ej. /contacto) o un https del portal oficial del Gobierno.
+           */
+          url: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Un dato por fila, en el orden en que se muestran.
+   */
+  datosRequeridos?:
+    | {
+        texto: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Plataforma nacional para presentar la solicitud en línea. Déjelo vacío si no corresponde.
+   */
+  portalOficial?: {
+    titulo?: string | null;
+    descripcion?: string | null;
+    /**
+     * Solo https de: informacionpublica.paraguay.gov.py.
+     */
+    url?: string | null;
+  };
+  /**
+   * Dirección para solicitudes escritas. Ejemplo: secgral@unc.edu.py.
+   */
+  correo: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido del hub /institucional: presentación, datos de la universidad, tarjetas de sección y valores.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "institucional".
+ */
+export interface Institucional {
+  id: number;
+  /**
+   * Ejemplo: «La Institución».
+   */
+  titulo: string;
+  /**
+   * Resumen bajo el título (máximo 400 caracteres).
+   */
+  descripcion: string;
+  sobre: {
+    titulo: string;
+    texto: string;
+    /**
+     * De 1 a 4 pares valor/etiqueta. Ejemplo: «2007» / «Año de fundación».
+     */
+    datos?:
+      | {
+          valor: string;
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Tarjetas que llevan a otras páginas. El orden del panel es el orden en la página.
+   */
+  secciones?:
+    | {
+        destino:
+          | 'historia'
+          | 'mision-vision-y-valores'
+          | 'autoridades'
+          | 'organigrama'
+          | 'marco-legal'
+          | 'aseguramiento-calidad'
+          | 'transparencia'
+          | 'informacion-publica';
+        etiqueta: string;
+        titulo: string;
+        descripcion: string;
+        /**
+         * Ejemplo: «Ver historia».
+         */
+        accion: string;
+        id?: string | null;
+      }[]
+    | null;
+  valores?:
+    | {
+        titulo: string;
+        descripcion: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navegacion_select".
  */
@@ -2596,6 +2750,95 @@ export interface TitulosInscripcionSelect<T extends boolean = true> {
     | T
     | {
         responsable?: T;
+        descripcion?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "informacion-publica_select".
+ */
+export interface InformacionPublicaSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  leyReferencia?: T;
+  cita?:
+    | T
+    | {
+        texto?: T;
+        fuente?: T;
+      };
+  vias?:
+    | T
+    | {
+        slug?: T;
+        etiqueta?: T;
+        titulo?: T;
+        descripcion?: T;
+        destacada?: T;
+        accion?:
+          | T
+          | {
+              texto?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  datosRequeridos?:
+    | T
+    | {
+        texto?: T;
+        id?: T;
+      };
+  portalOficial?:
+    | T
+    | {
+        titulo?: T;
+        descripcion?: T;
+        url?: T;
+      };
+  correo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "institucional_select".
+ */
+export interface InstitucionalSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  sobre?:
+    | T
+    | {
+        titulo?: T;
+        texto?: T;
+        datos?:
+          | T
+          | {
+              valor?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+      };
+  secciones?:
+    | T
+    | {
+        destino?: T;
+        etiqueta?: T;
+        titulo?: T;
+        descripcion?: T;
+        accion?: T;
+        id?: T;
+      };
+  valores?:
+    | T
+    | {
+        titulo?: T;
         descripcion?: T;
         id?: T;
       };
