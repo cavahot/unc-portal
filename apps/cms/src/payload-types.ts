@@ -75,6 +75,7 @@ export interface Config {
     tesis: Tesis;
     facultades: Facultade;
     carreras: Carrera;
+    tramites: Tramite;
     'marco-legal': MarcoLegal;
     'linea-tiempo': LineaTiempo;
     auditoria: Auditoria;
@@ -106,6 +107,7 @@ export interface Config {
     tesis: TesisSelect<false> | TesisSelect<true>;
     facultades: FacultadesSelect<false> | FacultadesSelect<true>;
     carreras: CarrerasSelect<false> | CarrerasSelect<true>;
+    tramites: TramitesSelect<false> | TramitesSelect<true>;
     'marco-legal': MarcoLegalSelect<false> | MarcoLegalSelect<true>;
     'linea-tiempo': LineaTiempoSelect<false> | LineaTiempoSelect<true>;
     auditoria: AuditoriaSelect<false> | AuditoriaSelect<true>;
@@ -672,6 +674,48 @@ export interface Carrera {
    * Ej: Central/Concepción
    */
   sede?: string | null;
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Requisitos de ingreso, matrícula y egreso que se publican en /tramites, agrupados por facultad.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tramites".
+ */
+export interface Tramite {
+  id: number;
+  facultad: number | Facultade;
+  /**
+   * Ej.: Inscripción al Examen de Ingreso.
+   */
+  titulo: string;
+  /**
+   * Opcional. Ej.: «Art. 150°». Se muestra junto al título.
+   */
+  etiqueta?: string | null;
+  descripcion?: string | null;
+  /**
+   * Un requisito por fila, en el orden en que se muestran.
+   */
+  requisitos?:
+    | {
+        texto: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Opcional. Horarios, contacto o una aclaración que aplica a todo el trámite.
+   */
+  nota?: string | null;
+  /**
+   * Número menor = aparece primero dentro de su facultad.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultarlo del portal sin borrarlo.
+   */
   activa?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -1506,6 +1550,10 @@ export interface PayloadLockedDocument {
         value: number | Carrera;
       } | null)
     | ({
+        relationTo: 'tramites';
+        value: number | Tramite;
+      } | null)
+    | ({
         relationTo: 'marco-legal';
         value: number | MarcoLegal;
       } | null)
@@ -1902,6 +1950,27 @@ export interface CarrerasSelect<T extends boolean = true> {
   orden?: T;
   tipo?: T;
   sede?: T;
+  activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tramites_select".
+ */
+export interface TramitesSelect<T extends boolean = true> {
+  facultad?: T;
+  titulo?: T;
+  etiqueta?: T;
+  descripcion?: T;
+  requisitos?:
+    | T
+    | {
+        texto?: T;
+        id?: T;
+      };
+  nota?: T;
+  orden?: T;
   activa?: T;
   updatedAt?: T;
   createdAt?: T;
