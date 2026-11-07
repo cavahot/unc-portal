@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
       'enlaces-externos',
       'facultades',
       'carreras',
+      'calendario-academico',
       'tramites',
       'convenios',
       'tribunal-miembros',
