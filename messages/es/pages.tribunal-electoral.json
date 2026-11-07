@@ -1,17 +1,20 @@
 {
   "meta": {
     "title": "Tribunal Electoral | UNC",
-    "description": "Conocé la composición y los documentos oficiales del Tribunal Electoral de la Universidad Nacional de Concepción."
+    "description": "Conozca la composición y los documentos oficiales del Tribunal Electoral de la Universidad Nacional de Concepción."
   },
-  "breadcrumb": "Tribunal Electoral",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Tribunal Electoral"
+  },
   "hero": {
-    "badge": "Gobierno Universitario",
     "title": "Tribunal Electoral",
     "description": "Órgano autónomo encargado de garantizar la transparencia y legalidad de los procesos electorales universitarios."
   },
   "members": {
     "title": "Composición del Tribunal",
-    "subtitle": "Autoridades designadas para el período electoral vigente"
+    "subtitle": "Autoridades designadas para el período electoral vigente",
+    "empty": "Aún no hay miembros publicados. Para consultar la composición vigente, comuníquese con la universidad."
   },
   "downloads": {
     "title": "Documentos Principales",
@@ -21,16 +24,27 @@
   },
   "accordion": {
     "title": "Documentos del Proceso Electoral",
-    "subtitle": "Accedé a los documentos oficiales de cada etapa del proceso",
+    "subtitle": "Acceda a los documentos oficiales de cada etapa del proceso.",
     "viewDoc": "Ver documento",
     "noDocuments": "No hay documentos disponibles en esta sección.",
     "tipos": {
-      "lista-inscriptos":  "Lista de Inscriptos",
-      "formato-notas":     "Formato de Notas",
-      "padron-electoral":  "Oficialización de Padrón Electoral",
-      "candidaturas":      "Puesta de Manifiesto de Movimientos y Candidaturas",
-      "oficializacion":    "Oficialización de Candidaturas",
-      "proclamacion":      "Proclamación de Candidatos"
+      "lista-inscriptos": "Lista de Inscriptos",
+      "formato-notas": "Formato de Notas",
+      "padron-electoral": "Oficialización de Padrón Electoral",
+      "candidaturas": "Puesta de Manifiesto de Movimientos y Candidaturas",
+      "oficializacion": "Oficialización de Candidaturas",
+      "proclamacion": "Proclamación de Candidatos"
     }
+  },
+  "newTab": "(se abre en una pestaña nueva)",
+  "states": {
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }
