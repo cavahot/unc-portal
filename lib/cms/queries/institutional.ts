@@ -14,21 +14,6 @@ export interface Transparencia {
   ley5282: TransparenciaItem[]
 }
 
-export interface Revista {
-  id: number
-  nombre: string
-  slug: string
-  descripcion: string
-  anioInicio: number
-  urlOjs: string
-  portada?: {
-    id: number
-    alt: string
-    url?: string | null
-  } | null
-  activa: boolean
-}
-
 export interface EnlacesExternos {
   formularioTitulos?: string | null
   urlPortalInfoPublica?: string | null
@@ -76,34 +61,6 @@ export async function getTransparencia(): Promise<Transparencia> {
     })
   } catch {
     return { ley5189: [], ley5282: [] }
-  }
-}
-
-export async function getRevistas(
-  options: { limit?: number } = {},
-): Promise<PayloadResponse<Revista>> {
-  try {
-    const params = new URLSearchParams()
-    params.append('where[activa][equals]', 'true')
-    params.append('sort', 'nombre')
-    if (options.limit) params.append('limit', String(options.limit))
-
-    return await cmsFetch<PayloadResponse<Revista>>(`/revistas?${params.toString()}`, {
-      tags: ['revistas'],
-    })
-  } catch {
-    return {
-      docs: [],
-      totalDocs: 0,
-      limit: options.limit ?? 10,
-      totalPages: 1,
-      page: 1,
-      pagingCounter: 1,
-      hasNextPage: false,
-      hasPrevPage: false,
-      prevPage: null,
-      nextPage: null,
-    }
   }
 }
 
