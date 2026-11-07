@@ -4,7 +4,7 @@ Estado: en implementación. Tarea: `odd/tasks/tramites-cms.md`. Regla: todo el c
 
 ## 1. Problema (hecho observado)
 
-`/tramites` muestra los requisitos de ingreso, matrícula y egreso de las seis facultades, pero los datos (≈25 trámites con requisitos, artículos, horarios y contactos) están escritos en `components/tramites/FacultadTabs.tsx` (529 líneas, componente de cliente con pestañas). Un cambio de requisitos exige un despliegue y el contenido no pasa por roles, revalidación ni auditoría del CMS. La página usa además el estilo oscuro anterior. Las pestañas ocultan el contenido de las facultades no activas a buscadores e impresión.
+`/tramites` muestra los requisitos de ingreso, matrícula y egreso de las seis facultades, pero los datos (18 trámites con 84 requisitos, artículos, horarios y contactos) están escritos en `components/tramites/FacultadTabs.tsx` (529 líneas, componente de cliente con pestañas). Un cambio de requisitos exige un despliegue y el contenido no pasa por roles, revalidación ni auditoría del CMS. La página usa además el estilo oscuro anterior. Las pestañas ocultan el contenido de las facultades no activas a buscadores e impresión.
 
 ## 2. Comportamiento
 
