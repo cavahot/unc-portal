@@ -26,9 +26,11 @@
     "noticias": "Notícias",
     "preguntasFrecuentes": "Perguntas Frequentes",
     "contactos": "Contatos",
-    "academia": "Academia"
+    "academia": "Acadêmico"
   },
   "institutional": {
+    "quienesSomos": "Quem somos",
+    "transparencia": "Transparência",
     "historia": "História",
     "misionVisionValores": "Missão, Visão e Valores",
     "marcoLegal": "Marco Legal",
@@ -83,7 +85,7 @@
       "contacto": "Contato"
     },
     "academia": {
-      "title": "Academia",
+      "title": "Acadêmico",
       "ariaLabel": "Links acadêmicos",
       "investigacion": "Pesquisa",
       "extension": "Extensão universitária",

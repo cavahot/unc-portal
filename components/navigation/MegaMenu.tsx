@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import LocaleSwitcher from '@/components/layout/LocaleSwitcher';
 import { createPortal } from 'react-dom';
@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import type { Navegacion } from '@unc/cms-types';
-import { mapCmsNavigation, type MenuItem } from '@/lib/cms/navegacion';
+import { mapCmsNavigation, translateMenu, type MenuItem } from '@/lib/cms/navegacion';
 import { safeHref } from '@/lib/security/safeUrl';
 
 interface MegaMenuProps {
@@ -184,12 +184,15 @@ function isExternal(href: string) {
 
 export default function MegaMenu({ navigation }: MegaMenuProps) {
   const t = useTranslations('nav');
+  const locale = useLocale();
   const pathname = usePathname();
 
-  const menuData =
+  // Las etiquetas se traducen por el destino del enlace con el catálogo `nav`; en español manda el texto del CMS.
+  const baseMenu =
     navigation && navigation.links && navigation.links.length > 0
       ? mapCmsNavigation(navigation)
       : fallbackMenuData;
+  const menuData = translateMenu(baseMenu, locale, (key) => (t.has(key) ? t(key) : undefined));
 
   const [activeIndex, setActiveIndex] =
     useState<number | null>(null);
