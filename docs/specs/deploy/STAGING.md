@@ -31,6 +31,6 @@ Ensayar, con datos inventados, las migraciones (`calendario_01`, `legales_01`, `
 - **Riesgo:** compartir máquina con producción (CPU, memoria y disco durante la construcción de imágenes). Mitigación: construir fuera del horario de mayor uso y apagar staging al terminar.
 - **Rollback:** `down -v` con el archivo de staging borra solo recursos `*staging*`.
 
-## 5. Supuestos por verificar en la primera corrida
+## 5. Supuestos verificados
 
-El CMS en `NODE_ENV=production` con URLs `http://localhost` y sin SMTP debería arrancar, pero no se probó (no se ejecutó Docker). Si el CMS rechaza `http` o el SMTP vacío, se documenta el ajuste mínimo.
+Verificado el 2026-11-08 con Docker real (instalador, desde cero): el CMS en `NODE_ENV=production` con URLs `http://localhost` y sin SMTP **sí arranca**, queda sano y responde; las migraciones se aplican y el portal sirve las páginas nuevas. Detalle en `odd/tasks/paquete-despliegue.md` (L6).
