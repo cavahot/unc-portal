@@ -1,0 +1,16 @@
+{
+  "notFound": {
+    "code": "Error 404",
+    "title": "No encontramos esta página",
+    "body": "La dirección que ingresó no existe en el portal. Verifique la URL o navegue desde el inicio.",
+    "home": "Ir al inicio",
+    "news": "Ver noticias"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado al cargar la página. Puede intentarlo de nuevo o comunicarse con la Universidad.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
+}

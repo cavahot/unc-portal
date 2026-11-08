@@ -1,5 +1,5 @@
 import { cmsFetch } from '../client'
-import { demoFallbackAllowed } from '../errors'
+import { CmsError, demoFallbackAllowed } from '../errors'
 import { PayloadResponse } from '../types'
 
 export const FAQ_CATEGORIES = [
@@ -202,6 +202,34 @@ function lexical(text: string) {
  * vacía -> `[]` real. Solo en desarrollo una caída devuelve DEMO_FAQS. Límite: la página debe
  * decidir cómo mostrar el error.
  */
+export type FAQsResult = { status: 'ok'; data: FAQItem[] } | { status: 'empty' } | { status: 'unavailable' }
+
+/**
+ * Preguntas frecuentes con estado, para /preguntas-frecuentes (el CMS es la ÚNICA fuente).
+ * - `ok`: hay al menos una pregunta activa.
+ * - `empty`: el CMS respondió sin preguntas: aviso neutro.
+ * - `unavailable`: el CMS no respondió o devolvió una forma inesperada: aviso neutro.
+ * Amenaza que evita: preguntas de demostración en producción o una caída mostrada como «sin preguntas». A diferencia de
+ * `getFAQs`, nunca usa `DEMO_FAQS` y nunca lanza; registra solo el NOMBRE del error y el código HTTP, nunca el mensaje.
+ */
+export async function getFAQsResult(): Promise<FAQsResult> {
+  try {
+    const res = await cmsFetch<PayloadResponse<FAQItem>>(
+      '/faqs?where[active][equals]=true&sort=order&limit=100',
+      { tags: ['faqs'], next: { revalidate: 3600 } },
+    )
+    if (!res || !Array.isArray(res.docs)) {
+      console.error('[FAQS] Respuesta inesperada del CMS; se muestra el aviso de no disponible.')
+      return { status: 'unavailable' }
+    }
+    return res.docs.length > 0 ? { status: 'ok', data: res.docs } : { status: 'empty' }
+  } catch (error) {
+    const detail = error instanceof CmsError ? `${error.name} ${error.status}` : error instanceof Error ? error.name : 'desconocido'
+    console.error(`[FAQS] No se pudo leer el CMS (${detail}); se muestra el aviso de no disponible.`)
+    return { status: 'unavailable' }
+  }
+}
+
 export async function getFAQs(): Promise<FAQItem[]> {
   try {
     const res = await cmsFetch<PayloadResponse<FAQItem>>(

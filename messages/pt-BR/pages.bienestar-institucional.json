@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "title": "Bem-estar Institucional",
+    "description": "A área de Bem-estar Institucional da UNC promove a saúde integral, a inclusão e a permanência de estudantes, docentes e funcionários no âmbito universitário."
+  },
+  "hero": {
+    "title": "Bem-estar Institucional",
+    "label": "Academia · Bem-estar",
+    "description": "A UNC cuida de sua comunidade. A área de Bem-estar Institucional acompanha estudantes, docentes e funcionários em seu desenvolvimento integral, promovendo saúde, inclusão e qualidade de vida no campus."
+  },
+  "breadcrumb": "Academia",
+  "contactLabel": "Precisa de apoio ou informações sobre um serviço?",
+  "areasTitle": "Serviços disponíveis",
+  "areas": {
+    "a1": {
+      "title": "Saúde mental",
+      "description": "Serviço gratuito de acompanhamento psicológico para estudantes, docentes e funcionários. Atendimento individual e oficinas de manejo do estresse e bem-estar emocional."
+    },
+    "a2": {
+      "title": "Inclusão e acessibilidade",
+      "description": "Programas e adaptações curriculares para garantir a plena participação de pessoas com deficiência na vida universitária."
+    },
+    "a3": {
+      "title": "Bolsas e apoio financeiro",
+      "description": "Gestão de bolsas nacionais e internacionais, refeitórios universitários e apoios financeiros para estudantes em situação de vulnerabilidade."
+    },
+    "a4": {
+      "title": "Esporte e recreação",
+      "description": "Atividades esportivas, torneios entre faculdades e espaços de lazer para fomentar a vida saudável na comunidade universitária."
+    },
+    "a5": {
+      "title": "Convivência universitária",
+      "description": "Protocolos de prevenção de violência e assédio, mediação de conflitos e promoção de um clima institucional inclusivo e respeitoso."
+    }
+  }
+}
