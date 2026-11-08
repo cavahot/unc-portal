@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "Contactos por dependencia | UNC",
+    "description": "Directorio de contacto del Rectorado y de todas las facultades de la Universidad Nacional de Concepción: teléfonos, correos y sitios web institucionales."
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "contacto": "Contacto",
+    "nombre": "Por dependencia"
+  },
+  "hero": {
+    "title": "Contactos por dependencia",
+    "description": "Encuentre los datos de contacto del Rectorado y de todas las facultades de la Universidad Nacional de Concepción: teléfonos, correos electrónicos y sitios web institucionales."
+  },
+  "nav": {
+    "label": "Saltar a una dependencia"
+  },
+  "logoAlt": "Logo de {nombre}",
+  "back": "Volver a la página de contacto",
+  "states": {
+    "empty": "El directorio de contactos todavía no está publicado. Vuelva a consultar más tarde o comuníquese con la Universidad.",
+    "unavailable": "No pudimos cargar el directorio de contactos en este momento. Intente de nuevo en unos minutos.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema al cargar el directorio de contactos. Puede intentarlo de nuevo o comunicarse con la Universidad.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
+}

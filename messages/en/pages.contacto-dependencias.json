@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "Contacts by department | UNC",
+    "description": "Contact directory of the Rectorate and all faculties of the Universidad Nacional de Concepción: phone numbers, emails and institutional websites."
+  },
+  "breadcrumb": {
+    "inicio": "Home",
+    "contacto": "Contact",
+    "nombre": "By department"
+  },
+  "hero": {
+    "title": "Contacts by department",
+    "description": "Find the contact details of the Rectorate and all faculties of the Universidad Nacional de Concepción: phone numbers, email addresses and institutional websites."
+  },
+  "nav": {
+    "label": "Jump to a department"
+  },
+  "logoAlt": "Logo of {nombre}",
+  "back": "Back to the contact page",
+  "states": {
+    "empty": "The contact directory has not been published yet. Please check back later or contact the University.",
+    "unavailable": "We could not load the contact directory right now. Please try again in a few minutes.",
+    "retry": "Try again",
+    "contact": "Go to Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "A problem occurred while loading the contact directory. You can try again or contact the University.",
+    "retry": "Try again",
+    "contact": "Go to Contact",
+    "reference": "Support reference: {digest}"
+  }
+}
