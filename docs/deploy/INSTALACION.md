@@ -103,6 +103,15 @@ El instalador guarda un registro (`instalacion-ENTORNO-FECHA.log`) con los secre
 | Nginx no encuentra los certificados | Faltan archivos en `certs/` | Copiarlos con los nombres exactos |
 | El … no llegó a estar sano | Tardó más de lo esperado o falla | Leer `docker logs`; esperar y reintentar |
 
+## 4 bis. Respaldos (siempre en el servidor)
+
+Los respaldos se hacen **en el VPS**, no desde GitHub: la base de datos de producción vive dentro de Docker y no se expone a internet (Postgres cerrado). Para que GitHub la alcanzara habría que abrirla al exterior y dejar su `DATABASE_URL` como secreto, y el volcado de toda la base quedaría como artefacto en un repositorio público. Por eso el flujo `Backup` de GitHub quedó solo manual.
+
+1. Copie `scripts/backup/crontab.example`, ajuste `PROJECT_DIR` y péguelo con `crontab -e` (respaldo diario cifrado de la base y de los medios, con alertas si falta una copia).
+2. Active la **copia externa** una vez: `bash scripts/backup/configure-offsite.sh` (use una clave SSH de solo escritura).
+3. Guarde la **frase de paso** fuera del servidor (gestor de contraseñas o papel): sin ella no se puede restaurar, y si estuviera solo en el servidor, un atacante la tendría junto a los datos.
+4. **Pruebe una restauración** antes de publicar y repítala cada cierto tiempo (`docs/BACKUP_RECOVERY.md`).
+
 ## 5. Actualizar y volver atrás
 
 - **Actualizar:** al fusionar a `main`, el flujo `deploy.yml` hace respaldo, migra y reinicia por SSH. Para eso configure en GitHub (Settings → Secrets) `SSH_HOST`, `SSH_USER`, `SSH_PRIVATE_KEY`, `GHCR_READ_TOKEN` (y los de Sentry si los usa).

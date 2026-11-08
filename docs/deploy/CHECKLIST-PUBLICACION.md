@@ -29,7 +29,10 @@ Marque cada punto. Un punto sin marcar **bloquea** la publicación (regla SEC-02
 - [ ] Vista en un celular real de las páginas principales.
 - [ ] Cabeceras de seguridad y HTTPS correctos (candado, sin contenido mixto).
 - [ ] Límite de tasa y nginx verificados (`x-real-ip`): lo que staging no cubre.
-- [ ] Respaldo programado (`crontab`) y **restauración probada** en producción o en una copia.
+- [ ] Respaldo programado en el VPS (`crontab`, `scripts/backup/backup-prod.sh`) y **restauración probada** en producción o en una copia.
+- [ ] **Copia externa** activa (`scripts/backup/configure-offsite.sh`) con una clave SSH de solo escritura.
+- [ ] La **frase de paso** de los respaldos guardada fuera del servidor (gestor de contraseñas o papel).
+- [ ] El flujo `Backup` de GitHub sigue solo manual y el secreto `DATABASE_URL` **no** está cargado en GitHub (la base no se expone a internet).
 - [ ] Cada unidad confirmó sus datos (calendario, textos legales, requisitos, teléfonos y correos) y los corrigió en el CMS.
 - [ ] Monitoreo activo (Sentry) y un responsable que lo mira.
 - [ ] Plan de retroceso entendido: versión anterior (`--tag`) y restauración del respaldo.
