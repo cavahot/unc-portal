@@ -19,6 +19,7 @@ import * as migration_20261107_172140_tramites_01_coleccion from './20261107_172
 import * as migration_20261107_182316_calendario_01_coleccion from './20261107_182316_calendario_01_coleccion';
 import * as migration_20261107_191247_legales_01_globals from './20261107_191247_legales_01_globals';
 import * as migration_20261107_200336_legalizaciones_01_global from './20261107_200336_legalizaciones_01_global';
+import * as migration_20261108_163903_dependencias_01 from './20261108_163903_dependencias_01';
 
 export const migrations = [
   {
@@ -124,6 +125,11 @@ export const migrations = [
   {
     up: migration_20261107_200336_legalizaciones_01_global.up,
     down: migration_20261107_200336_legalizaciones_01_global.down,
-    name: '20261107_200336_legalizaciones_01_global'
+    name: '20261107_200336_legalizaciones_01_global',
+  },
+  {
+    up: migration_20261108_163903_dependencias_01.up,
+    down: migration_20261108_163903_dependencias_01.down,
+    name: '20261108_163903_dependencias_01'
   },
 ];

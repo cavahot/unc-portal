@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
       'facultades',
       'carreras',
       'calendario-academico',
+      'dependencias-contacto',
       'politica-privacidad',
       'declaracion-accesibilidad',
       'legalizaciones',

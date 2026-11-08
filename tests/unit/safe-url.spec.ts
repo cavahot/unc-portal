@@ -113,7 +113,6 @@ const CMS_URL_FIELD = /(driveUrl|cvUrl|linkHref|urlPdf|urlOjs|ctaUrl|buttonUrl|e
 // que importa consultas del CMS (la portada) y lo hace para noticias, cuyos enlaces se arman con `/noticias/${slug}`.
 const STATIC_DATA_EXCEPTIONS: Record<string, { reason: string; cmsImport?: boolean }> = {
   'app/[locale]/contacto/page.tsx': { reason: 'maps/tel/mailto fijos definidos en el archivo' },
-  'app/[locale]/contacto/dependencias/page.tsx': { reason: 'directorio de dependencias literal en el archivo (web/maps)' },
   'app/[locale]/page.tsx': { reason: 'accesos rápidos y transparencia literales; las noticias usan `/noticias/${slug}`', cmsImport: true },
   'components/institutional/InstitutionalAccessSection.tsx': { reason: 'accesos institucionales literales' },
   'components/layout/LocaleSwitcher.tsx': { reason: '`pathname` del router de next-intl, no del CMS' },
