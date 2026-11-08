@@ -8,7 +8,7 @@
 // `mapCmsNavigation`); (2) una etiqueta sin destino (`#`) mostrada como enlace (se descarta); (3) enlaces repetidos.
 // Límite: no comprueba que el destino exista; una página borrada que siga en el menú también seguirá en el mapa.
 import type { Navegacion } from '@unc/cms-types'
-import { mapCmsNavigation } from '@/lib/cms/navegacion'
+import { mapCmsNavigation, type MenuItem } from '@/lib/cms/navegacion'
 
 export interface MapaEnlace {
   label: string
@@ -27,12 +27,16 @@ export interface MapaSeccion {
 const usable = (href: string | undefined): href is string => typeof href === 'string' && href.trim() !== '' && href !== '#'
 const clean = (s: unknown): string => (typeof s === 'string' ? s.trim() : '')
 
-export function armarMapa(navigation: Navegacion | null | undefined): MapaSeccion[] {
+export function armarMapa(
+  navigation: Navegacion | null | undefined,
+  /** Traducción opcional de las etiquetas (ver `translateMenu`); no cambia los destinos. */
+  localize: (items: MenuItem[]) => MenuItem[] = (items) => items,
+): MapaSeccion[] {
   if (!navigation || !Array.isArray(navigation.links) || navigation.links.length === 0) return []
   const principal: MapaEnlace[] = []
   const secciones: MapaSeccion[] = []
 
-  mapCmsNavigation(navigation).forEach((item, i) => {
+  localize(mapCmsNavigation(navigation)).forEach((item, i) => {
     const label = clean(item.label)
     if (!label) return
     const seen = new Set<string>()

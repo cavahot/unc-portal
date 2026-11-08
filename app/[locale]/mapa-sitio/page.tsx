@@ -11,6 +11,7 @@ import PageHero from '@/components/pages/PageHero'
 import { getT } from '@/lib/i18n/server'
 import { getNavigation } from '@/lib/cms/queries/navigation'
 import { armarMapa, type MapaEnlace } from '@/lib/cms/mapaSitio'
+import { translateMenu } from '@/lib/cms/navegacion'
 import { safeHref } from '@/lib/security/safeUrl' // DEP-15: todo href pasa por la allowlist
 
 // ISR (R4): revalida la página cada 60 s; las etiquetas de la navegación la refrescan antes cuando el CMS avisa.
@@ -43,8 +44,14 @@ function Enlace({ link }: { link: MapaEnlace }) {
 
 export default async function MapaSitioPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
-  const [t, navigation] = await Promise.all([getT(locale, 'pages.mapa-sitio'), getNavigation()])
-  const secciones = armarMapa(navigation)
+  const [t, tNav, navigation] = await Promise.all([getT(locale, 'pages.mapa-sitio'), getT(locale, 'nav'), getNavigation()])
+  // Las etiquetas del menú salen del catálogo `nav` según el destino (el CMS las guarda solo en español). Una clave ausente
+  // devuelve la propia clave, así que se descarta y se conserva la etiqueta del CMS.
+  const lookup = (key: string): string | undefined => {
+    const value = tNav(key)
+    return value && !value.endsWith(key) ? value : undefined
+  }
+  const secciones = armarMapa(navigation, (items) => translateMenu(items, locale, lookup))
   const utilidades: MapaEnlace[] = [
     { label: t('utilidades.buscar'), href: '/buscar' },
     { label: t('utilidades.privacidad'), href: '/privacidad' },
