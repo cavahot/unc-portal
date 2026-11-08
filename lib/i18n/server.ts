@@ -12,6 +12,8 @@ const NAMESPACES = [
   'pages.autoridades', 'pages.organigrama', 'pages.titulos',
   'pages.legalizaciones', 'pages.convenios', 'pages.tribunal-electoral',
   'pages.investigacion', 'pages.extension', 'pages.calendario-academico',
+  // Secciones académicas: textos de la plantilla compartida y contenido de las tres páginas con texto propio.
+  'pages.estados', 'pages.preguntas-frecuentes', 'pages.seccion-academica', 'pages.aseguramiento-calidad', 'pages.bienestar-institucional', 'pages.direccion-general-academica',
   'pages.mapa-sitio', 'pages.privacidad', 'pages.accesibilidad',
   'pages.tramites',
   // ARR-01: /aranceles-rectorado pasa a getT (como /marco-legal) para formatear en el servidor por idioma.

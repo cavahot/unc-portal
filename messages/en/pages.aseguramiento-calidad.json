@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "title": "Quality Assurance",
+    "description": "UNC drives continuous improvement of its academic and institutional processes through evaluation, accreditation and educational quality assurance systems."
+  },
+  "hero": {
+    "title": "Quality Assurance",
+    "label": "Academics · Quality",
+    "description": "UNC is committed to the continuous improvement of its educational standards. The quality assurance area coordinates evaluation, accreditation and institutional development processes."
+  },
+  "breadcrumb": "Academics",
+  "contactLabel": "Questions about accreditation or quality?",
+  "areasTitle": "Key processes",
+  "areas": {
+    "a1": {
+      "title": "Institutional self-assessment",
+      "description": "Periodic self-assessment processes that identify strengths, weaknesses and improvement opportunities in the core functions of the university."
+    },
+    "a2": {
+      "title": "Program accreditation",
+      "description": "Support for faculties in national and international accreditation processes before bodies such as ANEAES and ARCUSUR."
+    },
+    "a3": {
+      "title": "Quality indicators",
+      "description": "Indicator system to monitor and evaluate educational quality: completion rate, graduation, teaching performance and student satisfaction."
+    }
+  }
+}
