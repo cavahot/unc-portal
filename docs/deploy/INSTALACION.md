@@ -6,6 +6,13 @@ Para quien va a poner el portal en un servidor propio (VPS). Se usa el **instala
 
 ## 0. Qué necesita
 
+**Su servidor:** Ubuntu 22 x64, 8 GB de RAM, 2 vCPU dedicados, 250 GB SSD NVMe y certificado SSL Sectigo. Con eso:
+- **Sobra para todo:** producción y staging pueden convivir (cada uno usa cerca de 2 GB) y las imágenes se construyen en el servidor sin necesitar swap.
+- **Con 2 vCPU la construcción tarda varios minutos** (la primera vez, de 10 a 20). Hágala fuera del horario de mayor uso y no la ejecute a la vez que pruebas pesadas en staging.
+- **El certificado Sectigo cubre `www.unc.edu.py`.** Para `cms.unc.edu.py` se necesita aparte un certificado gratuito de Let's Encrypt (DEPLOY.md y `scripts/setup/rename-certs.sh` explican el paso). Confirme con el proveedor si el Sectigo incluye también el subdominio `cms`; si lo incluye, úselo y se ahorra ese paso.
+
+Mínimo general (para otro servidor):
+
 | Cosa | Mínimo recomendado |
 | --- | --- |
 | Servidor | Ubuntu 22.04 o superior, 2 CPU, 4 GB de memoria (con 2 GB, agregue swap), 40 GB de disco |
