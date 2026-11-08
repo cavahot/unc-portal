@@ -655,7 +655,11 @@ if [ "$ENTORNO" = "staging" ]; then
 else
   dice "1. Abra https://cms.unc.edu.py/accesoSeguro y cree el primer superadmin."
   dice "2. Cree las cuentas web-admin de quienes editarán los contenidos."
-  dice "3. Programe los respaldos: vea scripts/backup/crontab.example"
+  dice "3. Programe los respaldos EN ESTE SERVIDOR (la base no se expone a internet, por eso no se respalda desde GitHub):"
+  dice "     a) Copie scripts/backup/crontab.example, ajuste PROJECT_DIR y péguelo con: crontab -e"
+  dice "     b) Active la copia EXTERNA una vez: bash scripts/backup/configure-offsite.sh"
+  dice "     c) Guarde la frase de paso de los respaldos FUERA de este servidor (gestor de contraseñas o papel)."
+  dice "     d) Pruebe una restauración antes de dar el sitio por bueno: docs/BACKUP_RECOVERY.md"
   CMS_URL_EJ="https://cms.unc.edu.py"; PERM=" --allow-remote"
 fi
 dice "4. Cargue los contenidos iniciales (una sola vez; cada comando es repetible sin riesgo). Desde la carpeta del repositorio:"
