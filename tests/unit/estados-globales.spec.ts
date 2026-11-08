@@ -37,6 +37,15 @@ describe('404', () => {
   })
 })
 
+describe('título de la pestaña del 404', () => {
+  it('sale del catálogo por idioma y no trae el literal en español', () => {
+    const code = read('app/[locale]/[...slug]/page.tsx')
+    expect(code).not.toContain("title: 'Página no encontrada'")
+    expect(code).toContain("getT(locale, 'pages.estados')")
+    expect(code).toContain("t('notFound.title')")
+  })
+})
+
 describe('error de ruta, carga y error crítico', () => {
   it('el error usa el límite compartido con el catálogo y no muestra el mensaje del error', () => {
     const secret = Object.assign(new Error('SECRETO interno'), { digest: 'ref016' })
