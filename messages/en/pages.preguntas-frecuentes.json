@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "title": "Frequently asked questions | UNC",
+    "description": "Find answers to the most common questions about admissions, procedures, services and more at the Universidad Nacional de Concepción."
+  },
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Frequently asked questions"
+  },
+  "hero": {
+    "title": "Frequently asked questions",
+    "description": "We gather the most frequent questions from students, faculty and the community. Search by keyword or browse by category."
+  },
+  "stats": {
+    "questions": "Questions",
+    "categories": "Categories"
+  },
+  "nav": {
+    "label": "Available categories"
+  },
+  "categories": {
+    "horarios": "Hours and service",
+    "admision": "Admissions and enrollment",
+    "tramites": "Procedures",
+    "servicios": "Services",
+    "transparencia": "Transparency",
+    "rrhh": "Human resources",
+    "titulos": "Degrees and certificates"
+  },
+  "search": {
+    "label": "Search questions",
+    "placeholder": "Search a question…",
+    "clear": "Clear search",
+    "filter": "Filter by category",
+    "all": "All"
+  },
+  "results": {
+    "none": "No results found for “{query}”",
+    "noneHint": "Try other words or browse the categories.",
+    "showAll": "See all questions",
+    "countOne": "{count} result for “{query}”",
+    "countOther": "{count} results for “{query}”",
+    "questionsOne": "{count} question",
+    "questionsOther": "{count} questions"
+  },
+  "cta": {
+    "kicker": "Did not find what you were looking for?",
+    "title": "Contact us directly",
+    "body": "We reply on the next business day.",
+    "button": "Go to Contact"
+  },
+  "states": {
+    "empty": "No frequently asked questions have been published yet. Please check back later or contact the University.",
+    "unavailable": "We could not load the frequently asked questions right now. Please try again in a few minutes.",
+    "retry": "Try again",
+    "contact": "Go to Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "A problem occurred while loading the frequently asked questions. You can try again or contact the University.",
+    "retry": "Try again",
+    "contact": "Go to Contact",
+    "reference": "Support reference: {digest}"
+  }
+}
