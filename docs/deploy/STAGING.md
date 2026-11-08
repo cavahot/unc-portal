@@ -2,6 +2,8 @@
 
 Spec: `docs/specs/deploy/STAGING.md`. **Los comandos de servidor los ejecuta usted, tras autorizar el acceso.** Ningún paso toca producción.
 
+> **Atajo recomendado:** el instalador guiado hace los pasos 1 a 3 de esta guía por usted, con mensajes y errores explicados: `bash scripts/deploy/instalar.sh --generar-secretos` (ver `docs/deploy/INSTALACION.md`). Esta guía queda como detalle manual y para el recorrido de prueba.
+
 ## 1. Preparación (una vez)
 
 ```bash
