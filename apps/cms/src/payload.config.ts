@@ -14,6 +14,7 @@ import { DeclaracionAccesibilidad } from './globals/DeclaracionAccesibilidad'
 import { Legalizaciones } from './globals/Legalizaciones'
 import { Tramites } from './collections/Tramites'
 import { CalendarioAcademico } from './collections/CalendarioAcademico'
+import { DependenciasContacto } from './collections/DependenciasContacto'
 import { Facultades } from './collections/Facultades'
 import { MarcoLegal } from './collections/MarcoLegal'
 // LT-01: hitos de la línea de tiempo de /historia (docs/specs/portal/LINEA-TIEMPO.md).
@@ -181,6 +182,7 @@ export default buildConfig({
     Facultades,
     Carreras,
     CalendarioAcademico,
+    DependenciasContacto,
     Tramites,
     MarcoLegal,
     LineaTiempo,

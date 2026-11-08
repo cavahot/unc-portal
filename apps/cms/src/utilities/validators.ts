@@ -234,3 +234,40 @@ export function validateCalendarioDescripcion(value: unknown, options?: { siblin
   if (options?.siblingData?.evento === 'otro' && !texto) return 'Escriba la descripción del evento.'
   return true
 }
+
+/**
+ * INST-12: validadores de la colección `dependencias-contacto` (directorio de /contacto/dependencias).
+ * Amenazas que evitan: un `slug` que rompa el ancla de la página; un logo apuntando fuera de `/images/` (otro sitio, `..`,
+ * un esquema); un correo mal formado; una web `javascript:`/`data:` que llegaría a un `href`. El portal repite estas reglas al
+ * mapear (defensa en profundidad). Límite: validan forma, no que el dato sea el oficial.
+ */
+export function validateDependenciaSlug(value: unknown): true | string {
+  const slug = typeof value === 'string' ? value : ''
+  if (slug.length === 0 || slug.length > 60 || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
+    return 'Use minúsculas, números y guiones simples (hasta 60 caracteres). Ej.: ciencias-exactas.'
+  }
+  return true
+}
+
+export function validateDependenciaLogo(value: unknown): true | string {
+  const logo = typeof value === 'string' ? value : ''
+  const ok = /^\/images\/[A-Za-z0-9_\-./]+\.(png|jpe?g|webp|svg)$/i.test(logo) && !logo.includes('..') && !logo.includes('//')
+  return ok ? true : 'Use una ruta pública que empiece con /images/ y termine en .png, .jpg, .webp o .svg.'
+}
+
+export function validateDependenciaCorreo(value: unknown): true | string {
+  const correo = typeof value === 'string' ? value.trim() : ''
+  return correo.length > 0 && correo.length <= 120 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) ? true : 'Escriba un correo válido (nombre@dominio.ext).'
+}
+
+export function validateDependenciaWeb(value: unknown): true | string {
+  if (value === undefined || value === null || value === '') return true
+  if (typeof value !== 'string') return 'El sitio web no es válido.'
+  try {
+    const url = new URL(value)
+    if ((url.protocol === 'http:' || url.protocol === 'https:') && !url.username && !url.password) return true
+  } catch {
+    /* cae al mensaje */
+  }
+  return 'Use una dirección que empiece con http:// o https://, sin usuario ni contraseña.'
+}

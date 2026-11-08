@@ -76,6 +76,7 @@ export interface Config {
     facultades: Facultade;
     carreras: Carrera;
     'calendario-academico': CalendarioAcademico;
+    'dependencias-contacto': DependenciasContacto;
     tramites: Tramite;
     'marco-legal': MarcoLegal;
     'linea-tiempo': LineaTiempo;
@@ -109,6 +110,7 @@ export interface Config {
     facultades: FacultadesSelect<false> | FacultadesSelect<true>;
     carreras: CarrerasSelect<false> | CarrerasSelect<true>;
     'calendario-academico': CalendarioAcademicoSelect<false> | CalendarioAcademicoSelect<true>;
+    'dependencias-contacto': DependenciasContactoSelect<false> | DependenciasContactoSelect<true>;
     tramites: TramitesSelect<false> | TramitesSelect<true>;
     'marco-legal': MarcoLegalSelect<false> | MarcoLegalSelect<true>;
     'linea-tiempo': LineaTiempoSelect<false> | LineaTiempoSelect<true>;
@@ -730,6 +732,71 @@ export interface CalendarioAcademico {
      * Opcional. Déjela vacía si es un solo día.
      */
     fin?: string | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Directorio que se publica en /contacto/dependencias: Rectorado y facultades, con sus sedes, teléfonos, correos y sitios web.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dependencias-contacto".
+ */
+export interface DependenciasContacto {
+  id: number;
+  /**
+   * Ej.: Facultad de Medicina.
+   */
+  nombre: string;
+  /**
+   * Minúsculas y guiones. Es el ancla de la página (#dept-medicina). No lo cambie si ya hay enlaces a esa dependencia.
+   */
+  slug: string;
+  /**
+   * Ruta bajo /images/. Ej.: /images/facultades/medicina.png.
+   */
+  logo?: string | null;
+  /**
+   * Se usa para el Rectorado. Las demás dependencias llevan cabecera clara.
+   */
+  destacada?: boolean | null;
+  /**
+   * Número menor = aparece primero.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultarla del portal sin borrarla.
+   */
+  activa?: boolean | null;
+  /**
+   * Una fila por sede o filial, en el orden en que se muestran.
+   */
+  sedes: {
+    /**
+     * Opcional. Ej.: Filial Horqueta.
+     */
+    nombre?: string | null;
+    direccion: string;
+    telefonos?:
+      | {
+          /**
+           * Como se muestra. Ej.: (595 331) 241069.
+           */
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    correos?:
+      | {
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Opcional. Debe empezar con http:// o https://.
+     */
+    web?: string | null;
     id?: string | null;
   }[];
   updatedAt: string;
@@ -1611,6 +1678,10 @@ export interface PayloadLockedDocument {
         value: number | CalendarioAcademico;
       } | null)
     | ({
+        relationTo: 'dependencias-contacto';
+        value: number | DependenciasContacto;
+      } | null)
+    | ({
         relationTo: 'tramites';
         value: number | Tramite;
       } | null)
@@ -2032,6 +2103,40 @@ export interface CalendarioAcademicoSelect<T extends boolean = true> {
         descripcion?: T;
         inicio?: T;
         fin?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dependencias-contacto_select".
+ */
+export interface DependenciasContactoSelect<T extends boolean = true> {
+  nombre?: T;
+  slug?: T;
+  logo?: T;
+  destacada?: T;
+  orden?: T;
+  activa?: T;
+  sedes?:
+    | T
+    | {
+        nombre?: T;
+        direccion?: T;
+        telefonos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        correos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        web?: T;
         id?: T;
       };
   updatedAt?: T;
