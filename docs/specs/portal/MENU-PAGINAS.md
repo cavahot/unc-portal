@@ -32,4 +32,39 @@ La siembra (`scripts/lib/navegacionSeedData.mjs`) debe coincidir con el respaldo
 
 - Las **etiquetas por idioma** del menú siguen saliendo de una tabla fija por destino (`MENU_LABEL_KEYS`); un enlace nuevo conserva su texto en español hasta agregarle su clave. Alternativa: campo localizado en Navegación.
 - La respuesta de la API al crear una página incluye el usuario creador completo (correo, teléfono, identificadores de sesión) cuando lo ve un superadmin. Falta comprobar si los roles editor y revisor también lo reciben (SEC-027).
-- Publicar una página y verla en el portal no se pudo probar en el recorrido (requiere revisor y publicador).
+- ~~Publicar una página y verla en el portal no se pudo probar en el recorrido (requiere revisor y publicador).~~ Cubierto por la prueba de punta a punta (§5).
+
+## 5. Prueba de punta a punta (MENU-CMS-02)
+
+Pedido: «si por favor revisa el recorrido» y, tras confirmar que el paso de publicar nunca se probó, «Sí, prepáralo».
+
+`scripts/smoke-menu-pagina.mjs` recorre el camino completo con las tres identidades del flujo editorial y deja todo como estaba:
+
+| Paso | Comprobación | Resultado esperado |
+| --- | --- | --- |
+| 1 | `identidades` | Autor superadmin, revisor `reviewer` y publicador `publisher`/`superadmin`, tres cuentas distintas. Si falla, no se crea nada. |
+| 2 | (siembra) | Si Navegación está vacía, se carga el menú actual (`NAVEGACION_SEED`) y **queda cargado**. |
+| 3 | `pagina_creada` | Página `prueba-menu-<marca de tiempo>` en Borrador. |
+| 4 | `rechaza_borrador` | Enlazarla en Borrador devuelve **400** (regla del §2). |
+| 5 | `flujo_editorial` | `en_revision` (autor) → `aprobado` (revisor) → `publicado` (publicador). |
+| 6 | `enlace_agregado` | Navegación acepta el enlace «Relación (Página)» al final del menú. |
+| 7 | `portal_muestra_enlace` | La portada del portal contiene `href="/<slug>"` (espera hasta ~90 s la revalidación). |
+| 8 | `portal_muestra_pagina` | `/<slug>` responde 200. |
+| 9 | `menu_restaurado`, `pagina_borrada` | **Siempre** (también si un paso falla), salvo `--keep`: el menú vuelve a la copia tomada en el paso 2 y la página se borra. |
+
+Uso en local (las contraseñas se escriben en el aviso de la terminal, nunca en un archivo):
+
+```
+node scripts/smoke-menu-pagina.mjs            # sin red: describe el recorrido
+node scripts/smoke-menu-pagina.mjs --apply    # con CMS_EMAIL/CMS_PASSWORD, CMS_REVIEWER_*, CMS_PUBLISHER_*
+```
+
+En staging: `CMS_URL` y `PORTAL_URL` https y `--allow-remote`. Código de salida 0 solo si todas las comprobaciones pasan.
+
+El enlace de prueba va en el **primer nivel** del menú: los submenús se dibujan en el navegador al abrir el grupo y no vienen en el HTML del servidor, así que una búsqueda en el HTML no los vería.
+
+Segunda corrida (2026-11-09, 22:29 UTC, tras subir el límite): siembra, página creada, rechazo en borrador (400), flujo editorial completo, enlace visible en la portada y limpieza (página borrada y menú con sus 7 enlaces y 30 subenlaces). Comprobado además en el navegador: el megamenú abierto muestra los 15 subenlaces de «Institucional».
+
+Primera corrida real (2026-11-09, CMS local): falló en la siembra con HTTP 400. Navegación admitía 12 subenlaces por grupo y «Institucional» tiene 15, así que el menú actual nunca se podía guardar en el CMS (tampoco con `seed-navegacion`). Se subió el límite a 20 y una prueba compara la siembra con los límites leídos del global; el guion ahora muestra el mensaje del CMS.
+
+Límite: si otra persona edita el menú mientras corre, la restauración pisa ese cambio. Pruebas: `tests/unit/smoke-menu-pagina.spec.ts` (CMS y portal simulados).
