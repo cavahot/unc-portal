@@ -1,6 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { richTextEditor } from './fields/richTextEditor'
 import { es } from '@payloadcms/translations/languages/es'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -215,7 +215,8 @@ export default buildConfig({
     Legalizaciones,
   ],
 
-  editor: lexicalEditor(),
+  // VIDEO-01: editor común con el bloque «Video de YouTube» (fields/richTextEditor.ts).
+  editor: richTextEditor,
 
   email: nodemailerAdapter({
     defaultFromAddress:

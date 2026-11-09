@@ -1,6 +1,7 @@
 // DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
 import { safeHref } from '@/lib/security/safeUrl'
 import React from 'react'
+import { renderEmbed } from '@/components/richtext/RichTextEmbed'
 
 type TextNode = {
   type: 'text'
@@ -36,6 +37,9 @@ function renderNode(node: LexicalNode, key: number): React.ReactNode {
   }
 
   const el = node as ElementNode
+  // VIDEO-01: imágenes o archivos insertados en el cuerpo y el bloque «Video de YouTube» (antes se perdían en `default`).
+  const embed = renderEmbed(el, String(key))
+  if (embed !== undefined) return embed
   const children = (el.children || []).map((c, i) => renderNode(c, i))
 
   switch (el.type) {

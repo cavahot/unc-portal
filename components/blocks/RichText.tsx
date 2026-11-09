@@ -1,5 +1,6 @@
 // DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
 import { safeHref } from '@/lib/security/safeUrl'
+import { renderEmbed } from '@/components/richtext/RichTextEmbed'
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -29,6 +30,10 @@ function applyFormat(text: string, format: number): React.ReactNode {
 // ── Node serializer ────────────────────────────────────────────────────
 
 function serializeNode(node: LexicalNode, key: string): React.ReactNode {
+  // VIDEO-01: imágenes o archivos insertados y el bloque «Video de YouTube» (antes se perdían en `default`).
+  const embed = renderEmbed(node, key)
+  if (embed !== undefined) return embed
+
   const children = node.children
     ? node.children.map((child, i) => serializeNode(child, `${key}-${i}`))
     : null
