@@ -11,7 +11,7 @@ Marque cada punto. Un punto sin marcar **bloquea** la publicación (regla SEC-02
 - [ ] Cuentas **web-admin** creadas para los responsables de contenido.
 - [ ] Revisión del guaraní por un hablante nativo (o se acepta publicar con el marcador en español, por escrito).
 - [ ] Acta de la revisión de seguridad adjunta a `docs/security/SEC-027-ADENDA-2026-11-07.md` (quién, qué, cuándo, hallazgos).
-- [ ] Acceso SSH endurecido (`docs/deploy/INSTALACION.md`, sección 1 bis): `sudo sshd -T | grep -E 'passwordauthentication|permitrootlogin'` muestra `no` en ambos, se entra solo con clave y no hay login de `root`.
+- [ ] Acceso SSH endurecido (`docs/deploy/INSTALACION.md`, sección 1 bis; `PasswordAuthentication no` y `PermitRootLogin no`): `sudo sshd -T | grep -E 'passwordauthentication|permitrootlogin'` muestra `no` en ambos, se entra solo con clave y no hay login de `root`.
 - [ ] `fail2ban` activo (`sudo fail2ban-client status sshd` lista la cárcel) y `ufw` con `limit` o IP permitidas para el 22; solo 22, 80 y 443 abiertos al público.
 - [ ] Certificados HTTPS de `www` y `cms` vigentes y copiados.
 - [ ] DNS de `www.unc.edu.py` y `cms.unc.edu.py` apuntando al servidor.
