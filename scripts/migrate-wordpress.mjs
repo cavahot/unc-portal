@@ -11,6 +11,7 @@
  *   --xml=<path>      Path to .xml or .zip file (default: ~/Downloads/m1gr4unc_dbWP.zip)
  *   --dry-run         Parse and preview without writing to CMS
  *   --limit=<n>       Limit news posts to N (default: all)
+ *   --caps=oracion    MIG-WP-NORM-01: títulos TODO en mayúsculas -> formato de oración (por defecto: mantener)
  *   --only=posts      Migrate only news posts
  *   --only=pages      Migrate only static pages
  *   --cms=<url>       CMS base URL (default: http://localhost:3002); remoto solo con https y --allow-remote
@@ -29,6 +30,7 @@ import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
 import { requireCmsEmail, resolveCmsTarget } from './lib/cmsTarget.mjs'
 import { fetchWithRetry } from './lib/retry.mjs'
 import { buildDraftPayload, buildStepBody, checkIdentities, remainingSteps } from './lib/wpPublishFlow.mjs'
+import { normalizePost } from './lib/wpNormalize.mjs'
 import {
   cleanContentHtml,
   extractEmbeddedImages,
@@ -50,6 +52,17 @@ const DRY_RUN  = args.includes('--dry-run')
 const ONLY     = args.find(a => a.startsWith('--only='))?.split('=')[1] || 'both'
 const LIMIT    = (() => { const l = args.find(a => a.startsWith('--limit=')); return l ? parseInt(l.split('=')[1], 10) : Infinity })()
 const XML_ARG  = args.find(a => a.startsWith('--xml='))?.split('=').slice(1).join('=')
+// MIG-WP-NORM-01: --caps=oracion pasa a formato de oración los títulos escritos TODO en mayúsculas (decisión del Product
+// Owner; por defecto NO se tocan). Cualquier otro valor se rechaza para no aplicar un cambio de contenido por un error de tipeo.
+const CAPS = (() => {
+  const raw = args.find(a => a.startsWith('--caps='))?.split('=')[1]
+  if (raw === undefined) return 'mantener'
+  if (raw !== 'oracion' && raw !== 'mantener') {
+    console.error(`Error: --caps solo admite «oracion» o «mantener» (recibido: ${raw}).`)
+    process.exit(2)
+  }
+  return raw
+})()
 // SEC-REVIEW: destino validado (localhost, o https con --allow-remote); evita enviar credenciales a un host ajeno.
 let CMS_URL
 try {
@@ -595,10 +608,18 @@ async function migratePosts(xml, ctx) {
   for (const [i, info] of selected.entries()) {
     const post = info.post
     const wpCategories = postCategories[post.ID] || []
-    const title = (post.post_title || 'Sin título').slice(0, 150)
-    let slug = post.post_name
-      ? post.post_name.slice(0, 100)
-      : slugify(title) + '-' + post.ID
+    // MIG-WP-NORM-01: título, slug y resumen salen del normalizador (letras matemáticas de Unicode, slugs codificados en
+    // porcentaje y resumen derivado del cuerpo o del título); las notas dejan constancia de cada cambio.
+    const norm = normalizePost({
+      id: post.ID,
+      title: post.post_title,
+      wpSlug: post.post_name,
+      excerpt: post.post_excerpt,
+      content: post.post_content,
+      caps: CAPS,
+    })
+    const { title, summary } = norm
+    let slug = norm.slug
 
     // Resolve slug collision within this migration run: append post ID as suffix
     if (seenSlugs.has(slug)) {
@@ -606,15 +627,13 @@ async function migratePosts(xml, ctx) {
     }
     seenSlugs.add(slug)
 
-    const summaryRaw = post.post_excerpt?.trim()
-    const summary = summaryRaw && summaryRaw.length >= 20
-      ? summaryRaw.slice(0, 300)
-      : excerpt(post.post_content || '', 280)
-
-    if (summary.length < 20) {
-      console.log(`  ⚠  [${i + 1}/${posts.length}] SKIP (no excerpt): ${title.slice(0, 60)}`)
+    if (!summary) {
+      console.log(`  ⚠  [${i + 1}/${posts.length}] SKIP (sin extracto, cuerpo ni título suficientes): ${title.slice(0, 60)}`)
       skipped++
       continue
+    }
+    if (norm.notes.length) {
+      console.log(`       normalizado: ${norm.notes.join(', ')}`)
     }
 
     embeddedImagesBySlug[slug] = info.embedded
