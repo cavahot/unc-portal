@@ -93,6 +93,8 @@ export interface NewsItem {
     id: number
     alt: string
     url?: string | null
+    /** Miniatura borrosa que entrega el CMS para el `placeholder="blur"` de next/image (opcional). */
+    blurDataURL?: string | null
   } | null
   featuredImageUrl?: string | null
   gallery?: Array<{

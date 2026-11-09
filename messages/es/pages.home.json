@@ -49,7 +49,8 @@
     "description": "Información sobre actividades académicas, investigación, extensión universitaria y gestión institucional.",
     "viewAll": "Ver todas las noticias",
     "readNews": "Leer noticia: {title}",
-    "defaultCategory": "Institucional"
+    "defaultCategory": "Institucional",
+    "empty": "Todavía no hay noticias publicadas. Vuelva pronto o consulte la sección de noticias."
   },
   "stats": {
     "sectionLabel": "UNC en números",
@@ -61,7 +62,8 @@
       "docentesColaboradores": "Docentes y colaboradores",
       "facultades": "Facultades",
       "egresados": "Egresados"
-    }
+    },
+    "unavailable": "Las cifras institucionales no están disponibles en este momento. Vuelva a intentarlo en unos minutos."
   },
   "transparency": {
     "sectionLabel": "Gestión pública",
@@ -115,5 +117,42 @@
     "label": "Universidad pública",
     "title": "Excelencia académica, investigación e innovación",
     "description": "Comprometidos con el desarrollo sostenible de Concepción y del Paraguay."
+  },
+  "institutionalAccess": {
+    "label": "Acceso ciudadano",
+    "title": "Transparencia e información institucional",
+    "description": "Acceda a los documentos públicos, realice trámites académicos y consulte los recursos de investigación de la UNC.",
+    "items": {
+      "transparencia": {
+        "badge": "Ley 5.189 y 5.282",
+        "title": "Transparencia institucional",
+        "description": "Acceda a la información pública sobre remuneraciones, presupuesto, patrimonio y gestión institucional conforme a la normativa vigente.",
+        "cta": "Ver documentos"
+      },
+      "infoPublica": {
+        "badge": "Acceso ciudadano",
+        "title": "Información pública",
+        "description": "Solicite información al Estado conforme a la Ley de Libre Acceso.",
+        "cta": "Solicitar información"
+      },
+      "solicitarTitulo": {
+        "badge": "Trámite académico",
+        "title": "Solicitar título",
+        "description": "Inicie el trámite de obtención y legalización de su diploma académico.",
+        "cta": "Iniciar trámite"
+      },
+      "biblioteca": {
+        "badge": "Investigación",
+        "title": "Biblioteca y tesis",
+        "description": "Consulte el repositorio de tesis académicas y los recursos bibliográficos digitales.",
+        "cta": "Explorar repositorio"
+      },
+      "revistas": {
+        "badge": "Publicaciones",
+        "title": "Revistas académicas",
+        "description": "Revistas científicas y académicas publicadas por las facultades de la UNC.",
+        "cta": "Ver publicaciones"
+      }
+    }
   }
 }

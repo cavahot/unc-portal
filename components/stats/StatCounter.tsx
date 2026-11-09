@@ -73,12 +73,12 @@ export default function StatCounter({ value, label, locale, prefix, suffix }: St
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-8 text-center"
+      className="flex flex-col items-center justify-center rounded-2xl border border-[#D7E0DB] bg-[#F4F7F5] px-4 py-8 text-center"
     >
-      <span className="text-4xl font-bold tabular-nums text-[#5CFF5C] sm:text-5xl">
+      <span className="text-4xl font-bold tabular-nums text-[#004700] sm:text-5xl">
         {prefix}{numberFormatter.format(count)}{suffix}
       </span>
-      <span className="mt-2 text-sm text-white/50">{label}</span>
+      <span className="mt-2 text-sm text-[#3E4A45]">{label}</span>
     </div>
   )
 }

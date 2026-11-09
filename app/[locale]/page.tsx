@@ -13,7 +13,7 @@ import AwardsAccreditationsSection, { type AwardsLabels } from '@/components/hom
 import { getRecognitions } from '@/lib/cms/queries/recognitions';
 import { getAccreditations } from '@/lib/cms/queries/accreditations';
 import { getNews } from '@/lib/cms/queries/news';
-import { getStatsGlobal } from '@/lib/cms/queries/stats';
+import { getStatsResult } from '@/lib/cms/queries/stats';
 import { Link } from '@/i18n/navigation';
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 import { baseOg } from '@/lib/seo/og';
@@ -141,7 +141,7 @@ export default async function Home({
     notFound()
   }
   // Try featured news first; fall back to latest if none are marked featured
-  const [t, format, featuredResult, latestResult, stats, recognitions, accreditationGroups] = await Promise.all([
+  const [t, format, featuredResult, latestResult, statsResult, recognitions, accreditationGroups] = await Promise.all([
     getT(locale, 'pages.home'),
     getF(locale),
     // HOME-NEWS: la portada muestra tres tarjetas para mantener la jerarquía visual y el contrato E2E.
@@ -149,7 +149,7 @@ export default async function Home({
     // Límite: el resto de noticias sigue disponible en /noticias.
     getNews({ featured: true, limit: 3 }),
     getNews({ limit: 3 }),
-    getStatsGlobal(),
+    getStatsResult(),
     // PRA-02: ambas consultas devuelven [] si el CMS cae o no hay filas activas+verificadas (la sección se oculta).
     getRecognitions(),
     getAccreditations(),
@@ -268,7 +268,7 @@ export default async function Home({
           <Reveal>
             <header className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
               <div className="max-w-3xl">
-                <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#001A00]/70">
+                <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#001A00]/90">
                   {t('news.sectionLabel')}
                 </span>
 
@@ -279,7 +279,7 @@ export default async function Home({
                   {t('news.title')}
                 </h2>
 
-                <p className="mt-5 max-w-2xl text-base leading-7 text-[#001A00]/75 sm:text-lg">
+                <p className="mt-5 max-w-2xl text-base leading-7 text-[#001A00]/90 sm:text-lg">
                   {t('news.description')}
                 </p>
               </div>
@@ -305,6 +305,16 @@ export default async function Home({
               </Link>
             </header>
           </Reveal>
+
+          {/* HOME-STATES-01: sin noticias publicadas se avisa en lugar de dejar solo el encabezado. */}
+          {noticias.length === 0 && (
+            <p
+              role="status"
+              className="mt-14 max-w-[65ch] rounded-2xl bg-white p-6 text-base leading-7 text-[#3E4A45] sm:p-8"
+            >
+              {t('news.empty')}
+            </p>
+          )}
 
           <div className="mt-14 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
             {noticias.map((n, index) => (
@@ -338,7 +348,7 @@ export default async function Home({
                         fill
                         sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
                         placeholder="blur"
-                        blurDataURL={(n.featuredImage as any)?.blurDataURL ?? UNC_BLUR}
+                        blurDataURL={n.featuredImage?.blurDataURL ?? UNC_BLUR}
                         className="
                           object-cover
                           transition-transform
@@ -397,7 +407,7 @@ export default async function Home({
         </div>
       </section>
 
-      <StatsBlock locale={locale} stats={stats} />
+      <StatsBlock locale={locale} result={statsResult} />
 
       {/* =====================================================
           ACCESOS RÁPIDOS
@@ -427,7 +437,7 @@ export default async function Home({
                 {t('quickLinks.title')}
               </h2>
 
-              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#52635E] sm:text-lg">
                 {t('quickLinks.description')}
               </p>
             </header>
@@ -462,7 +472,7 @@ export default async function Home({
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 text-sm leading-6 text-[#6C7B76]">
+                  <p className="mt-3 text-sm leading-6 text-[#52635E]">
                     {item.description}
                   </p>
 
@@ -544,7 +554,7 @@ export default async function Home({
                 {t('transparency.title')}
               </h2>
 
-              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6C7B76] sm:text-lg">
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#52635E] sm:text-lg">
                 {t('transparency.description')}
               </p>
             </header>
@@ -600,7 +610,7 @@ export default async function Home({
                           {item.title}
                         </strong>
 
-                        <small className="mt-2 block text-sm leading-6 text-[#6C7B76]">
+                        <small className="mt-2 block text-sm leading-6 text-[#52635E]">
                           {item.description}
                         </small>
                       </span>
