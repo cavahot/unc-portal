@@ -1,6 +1,7 @@
-import type { Field, GlobalConfig } from 'payload'
+import { APIError, type Field, type GlobalConfig } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
 import { canUpdateGlobal } from '../access/roles'
+import { validateNavegacionLinks, type NavLinkInput } from '../utilities/navegacionValidation'
 
 function linkFields(depth: 0 | 1): Field[] {
   const fields: Field[] = [
@@ -75,6 +76,29 @@ export const Navegacion: GlobalConfig = {
     },
   ],
   hooks: {
+    // MENU-CMS-01: rechaza enlaces «Relación» sin página, a páginas inexistentes o sin publicar (amenaza: menú público con
+    // enlaces muertos). Usa la API local con `overrideAccess` para ver también borradores: el editor necesita el aviso.
+    beforeValidate: [
+      async ({ data, req }) => {
+        const result = await validateNavegacionLinks(data?.links as NavLinkInput[] | undefined, async (id) => {
+          try {
+            const page = await req.payload.findByID({
+              collection: 'paginas',
+              id,
+              depth: 0,
+              draft: false,
+              overrideAccess: true,
+            })
+            return page as { _status?: string | null }
+          } catch {
+            return null
+          }
+        })
+        // APIError público (400): con un `Error` común Payload responde 500 «Something went wrong» y el editor no vería el motivo.
+        if (result !== true) throw new APIError(result, 400, undefined, true)
+        return data
+      },
+    ],
     afterChange: [
       async () => {
         await revalidatePortalTag('navegacion')

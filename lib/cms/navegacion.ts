@@ -100,14 +100,27 @@ function resolveHref(link: { type: 'manual' | 'relationship'; url?: string | nul
   return safeHref(link.url)
 }
 
-/** Convierte el global Navegación en elementos de menú con hrefs saneados (DEP-19b). */
+/**
+ * MENU-CMS-01: false si el enlace es de tipo «Relación» y su página no llegó resuelta (borrador, despublicada o borrada: la
+ * lectura pública devuelve solo el id). Antes ese enlace se dibujaba como «#» (enlace muerto) en el menú público.
+ */
+function hasDestination(link: { type: 'manual' | 'relationship'; page?: unknown }): boolean {
+  return link.type !== 'relationship' || (typeof link.page === 'object' && link.page !== null)
+}
+
+/**
+ * Convierte el global Navegación en elementos de menú con hrefs saneados (DEP-19b). MENU-CMS-01: omite los enlaces «Relación»
+ * sin destino; un grupo cuyo propio enlace no resuelve se conserva (con «#») solo si le quedan hijos válidos.
+ */
 export function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
-  return (navigation.links || []).map((link) => ({
-    label: link.label,
-    href: resolveHref(link),
-    children: (link.children || []).map((child) => ({
+  const items: MenuItem[] = []
+  for (const link of navigation.links || []) {
+    const children = (link.children || []).filter(hasDestination).map((child) => ({
       label: child.label,
       href: resolveHref(child),
-    })),
-  }))
+    }))
+    if (!hasDestination(link) && children.length === 0) continue
+    items.push({ label: link.label, href: resolveHref(link), children })
+  }
+  return items
 }
