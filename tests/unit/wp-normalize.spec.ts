@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 // @ts-expect-error módulo .mjs sin tipos
-import { deriveSummary, normalizePost, normalizeTitle, slugForPost } from '../../scripts/lib/wpNormalize.mjs'
+import { deriveSummary, existingSlugCandidates, normalizePost, normalizeTitle, slugForPost } from '../../scripts/lib/wpNormalize.mjs'
 
 /** Convierte A-Z / a-z a las «letras matemáticas en negrita sans-serif» (U+1D5D4 / U+1D5EE) para armar títulos de prueba. */
 const bold = (s: string) =>
@@ -107,6 +107,34 @@ describe('slugForPost', () => {
     const r = slugForPost({ wpSlug: '', title: 'Título sin slug', id: '77' })
     expect(r.slug).toBe('titulo-sin-slug-77')
     expect(slugForPost({ wpSlug: '', title: 'palabra '.repeat(40), id: '5' }).slug.length).toBeLessThanOrEqual(100)
+  })
+})
+
+// MIG-WP-NORM-02: el importador decide si una noticia ya existe buscando su slug. Al regenerar los slugs codificados
+// (MIG-WP-NORM-01), las 16 noticias ya cargadas con el slug `%f0%9d…` dejaron de encontrarse y se crearon de nuevo
+// (corrida local del 2026-11-09: ids 274-289 duplicados). Estas pruebas exigen que también se busque el slug anterior.
+describe('existingSlugCandidates (no duplicar noticias ya cargadas)', () => {
+  const wpSlug = '%f0%9d%97%a8%f0%9d%97%a1%f0%9d%97%96-%f0%9d%97%bc%f0%9d%97%bf'
+
+  it('con slug codificado busca el slug nuevo y después el que usaba el importador anterior', () => {
+    const norm = normalizePost({ id: '9', title: `${bold('UNC')} ${bold('organiza')}`, wpSlug, excerpt: '', content: '', caps: 'mantener' })
+    expect(existingSlugCandidates(norm)).toEqual(['unc-organiza', wpSlug])
+  })
+
+  it('el slug anterior se recorta a 100 caracteres, como lo guardaba el importador anterior', () => {
+    const largo = '%f0%9d%97%a8'.repeat(12)
+    const norm = normalizePost({ id: '9', title: 'UNC organiza', wpSlug: largo, excerpt: '', content: '', caps: 'mantener' })
+    expect(existingSlugCandidates(norm)).toEqual(['unc-organiza', largo.slice(0, 100)])
+  })
+
+  it('sin slug y con título decorativo también prueba el slug anterior (título original + ID)', () => {
+    const norm = normalizePost({ id: '42', title: `${bold('Acto')} oficial`, wpSlug: '', excerpt: '', content: '', caps: 'mantener' })
+    expect(existingSlugCandidates(norm)).toEqual(['acto-oficial-42', 'oficial-42'])
+  })
+
+  it('con slug legible hay un solo candidato (comportamiento previo intacto)', () => {
+    const norm = normalizePost({ id: '1', title: 'Comunicado', wpSlug: 'comunicado-rectorado', excerpt: '', content: '', caps: 'mantener' })
+    expect(existingSlugCandidates(norm)).toEqual(['comunicado-rectorado'])
   })
 })
 

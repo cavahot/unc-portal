@@ -30,7 +30,7 @@ import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
 import { requireCmsEmail, resolveCmsTarget } from './lib/cmsTarget.mjs'
 import { fetchWithRetry } from './lib/retry.mjs'
 import { buildDraftPayload, buildStepBody, checkIdentities, remainingSteps } from './lib/wpPublishFlow.mjs'
-import { normalizePost } from './lib/wpNormalize.mjs'
+import { existingSlugCandidates, normalizePost } from './lib/wpNormalize.mjs'
 import {
   cleanContentHtml,
   extractEmbeddedImages,
@@ -673,16 +673,22 @@ async function migratePosts(xml, ctx) {
       // PERF-DB: idempotencia. Si el slug ya existe se omite (no se crea `slug-<ID>`), así una
       // migración interrumpida se puede relanzar sin duplicar noticias.
       // MIG-WP: si quedó a medias (borrador/en revisión/aprobada) se completa; nunca se duplica.
-      const found = await findNoticia(token, slug)
+      // MIG-WP-NORM-02: también se busca el slug que usaba el importador anterior; si no, las noticias ya cargadas con
+      // slug `%f0%9d…` no se reconocen y se duplican (pasó en local el 2026-11-09). La noticia encontrada no se renombra.
+      let found = null
+      for (const candidate of slug === norm.slug ? existingSlugCandidates(norm) : [slug]) {
+        found = await findNoticia(token, candidate)
+        if (found) break
+      }
       if (found) {
         const advanced = await advanceNoticia(ctx, found)
         if (advanced) {
-          console.log(`  🔁 [${i + 1}/${posts.length}] completada: ${slug}`)
+          console.log(`  🔁 [${i + 1}/${posts.length}] completada: ${found.slug}`)
           completed++
           publishedNow++
           await new Promise(r => setTimeout(r, ITEM_DELAY_MS))
         } else {
-          console.log(`  ⏭  [${i + 1}/${posts.length}] ya existía: ${slug}`)
+          console.log(`  ⏭  [${i + 1}/${posts.length}] ya existía: ${found.slug}`)
           existed++
         }
         continue
