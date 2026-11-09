@@ -24,6 +24,16 @@ type MediaDoc = {
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 const num = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null)
 
+/** Nombre visible del archivo a partir de su URL; con un `%` mal formado devuelve el texto sin decodificar (no lanza). */
+function fileNameFromUrl(src: string): string {
+  const last = src.split('/').pop() || ''
+  try {
+    return decodeURIComponent(last)
+  } catch {
+    return last
+  }
+}
+
 function renderUpload(node: EmbedNode, key: string): React.ReactNode {
   const doc = node.value
   if (!doc || typeof doc !== 'object') return null
@@ -31,7 +41,7 @@ function renderUpload(node: EmbedNode, key: string): React.ReactNode {
   const src = resolveMediaUrl(media.url)
   if (!src) return null
   if (!str(media.mimeType).startsWith('image/')) {
-    const name = str(media.filename) || decodeURIComponent(src.split('/').pop() || '')
+    const name = str(media.filename) || fileNameFromUrl(src)
     return (
       <p key={key} className="my-4">
         <a href={safeHref(src)} className="font-semibold text-[#004700] underline underline-offset-4 hover:text-[#005c00]">
