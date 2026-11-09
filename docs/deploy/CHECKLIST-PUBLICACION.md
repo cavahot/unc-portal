@@ -8,6 +8,7 @@ Marque cada punto. Un punto sin marcar **bloquea** la publicación (regla SEC-02
 - [ ] Se ensayó todo en **staging** con datos de prueba (`bash scripts/deploy/instalar.sh`), sin errores.
 - [ ] En staging se probó un **respaldo y su restauración** (`docs/deploy/STAGING.md`, sección 6).
 - [ ] Pruebas con roles no administrativos: anónimo, `editor` y `publisher` reciben 401/403 donde corresponde.
+- [ ] En staging, `node scripts/smoke-menu-pagina.mjs --apply --allow-remote` (página del CMS → megamenú, con las tres identidades) termina en «TODO BIEN».
 - [ ] Cuentas **web-admin** creadas para los responsables de contenido.
 - [ ] Revisión del guaraní por un hablante nativo (o se acepta publicar con el marcador en español, por escrito).
 - [ ] Acta de la revisión de seguridad adjunta a `docs/security/SEC-027-ADENDA-2026-11-07.md` (quién, qué, cuándo, hallazgos).

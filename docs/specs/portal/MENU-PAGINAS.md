@@ -32,4 +32,33 @@ La siembra (`scripts/lib/navegacionSeedData.mjs`) debe coincidir con el respaldo
 
 - Las **etiquetas por idioma** del menú siguen saliendo de una tabla fija por destino (`MENU_LABEL_KEYS`); un enlace nuevo conserva su texto en español hasta agregarle su clave. Alternativa: campo localizado en Navegación.
 - La respuesta de la API al crear una página incluye el usuario creador completo (correo, teléfono, identificadores de sesión) cuando lo ve un superadmin. Falta comprobar si los roles editor y revisor también lo reciben (SEC-027).
-- Publicar una página y verla en el portal no se pudo probar en el recorrido (requiere revisor y publicador).
+- ~~Publicar una página y verla en el portal no se pudo probar en el recorrido (requiere revisor y publicador).~~ Cubierto por la prueba de punta a punta (§5).
+
+## 5. Prueba de punta a punta (MENU-CMS-02)
+
+Pedido: «si por favor revisa el recorrido» y, tras confirmar que el paso de publicar nunca se probó, «Sí, prepáralo».
+
+`scripts/smoke-menu-pagina.mjs` recorre el camino completo con las tres identidades del flujo editorial y deja todo como estaba:
+
+| Paso | Comprobación | Resultado esperado |
+| --- | --- | --- |
+| 1 | `identidades` | Autor superadmin, revisor `reviewer` y publicador `publisher`/`superadmin`, tres cuentas distintas. Si falla, no se crea nada. |
+| 2 | (siembra) | Si Navegación está vacía, se carga el menú actual (`NAVEGACION_SEED`) y **queda cargado**. |
+| 3 | `pagina_creada` | Página `prueba-menu-<marca de tiempo>` en Borrador. |
+| 4 | `rechaza_borrador` | Enlazarla en Borrador devuelve **400** (regla del §2). |
+| 5 | `flujo_editorial` | `en_revision` (autor) → `aprobado` (revisor) → `publicado` (publicador). |
+| 6 | `enlace_agregado` | Navegación acepta el enlace «Relación (Página)» al final del menú. |
+| 7 | `portal_muestra_enlace` | La portada del portal contiene `href="/<slug>"` (espera hasta ~90 s la revalidación). |
+| 8 | `portal_muestra_pagina` | `/<slug>` responde 200. |
+| 9 | `menu_restaurado`, `pagina_borrada` | **Siempre** (también si un paso falla), salvo `--keep`: el menú vuelve a la copia tomada en el paso 2 y la página se borra. |
+
+Uso en local (las contraseñas se escriben en el aviso de la terminal, nunca en un archivo):
+
+```
+node scripts/smoke-menu-pagina.mjs            # sin red: describe el recorrido
+node scripts/smoke-menu-pagina.mjs --apply    # con CMS_EMAIL/CMS_PASSWORD, CMS_REVIEWER_*, CMS_PUBLISHER_*
+```
+
+En staging: `CMS_URL` y `PORTAL_URL` https y `--allow-remote`. Código de salida 0 solo si todas las comprobaciones pasan.
+
+Límite: si otra persona edita el menú mientras corre, la restauración pisa ese cambio. Pruebas: `tests/unit/smoke-menu-pagina.spec.ts` (CMS y portal simulados).
