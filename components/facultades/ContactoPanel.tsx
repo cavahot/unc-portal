@@ -2,7 +2,9 @@
 // en el código. Los `href` llegan ya filtrados por lib/cms/facultad.ts (tel solo dígitos, correo con forma válida,
 // sitio y redes https de hosts permitidos); aquí además pasan por `safeHref` (DEP-15) por defensa en profundidad.
 import type { FacultadDetalle } from '@/lib/cms/facultad'
+import { buildFacultadEmbedUrl } from '@/lib/maps/campusMapUrls'
 import { safeHref } from '@/lib/security/safeUrl'
+import FacultadMapa from './FacultadMapa'
 
 export interface ContactoLabels {
   direccion: string
@@ -18,45 +20,12 @@ export interface ContactoLabels {
 const link =
   'inline-flex min-h-11 items-center break-all text-lg font-semibold text-white underline decoration-white/40 underline-offset-4 transition-colors hover:decoration-[#8AFF8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8AFF8A] print:text-black'
 
-function Item({ term, children }: { term: string; children: React.ReactNode }) {
+// `className` permite ubicar una tarjeta en la cuadrícula (p. ej. «Sitio web» bajo el mapa) sin duplicar el estilo base.
+function Item({ term, children, className = '' }: { term: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className="rounded-2xl bg-white/[0.07] p-5 sm:p-6 print:bg-white">
+    <div className={`rounded-2xl bg-white/[0.07] p-5 sm:p-6 print:bg-white ${className}`.trim()}>
       <dt className="text-sm text-[#B8FFB8] print:text-black">{term}</dt>
       <dd className="mt-1">{children}</dd>
-    </div>
-  )
-}
-
-function mapEmbedHref(direccion: string): string {
-  // FAC-08: la URL del iframe usa una consulta pública sin API key.
-  // Amenaza: evita guardar coordenadas inventadas o exponer secretos de Google Maps en el CMS.
-  // Límite: Google controla la cartografía y puede modificar el resultado del buscador.
-  const normalized = direccion.replace(/\.\s*$/, '')
-  const query = /paraguay/i.test(normalized) ? normalized : `${normalized}, Concepción, Paraguay`
-  return `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`
-}
-
-function InteractiveMap({ direccion, label }: { direccion: string; label: string }) {
-  return (
-    <div className="sm:col-span-2 rounded-2xl bg-white/[0.07] p-3 sm:p-4">
-      <div className="relative aspect-[16/9] min-h-64 overflow-hidden rounded-xl border border-[#8AFF8A]/25 bg-[#073B16] shadow-[0_0_40px_rgba(57,255,136,0.12)]">
-        {/* FAC-08: iframe real para conservar zoom, arrastre y controles nativos del mapa. */}
-        <iframe
-          title={label}
-          src={mapEmbedHref(direccion)}
-          loading="lazy"
-          allowFullScreen
-          referrerPolicy="no-referrer-when-downgrade"
-          className="h-full w-full grayscale"
-          style={{ filter: 'grayscale(0.28) saturate(1.45) hue-rotate(62deg) brightness(0.72) contrast(1.08)' }}
-        />
-        {/* FAC-08: capa visual no interactiva; pointer-events permite que el usuario arrastre el mapa debajo. */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[#39FF88]/35 mix-blend-screen" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,transparent_20%,rgba(0,35,12,0.28)_100%)]" />
-        <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-[#00290D]/75 px-3 py-1 text-xs font-semibold text-[#C8FFCE] backdrop-blur-sm">
-          {label}
-        </span>
-      </div>
     </div>
   )
 }
@@ -76,7 +45,7 @@ export default function ContactoPanel({ facultad, mapHref, labels }: { facultad:
           )}
         </Item>
       )}
-      {facultad.direccion && <InteractiveMap direccion={facultad.direccion} label={labels.mapa} />}
+      {facultad.direccion && <FacultadMapa embedUrl={buildFacultadEmbedUrl(facultad.direccion)} label={labels.mapa} />}
       {facultad.telefono && (
         <Item term={labels.telefono}>
           {facultad.telHref ? (
@@ -103,7 +72,10 @@ export default function ContactoPanel({ facultad, mapHref, labels }: { facultad:
         </Item>
       )}
       {(facultad.sitioWeb || facultad.redes.length > 0) && (
-        <Item term={facultad.sitioWeb ? labels.sitio : labels.redes}>
+        // FAC-08b: en pantallas ≥ sm va en la columna derecha, justo debajo del mapa (que ocupa 2 filas), para que las
+        // tarjetas queden equilibradas: izquierda dirección/teléfono/correo, derecha mapa + sitio web. Con
+        // `col-start-2` y fila automática, la cuadrícula lo coloca en la primera fila libre de esa columna.
+        <Item term={facultad.sitioWeb ? labels.sitio : labels.redes} className="sm:col-start-2">
           {facultad.sitioWeb && (
             <a href={safeHref(facultad.sitioWeb.href)} {...external} className={link}>
               {facultad.sitioWeb.label}
