@@ -151,5 +151,43 @@ export function normalizePost({ id, title, wpSlug, excerpt, content, caps }) {
   const d = deriveSummary({ excerpt, content, title: t.title })
   const notes = [...t.notes, ...s.notes]
   if (SUMMARY_NOTE[d.source]) notes.push(SUMMARY_NOTE[d.source])
-  return { title: t.title, slug: s.slug, summary: d.summary, summarySource: d.source, notes }
+  const previo = legacySlug({ id, title, wpSlug })
+  return {
+    title: t.title,
+    slug: s.slug,
+    legacySlug: previo !== s.slug ? previo : null,
+    summary: d.summary,
+    summarySource: d.source,
+    notes,
+  }
+}
+
+/**
+ * MIG-WP-NORM-02: slug que calculaba el importador ANTES del normalizador (`post_name` recortado a 100, o el título original
+ * sin normalizar + ID). Por qué existe: las noticias cargadas con esa versión conservan ese slug en el CMS; si el importador
+ * solo busca el slug nuevo, no las reconoce y las crea otra vez (corrida local 2026-11-09: 16 duplicadas, ids 274-289).
+ * Límite: reproduce la fórmula anterior sin el sufijo por colisión dentro de una misma corrida.
+ */
+function legacySlug({ id, title, wpSlug }) {
+  const wp = String(wpSlug ?? '')
+  if (wp) return wp.slice(0, SLUG_MAX)
+  const viejo = String(title || 'Sin título')
+    .slice(0, TITLE_MAX)
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, SLUG_MAX)
+  return `${viejo}-${id}`
+}
+
+/**
+ * MIG-WP-NORM-02: slugs con los que el importador busca si la noticia ya existe, en orden: el nuevo y, si difiere, el
+ * anterior. Amenaza que evita: duplicar en el portal público noticias ya cargadas cuando cambia la regla del slug.
+ * Límite: no renombra la noticia encontrada; corregir su título y slug es otra tarea (T6, decisión del Product Owner).
+ */
+export function existingSlugCandidates(norm) {
+  return norm.legacySlug ? [norm.slug, norm.legacySlug] : [norm.slug]
 }
