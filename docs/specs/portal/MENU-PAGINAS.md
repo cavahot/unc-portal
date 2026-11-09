@@ -61,4 +61,6 @@ node scripts/smoke-menu-pagina.mjs --apply    # con CMS_EMAIL/CMS_PASSWORD, CMS_
 
 En staging: `CMS_URL` y `PORTAL_URL` https y `--allow-remote`. Código de salida 0 solo si todas las comprobaciones pasan.
 
+Primera corrida real (2026-11-09, CMS local): falló en la siembra con HTTP 400. Navegación admitía 12 subenlaces por grupo y «Institucional» tiene 15, así que el menú actual nunca se podía guardar en el CMS (tampoco con `seed-navegacion`). Se subió el límite a 20 y una prueba compara la siembra con los límites leídos del global; el guion ahora muestra el mensaje del CMS.
+
 Límite: si otra persona edita el menú mientras corre, la restauración pisa ese cambio. Pruebas: `tests/unit/smoke-menu-pagina.spec.ts` (CMS y portal simulados).

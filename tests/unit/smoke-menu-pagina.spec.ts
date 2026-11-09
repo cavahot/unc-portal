@@ -29,7 +29,7 @@ const ENV = {
 }
 
 /** CMS y portal en memoria con las reglas reales que importan aquí (flujo editorial y validación de Navegación). */
-function fakeWorld(opts: { links?: Link[]; portalNeverUpdates?: boolean; failStep?: string } = {}) {
+function fakeWorld(opts: { links?: Link[]; portalNeverUpdates?: boolean; failStep?: string; rejectSeed?: boolean } = {}) {
   const state = { links: structuredClone(opts.links ?? []) as Link[], pages: new Map<number, Page>(), nextId: 50 }
   const calls: string[] = []
   const tokenUser = (h: Record<string, string> | undefined) => String(h?.Authorization ?? '').replace('JWT ', '')
@@ -64,6 +64,7 @@ function fakeWorld(opts: { links?: Link[]; portalNeverUpdates?: boolean; failSte
     if (u.pathname === '/api/globals/navegacion' && method === 'GET') return json(200, { links: state.links })
     if (u.pathname === '/api/globals/navegacion' && method === 'POST') {
       if (USERS[who]?.role !== 'superadmin') return json(403, {})
+      if (opts.rejectSeed) return json(400, { errors: [{ message: 'The following field is invalid: links 2 > Subenlaces' }] })
       for (const l of body.links as Link[]) {
         if (l.type === 'relationship') {
           const p = l.page ? state.pages.get(l.page) : undefined
@@ -181,6 +182,15 @@ describe('smoke-menu-pagina: recorrido completo', () => {
     expect(r.ok).toBe(true)
     expect(world.state.pages.size).toBe(1)
     expect(world.state.links).toHaveLength(2)
+  })
+})
+
+describe('smoke-menu-pagina: errores del CMS', () => {
+  // MENU-CMS-02: en la corrida real solo se vio «HTTP 400»; sin el mensaje del CMS no se sabía qué campo fallaba.
+  it('si el CMS rechaza la siembra, el error incluye el mensaje del CMS y no se crea ninguna página', async () => {
+    const world = fakeWorld({ links: [], rejectSeed: true })
+    await expect(run({ apply: true, deps: deps(world) })).rejects.toThrow(/HTTP 400.*links 2 > Subenlaces/)
+    expect(world.calls.some((c) => c.includes('/api/paginas'))).toBe(false)
   })
 })
 

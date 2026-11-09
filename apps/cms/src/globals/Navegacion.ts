@@ -51,7 +51,10 @@ function linkFields(depth: 0 | 1): Field[] {
       name: 'children',
       type: 'array',
       fields: linkFields(1),
-      maxRows: 12,
+      // MENU-CMS-02: 20 y no 12. El menú actual del portal ya tiene 15 subenlaces en «Institucional»; con 12 la siembra
+      // (`scripts/seed-navegacion.mjs`) nunca se podía guardar (HTTP 400, prueba de punta a punta del 2026-11-09).
+      // Límite de validación, sin cambio de esquema en la base.
+      maxRows: 20,
     })
   }
 

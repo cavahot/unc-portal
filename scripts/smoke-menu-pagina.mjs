@@ -31,6 +31,13 @@ import { buildDraftPayload, buildStepBody, checkIdentities } from './lib/wpPubli
 
 const POLL_DELAY_MS = 3000
 
+/** Estado HTTP más el mensaje que devuelve el CMS (`errors[].message`), recortado. Sin él, «HTTP 400» no dice qué falló. */
+function cmsError(res) {
+  const errors = Array.isArray(res.data?.errors) ? res.data.errors : []
+  const detail = errors.map((e) => [e?.message, ...(e?.data?.errors ?? []).map((d) => `${d?.path}: ${d?.message}`)].filter(Boolean).join(' · ')).join(' | ')
+  return `HTTP ${res.status}${detail ? `: ${detail.slice(0, 300)}` : ''}`
+}
+
 /** Valida un destino: local siempre; remoto solo con allowRemote y https. Se llama antes de cualquier petición. */
 function checkTarget(kind, url, allowRemote) {
   let parsed
@@ -97,10 +104,10 @@ export async function run({ apply = false, allowRemote = false, keep = false, de
   // Menú de partida: si está vacío se siembra (con un solo enlace el portal reemplazaría el menú completo).
   let seeded = false
   const current = await author.api('GET', 'globals/navegacion?depth=0')
-  if (!current.ok) throw new Error(`No se pudo leer Navegación (HTTP ${current.status}).`)
+  if (!current.ok) throw new Error(`No se pudo leer Navegación (${cmsError(current)}).`)
   if ((current.data.links ?? []).length === 0) {
     const seed = await author.api('POST', 'globals/navegacion', { links: NAVEGACION_SEED })
-    if (!seed.ok) throw new Error(`No se pudo cargar el menú inicial (HTTP ${seed.status}).`)
+    if (!seed.ok) throw new Error(`No se pudo cargar el menú inicial (${cmsError(seed)}).`)
     seeded = true
     log('  · Navegación estaba vacía: se cargó el menú actual (queda cargado).')
   }
@@ -113,7 +120,7 @@ export async function run({ apply = false, allowRemote = false, keep = false, de
   try {
     const created = await author.api('POST', 'paginas', buildDraftPayload({ title: 'Prueba de menú (se borra sola)', slug, layout: [] }))
     pageId = created.data?.doc?.id ?? null
-    if (!check('pagina_creada', created.ok && pageId !== null, `/${slug}`)) return { dryRun: false, ok: false, checks, seeded }
+    if (!check('pagina_creada', created.ok && pageId !== null, created.ok ? `/${slug}` : cmsError(created))) return { dryRun: false, ok: false, checks, seeded }
 
     const link = { label, type: 'relationship', page: pageId, newTab: false }
     const draftTry = await author.api('POST', 'globals/navegacion', { links: [...snapshot, link] })
@@ -131,7 +138,7 @@ export async function run({ apply = false, allowRemote = false, keep = false, de
       const res = await who.api('PATCH', `paginas/${pageId}`, buildStepBody(to))
       if (!res.ok) {
         flowOk = false
-        flowDetail = `falló el paso a ${to} (HTTP ${res.status})`
+        flowDetail = `falló el paso a ${to} (${cmsError(res)})`
         break
       }
     }
@@ -139,7 +146,7 @@ export async function run({ apply = false, allowRemote = false, keep = false, de
 
     const added = await author.api('POST', 'globals/navegacion', { links: [...snapshot, link] })
     if (added.ok) menuChanged = true
-    if (!check('enlace_agregado', added.ok, `HTTP ${added.status}`)) return { dryRun: false, ok: false, checks, seeded }
+    if (!check('enlace_agregado', added.ok, cmsError(added))) return { dryRun: false, ok: false, checks, seeded }
 
     // El portal se actualiza por revalidación de etiquetas; se espera hasta ~90 s antes de darlo por fallido.
     let seen = false
@@ -158,13 +165,13 @@ export async function run({ apply = false, allowRemote = false, keep = false, de
       log('Limpieza:')
       if (menuChanged) {
         const restored = await author.api('POST', 'globals/navegacion', { links: snapshot })
-        check('menu_restaurado', restored.ok, `HTTP ${restored.status}`)
+        check('menu_restaurado', restored.ok, cmsError(restored))
       } else {
         check('menu_restaurado', true, 'el menú no se modificó')
       }
       if (pageId !== null) {
         const deleted = await author.api('DELETE', `paginas/${pageId}`)
-        check('pagina_borrada', deleted.ok, `HTTP ${deleted.status}`)
+        check('pagina_borrada', deleted.ok, cmsError(deleted))
       }
     }
   }

@@ -74,6 +74,17 @@ describe('siembra del menú actual en Navegación', () => {
     expect(NAVEGACION_SEED.length).toBeLessThanOrEqual(12) // maxRows del global
   })
 
+  // MENU-CMS-02: la prueba de punta a punta contra el CMS local (2026-11-09) mostró que la siembra NUNCA se podía guardar:
+  // «Institucional» tiene 15 subenlaces y el global admitía 12 (HTTP 400). La prueba anterior solo miraba el primer nivel.
+  it('respeta los límites del global en los dos niveles (leídos de la configuración, no copiados)', () => {
+    const links = Navegacion.fields.find((f: any) => f.name === 'links') as any
+    const children = links.fields.find((f: any) => f.name === 'children')
+    expect(NAVEGACION_SEED.length).toBeLessThanOrEqual(links.maxRows)
+    for (const l of NAVEGACION_SEED) {
+      expect((l.children ?? []).length, l.label).toBeLessThanOrEqual(children.maxRows)
+    }
+  })
+
   it('dry-run: no llama a la red', async () => {
     const cms = fakeCms()
     const r = await run({ apply: false, deps: { env, fetch: cms.fetch, log: quiet } })
