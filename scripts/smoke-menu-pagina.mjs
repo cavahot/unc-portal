@@ -32,14 +32,14 @@ import { buildDraftPayload, buildStepBody, checkIdentities } from './lib/wpPubli
 const POLL_DELAY_MS = 3000
 
 /** Estado HTTP más el mensaje que devuelve el CMS (`errors[].message`), recortado. Sin él, «HTTP 400» no dice qué falló. */
-function cmsError(res) {
+export function cmsError(res) {
   const errors = Array.isArray(res.data?.errors) ? res.data.errors : []
   const detail = errors.map((e) => [e?.message, ...(e?.data?.errors ?? []).map((d) => `${d?.path}: ${d?.message}`)].filter(Boolean).join(' · ')).join(' | ')
   return `HTTP ${res.status}${detail ? `: ${detail.slice(0, 300)}` : ''}`
 }
 
 /** Valida un destino: local siempre; remoto solo con allowRemote y https. Se llama antes de cualquier petición. */
-function checkTarget(kind, url, allowRemote) {
+export function checkTarget(kind, url, allowRemote) {
   let parsed
   try {
     parsed = new URL(url)
@@ -53,7 +53,7 @@ function checkTarget(kind, url, allowRemote) {
 }
 
 /** Abre la sesión de una identidad reutilizando la política de `openCmsSession` y devuelve `{ api, user }`. */
-async function openIdentity({ cmsUrl, email, password, allowRemote, doFetch, log }) {
+export async function openIdentity({ cmsUrl, email, password, allowRemote, doFetch, log }) {
   const env = { CMS_URL: cmsUrl, CMS_EMAIL: email ?? '', CMS_PASSWORD: password ?? '' }
   const { api } = await openCmsSession({ allowRemote, env, doFetch, log: () => {} })
   const me = await api('GET', 'users/me')
