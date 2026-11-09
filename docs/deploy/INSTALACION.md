@@ -34,13 +34,61 @@ sudo usermod -aG docker $USER
 docker info
 
 # 3. Firewall básico (producción)
-sudo ufw allow OpenSSH && sudo ufw allow 80/tcp && sudo ufw allow 443/tcp && sudo ufw enable
+sudo ufw limit OpenSSH && sudo ufw allow 80/tcp && sudo ufw allow 443/tcp && sudo ufw enable
 
 # 4. Descargar el proyecto
 git clone https://github.com/cavahot/unc-portal.git
 cd unc-portal
 git checkout chain/rediseno-portal   # o main, cuando ya esté publicado
 ```
+
+## 1 bis. Proteger el acceso SSH (una vez, antes de producción)
+
+El puerto 22 (SSH) es el más atacado de cualquier servidor con IP pública: los bots prueban contraseñas a los pocos minutos de que existe. Postgres ya queda cerrado y solo se publican 80 y 443; esto cierra lo que falta. **Orden importa: no cierre la sesión que tiene abierta hasta haber entrado por una segunda.**
+
+1. **Cree su usuario y entre con clave.** Desde su computadora (no desde el servidor):
+   ```bash
+   ssh-copy-id usuario@IP_DEL_SERVIDOR
+   ssh usuario@IP_DEL_SERVIDOR     # debe entrar SIN pedir la contraseña del servidor
+   ```
+   Si no entra con clave, **no siga**: desactivar contraseñas lo dejaría fuera.
+2. **Desactive contraseñas y el login de `root`.** Use un archivo que se lea **antes** de `50-cloud-init.conf` (en SSH gana el primer valor, y cloud-init puede reactivar las contraseñas):
+   ```bash
+   sudo tee /etc/ssh/sshd_config.d/00-unc-hardening.conf >/dev/null <<'EOF'
+   PasswordAuthentication no
+   PermitRootLogin no
+   PubkeyAuthentication yes
+   MaxAuthTries 3
+   LoginGraceTime 30
+   EOF
+   sudo sshd -t && sudo systemctl reload ssh
+   ```
+   `sshd -t` revisa la configuración: si imprime un error, **no recargue** y corrija.
+3. **Pruebe en otra ventana (otra terminal) sin cerrar la actual:** `ssh usuario@IP_DEL_SERVIDOR` debe entrar con la clave. Después compruebe lo que quedó vigente:
+   ```bash
+   sudo sshd -T | grep -E 'passwordauthentication|permitrootlogin'
+   # esperado: passwordauthentication no / permitrootlogin no
+   ```
+4. **Limite los intentos desde la misma IP** con `ufw limit` (ya lo aplica el paso 1.3; si abrió el 22 con `ufw allow OpenSSH`, bórrelo con `sudo ufw delete allow OpenSSH` y use `sudo ufw limit OpenSSH`). Bloquea a quien abre muchas conexiones en poco tiempo.
+5. **Bloquee a quien insiste con fail2ban:**
+   ```bash
+   sudo apt-get install -y fail2ban
+   sudo systemctl enable --now fail2ban
+   sudo fail2ban-client status sshd      # debe listar la cárcel «sshd» activa
+   ```
+6. **Actualizaciones de seguridad automáticas:** `sudo apt-get install -y unattended-upgrades` y `sudo dpkg-reconfigure -plow unattended-upgrades`.
+7. **Opcional: abra el 22 solo a las IP de la universidad.** Es lo más fuerte si tiene una IP fija: `sudo ufw delete limit OpenSSH` y `sudo ufw allow from IP_FIJA to any port 22 proto tcp`. Si su IP cambia, quedará fuera: téngalo claro antes de hacerlo.
+
+### ¿Hace falta cambiar el puerto?
+
+**No es necesario.** Cambiar el puerto reduce el ruido de los bots (menos intentos en los registros), pero **no sustituye** las medidas de arriba: un escaneo completo lo encuentra en segundos. Con clave obligatoria y fail2ban, el 22 es seguro. Si de todos modos lo quiere cambiar, hágalo en este orden para no quedar fuera:
+
+1. Abra el puerto nuevo en el firewall **antes**: `sudo ufw allow 2222/tcp` (y en el firewall del proveedor, si tiene uno aparte).
+2. Agregue `Port 2222` al archivo `00-unc-hardening.conf`, valide con `sudo sshd -t` y recargue.
+3. Entre por una ventana nueva con `ssh -p 2222 usuario@IP`. Solo si funciona: `sudo ufw delete limit OpenSSH` (cierra el 22).
+4. Cargue el puerto en GitHub como secreto `SSH_PORT` (entorno `production`), o el despliegue automático seguirá intentando el 22.
+
+Cambiar el puerto cuesta recordarlo en cada conexión y en cada herramienta (copias externas, flujo de despliegue). Es una comodidad contra el ruido, no una defensa.
 
 ## 2. Ensayo en staging (recomendado antes de producción)
 
