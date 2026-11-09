@@ -49,7 +49,8 @@
     "description": "Marandu tembiapo académico, jeporekapy, extensión universitaria ha gestión institucional rehegua.",
     "viewAll": "Ehecha opaite marandu",
     "readNews": "Emoñe'ẽ marandu: {title}",
-    "defaultCategory": "Temimoĩmby"
+    "defaultCategory": "Temimoĩmby",
+    "empty": "Ndaipóri marandu ojehaíva gueteri. Eju jey pya'e."
   },
   "stats": {
     "sectionLabel": "UNC papapýpe",
@@ -61,7 +62,8 @@
       "docentesColaboradores": "Mbo'ehára ha pytyvõhára",
       "facultades": "Facultad-kuéra",
       "egresados": "Egresado-kuéra"
-    }
+    },
+    "unavailable": "Cifra institucional ndaipóri ko'ágã. Eñeha'ã jey mbovy minuto rire."
   },
   "transparency": {
     "sectionLabel": "Tetã rembiapo ñemboguata",
@@ -115,5 +117,42 @@
     "label": "Tetã mbo'ehaovusu",
     "title": "Excelencia académica, jeporekapy ha innovación",
     "description": "Compromiso Concepción ha Paraguái jekakuaa sostenible ndive."
+  },
+  "institutionalAccess": {
+    "label": "Tetãygua jeike",
+    "title": "Transparencia ha marandu institucional",
+    "description": "Eike kuatia públicokuérape, ejapo trámite académico ha eheka umi marandu ñemoarandu rehegua UNC-pe.",
+    "items": {
+      "transparencia": {
+        "badge": "Ley 5.189 ha 5.282",
+        "title": "Transparencia institucional",
+        "description": "Eike marandu públicope sueldo, presupuesto, patrimonio ha gestión institucional rehegua, ley oĩháicha.",
+        "cta": "Ehecha kuatia"
+      },
+      "infoPublica": {
+        "badge": "Tetãygua jeike",
+        "title": "Marandu pública",
+        "description": "Ejerure marandu Estado-gui Ley de Libre Acceso he'iháicha.",
+        "cta": "Ejerure marandu"
+      },
+      "solicitarTitulo": {
+        "badge": "Trámite académico",
+        "title": "Ejerure título",
+        "description": "Eñepyrũ trámite eguerahavo ha eñemoneĩ ne diploma académico.",
+        "cta": "Eñepyrũ trámite"
+      },
+      "biblioteca": {
+        "badge": "Ñemoarandu",
+        "title": "Biblioteca ha tesis",
+        "description": "Eheka tesis académica ha recurso bibliográfico digital repositorio-pe.",
+        "cta": "Ehecha repositorio"
+      },
+      "revistas": {
+        "badge": "Ñemoherakuã",
+        "title": "Revista-kuéra académica",
+        "description": "Revista científica ha académica ojapóva facultad-kuéra UNC-gua.",
+        "cta": "Ehecha ñemoherakuã"
+      }
+    }
   }
 }

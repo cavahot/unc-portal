@@ -49,7 +49,8 @@
     "description": "Informações sobre atividades acadêmicas, pesquisa, extensão universitária e gestão institucional.",
     "viewAll": "Ver todas as notícias",
     "readNews": "Ler notícia: {title}",
-    "defaultCategory": "Institucional"
+    "defaultCategory": "Institucional",
+    "empty": "Ainda não há notícias publicadas. Volte em breve ou consulte a seção de notícias."
   },
   "stats": {
     "sectionLabel": "UNC em números",
@@ -61,7 +62,8 @@
       "docentesColaboradores": "Docentes e colaboradores",
       "facultades": "Faculdades",
       "egresados": "Egressos"
-    }
+    },
+    "unavailable": "Os números institucionais não estão disponíveis no momento. Tente novamente em alguns minutos."
   },
   "transparency": {
     "sectionLabel": "Gestão pública",
@@ -115,5 +117,42 @@
     "label": "Universidade pública",
     "title": "Excelência acadêmica, pesquisa e inovação",
     "description": "Comprometida com o desenvolvimento sustentável de Concepción e do Paraguai."
+  },
+  "institutionalAccess": {
+    "label": "Acesso do cidadão",
+    "title": "Transparência e informação institucional",
+    "description": "Acesse os documentos públicos, realize trâmites acadêmicos e consulte os recursos de pesquisa da UNC.",
+    "items": {
+      "transparencia": {
+        "badge": "Leis 5.189 e 5.282",
+        "title": "Transparência institucional",
+        "description": "Acesse a informação pública sobre remunerações, orçamento, patrimônio e gestão institucional conforme a normativa vigente.",
+        "cta": "Ver documentos"
+      },
+      "infoPublica": {
+        "badge": "Acesso do cidadão",
+        "title": "Informação pública",
+        "description": "Solicite informações ao Estado conforme a Lei de Livre Acesso.",
+        "cta": "Solicitar informações"
+      },
+      "solicitarTitulo": {
+        "badge": "Trâmite acadêmico",
+        "title": "Solicitar diploma",
+        "description": "Inicie o trâmite de obtenção e legalização do seu diploma acadêmico.",
+        "cta": "Iniciar trâmite"
+      },
+      "biblioteca": {
+        "badge": "Pesquisa",
+        "title": "Biblioteca e teses",
+        "description": "Consulte o repositório de teses acadêmicas e os recursos bibliográficos digitais.",
+        "cta": "Explorar repositório"
+      },
+      "revistas": {
+        "badge": "Publicações",
+        "title": "Revistas acadêmicas",
+        "description": "Revistas científicas e acadêmicas publicadas pelas faculdades da UNC.",
+        "cta": "Ver publicações"
+      }
+    }
   }
 }
