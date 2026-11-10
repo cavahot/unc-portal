@@ -2,6 +2,8 @@
 
 Para quien va a poner el portal en un servidor propio (VPS). Se usa el **instalador guiado** `scripts/deploy/instalar.sh`: avanza por nueve pasos, dice qué hace en cada uno y, si algo falla, explica **qué pasó** y **qué hacer**.
 
+> ¿Recibe el proyecto para instalarlo? Empiece por **`docs/deploy/README-VPS.md`**: ordena esta guía y las demás en fases, con comprobaciones en cada paso.
+
 > Regla de oro: **primero staging, después producción.** Staging es una copia de prueba con datos inventados; sirve para ensayar sin riesgo.
 
 ## 0. Qué necesita
@@ -39,7 +41,7 @@ sudo ufw limit OpenSSH && sudo ufw allow 80/tcp && sudo ufw allow 443/tcp && sud
 # 4. Descargar el proyecto
 git clone https://github.com/cavahot/unc-portal.git
 cd unc-portal
-git checkout chain/rediseno-portal   # o main, cuando ya esté publicado
+git checkout v1.0.0-rc.1             # la versión a instalar (Releases de GitHub); después, la versión final de main
 ```
 
 ## 1 bis. Proteger el acceso SSH (una vez, antes de producción)
