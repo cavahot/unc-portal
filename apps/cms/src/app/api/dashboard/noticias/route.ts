@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import config from '../../../../payload.config'
 import { DASHBOARD_ROLES } from '../../../../access/roles'
+import { authorEmail } from '../../../../utilities/auditChanges'
 import {
   internalError,
   invalidParameter,
@@ -56,7 +57,8 @@ export async function GET(request: Request) {
         slug: n.slug,
         category: n.category,
         approvalStatus: n.approvalStatus,
-        createdBy: n.createdBy,
+        // SEC-027: solo el correo del autor (antes viajaba el usuario poblado entero).
+        createdBy: authorEmail(n.createdBy),
         updatedAt: n.updatedAt,
         publishedAt: n.publishedAt,
         lastComment: n.approvalHistory?.[n.approvalHistory.length - 1]?.comentario || null,

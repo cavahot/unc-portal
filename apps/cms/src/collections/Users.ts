@@ -34,6 +34,11 @@ export const Users: CollectionConfig = {
 
   auth: true,
 
+  // SEC-027 (minimización): al poblar un usuario desde otra colección (p. ej. `createdBy` con depth ≥ 1) solo viajan
+  // su correo y su rol. Evita copiar teléfono, Telegram o sesiones a respuestas y auditorías que no los necesitan.
+  // Límite: no cambia la lectura directa de /api/users, que sigue gobernada por `canReadUsers`.
+  defaultPopulate: { email: true, role: true },
+
   access: {
     admin: isAuthenticated,
     create: canCreateUsers,
