@@ -3,8 +3,9 @@
 //   las claves con datos de acceso o personales de las cuentas.
 // Por qué existe: el hook editorial recibe `createdBy` poblado (correo, teléfono, sesiones) y lo copiaba entero a la
 //   auditoría, que se conserva y se exporta (docs/security/SEC-027-MATRIZ-ROLES.md, observación sobre P10).
-// Límite: un documento relacionado se reconoce por tener `id` y `createdAt`/`updatedAt`; las filas de arrays (sin esas
-//   fechas) se conservan con su contenido. Módulo puro: no importa la configuración de Payload.
+// Límite: un documento relacionado se reconoce por tener `id` y `createdAt`/`updatedAt` o la marca `collection` (un
+//   usuario poblado con `defaultPopulate` solo trae id, email, role y collection), o por reemplazar a un ID en el mismo
+//   campo; las filas de arrays (sin esas marcas) se conservan con su contenido. Módulo puro: no importa Payload.
 
 /** Claves que nunca se copian a la auditoría, estén donde estén. */
 const SENSITIVE_KEYS = new Set([
@@ -26,8 +27,14 @@ type Plain = Record<string, unknown>
 
 const isPlain = (v: unknown): v is Plain => typeof v === 'object' && v !== null && !Array.isArray(v)
 
-/** Documento relacionado ya poblado (no una fila de array): tiene `id` y fechas propias. */
-const isPopulatedDoc = (v: Plain): boolean => 'id' in v && ('createdAt' in v || 'updatedAt' in v)
+/** Documento relacionado ya poblado (no una fila de array): tiene `id` y fechas propias o la marca `collection`. */
+const isPopulatedDoc = (v: Plain): boolean => 'id' in v && ('createdAt' in v || 'updatedAt' in v || 'collection' in v)
+
+const isId = (v: unknown): v is string | number => typeof v === 'number' || typeof v === 'string'
+
+/** Un campo que antes guardaba un ID y ahora trae un objeto con `id` es la misma relación, poblada. */
+const relationValue = (other: unknown, value: unknown): unknown =>
+  isId(other) && isPlain(value) && 'id' in value ? value.id : toAuditValue(value)
 
 /** Valor tal como se guarda en la auditoría: relaciones como ID, sin claves sensibles. */
 export function toAuditValue(value: unknown): unknown {
@@ -52,8 +59,8 @@ export function extractChanges(
   const changes: Record<string, { antes: unknown; despues: unknown }> = {}
   for (const key in after) {
     if (SENSITIVE_KEYS.has(key)) continue
-    const antes = toAuditValue(before[key])
-    const despues = toAuditValue(after[key])
+    const antes = relationValue(after[key], before[key])
+    const despues = relationValue(before[key], after[key])
     if (JSON.stringify(antes) !== JSON.stringify(despues)) changes[key] = { antes, despues }
   }
   return changes

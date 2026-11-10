@@ -38,6 +38,13 @@ describe('SEC-027: minimización de datos del autor', () => {
     expect(cambios).toEqual({ featuredImage: { antes: 3, despues: 4 } })
   })
 
+  it('S2b: el autor poblado con defaultPopulate (sin fechas, con `collection`) también queda como ID', () => {
+    // Forma observada por probe-minimizacion.ts contra el CMS local el 2026-11-10.
+    const autorMinimo = { id: 7, email: 'autor@example.invalid', role: 'editor', collection: 'users' }
+    expect(extractChanges({ createdBy: 7 }, { createdBy: autorMinimo })).toEqual({})
+    expect(JSON.stringify(extractChanges({ approvalHistory: [] }, { approvalHistory: [{ id: 'r1', usuario: autorMinimo }] }))).not.toMatch(/example\.invalid/)
+  })
+
   it('S3: nunca guarda claves sensibles, en ningún nivel', () => {
     const cambios = extractChanges({}, { meta: { password: 'x', hash: 'h', salt: 's', telefono: '1', sessions: [], nota: 'ok' } })
     expect(JSON.stringify(cambios)).not.toMatch(/password|hash|salt|telefono|sessions/)
