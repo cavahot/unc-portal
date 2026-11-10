@@ -20,7 +20,7 @@ Objetivo: auditar el volcado de WordPress y llevar al CMS lo que falta (noticias
 | T3b | S4 | inline | El importador también busca el slug anterior para no duplicar noticias ya cargadas | Hecha: rama `fix/wp-import-slug-anterior` |
 | T4 | S3 | inline | Obtener `wp-content/uploads` del hosting y cargar imágenes y PDF a Medios con `scripts/load-news-images.mjs` | Parcial (local): imágenes 2024-2026 cargadas, 57 noticias con imagen; faltan las de 2016-2023 (no están en la copia) y los 13 PDF |
 | T5 | S4 | inline | Importar las 9 noticias faltantes como borrador y avanzarlas por el flujo (local) | Hecha en local: 281 noticias publicadas |
-| T6 | S2, S4 | inline | Corregir los 16 títulos y slugs con letras matemáticas ya cargados | Pendiente (T2) |
+| T6 | S2, S4 | inline | Corregir los 16 títulos y slugs con letras matemáticas ya cargados | Hecha en local: `scripts/fix-wp-titulos-unicode.mjs` (fc7faf1), 16/16 publicadas |
 | T7 | S3 | inline | Reescribir enlaces a PDF y las 14 imágenes de otros dominios del cuerpo | Pendiente (T4) |
 | T8 | S2 | inline | Páginas sin equivalente: migrar, recrear o descartar | Pendiente (T2) |
 | T9 | S4 | inline | Verificar en el portal local y repetir el recuento contra el volcado | Pendiente |
@@ -33,4 +33,6 @@ Objetivo: auditar el volcado de WordPress y llevar al CMS lo que falta (noticias
 - L4 (2026-11-09) T3 hecha (PR #50). Copia de `uploads` recibida: solo carpetas 2024, 2025 y 2026; 57 de 281 noticias tienen imagen disponible.
 - L5 (2026-11-09) Carga local con las tres identidades: 25 noticias creadas, de las cuales 16 eran duplicados (ids 274-289) de las noticias con título en letras matemáticas. Causa: el importador busca solo por slug y el normalizador cambió esos slugs. Medios pasó de 91 a 130 archivos.
 - L6 (2026-11-09, usuario, textual): «Sí, corrige y borra». Copia previa `respaldo-local-2026-11-09/unc_portal_post-carga.dump`; borradas en una transacción las 16 copias y sus 64 versiones. Resultado: 281 noticias, 0 fechas duplicadas, 57 con imagen. T3b: el importador prueba también el slug anterior (4 pruebas nuevas, RED observado; suite 2994 en verde).
-- Siguiente paso: T2 (decisiones del Product Owner) y T6 (limpiar los 16 títulos y slugs originales).
+- L7 (2026-11-09, usuario, textual): «vamos por el t6». Decisión sobre URL: el portal aún no está publicado, así que cambiar los slugs no rompe enlaces públicos. Copia previa `respaldo-local-2026-11-09/unc_portal_pre-t6.dump`.
+- L8 (2026-11-09/10) Hallazgo de la corrida sin escribir: el importador anterior cortó dos títulos (#104 y #67, este con un carácter partido); el corrector toma el título completo del volcado. Corrida real: #115 primero (`--limit=1`) y luego las 15 restantes, cada una por el flujo editorial con autor, revisor y publicador. Resultado: 0 pendientes, 281 noticias publicadas, 0 slugs repetidos, 15 + 1 publicaciones en la auditoría; el portal muestra los títulos nuevos.
+- Siguiente paso: T2 (decisiones del Product Owner).
