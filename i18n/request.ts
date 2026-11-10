@@ -38,6 +38,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     'pages.tribunal-electoral',
     'pages.investigacion',
     'pages.extension',
+    'pages.pilares',
     'pages.calendario-academico',
     'pages.mapa-sitio',
     'pages.privacidad',

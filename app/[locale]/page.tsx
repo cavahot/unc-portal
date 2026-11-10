@@ -14,6 +14,8 @@ import { getRecognitions } from '@/lib/cms/queries/recognitions';
 import { getAccreditations } from '@/lib/cms/queries/accreditations';
 import { getNews } from '@/lib/cms/queries/news';
 import { getStatsResult } from '@/lib/cms/queries/stats';
+import { getPilaresAcademicos } from '@/lib/cms/queries/pilares';
+import PilarCard from '@/components/home/PilarCard';
 import { Link } from '@/i18n/navigation';
 import { UNC_BLUR } from '@/lib/imagePlaceholder'
 import { baseOg } from '@/lib/seo/og';
@@ -141,7 +143,7 @@ export default async function Home({
     notFound()
   }
   // Try featured news first; fall back to latest if none are marked featured
-  const [t, format, featuredResult, latestResult, statsResult, recognitions, accreditationGroups] = await Promise.all([
+  const [t, format, featuredResult, latestResult, statsResult, recognitions, accreditationGroups, pilaresResult] = await Promise.all([
     getT(locale, 'pages.home'),
     getF(locale),
     // HOME-NEWS: la portada muestra tres tarjetas para mantener la jerarquía visual y el contrato E2E.
@@ -153,6 +155,8 @@ export default async function Home({
     // PRA-02: ambas consultas devuelven [] si el CMS cae o no hay filas activas+verificadas (la sección se oculta).
     getRecognitions(),
     getAccreditations(),
+    // PILARES-01: tarjetas de Docencia, Investigación y Extensión (sin pilares publicables la franja queda como antes).
+    getPilaresAcademicos(locale),
   ]);
   const noticias = featuredResult.docs.length > 0 ? featuredResult.docs : latestResult.docs;
 
@@ -689,6 +693,19 @@ export default async function Home({
             </p>
           </div>
         </Reveal>
+
+        {/* PILARES-01 (S1, S2): tarjetas «Editorial & Métricas» de los tres pilares, con datos del CMS. */}
+        {pilaresResult.status === 'ok' && (
+          <Reveal>
+            <ul className="relative mx-auto mt-12 grid max-w-[1260px] gap-6 px-5 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 lg:px-8">
+              {pilaresResult.data.map((pilar) => (
+                <li key={pilar.key} className="flex">
+                  <PilarCard pilar={pilar} />
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        )}
       </section>
     </>
   );

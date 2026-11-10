@@ -59,6 +59,7 @@
     "porDependencia": "Contacts by department"
   },
   "academia": {
+    "docencia": "Teaching",
     "direccionAcademica": "Academic Affairs Office",
     "aseguramientoCalidad": "Quality Assurance",
     "investigacion": "Research",

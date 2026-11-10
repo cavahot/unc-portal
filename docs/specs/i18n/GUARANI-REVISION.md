@@ -125,6 +125,16 @@ Muchas son a propósito: nombres propios (Universidad Nacional de Concepción, f
 | Archivo | Clave | Español | Antes | Guaraní propuesto | Términos del glosario | Incert. | Nota |
 |---|---|---|---|---|---|---|---|
 | nav.json | `academia.tesisAcademicas` | Tesis Académicas | (clave faltante) | Tesis Académicas |  | n/a | Clave nueva del menú (MENU-CMS-04): se agregó con el texto español (pendiente de traducción) |
+| nav.json | `academia.docencia` | Docencia | (clave faltante) | Docencia |  | n/a | Clave nueva del menú (PILARES-01): se agregó con el texto español (pendiente de traducción) |
+| pages.pilares.json | `meta.docencia.title` | Docencia | (archivo nuevo) | Docencia |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `meta.investigacion.title` | Investigación | (archivo nuevo) | Investigación |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `meta.extension.title` | Extensión | (archivo nuevo) | Extensión |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `meta.*.description` | (descripciones de las tres páginas) | (archivo nuevo) | (descripciones de las tres páginas) |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `titulos.*` | Docencia / Investigación / Extensión | (archivo nuevo) | Docencia / Investigación / Extensión |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `enConstruccion` | En construcción | (archivo nuevo) | En construcción |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `enConstruccionTexto` | Estamos preparando esta sección. Pronto publicaremos su contenido. | (archivo nuevo) | Estamos preparando esta sección. Pronto publicaremos su contenido. |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `volver` | Volver al inicio | (archivo nuevo) | Volver al inicio |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
+| pages.pilares.json | `estadisticas` | En cifras | (archivo nuevo) | En cifras |  | n/a | Archivo nuevo (PILARES-01): texto español pendiente de traducción; `inicio` reutiliza «Ñepyrũ» ya registrado |
 | pages.ley-5189.json | `breadcrumb.home` | Inicio | (clave faltante) | Ñepyrũ |  | bajo | clave antes faltante en gn |
 | pages.ley-5189.json | `breadcrumb.institutional` | Institucional | (clave faltante) | Temimoĩmby |  | medio | clave antes faltante en gn |
 | pages.ley-5189.json | `breadcrumb.page` | Ley 5189/2014 | (clave faltante) | Léi 5189/2014 |  | bajo | clave antes faltante en gn |

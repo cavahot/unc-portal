@@ -59,6 +59,7 @@
     "porDependencia": "Contactos por dependencia"
   },
   "academia": {
+    "docencia": "Docencia",
     "direccionAcademica": "Dirección General Académica",
     "aseguramientoCalidad": "Aseguramiento de la Calidad",
     "investigacion": "Investigación",

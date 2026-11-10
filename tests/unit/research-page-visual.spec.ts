@@ -10,8 +10,10 @@ const component = readFileSync('components/pages/AcademicSectionPage.tsx', 'utf8
 const css = readFileSync('app/globals.css', 'utf8')
 
 describe('RES-01 — diseño visual de Investigación', () => {
-  it('activa una variante específica de investigación', () => {
-    expect(page).toContain('visualVariant="research"')
+  it('la variante de investigación sigue disponible en la plantilla académica', () => {
+    // PILARES-01 (2026-11-10): /investigacion pasó a leer el CMS y mostrar «en construcción» (pedido del propietario);
+    // la variante visual queda en la plantilla para cuando la página se publique con ese diseño.
+    expect(page).toContain("pilar=\"investigacion\"")
     expect(component).toContain("visualVariant?: 'default' | 'research'")
     expect(component).toContain('research-hero')
     expect(component).toContain('research-areas')
