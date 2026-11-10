@@ -3,16 +3,21 @@ import { revalidatePortalTag } from '../utilities/revalidation'
 import { canUpdateGlobal } from '../access/roles'
 import { validateNavegacionLinks, type NavLinkInput } from '../utilities/navegacionValidation'
 
+// MENU-CMS-03: etiqueta de fila con el texto del enlace y sus subenlaces (admin/components/NavegacionRowLabel.tsx).
+const ROW_LABEL = { path: './admin/components/NavegacionRowLabel', exportName: 'NavegacionRowLabel' }
+
 function linkFields(depth: 0 | 1): Field[] {
   const fields: Field[] = [
     {
       name: 'label',
       type: 'text',
+      label: 'Texto',
       required: true,
     },
     {
       name: 'type',
       type: 'select',
+      label: 'Tipo de destino',
       defaultValue: 'manual',
       options: [
         { label: 'Manual (URL)', value: 'manual' },
@@ -23,6 +28,7 @@ function linkFields(depth: 0 | 1): Field[] {
     {
       name: 'url',
       type: 'text',
+      label: 'Dirección (URL)',
       required: false,
       admin: {
         description: 'Requerido cuando el tipo es "Manual"',
@@ -32,6 +38,7 @@ function linkFields(depth: 0 | 1): Field[] {
     {
       name: 'page',
       type: 'relationship',
+      label: 'Página',
       relationTo: 'paginas',
       required: false,
       admin: {
@@ -42,6 +49,7 @@ function linkFields(depth: 0 | 1): Field[] {
     {
       name: 'newTab',
       type: 'checkbox',
+      label: 'Abrir en una pestaña nueva',
       defaultValue: false,
     },
   ]
@@ -50,6 +58,8 @@ function linkFields(depth: 0 | 1): Field[] {
     fields.push({
       name: 'children',
       type: 'array',
+      labels: { singular: 'Subenlace', plural: 'Subenlaces' },
+      admin: { components: { RowLabel: ROW_LABEL } },
       fields: linkFields(1),
       // MENU-CMS-02: 20 y no 12. El menú actual del portal ya tiene 15 subenlaces en «Institucional»; con 12 la siembra
       // (`scripts/seed-navegacion.mjs`) nunca se podía guardar (HTTP 400, prueba de punta a punta del 2026-11-09).
@@ -72,8 +82,16 @@ export const Navegacion: GlobalConfig = {
   },
   fields: [
     {
+      // MENU-CMS-03 (S1): vista del árbol del menú; campo de interfaz, no guarda datos ni cambia el esquema.
+      name: 'vistaMenu',
+      type: 'ui',
+      admin: { components: { Field: { path: './admin/components/NavegacionPreview', exportName: 'NavegacionPreview' } } },
+    },
+    {
       name: 'links',
       type: 'array',
+      labels: { singular: 'Enlace', plural: 'Enlaces del menú' },
+      admin: { components: { RowLabel: ROW_LABEL } },
       fields: linkFields(0),
       maxRows: 12,
     },
