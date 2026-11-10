@@ -1,0 +1,26 @@
+# Pilares académicos (Docencia, Investigación, Extensión)
+Objetivo: tarjetas de los tres pilares en la franja «Excelencia académica, investigación e innovación» de la portada, con
+contenido y métricas desde el CMS, y una página por pilar (en construcción por ahora) enlazada desde Academia en el megamenú.
+Rama `feat/pilares-academicos` (desde `chain/rediseno-portal`). Entrega: PR al tracker. Pruebas: `npx vitest run`.
+
+## Specs
+- S1 — Tarjetas «Propuesta 02 • Editorial & Métricas» en la franja de la portada: «Ahora diseña dentro de el apartado Excelencia académica, investigación e innovación el diseño de card con Propuesta 02 • Editorial & Métricas deben ser identicas». Estructura idéntica a la propuesta (ícono en recuadro, título serif, bajada en mayúsculas, descripción, recuadro con dos métricas y divisor, botón a todo el ancho con flecha); fuentes y colores del portal: «las tarjetas van van en la franja de nuestro diseño debe ser de la misma linea».
+- S2 — Sombra y cambio al pasar el cursor: «el card debe tener una sobra alrededor y al pasar sobre el debe cambiar en el hover».
+- S3 — Todo desde el CMS y la base de datos: «vincula todo con el cms y la base de datos para la carga correspondiente»; «prepara para la base de datos tanto en docencia, estadisticas, de docencias, investigacion, tambien las estadisticas, y la parte de extensión». Sin cifras fijas en el código: una métrica sale de «Estadísticas» o se carga a mano con su fuente; sin métricas válidas el recuadro no se dibuja.
+- S4 — Una página por pilar: «a demas las paginas para cada uno», que por ahora muestren solo el aviso «en construcción»: «que aparezca solo en construccion». El estado se cambia desde el CMS.
+- S5 — En el megamenú, dentro de Academia, con el mismo estilo: «vinculadas con academico deben estar en el megamenu mismo estilo».
+- Supuesto: el contenido inicial (textos de la propuesta y el actual de /investigacion y /extension) se siembra para que los responsables lo confirmen; las métricas de Investigación y Extensión de la propuesta (45+, PRONII, 80+, Anual) no tienen fuente y NO se siembran.
+
+## Tasks
+| ID | Specs | Ruta | Estado | Evidencia |
+| --- | --- | --- | --- | --- |
+| T1 | S3, S4 | inline | pendiente | global `pilares-academicos`, migración, auditoría, revalidación, siembra |
+| T2 | S1, S2, S3 | inline | pendiente | consulta con estados ok/empty/unavailable, `PilarCard` en la franja |
+| T3 | S4 | inline | pendiente | /docencia, /investigacion, /extension desde el CMS, aviso en construcción |
+| T4 | S5 | inline | pendiente | Docencia en Academia (3 copias del menú, traducciones, selector de secciones) |
+| T5 | S1–S5 | inline | pendiente | navegador (escritorio, celular, hover), suite |
+
+## Log
+- L1 (2026-11-10, pedido original): «Ahora diseña dentro de el apartado Excelencia académica, investigación e innovación el diseño de card con Propuesta 02 • Editorial & Métricas deben ser identicas  ademas vincula todo con el cms y la base de datos para la carga correspondiente a demas las paginas para cada uno y vinculadas con academico deben estar en el megamenu mismo estilo, haz un plan luego aplicamos misma hoja de ruta para la carga de las paginas que aparezca solo en  construccion el card debe tener una sobra alrededor y al pasar sobre el debe cambiar en el hover prepara para la base de datos tanto en docencia, estadisticas, de docencias, investigacion, tambien las estadisticas, y la parte de extensión»
+- L2 (2026-11-10): «las tarjetas van van en la franja de nuestro diseño debe ser de la misma linea» → dentro de la franja verde, con fuentes y colores del portal.
+- L3: «Estadísticas» del CMS local tiene 4985 estudiantes, 762 docentes, 672 egresados, 10 carreras acreditadas y 6 facultades; son los mismos valores que `DEMO_STATS` (lib/cms/queries/stats.ts): confirmar su origen antes de publicar.

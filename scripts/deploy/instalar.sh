@@ -663,7 +663,7 @@ else
   CMS_URL_EJ="https://cms.unc.edu.py"; PERM=" --allow-remote"
 fi
 dice "4. Cargue los contenidos iniciales (una sola vez; cada comando es repetible sin riesgo). Desde la carpeta del repositorio:"
-for S in seed-tramites seed-calendario seed-legales seed-legalizaciones seed-dependencias seed-navegacion; do
+for S in seed-tramites seed-calendario seed-legales seed-legalizaciones seed-dependencias seed-pilares-academicos seed-navegacion; do
   dice "     CMS_URL=$CMS_URL_EJ CMS_EMAIL=su-correo CMS_PASSWORD=su-clave node scripts/$S.mjs --apply$PERM"
 done
 dice "   Hay más siembras en scripts/seed-*.mjs (aranceles, glosario, etc.); la guía indica el orden completo."

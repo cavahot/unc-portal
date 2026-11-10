@@ -46,6 +46,7 @@ import { Transparencia } from './globals/Transparencia'
 import { EnlacesExternos } from './globals/EnlacesExternos'
 import { Estadisticas } from './globals/Estadisticas'
 import { TitulosInscripcion } from './globals/TitulosInscripcion'
+import { PilaresAcademicos } from './globals/PilaresAcademicos'
 import { InformacionPublica } from './globals/InformacionPublica'
 import { Institucional } from './globals/Institucional'
 import { getDatabaseURL } from './config/database'
@@ -208,6 +209,7 @@ export default buildConfig({
     EnlacesExternos,
     Estadisticas,
     TitulosInscripcion,
+    PilaresAcademicos,
     InformacionPublica,
     Institucional,
     PoliticaPrivacidad,

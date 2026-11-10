@@ -62,6 +62,8 @@ export async function POST(request: NextRequest) {
       // PERF-DB: lista de slugs que consume getNewsSlugs (generateStaticParams).
       'noticias-slugs',
       'navegacion',
+      // PILARES-01: tarjetas de la portada y páginas /docencia, /investigacion y /extension.
+      'pilares-academicos',
       'transparencia',
       'revistas',
       'tesis',

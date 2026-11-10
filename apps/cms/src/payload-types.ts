@@ -144,6 +144,7 @@ export interface Config {
     'enlaces-externos': EnlacesExterno;
     estadisticas: Estadistica;
     'titulos-inscripcion': TitulosInscripcion;
+    'pilares-academicos': PilaresAcademico;
     'informacion-publica': InformacionPublica;
     institucional: Institucional;
     'politica-privacidad': PoliticaPrivacidad;
@@ -156,6 +157,7 @@ export interface Config {
     'enlaces-externos': EnlacesExternosSelect<false> | EnlacesExternosSelect<true>;
     estadisticas: EstadisticasSelect<false> | EstadisticasSelect<true>;
     'titulos-inscripcion': TitulosInscripcionSelect<false> | TitulosInscripcionSelect<true>;
+    'pilares-academicos': PilaresAcademicosSelect<false> | PilaresAcademicosSelect<true>;
     'informacion-publica': InformacionPublicaSelect<false> | InformacionPublicaSelect<true>;
     institucional: InstitucionalSelect<false> | InstitucionalSelect<true>;
     'politica-privacidad': PoliticaPrivacidadSelect<false> | PoliticaPrivacidadSelect<true>;
@@ -2535,7 +2537,7 @@ export interface Navegacion {
         label: string;
         type: 'manual' | 'relationship';
         /**
-         * Requerido cuando el tipo es "Manual"
+         * Requerido cuando el tipo es "Manual". Ruta del portal (p. ej. /biblioteca), «#» para un grupo o una dirección completa.
          */
         url?: string | null;
         /**
@@ -2548,7 +2550,7 @@ export interface Navegacion {
               label: string;
               type: 'manual' | 'relationship';
               /**
-               * Requerido cuando el tipo es "Manual"
+               * Requerido cuando el tipo es "Manual". Ruta del portal (p. ej. /biblioteca), «#» para un grupo o una dirección completa.
                */
               url?: string | null;
               /**
@@ -2737,6 +2739,272 @@ export interface TitulosInscripcion {
         id?: string | null;
       }[]
     | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tarjetas de Docencia, Investigación y Extensión en la portada, y la página de cada una.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pilares-academicos".
+ */
+export interface PilaresAcademico {
+  id: number;
+  docencia: {
+    titulo: string;
+    /**
+     * Línea breve en mayúsculas bajo el título.
+     */
+    bajada?: string | null;
+    descripcion: string;
+    icono: 'birrete' | 'matraz' | 'personas';
+    /**
+     * Hasta dos. Sin métricas válidas la tarjeta no muestra el recuadro de cifras.
+     */
+    metricas?:
+      | {
+          origen: 'estadistica' | 'manual';
+          /**
+           * El número se actualiza solo cuando cambia «Estadísticas».
+           */
+          estadistica?:
+            | ('totalEstudiantes' | 'totalDocentes' | 'totalEgresados' | 'totalCarrerasAcreditadas' | 'totalFacultades')
+            | null;
+          /**
+           * Ejemplo: «45» o «45+».
+           */
+          valor?: string | null;
+          /**
+           * No se muestra en el portal; queda como respaldo del dato.
+           */
+          fuente?: string | null;
+          /**
+           * Ejemplo: «Carreras acreditadas».
+           */
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+    enlaceTexto: string;
+    pagina: {
+      estado: 'construccion' | 'publicada';
+      contenido?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      estadisticas?:
+        | {
+            origen: 'estadistica' | 'manual';
+            /**
+             * El número se actualiza solo cuando cambia «Estadísticas».
+             */
+            estadistica?:
+              | (
+                  | 'totalEstudiantes'
+                  | 'totalDocentes'
+                  | 'totalEgresados'
+                  | 'totalCarrerasAcreditadas'
+                  | 'totalFacultades'
+                )
+              | null;
+            /**
+             * Ejemplo: «45» o «45+».
+             */
+            valor?: string | null;
+            /**
+             * No se muestra en el portal; queda como respaldo del dato.
+             */
+            fuente?: string | null;
+            /**
+             * Ejemplo: «Carreras acreditadas».
+             */
+            etiqueta: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  investigacion: {
+    titulo: string;
+    /**
+     * Línea breve en mayúsculas bajo el título.
+     */
+    bajada?: string | null;
+    descripcion: string;
+    icono: 'birrete' | 'matraz' | 'personas';
+    /**
+     * Hasta dos. Sin métricas válidas la tarjeta no muestra el recuadro de cifras.
+     */
+    metricas?:
+      | {
+          origen: 'estadistica' | 'manual';
+          /**
+           * El número se actualiza solo cuando cambia «Estadísticas».
+           */
+          estadistica?:
+            | ('totalEstudiantes' | 'totalDocentes' | 'totalEgresados' | 'totalCarrerasAcreditadas' | 'totalFacultades')
+            | null;
+          /**
+           * Ejemplo: «45» o «45+».
+           */
+          valor?: string | null;
+          /**
+           * No se muestra en el portal; queda como respaldo del dato.
+           */
+          fuente?: string | null;
+          /**
+           * Ejemplo: «Carreras acreditadas».
+           */
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+    enlaceTexto: string;
+    pagina: {
+      estado: 'construccion' | 'publicada';
+      contenido?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      estadisticas?:
+        | {
+            origen: 'estadistica' | 'manual';
+            /**
+             * El número se actualiza solo cuando cambia «Estadísticas».
+             */
+            estadistica?:
+              | (
+                  | 'totalEstudiantes'
+                  | 'totalDocentes'
+                  | 'totalEgresados'
+                  | 'totalCarrerasAcreditadas'
+                  | 'totalFacultades'
+                )
+              | null;
+            /**
+             * Ejemplo: «45» o «45+».
+             */
+            valor?: string | null;
+            /**
+             * No se muestra en el portal; queda como respaldo del dato.
+             */
+            fuente?: string | null;
+            /**
+             * Ejemplo: «Carreras acreditadas».
+             */
+            etiqueta: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  extension: {
+    titulo: string;
+    /**
+     * Línea breve en mayúsculas bajo el título.
+     */
+    bajada?: string | null;
+    descripcion: string;
+    icono: 'birrete' | 'matraz' | 'personas';
+    /**
+     * Hasta dos. Sin métricas válidas la tarjeta no muestra el recuadro de cifras.
+     */
+    metricas?:
+      | {
+          origen: 'estadistica' | 'manual';
+          /**
+           * El número se actualiza solo cuando cambia «Estadísticas».
+           */
+          estadistica?:
+            | ('totalEstudiantes' | 'totalDocentes' | 'totalEgresados' | 'totalCarrerasAcreditadas' | 'totalFacultades')
+            | null;
+          /**
+           * Ejemplo: «45» o «45+».
+           */
+          valor?: string | null;
+          /**
+           * No se muestra en el portal; queda como respaldo del dato.
+           */
+          fuente?: string | null;
+          /**
+           * Ejemplo: «Carreras acreditadas».
+           */
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+    enlaceTexto: string;
+    pagina: {
+      estado: 'construccion' | 'publicada';
+      contenido?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      estadisticas?:
+        | {
+            origen: 'estadistica' | 'manual';
+            /**
+             * El número se actualiza solo cuando cambia «Estadísticas».
+             */
+            estadistica?:
+              | (
+                  | 'totalEstudiantes'
+                  | 'totalDocentes'
+                  | 'totalEgresados'
+                  | 'totalCarrerasAcreditadas'
+                  | 'totalFacultades'
+                )
+              | null;
+            /**
+             * Ejemplo: «45» o «45+».
+             */
+            valor?: string | null;
+            /**
+             * No se muestra en el portal; queda como respaldo del dato.
+             */
+            fuente?: string | null;
+            /**
+             * Ejemplo: «Carreras acreditadas».
+             */
+            etiqueta: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3159,6 +3427,120 @@ export interface TitulosInscripcionSelect<T extends boolean = true> {
         responsable?: T;
         descripcion?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pilares-academicos_select".
+ */
+export interface PilaresAcademicosSelect<T extends boolean = true> {
+  docencia?:
+    | T
+    | {
+        titulo?: T;
+        bajada?: T;
+        descripcion?: T;
+        icono?: T;
+        metricas?:
+          | T
+          | {
+              origen?: T;
+              estadistica?: T;
+              valor?: T;
+              fuente?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+        enlaceTexto?: T;
+        pagina?:
+          | T
+          | {
+              estado?: T;
+              contenido?: T;
+              estadisticas?:
+                | T
+                | {
+                    origen?: T;
+                    estadistica?: T;
+                    valor?: T;
+                    fuente?: T;
+                    etiqueta?: T;
+                    id?: T;
+                  };
+            };
+      };
+  investigacion?:
+    | T
+    | {
+        titulo?: T;
+        bajada?: T;
+        descripcion?: T;
+        icono?: T;
+        metricas?:
+          | T
+          | {
+              origen?: T;
+              estadistica?: T;
+              valor?: T;
+              fuente?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+        enlaceTexto?: T;
+        pagina?:
+          | T
+          | {
+              estado?: T;
+              contenido?: T;
+              estadisticas?:
+                | T
+                | {
+                    origen?: T;
+                    estadistica?: T;
+                    valor?: T;
+                    fuente?: T;
+                    etiqueta?: T;
+                    id?: T;
+                  };
+            };
+      };
+  extension?:
+    | T
+    | {
+        titulo?: T;
+        bajada?: T;
+        descripcion?: T;
+        icono?: T;
+        metricas?:
+          | T
+          | {
+              origen?: T;
+              estadistica?: T;
+              valor?: T;
+              fuente?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+        enlaceTexto?: T;
+        pagina?:
+          | T
+          | {
+              estado?: T;
+              contenido?: T;
+              estadisticas?:
+                | T
+                | {
+                    origen?: T;
+                    estadistica?: T;
+                    valor?: T;
+                    fuente?: T;
+                    etiqueta?: T;
+                    id?: T;
+                  };
+            };
       };
   updatedAt?: T;
   createdAt?: T;
