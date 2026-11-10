@@ -50,3 +50,29 @@ export async function validateNavegacionLinks(
   }
   return true
 }
+
+/** Id de la página de un enlace (número, texto u objeto poblado), o `undefined`. */
+function pageIdOf(page: NavLinkInput['page']): number | string | undefined {
+  const id = page && typeof page === 'object' ? page.id : page
+  return id === null || id === '' ? undefined : (id ?? undefined)
+}
+
+/**
+ * MENU-CMS-05: filtro del combo «Página» de Navegación. Ofrece solo páginas PUBLICADAS (las únicas que la validación de
+ * arriba acepta) que aún no estén enlazadas en el menú; la página de la fila que se edita (`keep`) se sigue ofreciendo.
+ * Por qué: el pedido fue que el combo muestre las páginas que faltan en el menú para vincularlas, sin duplicados.
+ * Límite: Payload también aplica este filtro al guardar, así que una misma página no puede quedar enlazada dos veces.
+ */
+export function pagesNotInMenuFilter(links: NavLinkInput[] | null | undefined, keep: NavLinkInput['page']) {
+  const keepId = pageIdOf(keep)
+  const used: Array<number | string> = []
+  for (const link of links ?? []) {
+    for (const item of [link, ...(link.children ?? [])]) {
+      if (item.type !== 'relationship') continue
+      const id = pageIdOf(item.page)
+      if (id !== undefined && String(id) !== String(keepId) && !used.some((u) => String(u) === String(id))) used.push(id)
+    }
+  }
+  const published = { _status: { equals: 'published' } }
+  return used.length ? { and: [published, { id: { not_in: used } }] } : published
+}

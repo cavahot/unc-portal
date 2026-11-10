@@ -94,3 +94,11 @@ Pedido (textual): «trata de enlazar bien tesis académica a una pagina que redi
 - Enlace: `/biblioteca#tesis`, ancla en la sección de resultados, que se dibuja en todos los estados (con tesis, vacía o con el CMS caído). Clave de traducción propia `academia.tesisAcademicas` (en: Academic Theses; pt-BR: Teses Acadêmicas; gn: en español, pendiente de revisión nativa).
 - Agregado en las tres copias del menú (respaldo del portal, siembra y MegaMenu) y, en la base local, editado desde el panel. Comprobado en el portal en español e inglés.
 - Pendiente de contenido: la colección `tesis` tiene 0 registros; la página muestra «aún no hay tesis publicadas» hasta que se carguen.
+
+## 8. Combo «Página» con las páginas disponibles (MENU-CMS-05)
+
+Pedido (textual): «en el combo debe aparecer las paginas que aun no estan en el menu para seleccionarlo y vincularlo».
+
+- El combo ofrece solo páginas **publicadas** que **no** están ya enlazadas en el menú (en ningún nivel). La página que tiene la fila que se edita se sigue ofreciendo. Payload aplica el mismo filtro al guardar: una página no puede quedar enlazada dos veces.
+- Solo lista documentos de la colección **Páginas**. Las secciones programadas del portal (`/biblioteca`, `/historia`, `/facultades/...`) no son Páginas del CMS: se enlazan con el tipo «Manual» y su ruta.
+- Estado local (2026-11-10): 0 páginas en el CMS, así que el combo aparece vacío hasta que se cree y publique la primera. Comprobado: la consulta del filtro responde 200 y el formulario carga sin errores.
