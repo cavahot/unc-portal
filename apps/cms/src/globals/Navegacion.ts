@@ -1,7 +1,7 @@
-import { APIError, type Field, type GlobalConfig } from 'payload'
+import { APIError, type Field, type GlobalConfig, type Where } from 'payload'
 import { revalidatePortalTag } from '../utilities/revalidation'
 import { canUpdateGlobal } from '../access/roles'
-import { validateNavegacionLinks, type NavLinkInput } from '../utilities/navegacionValidation'
+import { pagesNotInMenuFilter, validateNavegacionLinks, type NavLinkInput } from '../utilities/navegacionValidation'
 
 // MENU-CMS-03: etiqueta de fila con el texto del enlace y sus subenlaces (admin/components/NavegacionRowLabel.tsx).
 const ROW_LABEL = { path: './admin/components/NavegacionRowLabel', exportName: 'NavegacionRowLabel' }
@@ -31,8 +31,10 @@ function linkFields(depth: 0 | 1): Field[] {
       label: 'Dirección (URL)',
       required: false,
       admin: {
-        description: 'Requerido cuando el tipo es "Manual"',
+        description: 'Requerido cuando el tipo es "Manual". Ruta del portal (p. ej. /biblioteca), «#» para un grupo o una dirección completa.',
         condition: (_, siblingData) => siblingData?.type === 'manual',
+        // MENU-CMS-06: campo de texto + combo de secciones del portal que aún no están en el menú.
+        components: { Field: { path: './admin/components/NavegacionUrlField', exportName: 'NavegacionUrlField' } },
       },
     },
     {
@@ -40,6 +42,9 @@ function linkFields(depth: 0 | 1): Field[] {
       type: 'relationship',
       label: 'Página',
       relationTo: 'paginas',
+      // MENU-CMS-05: solo páginas publicadas que aún no están en el menú (la de esta fila se mantiene).
+      filterOptions: ({ data, siblingData }) =>
+        pagesNotInMenuFilter((data as { links?: NavLinkInput[] })?.links, (siblingData as { page?: NavLinkInput['page'] })?.page) as Where,
       required: false,
       admin: {
         description: 'Requerido cuando el tipo es "Relación"',

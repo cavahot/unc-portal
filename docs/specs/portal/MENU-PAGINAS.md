@@ -94,3 +94,21 @@ Pedido (textual): «trata de enlazar bien tesis académica a una pagina que redi
 - Enlace: `/biblioteca#tesis`, ancla en la sección de resultados, que se dibuja en todos los estados (con tesis, vacía o con el CMS caído). Clave de traducción propia `academia.tesisAcademicas` (en: Academic Theses; pt-BR: Teses Acadêmicas; gn: en español, pendiente de revisión nativa).
 - Agregado en las tres copias del menú (respaldo del portal, siembra y MegaMenu) y, en la base local, editado desde el panel. Comprobado en el portal en español e inglés.
 - Pendiente de contenido: la colección `tesis` tiene 0 registros; la página muestra «aún no hay tesis publicadas» hasta que se carguen.
+
+## 8. Combo «Página» con las páginas disponibles (MENU-CMS-05)
+
+Pedido (textual): «en el combo debe aparecer las paginas que aun no estan en el menu para seleccionarlo y vincularlo».
+
+- El combo ofrece solo páginas **publicadas** que **no** están ya enlazadas en el menú (en ningún nivel). La página que tiene la fila que se edita se sigue ofreciendo. Payload aplica el mismo filtro al guardar: una página no puede quedar enlazada dos veces.
+- Solo lista documentos de la colección **Páginas**. Las secciones programadas del portal (`/biblioteca`, `/historia`, `/facultades/...`) no son Páginas del CMS: se enlazan con el tipo «Manual» y su ruta.
+- Estado local (2026-11-10): 0 páginas en el CMS, así que el combo aparece vacío hasta que se cree y publique la primera. Comprobado: la consulta del filtro responde 200 y el formulario carga sin errores.
+
+## 9. Elegir una sección del portal (MENU-CMS-06)
+
+Pedido: tras explicar que las secciones del portal no son Páginas del CMS y proponer un selector para ellas, «Sí, agrégalo».
+
+- En los enlaces de tipo «Manual», debajo de «Dirección (URL)», un combo **«Elegir una sección del portal que aún no está en el menú…»** lista las secciones programadas del portal (`apps/cms/src/config/portalSections.ts`) que ningún otro enlace usa. Al elegir una, completa la dirección y, si el texto está vacío, también el texto. La dirección se puede seguir escribiendo a mano.
+- Sin migración: el valor se guarda en el campo `url` existente. (Un tercer «tipo» de destino habría exigido migrar la estructura de la base.)
+- Una prueba exige que cada sección de la lista exista como página del portal (`app/[locale]/…/page.tsx`) y que incluya todas las secciones con traducción del menú (`MENU_LABEL_KEYS`). Una ruta nueva del portal se agrega a la lista para que aparezca en el combo.
+
+Verificación en el panel real (2026-11-10): un combo en cada enlace «Manual» (38). En la fila de «Tesis Académicas» ofreció 10 secciones (las 9 que faltan en el menú y la propia) y excluyó las ya usadas (Biblioteca, Historia…). En una fila nueva, elegir «Calendario Académico» completó texto y dirección, la vista del menú lo mostró y las demás filas dejaron de ofrecerlo; la prueba se descartó sin guardar. Hallazgo corregido con prueba: en el estado del formulario, un enlace sin subenlaces trae `children` como el número de filas (0) y `link.children ?? []` rompía el formulario («is not iterable»); afectaba también al filtro de Páginas (§8). Los recorridos aceptan ahora solo listas.

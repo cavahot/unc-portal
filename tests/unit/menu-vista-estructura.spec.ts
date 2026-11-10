@@ -175,3 +175,30 @@ describe('MENU-CMS-03 — hallazgos de la verificación en el panel', () => {
     expect(children.label).toBe('Subenlaces')
   })
 })
+
+// MENU-CMS-05: el combo «Página» de cada enlace ofrece solo páginas PUBLICADAS que aún no están en el menú. Pedido
+// (textual): «en el combo debe aparecer las paginas que aun no estan en el menu para seleccionarlo y vincularlo».
+// La página que ya tiene la fila que se está editando se sigue ofreciendo (si no, la fila quedaría inválida).
+describe('MENU-CMS-05 — páginas disponibles en el combo', () => {
+  it('excluye las páginas ya enlazadas en cualquier nivel, salvo la de la propia fila, y pide publicadas', async () => {
+    const { pagesNotInMenuFilter } = await import('../../apps/cms/src/utilities/navegacionValidation')
+    const links = [
+      { label: 'A', type: 'relationship', page: 3 },
+      { label: 'G', type: 'manual', url: '#', children: [{ label: 'B', type: 'relationship', page: { id: 7 } }, { label: 'M', type: 'manual', url: '/x', page: 9 }] },
+    ]
+    expect(pagesNotInMenuFilter(links, 3)).toEqual({ and: [{ _status: { equals: 'published' } }, { id: { not_in: [7] } }] })
+    expect(pagesNotInMenuFilter(links, undefined)).toEqual({ and: [{ _status: { equals: 'published' } }, { id: { not_in: [3, 7] } }] })
+    expect(pagesNotInMenuFilter([], null)).toEqual({ _status: { equals: 'published' } })
+    expect(pagesNotInMenuFilter(undefined, null)).toEqual({ _status: { equals: 'published' } })
+  })
+
+  it('el campo «Página» de ambos niveles usa ese filtro con los datos del formulario', () => {
+    const links = (Navegacion.fields as any[]).find((f) => f.name === 'links')
+    const children = links.fields.find((f: any) => f.name === 'children')
+    for (const list of [links.fields, children.fields]) {
+      const page = list.find((f: any) => f.name === 'page')
+      const where = page.filterOptions({ data: { links: [{ label: 'A', type: 'relationship', page: 3 }] }, siblingData: { page: null } })
+      expect(where).toEqual({ and: [{ _status: { equals: 'published' } }, { id: { not_in: [3] } }] })
+    }
+  })
+})
