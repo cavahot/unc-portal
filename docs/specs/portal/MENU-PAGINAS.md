@@ -112,3 +112,13 @@ Pedido: tras explicar que las secciones del portal no son Páginas del CMS y pro
 - Una prueba exige que cada sección de la lista exista como página del portal (`app/[locale]/…/page.tsx`) y que incluya todas las secciones con traducción del menú (`MENU_LABEL_KEYS`). Una ruta nueva del portal se agrega a la lista para que aparezca en el combo.
 
 Verificación en el panel real (2026-11-10): un combo en cada enlace «Manual» (38). En la fila de «Tesis Académicas» ofreció 10 secciones (las 9 que faltan en el menú y la propia) y excluyó las ya usadas (Biblioteca, Historia…). En una fila nueva, elegir «Calendario Académico» completó texto y dirección, la vista del menú lo mostró y las demás filas dejaron de ofrecerlo; la prueba se descartó sin guardar. Hallazgo corregido con prueba: en el estado del formulario, un enlace sin subenlaces trae `children` como el número de filas (0) y `link.children ?? []` rompía el formulario («is not iterable»); afectaba también al filtro de Páginas (§8). Los recorridos aceptan ahora solo listas.
+
+## 10. Agregar al menú guardado lo que falta del menú base (MENU-CMS-07)
+
+El menú guardado en la base no cambia cuando el código agrega una sección (por ejemplo, Docencia en Academia, PILARES-01), y
+`seed-navegacion` se omite si ya hay menú. `npx tsx apps/cms/scripts/menu/agregar-enlaces-faltantes.ts` muestra qué subenlaces del
+menú base faltan y, con `--apply`, los inserta junto a sus vecinos (antes del siguiente que esté guardado). No borra, mueve ni
+cambia nada; un enlace que ya existe en otro grupo no se duplica; no agrega enlaces principales; respeta el tope de 20. Solo
+base local (`DATABASE_URI` con localhost); el guardado pasa por la auditoría y la revalidación del global. Pruebas:
+`tests/unit/menu-agregar-faltantes.spec.ts`. Corrida local del 2026-11-10: `+ Academia → Docencia (/docencia)`, menú de 31 a 32
+subenlaces; la segunda corrida informa «Nada que agregar».

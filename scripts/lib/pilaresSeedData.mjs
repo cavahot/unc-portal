@@ -3,8 +3,9 @@
  * Spec: docs/specs/portal/PILARES-ACADEMICOS.md.
  *
  * Origen de cada texto (para que los responsables lo confirmen desde el panel):
- *   - Tarjetas: propuesta de diseño «Propuesta 02 • Editorial & Métricas» (2026-11-10). Redacción de la propuesta, sin
- *     confirmar por las dependencias.
+ *   - Tarjetas: propuesta de diseño «Propuesta 02 • Editorial & Métricas» (2026-11-10). Docencia e Investigación se
+ *     reescribieron sin afirmaciones no verificables («laboratorios de vanguardia», «biotecnología»); Investigación usa las
+ *     líneas que ya publicaba /investigacion (aprobado por el propietario el 2026-11-10). Sin confirmar por las dependencias.
  *   - Páginas de Investigación y Extensión: el contenido que hasta ahora estaba escrito en el portal
  *     (messages/es/pages.investigacion.json y app/[locale]/extension/page.tsx), conservado para no perderlo.
  * Reglas: ninguna cifra a mano. Las métricas de Docencia se vinculan a «Estadísticas»; las cifras de la propuesta para
@@ -26,7 +27,7 @@ export const PILARES_SEED = {
     titulo: 'Docencia de Grado y Posgrado',
     bajada: 'Formación de alta competencia',
     descripcion:
-      'Planes curriculares actualizados bajo estándares de la ANEAES, articulando teoría, laboratorios de vanguardia y formación de juicio crítico.',
+      'Carreras de grado y posgrado con planes curriculares evaluados según los estándares de la ANEAES, que articulan teoría, práctica y formación de juicio crítico.',
     icono: 'birrete',
     metricas: [stat('totalCarrerasAcreditadas', 'Carreras acreditadas'), stat('totalEstudiantes', 'Estudiantes activos')],
     enlaceTexto: 'Ir a Docencia',
@@ -39,7 +40,7 @@ export const PILARES_SEED = {
     titulo: 'Investigación y Desarrollo',
     bajada: 'Ciencia aplicada al territorio',
     descripcion:
-      'Fomento de proyectos en áreas prioritarias: biotecnología, producción sostenible, ciencias de la salud, humanidades y tecnología regional.',
+      'Proyectos en las líneas prioritarias de la UNC: ciencias de la salud, ciencias agrarias y ambiente, tecnología e ingeniería, y ciencias sociales y humanidades.',
     icono: 'matraz',
     metricas: [],
     enlaceTexto: 'Ir a Investigación',

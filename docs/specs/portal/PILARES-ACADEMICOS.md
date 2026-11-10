@@ -40,5 +40,8 @@ Seguimiento: `odd/tasks/pilares-academicos.md`. Diseño de referencia: «Propues
 
 - Los textos sembrados (propuesta de diseño y contenido previo de /investigacion y /extension) no están confirmados
   por las dependencias.
-- Las cifras de «Estadísticas» del CMS local coinciden con `DEMO_STATS`: confirmar su origen antes de publicar.
+- Origen de las cifras de «Estadísticas» (4985 estudiantes, 762 docentes, 672 egresados, 10 carreras acreditadas, 6
+  facultades): contadores de la portada del sitio anterior unc.edu.py (`us_counter` del WordPress, página modificada el
+  2025-11-03), verificado en el volcado del 2026-11-09. Son datos publicados por la UNC, pero de hace un año: la dependencia
+  responsable debe actualizarlos en el CMS. El origen quedó escrito en la descripción del global.
 - Rollback: revertir el PR; el `down` de la migración se niega si el global tiene contenido.
