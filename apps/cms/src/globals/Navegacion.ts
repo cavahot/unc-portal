@@ -31,8 +31,10 @@ function linkFields(depth: 0 | 1): Field[] {
       label: 'Dirección (URL)',
       required: false,
       admin: {
-        description: 'Requerido cuando el tipo es "Manual"',
+        description: 'Requerido cuando el tipo es "Manual". Ruta del portal (p. ej. /biblioteca), «#» para un grupo o una dirección completa.',
         condition: (_, siblingData) => siblingData?.type === 'manual',
+        // MENU-CMS-06: campo de texto + combo de secciones del portal que aún no están en el menú.
+        components: { Field: { path: './admin/components/NavegacionUrlField', exportName: 'NavegacionUrlField' } },
       },
     },
     {
