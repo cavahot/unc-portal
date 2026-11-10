@@ -89,11 +89,11 @@ describe('S1 — enlaces de YouTube (CMS y portal usan la misma regla)', () => {
     expect(title.maxLength).toBe(150)
   })
 
-  it('el bloque está en el editor de noticias y en el bloque «Texto» de las páginas (no en «Dos columnas»)', () => {
+  it('el bloque está en el editor de noticias, en el bloque «Texto» y en «Dos columnas» de las páginas', () => {
     expect(read('apps/cms/src/payload.config.ts')).toMatch(/editor: richTextEditor/)
     expect(read('apps/cms/src/blocks/RichText.ts')).toMatch(/editor: richTextEditor/)
-    // «Dos columnas» no muestra su contenido en el portal (componente con texto fijo): ofrecer ahí el video sería engañoso.
-    expect(read('apps/cms/src/blocks/TwoColumn.ts')).not.toMatch(/richTextEditor/)
+    // «Dos columnas» ya dibuja su contenido en el portal (BLOQUE-2COL), así que ofrece el mismo editor.
+    expect(read('apps/cms/src/blocks/TwoColumn.ts')).toMatch(/editor: richTextEditor/)
     expect(read('apps/cms/src/fields/richTextEditor.ts')).toMatch(/BlocksFeature\(\{\s*blocks: \[YouTubeBlock\]/)
   })
 })
