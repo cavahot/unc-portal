@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getT(locale, 'pages.legalizaciones')
   const result = await getLegalizaciones()
   // Con contenido, el título y la descripción son los del CMS (el editor los corrige sin desplegar).
-  if (result.status === 'ok') return { title: `${result.data.titulo} | UNC`, description: result.data.descripcion }
+  if (result.status === 'ok') return { title: `${result.data.titulo}`, description: result.data.descripcion }
   return { title: t('meta.title'), description: t('meta.description') }
 }
 

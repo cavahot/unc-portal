@@ -1,6 +1,6 @@
 {
-  "pageTitleDefault": "Eheka — Universidad Nacional de Concepción",
-  "pageTitleQuery": "Jeheka: \"{q}\" — UNC",
+  "pageTitleDefault": "Eheka",
+  "pageTitleQuery": "Jeheka: \"{q}\"",
   "pageDescription": "Eheka marandu ha tetepy Universidad Nacional de Concepción portal-pe.",
   "breadcrumb": {
     "inicio": "Inicio",

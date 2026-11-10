@@ -45,7 +45,7 @@ export async function generateMetadata({
   const noticia = await getNewsBySlug(slug).catch(() => null)
   if (!noticia) return { title: t('empty') }
   return {
-    title: `${noticia.title} — UNC`,
+    title: `${noticia.title}`,
     description: noticia.summary,
     openGraph: {
       ...baseOg(locale),

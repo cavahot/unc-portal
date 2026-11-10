@@ -42,7 +42,7 @@ export async function facultadMetadata(slug: string, locale: string) {
   const [result, t] = await Promise.all([getFacultadDetalle(slug), getT(locale, 'pages.facultades.detalle')])
   if (result.status !== 'ok') return {}
   const { nombre, descripcion } = result.facultad
-  return { title: `${nombre} | UNC`, description: descripcion ?? t('meta.description', { nombre }) }
+  return { title: `${nombre}`, description: descripcion ?? t('meta.description', { nombre }) }
 }
 
 export default async function FacultadView({ slug, locale }: { slug: string; locale: string }) {
