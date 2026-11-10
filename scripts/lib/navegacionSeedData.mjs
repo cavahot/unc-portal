@@ -51,5 +51,6 @@ export const NAVEGACION_SEED = [
     ['Bienestar Institucional', '/bienestar-institucional'],
     ['Revistas Académicas', '/revistas'],
     ['Biblioteca Digital', '/biblioteca'],
+    ['Tesis Académicas', '/biblioteca#tesis'], // MENU-CMS-04: lista de tesis de /biblioteca
   ]),
 ]

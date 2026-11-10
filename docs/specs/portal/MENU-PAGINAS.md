@@ -68,3 +68,29 @@ Segunda corrida (2026-11-09, 22:29 UTC, tras subir el límite): siembra, página
 Primera corrida real (2026-11-09, CMS local): falló en la siembra con HTTP 400. Navegación admitía 12 subenlaces por grupo y «Institucional» tiene 15, así que el menú actual nunca se podía guardar en el CMS (tampoco con `seed-navegacion`). Se subió el límite a 20 y una prueba compara la siembra con los límites leídos del global; el guion ahora muestra el mensaje del CMS.
 
 Límite: si otra persona edita el menú mientras corre, la restauración pisa ese cambio. Pruebas: `tests/unit/smoke-menu-pagina.spec.ts` (CMS y portal simulados).
+
+## 6. Vista de la estructura en el panel (MENU-CMS-03)
+
+Pedido (textual): «Dentro del CMS debe estar el apartado de menu del portal donde se pueda visualizar la estructura del portal y debe tener la posibilidad de insertar en los niveles ejemplo dentro de Academia en un sub nivel Tesis Académicas ahora no se visualiza esa parte dentro del cms» y luego «Sí, impleméntala».
+
+Evidencia: el apartado existe (Globales → Navegación, dos niveles) pero (a) estaba vacío hasta que se cargó el menú actual; (b) cada fila se ve como «Link 01», «Link 02», sin su nombre, y para ubicar «Academia» hay que abrir fila por fila; (c) los campos se llaman `Label`, `Type`, `Url`, `Page`, `New Tab`.
+
+| ID | Comportamiento esperado |
+| --- | --- |
+| S1 | Arriba del formulario, una **vista del menú**: el árbol completo en el orden del portal, con cada enlace principal y sus subenlaces sangrados, y el destino de cada uno (`/ruta`, «Página vinculada», «Grupo sin página propia» para `#`, «sin destino» si falta). Se actualiza mientras se edita, sin guardar. Si el menú está vacío dice que el portal usa su menú de respaldo y cómo cargarlo. |
+| S2 | Cada fila muestra su texto; un enlace principal con subenlaces agrega «· N subenlaces» (o «· 1 subenlace»). Una fila sin texto dice «Enlace sin nombre». |
+| S3 | Etiquetas en español: «Enlaces del menú» / «Enlace», «Subenlaces» / «Subenlace», «Texto», «Tipo de destino», «Dirección (URL)», «Página», «Abrir en una pestaña nueva». |
+| S4 | No cambia la estructura guardada (sin migración) ni las reglas de §2. |
+
+Límite: la vista no consulta el título de las páginas vinculadas (muestra «Página vinculada»); la traducción de enlaces nuevos sigue pendiente (§4).
+
+Verificación en el panel real (2026-11-09): la vista mostró el árbol completo y las filas con su nombre («Academia · 8 subenlaces»). Dos hallazgos corregidos con prueba: (a) se había guardado un subenlace «Manual» con la URL vacía (la vista lo marcó «sin destino»): ahora Navegación rechaza un enlace «Manual» sin dirección con el mensaje «El enlace «…» es de tipo «Manual» pero no tiene dirección. Escriba la ruta (por ejemplo, /biblioteca) o «#» si es un grupo sin página propia.»; (b) las cabeceras «Links» y «Children» pasan a «Enlaces del menú» y «Subenlaces».
+
+## 7. Tesis Académicas en Academia (MENU-CMS-04)
+
+Pedido (textual): «trata de enlazar bien tesis académica a una pagina que redireccione si la ahi si no la hay diseña uno con lo que tenemos en el cms».
+
+- La página existe: `/biblioteca` es el repositorio de tesis (colección `tesis`, que el CMS llama «Tesis Académicas»). No se creó una página nueva.
+- Enlace: `/biblioteca#tesis`, ancla en la sección de resultados, que se dibuja en todos los estados (con tesis, vacía o con el CMS caído). Clave de traducción propia `academia.tesisAcademicas` (en: Academic Theses; pt-BR: Teses Acadêmicas; gn: en español, pendiente de revisión nativa).
+- Agregado en las tres copias del menú (respaldo del portal, siembra y MegaMenu) y, en la base local, editado desde el panel. Comprobado en el portal en español e inglés.
+- Pendiente de contenido: la colección `tesis` tiene 0 registros; la página muestra «aún no hay tesis publicadas» hasta que se carguen.
