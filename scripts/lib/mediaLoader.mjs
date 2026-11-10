@@ -88,7 +88,7 @@ function decodeEntities(s) {
     .replace(/&#(\d+);/g, (_, c) => String.fromCharCode(parseInt(c, 10)))
 }
 
-function parseTableRows(xml, tableName) {
+export function parseTableRows(xml, tableName) {
   const tableRe = new RegExp(`<table name="${tableName}">[\\s\\S]*?<\\/table>`, 'g')
   const colRe = /<column name="([^"]+)">([\s\S]*?)<\/column>/g
   const rows = []
