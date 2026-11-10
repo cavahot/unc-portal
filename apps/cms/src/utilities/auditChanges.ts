@@ -1,0 +1,65 @@
+// SEC-027 (minimización de datos): qué se guarda de un cambio en `auditoria.cambiosRelevantes`.
+// Qué hace: compara antes/después reduciendo cada documento relacionado poblado a su ID y quitando, en cualquier nivel,
+//   las claves con datos de acceso o personales de las cuentas.
+// Por qué existe: el hook editorial recibe `createdBy` poblado (correo, teléfono, sesiones) y lo copiaba entero a la
+//   auditoría, que se conserva y se exporta (docs/security/SEC-027-MATRIZ-ROLES.md, observación sobre P10).
+// Límite: un documento relacionado se reconoce por tener `id` y `createdAt`/`updatedAt`; las filas de arrays (sin esas
+//   fechas) se conservan con su contenido. Módulo puro: no importa la configuración de Payload.
+
+/** Claves que nunca se copian a la auditoría, estén donde estén. */
+const SENSITIVE_KEYS = new Set([
+  'password',
+  'hash',
+  'salt',
+  'sessions',
+  'resetPasswordToken',
+  'resetPasswordExpiration',
+  'apiKey',
+  'apiKeyIndex',
+  'loginAttempts',
+  'lockUntil',
+  'telefono',
+  'telegramUserId',
+])
+
+type Plain = Record<string, unknown>
+
+const isPlain = (v: unknown): v is Plain => typeof v === 'object' && v !== null && !Array.isArray(v)
+
+/** Documento relacionado ya poblado (no una fila de array): tiene `id` y fechas propias. */
+const isPopulatedDoc = (v: Plain): boolean => 'id' in v && ('createdAt' in v || 'updatedAt' in v)
+
+/** Valor tal como se guarda en la auditoría: relaciones como ID, sin claves sensibles. */
+export function toAuditValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(toAuditValue)
+  if (!isPlain(value)) return value
+  if (isPopulatedDoc(value)) return value.id
+  const out: Plain = {}
+  for (const [key, inner] of Object.entries(value)) {
+    if (!SENSITIVE_KEYS.has(key)) out[key] = toAuditValue(inner)
+  }
+  return out
+}
+
+/**
+ * Campos que cambiaron entre `before` y `after`, ya minimizados. Un documento relacionado que solo pasó de ID a
+ * poblado no cuenta como cambio. Las claves sensibles de primer nivel tampoco se registran.
+ */
+export function extractChanges(
+  before: Record<string, unknown>,
+  after: Record<string, unknown>,
+): Record<string, { antes: unknown; despues: unknown }> {
+  const changes: Record<string, { antes: unknown; despues: unknown }> = {}
+  for (const key in after) {
+    if (SENSITIVE_KEYS.has(key)) continue
+    const antes = toAuditValue(before[key])
+    const despues = toAuditValue(after[key])
+    if (JSON.stringify(antes) !== JSON.stringify(despues)) changes[key] = { antes, despues }
+  }
+  return changes
+}
+
+/** Correo del autor si `createdBy` llegó poblado; si no, `null` (el panel no muestra IDs ni otros datos). */
+export function authorEmail(createdBy: unknown): string | null {
+  return isPlain(createdBy) && typeof createdBy.email === 'string' ? createdBy.email : null
+}

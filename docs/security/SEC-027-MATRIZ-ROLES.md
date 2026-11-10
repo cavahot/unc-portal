@@ -64,7 +64,7 @@ Primera corrida: P11 «fallaba» con 404 en todos los roles. No era un defecto d
 Clasificación: **confirmado** para el alcance probado (CMS local, REST, 9 actores). Sigue pendiente: la misma corrida en staging y la revisión independiente de otra persona que exige `security-27-gate`.
 
 Observaciones:
-- `superadmin` sí recibe el usuario creador completo (correo, teléfono, sesiones) al leer con `depth` ≥ 1, y la auditoría guarda ese objeto en `cambios_relevantes`. No lo ve ningún otro rol (P10), pero conviene acotar los campos que se pueblan y los que se guardan en la auditoría (minimización de datos).
+- `superadmin` sí recibe el usuario creador completo (correo, teléfono, sesiones) al leer con `depth` ≥ 1, y la auditoría guarda ese objeto en `cambios_relevantes`. No lo ve ningún otro rol (P10), pero conviene acotar los campos que se pueblan y los que se guardan en la auditoría (minimización de datos). **Tratado (2026-11-10, rama `fix/minimizacion-createdby`):** `Users.defaultPopulate = { email, role }` (un usuario poblado ya no trae teléfono, Telegram ni sesiones); la auditoría guarda los documentos relacionados como ID y descarta claves sensibles en cualquier nivel (`apps/cms/src/utilities/auditChanges.ts`); el panel de revisión recibe solo el correo del autor. Pruebas: `tests/unit/sec027-minimizacion-autor.spec.ts`. Pendiente: repetir P10 con `probe-roles.ts` para confirmarlo contra el CMS en marcha; las filas de auditoría ya guardadas antes del cambio no se reescriben.
 - Al iniciar Payload desde el guion se ve «Pulling schema from database» (modo desarrollo): compara el esquema, no lo cambia si coincide.
 
 ## Límites

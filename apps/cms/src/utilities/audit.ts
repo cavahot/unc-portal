@@ -64,20 +64,5 @@ export function getClientIP(req: PayloadRequest | undefined): string {
   return ip || 'unknown'
 }
 
-export function extractChanges(
-  before: Record<string, unknown>,
-  after: Record<string, unknown>
-): Record<string, { antes: unknown; despues: unknown }> {
-  const changes: Record<string, { antes: unknown; despues: unknown }> = {}
-
-  for (const key in after) {
-    if (JSON.stringify(before[key]) !== JSON.stringify(after[key])) {
-      changes[key] = {
-        antes: before[key],
-        despues: after[key],
-      }
-    }
-  }
-
-  return Object.keys(changes).length > 0 ? changes : {}
-}
+// SEC-027: la comparación minimizada vive en auditChanges.ts (módulo puro, con pruebas propias).
+export { extractChanges } from './auditChanges'
