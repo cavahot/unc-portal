@@ -83,6 +83,7 @@ export const fallbackMenuData: MenuItem[] = [
     children: [
       { label: 'Dirección General Académica', href: '/direccion-general-academica' },
       { label: 'Aseguramiento de la Calidad', href: '/aseguramiento-calidad' },
+      { label: 'Docencia', href: '/docencia' },
       { label: 'Investigación', href: '/investigacion' },
       { label: 'Extensión y Vinculación', href: '/extension' },
       { label: 'Bienestar Institucional', href: '/bienestar-institucional' },

@@ -12,6 +12,8 @@ const NAMESPACES = [
   'pages.autoridades', 'pages.organigrama', 'pages.titulos',
   'pages.legalizaciones', 'pages.convenios', 'pages.tribunal-electoral',
   'pages.investigacion', 'pages.extension', 'pages.calendario-academico',
+  // PILARES-01: textos de las páginas /docencia, /investigacion y /extension (el contenido viene del CMS).
+  'pages.pilares',
   // Secciones académicas: textos de la plantilla compartida y contenido de las tres páginas con texto propio.
   'pages.contacto-dependencias', 'pages.estados','pages.preguntas-frecuentes', 'pages.seccion-academica', 'pages.aseguramiento-calidad', 'pages.bienestar-institucional', 'pages.direccion-general-academica',
   'pages.mapa-sitio', 'pages.privacidad', 'pages.accesibilidad',

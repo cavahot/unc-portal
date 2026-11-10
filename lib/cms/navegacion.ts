@@ -54,6 +54,7 @@ const MENU_LABEL_KEYS: Record<string, string> = {
   '/contacto/dependencias': 'contactos.porDependencia',
   '/direccion-general-academica': 'academia.direccionAcademica',
   '/aseguramiento-calidad': 'academia.aseguramientoCalidad',
+  '/docencia': 'academia.docencia',
   '/investigacion': 'academia.investigacion',
   '/extension': 'academia.extensionVinculacion',
   '/bienestar-institucional': 'academia.bienestarInstitucional',

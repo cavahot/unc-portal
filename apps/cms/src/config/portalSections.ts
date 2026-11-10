@@ -45,6 +45,7 @@ export const PORTAL_SECTIONS: readonly PortalSection[] = [
   { path: '/contacto/dependencias', label: 'Contactos por dependencia' },
   { path: '/direccion-general-academica', label: 'Dirección General Académica' },
   { path: '/aseguramiento-calidad', label: 'Aseguramiento de la Calidad' },
+  { path: '/docencia', label: 'Docencia' },
   { path: '/investigacion', label: 'Investigación' },
   { path: '/extension', label: 'Extensión y Vinculación' },
   { path: '/bienestar-institucional', label: 'Bienestar Institucional' },

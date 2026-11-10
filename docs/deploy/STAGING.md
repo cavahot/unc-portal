@@ -35,6 +35,7 @@ $env:CMS_URL='http://localhost:3102'; $env:CMS_EMAIL='superadmin-sintetico@examp
 node scripts/seed-calendario.mjs --apply
 node scripts/seed-legales.mjs --apply
 node scripts/seed-legalizaciones.mjs --apply
+node scripts/seed-pilares-academicos.mjs --apply
 ```
 
 Repita cada comando: la segunda corrida debe informar «omitidos».

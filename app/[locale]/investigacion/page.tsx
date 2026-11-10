@@ -1,39 +1,12 @@
-// I18N-GN-INV-01: la página consume el catálogo por locale y no conserva textos de contenido en código.
-// Qué hace: construye la vista con messages/{locale}/pages.investigacion.json.
-// Amenaza: evita que /gn muestre contenido español por literales hardcodeados y permite actualizar el catálogo de forma trazable.
-import type { Metadata } from 'next'
-import { getLocale, getTranslations } from 'next-intl/server'
-import AcademicSectionPage from '@/components/pages/AcademicSectionPage'
+// PILARES-01 (S4): página del pilar «investigacion». Contenido desde el global `pilares-academicos` del CMS; mientras esté
+// «en construcción» solo se muestra el aviso. Spec: docs/specs/portal/PILARES-ACADEMICOS.md.
+import { PilarRoute, pilarMetadata } from '@/components/pilares/pilarRoute'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('pages.investigacion.meta')
-  return { title: t('title'), description: t('description') }
-}
+// ISR: revalida cada 60 s para no hornear el aviso si el build corre sin CMS; las etiquetas lo acortan.
+export const revalidate = 60
 
-export default async function InvestigacionPage() {
-  const locale = await getLocale()
-  const t = await getTranslations('pages.investigacion')
-  const areaKeys = ['a1', 'a2', 'a3', 'a4'] as const
-  const icons = ['🔬', '🌱', '⚙️', '🏛️']
+export const generateMetadata = pilarMetadata('investigacion')
 
-  const areas = areaKeys.map((key, index) => ({
-    icon: icons[index],
-    title: t(`areas.${key}.area`),
-    // Las tres líneas del catálogo se mantienen juntas para no perder información editorial.
-    description: [t(`areas.${key}.p1`), t(`areas.${key}.p2`), t(`areas.${key}.p3`)].join(' · '),
-  }))
-
-  return (
-    <AcademicSectionPage
-      title={t('hero.title')}
-      label={t('hero.label')}
-      description={t('hero.description')}
-      breadcrumb={[{ label: t('breadcrumb'), href: `/${locale}` }]}
-      areas={areas}
-      areasTitle={t('lines.title')}
-      contactEmail="secgral@unc.edu.py"
-      contactLabel={t('cta.title')}
-      visualVariant="research"
-    />
-  )
+export default function Page({ params }: { params: Promise<{ locale: string }> }) {
+  return <PilarRoute params={params} pilar="investigacion" />
 }

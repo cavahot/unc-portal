@@ -46,6 +46,7 @@ export const NAVEGACION_SEED = [
   m('Academia', '#', [
     ['Dirección General Académica', '/direccion-general-academica'],
     ['Aseguramiento de la Calidad', '/aseguramiento-calidad'],
+    ['Docencia', '/docencia'],
     ['Investigación', '/investigacion'],
     ['Extensión y Vinculación', '/extension'],
     ['Bienestar Institucional', '/bienestar-institucional'],

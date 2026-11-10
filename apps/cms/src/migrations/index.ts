@@ -20,6 +20,7 @@ import * as migration_20261107_182316_calendario_01_coleccion from './20261107_1
 import * as migration_20261107_191247_legales_01_globals from './20261107_191247_legales_01_globals';
 import * as migration_20261107_200336_legalizaciones_01_global from './20261107_200336_legalizaciones_01_global';
 import * as migration_20261108_163903_dependencias_01 from './20261108_163903_dependencias_01';
+import * as migration_20261110_125232_pilares_academicos_01 from './20261110_125232_pilares_academicos_01';
 
 export const migrations = [
   {
@@ -130,6 +131,11 @@ export const migrations = [
   {
     up: migration_20261108_163903_dependencias_01.up,
     down: migration_20261108_163903_dependencias_01.down,
-    name: '20261108_163903_dependencias_01'
+    name: '20261108_163903_dependencias_01',
+  },
+  {
+    up: migration_20261110_125232_pilares_academicos_01.up,
+    down: migration_20261110_125232_pilares_academicos_01.down,
+    name: '20261110_125232_pilares_academicos_01'
   },
 ];

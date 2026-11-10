@@ -24,7 +24,7 @@ Marque cada punto. Un punto sin marcar **bloquea** la publicación (regla SEC-02
 - [ ] `bash scripts/deploy/instalar.sh --entorno produccion --solo-verificar` termina sin errores.
 - [ ] `bash scripts/deploy/instalar.sh --entorno produccion` (con `--construir` o `--tag`) termina en «Todo listo».
 - [ ] Primer superadmin creado en `https://cms.unc.edu.py/accesoSeguro`.
-- [ ] Siembras ejecutadas, **en este orden** y sin errores: `seed-tramites`, `seed-calendario`, `seed-legales`, `seed-legalizaciones`, `seed-dependencias`, `seed-navegacion` (y las demás de `scripts/seed-*.mjs` que correspondan).
+- [ ] Siembras ejecutadas, **en este orden** y sin errores: `seed-tramites`, `seed-calendario`, `seed-legales`, `seed-legalizaciones`, `seed-dependencias`, `seed-pilares-academicos`, `seed-navegacion` (y las demás de `scripts/seed-*.mjs` que correspondan).
 
 ## C. Después de instalar (primeras 24 horas)
 

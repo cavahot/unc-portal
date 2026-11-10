@@ -66,6 +66,7 @@ export const FALLBACK_NAVIGATION: Navegacion = {
       children: [
         { id: 'nav-acad-dga', label: 'Dirección General Académica', type: 'manual', url: '/direccion-general-academica', newTab: false },
         { id: 'nav-acad-calidad', label: 'Aseguramiento de la Calidad', type: 'manual', url: '/aseguramiento-calidad', newTab: false },
+        { id: 'nav-acad-docencia', label: 'Docencia', type: 'manual', url: '/docencia', newTab: false },
         { id: 'nav-acad-investigacion', label: 'Investigación', type: 'manual', url: '/investigacion', newTab: false },
         { id: 'nav-acad-extension', label: 'Extensión y Vinculación', type: 'manual', url: '/extension', newTab: false },
         { id: 'nav-acad-bienestar', label: 'Bienestar Institucional', type: 'manual', url: '/bienestar-institucional', newTab: false },
