@@ -59,6 +59,7 @@ const MENU_LABEL_KEYS: Record<string, string> = {
   '/bienestar-institucional': 'academia.bienestarInstitucional',
   '/revistas': 'academia.revistasAcademicas',
   '/biblioteca': 'academia.bibliotecaDigital',
+  '/biblioteca#tesis': 'academia.tesisAcademicas', // MENU-CMS-04
 }
 
 /** Grupos del menú sin destino propio (`#`): se reconocen por su etiqueta en español. */

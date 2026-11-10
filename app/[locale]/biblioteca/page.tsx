@@ -79,7 +79,9 @@ export default async function BibliotecaPage({
         }
       />
 
-      <section className="relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem] print:mt-0 print:bg-white print:pt-2">
+      {/* MENU-CMS-04: ancla del enlace «Tesis Académicas» del menú (/biblioteca#tesis). Va en esta sección porque se dibuja
+          en todos los estados (con tesis, sin tesis o con el CMS caído); scroll-mt evita que el encabezado fijo la tape. */}
+      <section id="tesis" className="scroll-mt-28 relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem] print:mt-0 print:bg-white print:pt-2">
         <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
           {result.status === 'ok' ? (
             <section aria-labelledby="biblioteca-resultados">

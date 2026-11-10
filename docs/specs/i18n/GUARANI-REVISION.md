@@ -124,6 +124,7 @@ Muchas son a propósito: nombres propios (Universidad Nacional de Concepción, f
 
 | Archivo | Clave | Español | Antes | Guaraní propuesto | Términos del glosario | Incert. | Nota |
 |---|---|---|---|---|---|---|---|
+| nav.json | `academia.tesisAcademicas` | Tesis Académicas | (clave faltante) | Tesis Académicas |  | n/a | Clave nueva del menú (MENU-CMS-04): se agregó con el texto español (pendiente de traducción) |
 | pages.ley-5189.json | `breadcrumb.home` | Inicio | (clave faltante) | Ñepyrũ |  | bajo | clave antes faltante en gn |
 | pages.ley-5189.json | `breadcrumb.institutional` | Institucional | (clave faltante) | Temimoĩmby |  | medio | clave antes faltante en gn |
 | pages.ley-5189.json | `breadcrumb.page` | Ley 5189/2014 | (clave faltante) | Léi 5189/2014 |  | bajo | clave antes faltante en gn |

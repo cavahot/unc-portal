@@ -71,6 +71,8 @@ export const FALLBACK_NAVIGATION: Navegacion = {
         { id: 'nav-acad-bienestar', label: 'Bienestar Institucional', type: 'manual', url: '/bienestar-institucional', newTab: false },
         { id: 'nav-acad-revistas', label: 'Revistas Académicas', type: 'manual', url: '/revistas', newTab: false },
         { id: 'nav-acad-biblioteca', label: 'Biblioteca Digital', type: 'manual', url: '/biblioteca', newTab: false },
+        // MENU-CMS-04: la lista de tesis de /biblioteca (colección `tesis`), con ancla propia para traducirla por destino.
+        { id: 'nav-acad-tesis', label: 'Tesis Académicas', type: 'manual', url: '/biblioteca#tesis', newTab: false },
       ],
     },
   ],

@@ -88,6 +88,8 @@ export const fallbackMenuData: MenuItem[] = [
       { label: 'Bienestar Institucional', href: '/bienestar-institucional' },
       { label: 'Revistas Académicas', href: '/revistas' },
       { label: 'Biblioteca Digital', href: '/biblioteca' },
+      // MENU-CMS-04: lista de tesis de /biblioteca.
+      { label: 'Tesis Académicas', href: '/biblioteca#tesis' },
     ],
   },
 ];
