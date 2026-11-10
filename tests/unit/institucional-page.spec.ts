@@ -172,7 +172,7 @@ describe('INST-01 página /institucional', () => {
 
   it('metadatos: con contenido, los del CMS; sin él, los de los mensajes', async () => {
     getInstitucional.mockResolvedValue({ status: 'ok', data: mapInstitucional(raw()) })
-    expect((await generateMetadata({ params: Promise.resolve({ locale: 'es' }) })).title).toBe('Institución desde el CMS | UNC')
+    expect((await generateMetadata({ params: Promise.resolve({ locale: 'es' }) })).title).toBe('Institución desde el CMS')
     getInstitucional.mockResolvedValue({ status: 'empty' })
     expect((await generateMetadata({ params: Promise.resolve({ locale: 'es' }) })).title).toBe('meta.title')
   })

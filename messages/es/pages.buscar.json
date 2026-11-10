@@ -1,6 +1,6 @@
 {
-  "pageTitleDefault": "Buscar — Universidad Nacional de Concepción",
-  "pageTitleQuery": "Búsqueda: \"{q}\" — UNC",
+  "pageTitleDefault": "Buscar",
+  "pageTitleQuery": "Búsqueda: \"{q}\"",
   "pageDescription": "Buscar noticias y contenido en el portal de la Universidad Nacional de Concepción.",
   "breadcrumb": {
     "inicio": "Inicio",

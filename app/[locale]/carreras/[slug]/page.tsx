@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     return { title: t('empty') }
   }
   return {
-    title: `${carrera.nombre} | UNC`,
+    title: `${carrera.nombre}`,
     description: carrera.descripcion ?? ([carrera.titulo, carrera.facultad?.nombre].filter(Boolean).join(' — ') || undefined),
   }
 }

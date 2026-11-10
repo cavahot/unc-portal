@@ -1,6 +1,6 @@
 {
-  "pageTitleDefault": "Biblioteca Digital — Universidad Nacional de Concepción",
-  "pageTitleQuery": "Biblioteca: \"{q}\" — UNC",
+  "pageTitleDefault": "Biblioteca Digital",
+  "pageTitleQuery": "Biblioteca: \"{q}\"",
   "pageDescription": "Repositorio de tesis y trabajos académicos de la Universidad Nacional de Concepción.",
   "headingDefault": "Biblioteca Digital",
   "subheading": "Explore nuestra biblioteca digital: repositorio de tesis y trabajos académicos.",

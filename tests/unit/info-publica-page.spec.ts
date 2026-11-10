@@ -185,7 +185,7 @@ describe('INST-01 página /informacion-publica', () => {
 
   it('metadatos: con contenido, los del CMS; sin él, los de los mensajes', async () => {
     getInformacionPublica.mockResolvedValue({ status: 'ok', data: mapInformacionPublica(raw()) })
-    expect((await generateMetadata({ params: Promise.resolve({ locale: 'es' }) })).title).toBe('Acceso desde el CMS | UNC')
+    expect((await generateMetadata({ params: Promise.resolve({ locale: 'es' }) })).title).toBe('Acceso desde el CMS')
     getInformacionPublica.mockResolvedValue({ status: 'empty' })
     expect((await generateMetadata({ params: Promise.resolve({ locale: 'es' }) })).title).toBe('meta.title')
   })
