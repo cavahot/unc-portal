@@ -83,3 +83,14 @@ Evidencia: el apartado existe (Globales → Navegación, dos niveles) pero (a) e
 | S4 | No cambia la estructura guardada (sin migración) ni las reglas de §2. |
 
 Límite: la vista no consulta el título de las páginas vinculadas (muestra «Página vinculada»); la traducción de enlaces nuevos sigue pendiente (§4).
+
+Verificación en el panel real (2026-11-09): la vista mostró el árbol completo y las filas con su nombre («Academia · 8 subenlaces»). Dos hallazgos corregidos con prueba: (a) se había guardado un subenlace «Manual» con la URL vacía (la vista lo marcó «sin destino»): ahora Navegación rechaza un enlace «Manual» sin dirección con el mensaje «El enlace «…» es de tipo «Manual» pero no tiene dirección. Escriba la ruta (por ejemplo, /biblioteca) o «#» si es un grupo sin página propia.»; (b) las cabeceras «Links» y «Children» pasan a «Enlaces del menú» y «Subenlaces».
+
+## 7. Tesis Académicas en Academia (MENU-CMS-04)
+
+Pedido (textual): «trata de enlazar bien tesis académica a una pagina que redireccione si la ahi si no la hay diseña uno con lo que tenemos en el cms».
+
+- La página existe: `/biblioteca` es el repositorio de tesis (colección `tesis`, que el CMS llama «Tesis Académicas»). No se creó una página nueva.
+- Enlace: `/biblioteca#tesis`, ancla en la sección de resultados, que se dibuja en todos los estados (con tesis, vacía o con el CMS caído). Clave de traducción propia `academia.tesisAcademicas` (en: Academic Theses; pt-BR: Teses Acadêmicas; gn: en español, pendiente de revisión nativa).
+- Agregado en las tres copias del menú (respaldo del portal, siembra y MegaMenu) y, en la base local, editado desde el panel. Comprobado en el portal en español e inglés.
+- Pendiente de contenido: la colección `tesis` tiene 0 registros; la página muestra «aún no hay tesis publicadas» hasta que se carguen.

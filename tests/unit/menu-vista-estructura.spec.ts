@@ -145,3 +145,33 @@ describe('MENU-CMS-04 — Tesis Académicas en Academia', () => {
     }
   })
 })
+
+// MENU-CMS-03, verificación en el panel real (2026-11-09): (a) se guardó «Tesis Académicos» como «Manual» con la URL vacía
+// (la vista lo mostró como «sin destino») porque solo se validaban los enlaces «Relación»; (b) las cabeceras de las listas
+// seguían en inglés («Links», «Children»).
+describe('MENU-CMS-03 — hallazgos de la verificación en el panel', () => {
+  const lookup = async () => ({ _status: 'published' })
+  const MSG = 'El enlace «Tesis Académicos» es de tipo «Manual» pero no tiene dirección. Escriba la ruta (por ejemplo, /biblioteca) o «#» si es un grupo sin página propia.'
+
+  it('rechaza un enlace «Manual» sin dirección, también como subenlace y con solo espacios', async () => {
+    const { validateNavegacionLinks } = await import('../../apps/cms/src/utilities/navegacionValidation')
+    const sub = (url: string | null) => [{ label: 'Academia', type: 'manual', url: '#', children: [{ label: 'Tesis Académicos', type: 'manual', url }] }]
+    expect(await validateNavegacionLinks(sub(''), lookup)).toBe(MSG)
+    expect(await validateNavegacionLinks(sub('   '), lookup)).toBe(MSG)
+    expect(await validateNavegacionLinks(sub(null), lookup)).toBe(MSG)
+    expect(await validateNavegacionLinks([{ label: 'Tesis Académicos', url: '' }], lookup)).toBe(MSG) // tipo por defecto: Manual
+  })
+
+  it('acepta «#» (grupo) y rutas; los enlaces «Relación» siguen igual', async () => {
+    const { validateNavegacionLinks } = await import('../../apps/cms/src/utilities/navegacionValidation')
+    expect(await validateNavegacionLinks([{ label: 'Academia', type: 'manual', url: '#', children: [{ label: 'T', type: 'manual', url: '/biblioteca#tesis' }] }], lookup)).toBe(true)
+    expect(await validateNavegacionLinks([{ label: 'P', type: 'relationship', page: 1 }], lookup)).toBe(true)
+  })
+
+  it('las cabeceras de las listas están en español', () => {
+    const links = (Navegacion.fields as any[]).find((f) => f.name === 'links')
+    const children = links.fields.find((f: any) => f.name === 'children')
+    expect(links.label).toBe('Enlaces del menú')
+    expect(children.label).toBe('Subenlaces')
+  })
+})

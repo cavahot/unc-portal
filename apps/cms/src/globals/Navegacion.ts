@@ -58,6 +58,7 @@ function linkFields(depth: 0 | 1): Field[] {
     fields.push({
       name: 'children',
       type: 'array',
+      label: 'Subenlaces',
       labels: { singular: 'Subenlace', plural: 'Subenlaces' },
       admin: { components: { RowLabel: ROW_LABEL } },
       fields: linkFields(1),
@@ -90,6 +91,7 @@ export const Navegacion: GlobalConfig = {
     {
       name: 'links',
       type: 'array',
+      label: 'Enlaces del menú',
       labels: { singular: 'Enlace', plural: 'Enlaces del menú' },
       admin: { components: { RowLabel: ROW_LABEL } },
       fields: linkFields(0),
