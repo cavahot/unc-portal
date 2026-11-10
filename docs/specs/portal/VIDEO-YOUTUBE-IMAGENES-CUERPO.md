@@ -28,7 +28,7 @@ Tarea: `VIDEO-01`. Rama: `feat/video-youtube-imagenes-cuerpo` (hija del tracker 
 
 ### S1 — Bloque «Video de YouTube» en el editor
 
-- Disponible en el cuerpo de las noticias, en el bloque «Texto» de las páginas y en los demás campos de texto enriquecido que usan el editor común. No en «Dos columnas»: su componente del portal (`components/blocks/TwoColumn.tsx`) dibuja un texto fijo y nunca muestra el contenido (defecto previo, fuera de esta tarea).
+- Disponible en el cuerpo de las noticias, en el bloque «Texto» de las páginas y en los demás campos de texto enriquecido que usan el editor común. También en las dos columnas del bloque «Dos columnas» desde BLOQUE-2COL (2026-11-10): antes su componente del portal (`components/blocks/TwoColumn.tsx`) dibujaba el aviso fijo «Contenido enriquecido disponible en Payload CMS» y nunca el contenido. Ahora cada columna usa el mismo renderizado que el cuerpo de las noticias (`components/RichText.tsx`: safeHref, imágenes, video); una columna vacía no se dibuja, si queda una sola ocupa todo el ancho y un bloque sin contenido no aparece. Pruebas: `tests/unit/two-column-block.spec.ts`.
 - Campos: `url` (obligatoria) y `title` (obligatorio, máximo 150 caracteres; es el nombre accesible del reproductor).
 - URL aceptadas (http o https): `youtube.com/watch?v=ID`, `m.youtube.com/watch?v=ID`, `youtu.be/ID`, `youtube.com/embed/ID`, `youtube.com/shorts/ID`, `youtube.com/live/ID`, `youtube-nocookie.com/embed/ID`. `ID` = 11 caracteres `[A-Za-z0-9_-]`.
 - Rechazadas con el mensaje «Pegue el enlace de un video de YouTube (por ejemplo, https://www.youtube.com/watch?v=…).»: otro dominio (incluido `youtube.com.otro.com`), canales, listas sin video, `javascript:`, identificador de otra longitud, texto vacío.
