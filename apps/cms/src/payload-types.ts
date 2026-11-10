@@ -2623,7 +2623,7 @@ export interface EnlacesExterno {
   createdAt?: string | null;
 }
 /**
- * Estadísticas institucionales de la Universidad Nacional de Concepción
+ * Estadísticas institucionales de la Universidad Nacional de Concepción. Origen de los valores iniciales: contadores de la portada del sitio anterior unc.edu.py (actualizados por última vez el 2025-11-03). Actualícelos con el dato oficial vigente; los usan la portada y las tarjetas de los pilares.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "estadisticas".
