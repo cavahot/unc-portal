@@ -24,8 +24,9 @@ export const NavegacionUrlField: TextFieldClientComponent = (props) => {
   return (
     <div>
       <TextField {...props} />
-      <div style={{ marginTop: '-12px', marginBottom: '24px' }}>
-        <label htmlFor={selectId} style={{ display: 'block', fontSize: '13px', color: 'var(--theme-elevation-600)', marginBottom: '4px' }}>
+      {/* Sin margen negativo: subía el bloque sobre la descripción del campo de texto (se solapaban en el panel). */}
+      <div style={{ marginTop: '8px', marginBottom: '24px' }}>
+        <label htmlFor={selectId} style={{ display: 'block', fontSize: '13px', lineHeight: '18px', color: 'var(--theme-elevation-600)', marginBottom: '6px' }}>
           o elegir una sección del portal que aún no está en el menú
         </label>
         <select
