@@ -56,7 +56,7 @@ export async function GET(request: Request) {
         title: n.title,
         slug: n.slug,
         category: n.category,
-        approvalStatus: n.approvalStatus,
+        approvalStatus: n.approvalStatus,
         // SEC-027: solo el correo del autor (antes viajaba el usuario poblado entero).
         createdBy: authorEmail(n.createdBy),
         updatedAt: n.updatedAt,
