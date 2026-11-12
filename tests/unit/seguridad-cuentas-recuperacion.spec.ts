@@ -73,6 +73,25 @@ describe('S8: recuperación de emergencia', () => {
     expect(saved.data.sessions).toEqual([])
   })
 
+  // Hallazgo A2 del verificador: si un paso posterior falla, la contraseña ya cambió; sin mostrarla, el operador quedaría
+  // sin la provisoria. Debe devolverse igual, con el aviso de qué paso falló.
+  it('si falla el desbloqueo o el cierre de sesiones después del cambio, devuelve igual la contraseña con avisos', async () => {
+    const payload = fakePayload(superadmin)
+    payload.unlock.mockRejectedValueOnce(new Error('db caída'))
+    payload.db.updateOne.mockRejectedValueOnce(new Error('db caída'))
+    const out = (await recuperarSuperadmin(payload as never, { email: EMAIL, operador: 'Mesa de ayuda TI', confirmar: true })) as {
+      ok: boolean
+      clave: string
+      avisos: string[]
+    }
+    expect(out.ok).toBe(true)
+    expect(out.clave).toHaveLength(16)
+    expect(out.avisos).toHaveLength(2)
+    expect(out.avisos.join(' ')).toMatch(/desbloquear/)
+    expect(out.avisos.join(' ')).toMatch(/sesiones/)
+    expect(out.avisos.join(' ')).not.toContain('db caída')
+  })
+
   it('solo actúa sobre superadmins: las demás cuentas las restablece un superadmin desde el panel', async () => {
     const payload = fakePayload({ id: 8, email: EMAIL, role: 'editor' })
     const out = await recuperarSuperadmin(payload as never, { email: EMAIL, operador: 'Mesa de ayuda TI', confirmar: true })

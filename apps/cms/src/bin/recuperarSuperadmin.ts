@@ -18,7 +18,7 @@ export type RecoveryArgs = { email: string; operador: string; confirmar: boolean
 
 export type RecoveryResult =
   | { ok: true; simulacion: true; email: string }
-  | { ok: true; simulacion: false; email: string; clave: string }
+  | { ok: true; simulacion: false; email: string; clave: string; avisos: string[] }
   | { ok: false; error: string }
 
 /** Lee `--email <correo> --operador "<quién>" [--confirmar]` (también acepta `--email=<correo>`). */
@@ -61,19 +61,40 @@ export async function recuperarSuperadmin(payload: Payload, args: RecoveryArgs):
     context: { exigirCambio: true, modoRestablecimiento: 'generar', recuperacionEmergencia: { operador } },
   })
   // Una cuenta bloqueada por intentos fallidos no podría ingresar con la provisoria.
-  // El tipo de Payload 3.91 pide `password`, pero la operación solo lee el correo (auth/operations/unlock.js:17).
-  await payload.unlock({ collection: 'users', data: { email } as { email: string; password: string }, overrideAccess: true })
-  // Cualquier sesión abierta (por ejemplo, de quien se apoderó de la cuenta) deja de valer.
-  await pruneSessions({ payload } as PayloadRequest, account.id, () => false)
-  return { ok: true, simulacion: false, email, clave }
+  // Desde aquí la contraseña YA cambió: un fallo posterior no debe ocultarla (el operador se quedaría sin la provisoria).
+  // Se informa como aviso, sin el detalle del error (podría traer datos de la base); repetir el comando lo completa.
+  const avisos: string[] = []
+  try {
+    // El tipo de Payload 3.91 pide `password`, pero la operación solo lee el correo (auth/operations/unlock.js:17).
+    await payload.unlock({ collection: 'users', data: { email } as { email: string; password: string }, overrideAccess: true })
+  } catch {
+    avisos.push('No se pudo desbloquear la cuenta; si sigue bloqueada, espere 10 minutos o repita el comando.')
+  }
+  try {
+    // Cualquier sesión abierta (por ejemplo, de quien se apoderó de la cuenta) deja de valer. Payload ya las limpia al
+    // cambiar la contraseña (`update`); este es el segundo control.
+    await pruneSessions({ payload } as PayloadRequest, account.id, () => false)
+  } catch {
+    avisos.push('No se pudieron cerrar las sesiones abiertas; repita el comando para cerrarlas.')
+  }
+  return { ok: true, simulacion: false, email, clave, avisos }
 }
 
 /** Punto de entrada de `payload recuperar-superadmin` (registrado en `config.bin` de payload.config.ts). */
 export async function script(config: SanitizedConfig): Promise<void> {
   const args = parseRecoveryArgs(process.argv.slice(2))
-  const { getPayload } = await import('payload')
-  const payload = await getPayload({ config })
-  const result = await recuperarSuperadmin(payload, args)
+  let result: RecoveryResult
+  try {
+    const { getPayload } = await import('payload')
+    const payload = await getPayload({ config })
+    result = await recuperarSuperadmin(payload, args)
+  } catch (error) {
+    // El envoltorio de Payload saldría con código 0 e imprimiría el error crudo (puede traer hashes de la consulta):
+    // se muestra solo el tipo y se sale con 1.
+    console.error(`ERROR: la recuperación no se completó (${error instanceof Error ? error.name : 'error desconocido'}).`)
+    console.error('Compruebe que la base de datos esté en marcha y repita el comando.')
+    process.exit(1)
+  }
   if (!result.ok) {
     console.error(`ERROR: ${result.error}`)
     process.exit(1)
@@ -87,6 +108,7 @@ export async function script(config: SanitizedConfig): Promise<void> {
   console.log('')
   console.log(`    ${result.clave}`)
   console.log('')
+  for (const aviso of result.avisos) console.log(`AVISO: ${aviso}`)
   console.log('Entréguela por un canal seguro. Al ingresar, el panel exigirá elegir una nueva.')
   console.log('Borre el historial de esta terminal (por ejemplo `clear`) cuando la haya entregado.')
   process.exit(0)
