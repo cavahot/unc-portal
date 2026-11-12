@@ -1,7 +1,6 @@
 {
-  "pageTitle": "Transparency — UNC",
+  "pageTitle": "Transparency",
   "pageDescription": "Institutional legal compliance information according to Laws No. 5,189/2014 and No. 5,282/2014 of the National University of Concepción.",
-  "portalLabel": "UNC Portal",
   "heading": "Institutional Transparency",
   "description": "In compliance with the Transparency Laws of the Republic of Paraguay, the National University of Concepción makes the following institutional information available to citizens.",
   "ley5189": {
@@ -15,5 +14,26 @@
   "viewLabel": "View documents",
   "progress": "{withDocs} of {total} categories with published documents",
   "pending": "No documents have been published yet.",
-  "unavailable": "We could not load the information. Please try again in a few minutes."
+  "unavailable": "We could not load the information. Please try again in a few minutes.",
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Transparency"
+  },
+  "docs": {
+    "title": "Information by law",
+    "intro": "Documents are published according to what each law requires. Choose the one you are interested in."
+  },
+  "infoPublica": {
+    "heading": "Access to public information",
+    "description": "How to request information from the university: ways to apply, required information and the Government's official portal.",
+    "action": "See how to apply",
+    "status": "{count} ways to file the request"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
+  }
 }

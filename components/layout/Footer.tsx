@@ -4,10 +4,14 @@ import { Link } from '@/i18n/navigation';
 import CampusMap from '@/components/layout/CampusMap'; // MAP-01
 import { safeHref } from '@/lib/security/safeUrl'; // DEP-19b: defensa en profundidad (hoy los enlaces son literales)
 
+/** `key` es la clave de la etiqueta en el catálogo `nav` (se traduce por idioma al pintar). */
 type FooterLinkItem = {
-  label: string;
+  key: string;
   href: string;
 };
+
+/** Enlace ya con su etiqueta traducida (la resuelve el pie con el catálogo `nav`). */
+type FooterLink = FooterLinkItem & { label: string };
 
 type SocialNetwork =
   | 'facebook'
@@ -27,57 +31,57 @@ type SocialLinkItem = {
 
 const institutionalLinks: FooterLinkItem[] = [
   {
-    label: 'Autoridades',
+    key: 'footer.institutional.autoridades',
     href: '/autoridades',
   },
   {
-    label: 'Historia',
+    key: 'footer.institutional.historia',
     href: '/historia',
   },
   {
-    label: 'Misión y Visión',
+    key: 'footer.institutional.misionVision',
     href: '/mision-vision-y-valores',
   },
   {
-    label: 'Organigrama',
+    key: 'footer.institutional.organigrama',
     href: '/organigrama',
   },
 ];
 
 const serviceLinks: FooterLinkItem[] = [
   {
-    label: 'Carreras',
+    key: 'footer.services.carreras',
     href: '/carreras',
   },
   {
-    label: 'Trámites',
+    key: 'footer.services.tramites',
     href: '/tramites',
   },
   {
-    label: 'Transparencia',
+    key: 'footer.services.transparencia',
     href: '/transparencia',
   },
   {
-    label: 'Contacto',
+    key: 'footer.services.contacto',
     href: '/contacto',
   },
 ];
 
 const academicLinks: FooterLinkItem[] = [
   {
-    label: 'Investigación',
+    key: 'footer.academia.investigacion',
     href: '/investigacion',
   },
   {
-    label: 'Extensión universitaria',
+    key: 'footer.academia.extension',
     href: '/extension',
   },
   {
-    label: 'Noticias',
+    key: 'footer.academia.noticias',
     href: '/noticias',
   },
   {
-    label: 'Calendario académico',
+    key: 'footer.academia.calendarioAcademico',
     href: '/calendario-academico',
   },
 ];
@@ -350,7 +354,7 @@ function SocialIcon({
 function FooterNavigationLink({
   item,
 }: {
-  item: FooterLinkItem;
+  item: FooterLink;
 }) {
   return (
     <Link
@@ -373,7 +377,7 @@ function FooterNavigationColumn({
   ariaLabel,
 }: {
   title: string;
-  links: FooterLinkItem[];
+  links: FooterLink[];
   ariaLabel: string;
 }) {
   return (
@@ -431,6 +435,9 @@ function MiticLogo() {
 
 export default async function Footer({ locale }: { locale: string }) {
   const t = await getT(locale, 'common');
+  // Las etiquetas de los enlaces salen del catálogo `nav` por idioma (antes estaban escritas en español en este archivo).
+  const tNav = await getT(locale, 'nav');
+  const withLabels = (links: FooterLinkItem[]): FooterLink[] => links.map((l) => ({ ...l, label: tNav(l.key) }));
   const currentYear = new Date().getFullYear();
 
   return (
@@ -521,20 +528,20 @@ export default async function Footer({ locale }: { locale: string }) {
           <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:col-span-8 2xl:col-span-4">
             <FooterNavigationColumn
               title={t('institutional')}
-              links={institutionalLinks}
+              links={withLabels(institutionalLinks)}
               ariaLabel={t('institutional')}
             />
 
             <FooterNavigationColumn
               title={t('services')}
-              links={serviceLinks}
+              links={withLabels(serviceLinks)}
               ariaLabel={t('services')}
             />
 
             <div className="col-span-2 sm:col-span-1">
               <FooterNavigationColumn
                 title={t('academia')}
-                links={academicLinks}
+                links={withLabels(academicLinks)}
                 ariaLabel={t('academia')}
               />
             </div>

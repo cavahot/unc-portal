@@ -1,41 +1,55 @@
 {
   "meta": {
-    "title": "Facultad de Odontología | UNC",
+    "title": "Facultad de Odontología",
     "description": "Carreras de grado y posgrado, aranceles y contacto de la Facultad de Odontología de la UNC."
   },
-  "breadcrumb": { "facultades": "Mbo'ehaovusu", "nombre": "Odontología" },
+  "breadcrumb": {
+    "facultades": "Mbo'ehaovusu",
+    "nombre": "Odontología"
+  },
   "hero": {
     "badge": "Mbo'ehao Teete",
     "nombre": "Facultad de Odontología",
     "tagline": "Ñemoaranduhára ñomongeta oñeñangarekóva kanguépe ha ñemomba'egua."
   },
   "grado": {
-    "title": "Carreras de Grado",
+    "title": "Carrera de grado",
     "subtitle": "Mbo'eporu CONES oñemomba'éva",
-    "cols": { "carrera": "Carrera", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+    "cols": {
+      "carrera": "Carrera",
+      "sede": "Tenda térã filial",
+      "resolucion": "Res. CONES"
+    }
   },
   "posgrado": {
-    "title": "Programas de Posgrado",
+    "title": "Posgrado ñemoarandu",
     "subtitle": "Especializaciones ha programas de formación avanzada",
-    "cols": { "programa": "Programa", "sede": "Sede o Filial", "resolucion": "Res. CONES" }
+    "cols": {
+      "programa": "Tembiaporã",
+      "sede": "Tenda térã filial",
+      "resolucion": "Res. CONES"
+    }
   },
   "aranceles": {
-    "title": "Aranceles",
-    "subtitle": "Valores vigentes según resolución institucional",
-    "monto": "Monto (Gs.)",
+    "title": "Tepykue",
+    "subtitle": "Tepykue oñemoĩva tembiapo renda rembiapoukapy rupi",
+    "monto": "Tepykue (Gs.)",
     "grupos": {
-      "multas": "Multas y Otros Derechos No Tributarios",
-      "venta": "Venta de Libros, Formularios y Documentos",
-      "servicios": "Venta de Servicios de la Administración Pública",
-      "medicos": "Servicios Médicos y Hospitalarios"
+      "multas": "Multa-kuéra ha ambue tepy ndaha'éiva impuesto",
+      "venta": "Aranduka, formulario ha kuatia ñemu",
+      "servicios": "Tetã ñemboguata rembiapo ñemu",
+      "medicos": "Tesãi ha tasyo rembiapo"
     }
   },
   "contacto": {
-    "title": "Contacto",
+    "title": "Ñe'ẽmondo",
     "direccion": "Campus Universitario: Ruta Py05, Km 210, Concepción, Paraguay",
     "telefono": "(595 331) 241680",
-    "emails": ["decanatofo@unc.edu.py", "secretariagralfo@unc.edu.py"],
+    "emails": [
+      "decanatofo@unc.edu.py",
+      "secretariagralfo@unc.edu.py"
+    ],
     "web": "www.founc.edu.py",
-    "sitio": "Ir al sitio web de la Facultad"
+    "sitio": "Eho Facultad ñanduti rendápe"
   }
 }

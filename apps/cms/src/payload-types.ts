@@ -75,6 +75,9 @@ export interface Config {
     tesis: Tesis;
     facultades: Facultade;
     carreras: Carrera;
+    'calendario-academico': CalendarioAcademico;
+    'dependencias-contacto': DependenciasContacto;
+    tramites: Tramite;
     'marco-legal': MarcoLegal;
     'linea-tiempo': LineaTiempo;
     auditoria: Auditoria;
@@ -106,6 +109,9 @@ export interface Config {
     tesis: TesisSelect<false> | TesisSelect<true>;
     facultades: FacultadesSelect<false> | FacultadesSelect<true>;
     carreras: CarrerasSelect<false> | CarrerasSelect<true>;
+    'calendario-academico': CalendarioAcademicoSelect<false> | CalendarioAcademicoSelect<true>;
+    'dependencias-contacto': DependenciasContactoSelect<false> | DependenciasContactoSelect<true>;
+    tramites: TramitesSelect<false> | TramitesSelect<true>;
     'marco-legal': MarcoLegalSelect<false> | MarcoLegalSelect<true>;
     'linea-tiempo': LineaTiempoSelect<false> | LineaTiempoSelect<true>;
     auditoria: AuditoriaSelect<false> | AuditoriaSelect<true>;
@@ -130,20 +136,35 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale:
+    ('false' | 'none' | 'null') | false | null | ('es' | 'en' | 'pt-BR' | 'gn') | ('es' | 'en' | 'pt-BR' | 'gn')[];
   globals: {
     navegacion: Navegacion;
     transparencia: Transparencia;
     'enlaces-externos': EnlacesExterno;
     estadisticas: Estadistica;
+    'titulos-inscripcion': TitulosInscripcion;
+    'pilares-academicos': PilaresAcademico;
+    'informacion-publica': InformacionPublica;
+    institucional: Institucional;
+    'politica-privacidad': PoliticaPrivacidad;
+    'declaracion-accesibilidad': DeclaracionAccesibilidad;
+    legalizaciones: Legalizacione;
   };
   globalsSelect: {
     navegacion: NavegacionSelect<false> | NavegacionSelect<true>;
     transparencia: TransparenciaSelect<false> | TransparenciaSelect<true>;
     'enlaces-externos': EnlacesExternosSelect<false> | EnlacesExternosSelect<true>;
     estadisticas: EstadisticasSelect<false> | EstadisticasSelect<true>;
+    'titulos-inscripcion': TitulosInscripcionSelect<false> | TitulosInscripcionSelect<true>;
+    'pilares-academicos': PilaresAcademicosSelect<false> | PilaresAcademicosSelect<true>;
+    'informacion-publica': InformacionPublicaSelect<false> | InformacionPublicaSelect<true>;
+    institucional: InstitucionalSelect<false> | InstitucionalSelect<true>;
+    'politica-privacidad': PoliticaPrivacidadSelect<false> | PoliticaPrivacidadSelect<true>;
+    'declaracion-accesibilidad': DeclaracionAccesibilidadSelect<false> | DeclaracionAccesibilidadSelect<true>;
+    legalizaciones: LegalizacionesSelect<false> | LegalizacionesSelect<true>;
   };
-  locale: null;
+  locale: 'es' | 'en' | 'pt-BR' | 'gn';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -179,6 +200,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  nombre?: string | null;
+  apellido?: string | null;
   /**
    * Define las funciones y permisos institucionales del usuario dentro del CMS.
    */
@@ -200,6 +223,23 @@ export interface User {
    * ID del usuario en Telegram para recibir notificaciones
    */
   telegramUserId?: string | null;
+  /**
+   * Lo fija el sistema al restablecer la contraseña; se borra cuando el usuario la cambia.
+   */
+  mustChangePassword?: boolean | null;
+  /**
+   * Vence a los 90 días. Sin fecha, el usuario debe cambiarla en su próximo ingreso.
+   */
+  passwordChangedAt?: string | null;
+  passwordHistory?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -671,6 +711,161 @@ export interface Carrera {
   createdAt: string;
 }
 /**
+ * Fechas de semestres y mesas de exámenes que se publican en /calendario-academico. El portal muestra el año más reciente.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "calendario-academico".
+ */
+export interface CalendarioAcademico {
+  id: number;
+  /**
+   * Ej.: 1er Semestre 2026.
+   */
+  titulo: string;
+  tipo: 'semestre' | 'examenes';
+  /**
+   * El portal muestra solo el año más reciente entre los bloques activos.
+   */
+  anio: number;
+  /**
+   * Número menor = aparece primero.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultarlo del portal sin borrarlo.
+   */
+  activa?: boolean | null;
+  /**
+   * Una fila por fecha o período, en el orden en que se muestran.
+   */
+  entradas: {
+    /**
+     * Obligatorio en un semestre. En las mesas de exámenes se deja vacío: el período sale de las fechas.
+     */
+    evento?:
+      ('inicio-clases' | 'inscripcion-tardia' | 'parciales-1' | 'parciales-2' | 'cierre-semestre' | 'otro') | null;
+    /**
+     * Solo si el evento es «Otro». Solo se publica en español.
+     */
+    descripcion?: string | null;
+    inicio: string;
+    /**
+     * Opcional. Déjela vacía si es un solo día.
+     */
+    fin?: string | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Directorio que se publica en /contacto/dependencias: Rectorado y facultades, con sus sedes, teléfonos, correos y sitios web.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dependencias-contacto".
+ */
+export interface DependenciasContacto {
+  id: number;
+  /**
+   * Ej.: Facultad de Medicina.
+   */
+  nombre: string;
+  /**
+   * Minúsculas y guiones. Es el ancla de la página (#dept-medicina). No lo cambie si ya hay enlaces a esa dependencia.
+   */
+  slug: string;
+  /**
+   * Ruta bajo /images/. Ej.: /images/facultades/medicina.png.
+   */
+  logo?: string | null;
+  /**
+   * Se usa para el Rectorado. Las demás dependencias llevan cabecera clara.
+   */
+  destacada?: boolean | null;
+  /**
+   * Número menor = aparece primero.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultarla del portal sin borrarla.
+   */
+  activa?: boolean | null;
+  /**
+   * Una fila por sede o filial, en el orden en que se muestran.
+   */
+  sedes: {
+    /**
+     * Opcional. Ej.: Filial Horqueta.
+     */
+    nombre?: string | null;
+    direccion: string;
+    telefonos?:
+      | {
+          /**
+           * Como se muestra. Ej.: (595 331) 241069.
+           */
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    correos?:
+      | {
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Opcional. Debe empezar con http:// o https://.
+     */
+    web?: string | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Requisitos de ingreso, matrícula y egreso que se publican en /tramites, agrupados por facultad.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tramites".
+ */
+export interface Tramite {
+  id: number;
+  facultad: number | Facultade;
+  /**
+   * Ej.: Inscripción al Examen de Ingreso.
+   */
+  titulo: string;
+  /**
+   * Opcional. Ej.: «Art. 150°». Se muestra junto al título.
+   */
+  etiqueta?: string | null;
+  descripcion?: string | null;
+  /**
+   * Un requisito por fila, en el orden en que se muestran.
+   */
+  requisitos?:
+    | {
+        texto: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Opcional. Horarios, contacto o una aclaración que aplica a todo el trámite.
+   */
+  nota?: string | null;
+  /**
+   * Número menor = aparece primero dentro de su facultad.
+   */
+  orden?: number | null;
+  /**
+   * Desmarque para ocultarlo del portal sin borrarlo.
+   */
+  activa?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Documentos normativos que se publican en /marco-legal. Para retirar uno, desmarque «Publicado» (no lo borre: queda el historial).
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -819,7 +1014,9 @@ export interface Auditoria {
     | 'aprobar'
     | 'rechazar'
     | 'importar'
-    | 'revalidar';
+    | 'revalidar'
+    | 'cambiar_clave'
+    | 'restablecer_clave';
   /**
    * Colección afectada (noticias, usuarios, media, etc)
    */
@@ -1425,6 +1622,16 @@ export interface GlosarioGuarani {
    * El actualizador solo modifica sus propias filas.
    */
   origen?: ('glosario-po' | 'actualizador' | 'panel') | null;
+  /**
+   * La aprobación exige superadmin, traducción, fuente oficial y confianza A/B. El portal solo usa aprobados.
+   */
+  estadoRevision?: ('pendiente' | 'aprobado' | 'rechazado') | null;
+  aprobadoPor?: (number | null) | User;
+  fechaAprobacion?: string | null;
+  /**
+   * Motivo de aprobación, rechazo o solicitud de corrección.
+   */
+  comentarioRevision?: string | null;
   fechaConsulta?: string | null;
   /**
    * Acepción, advertencias, «Pendiente de revisión: …».
@@ -1488,6 +1695,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'carreras';
         value: number | Carrera;
+      } | null)
+    | ({
+        relationTo: 'calendario-academico';
+        value: number | CalendarioAcademico;
+      } | null)
+    | ({
+        relationTo: 'dependencias-contacto';
+        value: number | DependenciasContacto;
+      } | null)
+    | ({
+        relationTo: 'tramites';
+        value: number | Tramite;
       } | null)
     | ({
         relationTo: 'marco-legal';
@@ -1600,9 +1819,14 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  nombre?: T;
+  apellido?: T;
   role?: T;
   telefono?: T;
   telegramUserId?: T;
+  mustChangePassword?: T;
+  passwordChangedAt?: T;
+  passwordHistory?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1886,6 +2110,83 @@ export interface CarrerasSelect<T extends boolean = true> {
   orden?: T;
   tipo?: T;
   sede?: T;
+  activa?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "calendario-academico_select".
+ */
+export interface CalendarioAcademicoSelect<T extends boolean = true> {
+  titulo?: T;
+  tipo?: T;
+  anio?: T;
+  orden?: T;
+  activa?: T;
+  entradas?:
+    | T
+    | {
+        evento?: T;
+        descripcion?: T;
+        inicio?: T;
+        fin?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dependencias-contacto_select".
+ */
+export interface DependenciasContactoSelect<T extends boolean = true> {
+  nombre?: T;
+  slug?: T;
+  logo?: T;
+  destacada?: T;
+  orden?: T;
+  activa?: T;
+  sedes?:
+    | T
+    | {
+        nombre?: T;
+        direccion?: T;
+        telefonos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        correos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        web?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tramites_select".
+ */
+export interface TramitesSelect<T extends boolean = true> {
+  facultad?: T;
+  titulo?: T;
+  etiqueta?: T;
+  descripcion?: T;
+  requisitos?:
+    | T
+    | {
+        texto?: T;
+        id?: T;
+      };
+  nota?: T;
+  orden?: T;
   activa?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2200,6 +2501,10 @@ export interface GlosarioGuaraniSelect<T extends boolean = true> {
   revisado?: T;
   activo?: T;
   origen?: T;
+  estadoRevision?: T;
+  aprobadoPor?: T;
+  fechaAprobacion?: T;
+  comentarioRevision?: T;
   fechaConsulta?: T;
   nota?: T;
   updatedAt?: T;
@@ -2258,7 +2563,7 @@ export interface Navegacion {
         label: string;
         type: 'manual' | 'relationship';
         /**
-         * Requerido cuando el tipo es "Manual"
+         * Requerido cuando el tipo es "Manual". Ruta del portal (p. ej. /biblioteca), «#» para un grupo o una dirección completa.
          */
         url?: string | null;
         /**
@@ -2271,7 +2576,7 @@ export interface Navegacion {
               label: string;
               type: 'manual' | 'relationship';
               /**
-               * Requerido cuando el tipo es "Manual"
+               * Requerido cuando el tipo es "Manual". Ruta del portal (p. ej. /biblioteca), «#» para un grupo o una dirección completa.
                */
               url?: string | null;
               /**
@@ -2344,7 +2649,7 @@ export interface EnlacesExterno {
   createdAt?: string | null;
 }
 /**
- * Estadísticas institucionales de la Universidad Nacional de Concepción
+ * Estadísticas institucionales de la Universidad Nacional de Concepción. Origen de los valores iniciales: contadores de la portada del sitio anterior unc.edu.py (actualizados por última vez el 2025-11-03). Actualícelos con el dato oficial vigente; los usan la portada y las tarjetas de los pilares.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "estadisticas".
@@ -2356,6 +2661,676 @@ export interface Estadistica {
   totalEgresados: number;
   totalCarrerasAcreditadas: number;
   totalFacultades: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /titulos: tipos de universidad y sus requisitos, pasos del procedimiento, plazo y nota del CONES. El arancel se toma de «Aranceles del Rectorado».
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "titulos-inscripcion".
+ */
+export interface TitulosInscripcion {
+  id: number;
+  /**
+   * Encabezado principal. Ejemplo: «Inscripción de títulos».
+   */
+  titulo: string;
+  /**
+   * Resumen del servicio que aparece bajo el título (máximo 400 caracteres).
+   */
+  descripcion: string;
+  /**
+   * Dependencia que tramita la inscripción. Ejemplo: «Secretaría General — UNC».
+   */
+  unidad: string;
+  /**
+   * Número entero de horas hábiles. Ejemplo: 8.
+   */
+  plazoMinHoras: number;
+  /**
+   * Número entero, igual o mayor que el mínimo. Ejemplo: 24.
+   */
+  plazoMaxHoras: number;
+  /**
+   * Elija la fila de «Aranceles del Rectorado» (por ejemplo «Inscripción de Títulos Universitarios»). El monto se toma de allí: no se escribe en esta página.
+   */
+  arancel?: (number | null) | ArancelesRectorado;
+  /**
+   * Aviso sobre el reconocimiento previo de títulos extranjeros. Déjelo vacío si no corresponde.
+   */
+  notaCones?: {
+    /**
+     * Qué debe saber la persona antes de presentarse.
+     */
+    texto?: string | null;
+    /**
+     * Solo https://www.cones.gov.py o https://cones.gov.py.
+     */
+    url?: string | null;
+  };
+  /**
+   * Cada tipo (extranjera, nacional pública, nacional privada) con los documentos que debe presentar. El orden del panel es el orden en la página.
+   */
+  tipos?:
+    | {
+        /**
+         * Letras minúsculas, números y guiones. Debe ser único. Ejemplo: universidad-extranjera.
+         */
+        slug: string;
+        /**
+         * Rótulo breve sobre el título. Ejemplo: «Internacional».
+         */
+        etiqueta: string;
+        /**
+         * Ejemplo: «Universidades extranjeras».
+         */
+        titulo: string;
+        /**
+         * Ejemplo: «Títulos de grado y/o posgrado».
+         */
+        subtitulo?: string | null;
+        /**
+         * Solo estos tres colores; el portal los aplica con su propia paleta.
+         */
+        acento: 'verde' | 'azul' | 'violeta';
+        /**
+         * Un documento o condición por fila, en el orden en que se muestran.
+         */
+        requisitos?:
+          | {
+              /**
+               * Máximo 600 caracteres.
+               */
+              texto: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * En orden: el número del paso lo pone el portal según la posición en esta lista.
+   */
+  pasos?:
+    | {
+        /**
+         * Quién realiza el paso. Ejemplo: «Mesa de Entrada / Atención al Usuario».
+         */
+        responsable: string;
+        /**
+         * Qué ocurre en este paso (máximo 800 caracteres).
+         */
+        descripcion: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tarjetas de Docencia, Investigación y Extensión en la portada, y la página de cada una.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pilares-academicos".
+ */
+export interface PilaresAcademico {
+  id: number;
+  docencia: {
+    titulo: string;
+    /**
+     * Línea breve en mayúsculas bajo el título.
+     */
+    bajada?: string | null;
+    descripcion: string;
+    icono: 'birrete' | 'matraz' | 'personas';
+    /**
+     * Hasta dos. Sin métricas válidas la tarjeta no muestra el recuadro de cifras.
+     */
+    metricas?:
+      | {
+          origen: 'estadistica' | 'manual';
+          /**
+           * El número se actualiza solo cuando cambia «Estadísticas».
+           */
+          estadistica?:
+            | ('totalEstudiantes' | 'totalDocentes' | 'totalEgresados' | 'totalCarrerasAcreditadas' | 'totalFacultades')
+            | null;
+          /**
+           * Ejemplo: «45» o «45+».
+           */
+          valor?: string | null;
+          /**
+           * No se muestra en el portal; queda como respaldo del dato.
+           */
+          fuente?: string | null;
+          /**
+           * Ejemplo: «Carreras acreditadas».
+           */
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+    enlaceTexto: string;
+    pagina: {
+      estado: 'construccion' | 'publicada';
+      contenido?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      estadisticas?:
+        | {
+            origen: 'estadistica' | 'manual';
+            /**
+             * El número se actualiza solo cuando cambia «Estadísticas».
+             */
+            estadistica?:
+              | (
+                  | 'totalEstudiantes'
+                  | 'totalDocentes'
+                  | 'totalEgresados'
+                  | 'totalCarrerasAcreditadas'
+                  | 'totalFacultades'
+                )
+              | null;
+            /**
+             * Ejemplo: «45» o «45+».
+             */
+            valor?: string | null;
+            /**
+             * No se muestra en el portal; queda como respaldo del dato.
+             */
+            fuente?: string | null;
+            /**
+             * Ejemplo: «Carreras acreditadas».
+             */
+            etiqueta: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  investigacion: {
+    titulo: string;
+    /**
+     * Línea breve en mayúsculas bajo el título.
+     */
+    bajada?: string | null;
+    descripcion: string;
+    icono: 'birrete' | 'matraz' | 'personas';
+    /**
+     * Hasta dos. Sin métricas válidas la tarjeta no muestra el recuadro de cifras.
+     */
+    metricas?:
+      | {
+          origen: 'estadistica' | 'manual';
+          /**
+           * El número se actualiza solo cuando cambia «Estadísticas».
+           */
+          estadistica?:
+            | ('totalEstudiantes' | 'totalDocentes' | 'totalEgresados' | 'totalCarrerasAcreditadas' | 'totalFacultades')
+            | null;
+          /**
+           * Ejemplo: «45» o «45+».
+           */
+          valor?: string | null;
+          /**
+           * No se muestra en el portal; queda como respaldo del dato.
+           */
+          fuente?: string | null;
+          /**
+           * Ejemplo: «Carreras acreditadas».
+           */
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+    enlaceTexto: string;
+    pagina: {
+      estado: 'construccion' | 'publicada';
+      contenido?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      estadisticas?:
+        | {
+            origen: 'estadistica' | 'manual';
+            /**
+             * El número se actualiza solo cuando cambia «Estadísticas».
+             */
+            estadistica?:
+              | (
+                  | 'totalEstudiantes'
+                  | 'totalDocentes'
+                  | 'totalEgresados'
+                  | 'totalCarrerasAcreditadas'
+                  | 'totalFacultades'
+                )
+              | null;
+            /**
+             * Ejemplo: «45» o «45+».
+             */
+            valor?: string | null;
+            /**
+             * No se muestra en el portal; queda como respaldo del dato.
+             */
+            fuente?: string | null;
+            /**
+             * Ejemplo: «Carreras acreditadas».
+             */
+            etiqueta: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  extension: {
+    titulo: string;
+    /**
+     * Línea breve en mayúsculas bajo el título.
+     */
+    bajada?: string | null;
+    descripcion: string;
+    icono: 'birrete' | 'matraz' | 'personas';
+    /**
+     * Hasta dos. Sin métricas válidas la tarjeta no muestra el recuadro de cifras.
+     */
+    metricas?:
+      | {
+          origen: 'estadistica' | 'manual';
+          /**
+           * El número se actualiza solo cuando cambia «Estadísticas».
+           */
+          estadistica?:
+            | ('totalEstudiantes' | 'totalDocentes' | 'totalEgresados' | 'totalCarrerasAcreditadas' | 'totalFacultades')
+            | null;
+          /**
+           * Ejemplo: «45» o «45+».
+           */
+          valor?: string | null;
+          /**
+           * No se muestra en el portal; queda como respaldo del dato.
+           */
+          fuente?: string | null;
+          /**
+           * Ejemplo: «Carreras acreditadas».
+           */
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+    enlaceTexto: string;
+    pagina: {
+      estado: 'construccion' | 'publicada';
+      contenido?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      estadisticas?:
+        | {
+            origen: 'estadistica' | 'manual';
+            /**
+             * El número se actualiza solo cuando cambia «Estadísticas».
+             */
+            estadistica?:
+              | (
+                  | 'totalEstudiantes'
+                  | 'totalDocentes'
+                  | 'totalEgresados'
+                  | 'totalCarrerasAcreditadas'
+                  | 'totalFacultades'
+                )
+              | null;
+            /**
+             * Ejemplo: «45» o «45+».
+             */
+            valor?: string | null;
+            /**
+             * No se muestra en el portal; queda como respaldo del dato.
+             */
+            fuente?: string | null;
+            /**
+             * Ejemplo: «Carreras acreditadas».
+             */
+            etiqueta: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /informacion-publica: vías para solicitar información (Ley N° 5282), datos que debe aportar la persona, portal oficial y correo de la oficina.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "informacion-publica".
+ */
+export interface InformacionPublica {
+  id: number;
+  /**
+   * Encabezado principal. Ejemplo: «Acceso a la información pública».
+   */
+  titulo: string;
+  /**
+   * Resumen que aparece bajo el título (máximo 500 caracteres).
+   */
+  descripcion: string;
+  /**
+   * Ejemplo: «Ley N° 5282/2014 — Libre Acceso a la Información Pública».
+   */
+  leyReferencia: string;
+  /**
+   * Texto de la norma que sustenta cómo presentar la solicitud. Déjelo vacío si no corresponde.
+   */
+  cita?: {
+    texto?: string | null;
+    /**
+     * Ejemplo: «Ley N° 5282/2014, art. 12».
+     */
+    fuente?: string | null;
+  };
+  /**
+   * Cada forma de presentar la solicitud. El orden del panel es el orden en la página.
+   */
+  vias?:
+    | {
+        /**
+         * Letras minúsculas, números y guiones. Único. Ejemplo: solicitud-online.
+         */
+        slug: string;
+        /**
+         * Ejemplo: «Vía digital».
+         */
+        etiqueta: string;
+        titulo: string;
+        descripcion: string;
+        /**
+         * Marca la vía más rápida con un rótulo fijo de la interfaz (no es texto libre).
+         */
+        destacada?: boolean | null;
+        accion: {
+          texto: string;
+          /**
+           * Una ruta interna (p. ej. /contacto) o un https del portal oficial del Gobierno.
+           */
+          url: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Un dato por fila, en el orden en que se muestran.
+   */
+  datosRequeridos?:
+    | {
+        texto: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Plataforma nacional para presentar la solicitud en línea. Déjelo vacío si no corresponde.
+   */
+  portalOficial?: {
+    titulo?: string | null;
+    descripcion?: string | null;
+    /**
+     * Solo https de: informacionpublica.paraguay.gov.py.
+     */
+    url?: string | null;
+  };
+  /**
+   * Dirección para solicitudes escritas. Ejemplo: secgral@unc.edu.py.
+   */
+  correo: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido del hub /institucional: presentación, datos de la universidad, tarjetas de sección y valores.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "institucional".
+ */
+export interface Institucional {
+  id: number;
+  /**
+   * Ejemplo: «La Institución».
+   */
+  titulo: string;
+  /**
+   * Resumen bajo el título (máximo 400 caracteres).
+   */
+  descripcion: string;
+  sobre: {
+    titulo: string;
+    texto: string;
+    /**
+     * De 1 a 4 pares valor/etiqueta. Ejemplo: «2007» / «Año de fundación».
+     */
+    datos?:
+      | {
+          valor: string;
+          etiqueta: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Tarjetas que llevan a otras páginas. El orden del panel es el orden en la página.
+   */
+  secciones?:
+    | {
+        destino:
+          | 'historia'
+          | 'mision-vision-y-valores'
+          | 'autoridades'
+          | 'organigrama'
+          | 'marco-legal'
+          | 'aseguramiento-calidad'
+          | 'transparencia'
+          | 'informacion-publica';
+        etiqueta: string;
+        titulo: string;
+        descripcion: string;
+        /**
+         * Ejemplo: «Ver historia».
+         */
+        accion: string;
+        id?: string | null;
+      }[]
+    | null;
+  valores?:
+    | {
+        titulo: string;
+        descripcion: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /privacidad: secciones de la política y fecha de la última actualización. Cada idioma tiene su propio texto; si falta uno, el portal muestra el español.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "politica-privacidad".
+ */
+export interface PoliticaPrivacidad {
+  id: number;
+  /**
+   * Fecha de la última revisión del texto. El portal muestra solo el mes y el año.
+   */
+  ultimaActualizacion: string;
+  /**
+   * Cada sección tiene un título y un texto. Un salto de línea doble separa párrafos.
+   */
+  secciones: {
+    /**
+     * Ejemplo: «Responsable del tratamiento».
+     */
+    titulo: string;
+    /**
+     * Texto de la sección (máximo 3000 caracteres).
+     */
+    contenido: string;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /accesibilidad: descripción, características de accesibilidad y correo para reportar problemas. Cada idioma tiene su propio texto; si falta uno, el portal muestra el español.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "declaracion-accesibilidad".
+ */
+export interface DeclaracionAccesibilidad {
+  id: number;
+  /**
+   * Texto que aparece bajo el título de la página (máximo 600 caracteres).
+   */
+  descripcion: string;
+  caracteristicas: {
+    /**
+     * Ejemplo: «Tamaño de texto ajustable».
+     */
+    titulo: string;
+    /**
+     * Qué ofrece esta característica (máximo 400 caracteres).
+     */
+    descripcion: string;
+    id?: string | null;
+  }[];
+  /**
+   * Correo al que se escribe para reportar un problema de accesibilidad.
+   */
+  correoContacto: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Contenido de la página /legalizaciones: categorías de documentos y sus requisitos, pasos del procedimiento y plazo. El arancel se toma de «Aranceles del Rectorado».
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legalizaciones".
+ */
+export interface Legalizacione {
+  id: number;
+  /**
+   * Encabezado principal. Ejemplo: «Inscripción de títulos».
+   */
+  titulo: string;
+  /**
+   * Resumen del servicio que aparece bajo el título (máximo 400 caracteres).
+   */
+  descripcion: string;
+  /**
+   * Dependencia que tramita la inscripción. Ejemplo: «Secretaría General — UNC».
+   */
+  unidad: string;
+  /**
+   * Número entero de horas hábiles. Ejemplo: 8.
+   */
+  plazoMinHoras: number;
+  /**
+   * Número entero, igual o mayor que el mínimo. Ejemplo: 24.
+   */
+  plazoMaxHoras: number;
+  /**
+   * Elija la fila «Legalizaciones» de «Aranceles del Rectorado». El monto se toma de allí: no se escribe en esta página.
+   */
+  arancel?: (number | null) | ArancelesRectorado;
+  /**
+   * Cada categoría (títulos, certificados de estudios, expedientes de ingreso) con los documentos que debe presentar. El orden del panel es el orden en la página.
+   */
+  tipos?:
+    | {
+        /**
+         * Letras minúsculas, números y guiones. Debe ser único. Ejemplo: universidad-extranjera.
+         */
+        slug: string;
+        /**
+         * Rótulo breve sobre el título. Ejemplo: «Internacional».
+         */
+        etiqueta: string;
+        /**
+         * Ejemplo: «Universidades extranjeras».
+         */
+        titulo: string;
+        /**
+         * Ejemplo: «Títulos de grado y/o posgrado».
+         */
+        subtitulo?: string | null;
+        /**
+         * Solo estos tres colores; el portal los aplica con su propia paleta.
+         */
+        acento: 'verde' | 'azul' | 'violeta';
+        /**
+         * Un documento o condición por fila, en el orden en que se muestran.
+         */
+        requisitos?:
+          | {
+              /**
+               * Máximo 600 caracteres.
+               */
+              texto: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * En orden: el número del paso lo pone el portal según la posición en esta lista.
+   */
+  pasos?:
+    | {
+        /**
+         * Quién realiza el paso. Ejemplo: «Mesa de Entrada / Atención al Usuario».
+         */
+        responsable: string;
+        /**
+         * Qué ocurre en este paso (máximo 800 caracteres).
+         */
+        descripcion: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2435,6 +3410,326 @@ export interface EstadisticasSelect<T extends boolean = true> {
   totalEgresados?: T;
   totalCarrerasAcreditadas?: T;
   totalFacultades?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "titulos-inscripcion_select".
+ */
+export interface TitulosInscripcionSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  unidad?: T;
+  plazoMinHoras?: T;
+  plazoMaxHoras?: T;
+  arancel?: T;
+  notaCones?:
+    | T
+    | {
+        texto?: T;
+        url?: T;
+      };
+  tipos?:
+    | T
+    | {
+        slug?: T;
+        etiqueta?: T;
+        titulo?: T;
+        subtitulo?: T;
+        acento?: T;
+        requisitos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  pasos?:
+    | T
+    | {
+        responsable?: T;
+        descripcion?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pilares-academicos_select".
+ */
+export interface PilaresAcademicosSelect<T extends boolean = true> {
+  docencia?:
+    | T
+    | {
+        titulo?: T;
+        bajada?: T;
+        descripcion?: T;
+        icono?: T;
+        metricas?:
+          | T
+          | {
+              origen?: T;
+              estadistica?: T;
+              valor?: T;
+              fuente?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+        enlaceTexto?: T;
+        pagina?:
+          | T
+          | {
+              estado?: T;
+              contenido?: T;
+              estadisticas?:
+                | T
+                | {
+                    origen?: T;
+                    estadistica?: T;
+                    valor?: T;
+                    fuente?: T;
+                    etiqueta?: T;
+                    id?: T;
+                  };
+            };
+      };
+  investigacion?:
+    | T
+    | {
+        titulo?: T;
+        bajada?: T;
+        descripcion?: T;
+        icono?: T;
+        metricas?:
+          | T
+          | {
+              origen?: T;
+              estadistica?: T;
+              valor?: T;
+              fuente?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+        enlaceTexto?: T;
+        pagina?:
+          | T
+          | {
+              estado?: T;
+              contenido?: T;
+              estadisticas?:
+                | T
+                | {
+                    origen?: T;
+                    estadistica?: T;
+                    valor?: T;
+                    fuente?: T;
+                    etiqueta?: T;
+                    id?: T;
+                  };
+            };
+      };
+  extension?:
+    | T
+    | {
+        titulo?: T;
+        bajada?: T;
+        descripcion?: T;
+        icono?: T;
+        metricas?:
+          | T
+          | {
+              origen?: T;
+              estadistica?: T;
+              valor?: T;
+              fuente?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+        enlaceTexto?: T;
+        pagina?:
+          | T
+          | {
+              estado?: T;
+              contenido?: T;
+              estadisticas?:
+                | T
+                | {
+                    origen?: T;
+                    estadistica?: T;
+                    valor?: T;
+                    fuente?: T;
+                    etiqueta?: T;
+                    id?: T;
+                  };
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "informacion-publica_select".
+ */
+export interface InformacionPublicaSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  leyReferencia?: T;
+  cita?:
+    | T
+    | {
+        texto?: T;
+        fuente?: T;
+      };
+  vias?:
+    | T
+    | {
+        slug?: T;
+        etiqueta?: T;
+        titulo?: T;
+        descripcion?: T;
+        destacada?: T;
+        accion?:
+          | T
+          | {
+              texto?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  datosRequeridos?:
+    | T
+    | {
+        texto?: T;
+        id?: T;
+      };
+  portalOficial?:
+    | T
+    | {
+        titulo?: T;
+        descripcion?: T;
+        url?: T;
+      };
+  correo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "institucional_select".
+ */
+export interface InstitucionalSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  sobre?:
+    | T
+    | {
+        titulo?: T;
+        texto?: T;
+        datos?:
+          | T
+          | {
+              valor?: T;
+              etiqueta?: T;
+              id?: T;
+            };
+      };
+  secciones?:
+    | T
+    | {
+        destino?: T;
+        etiqueta?: T;
+        titulo?: T;
+        descripcion?: T;
+        accion?: T;
+        id?: T;
+      };
+  valores?:
+    | T
+    | {
+        titulo?: T;
+        descripcion?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "politica-privacidad_select".
+ */
+export interface PoliticaPrivacidadSelect<T extends boolean = true> {
+  ultimaActualizacion?: T;
+  secciones?:
+    | T
+    | {
+        titulo?: T;
+        contenido?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "declaracion-accesibilidad_select".
+ */
+export interface DeclaracionAccesibilidadSelect<T extends boolean = true> {
+  descripcion?: T;
+  caracteristicas?:
+    | T
+    | {
+        titulo?: T;
+        descripcion?: T;
+        id?: T;
+      };
+  correoContacto?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legalizaciones_select".
+ */
+export interface LegalizacionesSelect<T extends boolean = true> {
+  titulo?: T;
+  descripcion?: T;
+  unidad?: T;
+  plazoMinHoras?: T;
+  plazoMaxHoras?: T;
+  arancel?: T;
+  tipos?:
+    | T
+    | {
+        slug?: T;
+        etiqueta?: T;
+        titulo?: T;
+        subtitulo?: T;
+        acento?: T;
+        requisitos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  pasos?:
+    | T
+    | {
+        responsable?: T;
+        descripcion?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

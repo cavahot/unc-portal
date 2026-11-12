@@ -1,4 +1,5 @@
 import { createTranslator, createFormatter, type AbstractIntlMessages } from 'next-intl'
+import { applyApprovedGuaraniDictionary, getApprovedGuaraniDictionary } from './guaraniDynamic'
 
 const NAMESPACES = [
   'common', 'nav', 'accessibility',
@@ -11,6 +12,10 @@ const NAMESPACES = [
   'pages.autoridades', 'pages.organigrama', 'pages.titulos',
   'pages.legalizaciones', 'pages.convenios', 'pages.tribunal-electoral',
   'pages.investigacion', 'pages.extension', 'pages.calendario-academico',
+  // PILARES-01: textos de las páginas /docencia, /investigacion y /extension (el contenido viene del CMS).
+  'pages.pilares',
+  // Secciones académicas: textos de la plantilla compartida y contenido de las tres páginas con texto propio.
+  'pages.contacto-dependencias', 'pages.estados','pages.preguntas-frecuentes', 'pages.seccion-academica', 'pages.aseguramiento-calidad', 'pages.bienestar-institucional', 'pages.direccion-general-academica',
   'pages.mapa-sitio', 'pages.privacidad', 'pages.accesibilidad',
   'pages.tramites',
   // ARR-01: /aranceles-rectorado pasa a getT (como /marco-legal) para formatear en el servidor por idioma.
@@ -36,6 +41,11 @@ export async function loadMessages(locale: string): Promise<AbstractIntlMessages
       cursor = cursor[parts[i]] as Record<string, unknown>
     }
     cursor[parts[parts.length - 1]] = mod.default
+  }
+  if (locale === 'gn') {
+    // Solo se actualizan etiquetas que todavía son idénticas al español; las frases traducidas siguen siendo editoriales.
+    const [messagesEs, dictionary] = await Promise.all([loadMessages('es'), getApprovedGuaraniDictionary()])
+    return applyApprovedGuaraniDictionary(messages as AbstractIntlMessages, messagesEs, dictionary)
   }
   return messages as AbstractIntlMessages
 }

@@ -95,6 +95,7 @@ export const GLOSARIO_OFFICIAL_HOSTS = [
   'repositorio.conacyt.gov.py',
   'spl.gov.py',
   'www.spl.gov.py',
+  'corpus.spl.gov.py',
 ] as const
 
 /**
@@ -105,6 +106,42 @@ export const GLOSARIO_OFFICIAL_HOSTS = [
  */
 export function validateOfficialSourceUrl(value: unknown, options: { required?: boolean } = {}): true | string {
   return validateAllowedHostUrl(value, { allowedHosts: GLOSARIO_OFFICIAL_HOSTS, required: options.required })
+}
+
+/**
+ * TITULOS-01: hosts EXACTOS del CONES aceptados en la nota de reconocimiento de títulos extranjeros.
+ * Amenaza que evita: que un editor (o un texto pegado) enlace la nota «Títulos extranjeros» a un sitio ajeno
+ * con la marca UNC (`cones.gov.py.evil.example`, `?u=https://www.cones.gov.py`). Límite: confía en lo que
+ * sirva el propio CONES; no comprueba que la página siga existiendo.
+ */
+export const CONES_HOSTS = ['www.cones.gov.py', 'cones.gov.py'] as const
+
+/** TITULOS-01: URL https de host exacto del CONES; vacía es válida (la nota es opcional). */
+export function validateConesUrl(value: unknown, options: { required?: boolean } = {}): true | string {
+  return validateAllowedHostUrl(value, { allowedHosts: CONES_HOSTS, required: options.required })
+}
+
+/**
+ * INST-01: hosts EXACTOS del portal oficial de acceso a la información pública del Gobierno (Ley N° 5282/2014).
+ * Por qué estos: son los sitios a los que la UNC remite a quien solicita información; cualquier otro host sería
+ * un desvío (phishing con la marca de la UNC). Límite: confía en todo lo que sirva ese host.
+ */
+export const INFO_PUBLICA_HOSTS = ['informacionpublica.paraguay.gov.py'] as const
+
+/** INST-01: ruta interna del portal (empieza con una sola «/», sin esquema, sin «//» ni «\»). */
+const INTERNAL_PATH = /^\/(?!\/)[A-Za-z0-9\-._~/#?=&%]*$/
+
+/**
+ * INST-01: enlace de una acción editable: ruta interna del portal o https de host oficial permitido.
+ * Amenaza que evita: `javascript:`, `http:`, rutas protocolo-relativas (`//host`) y hosts ajenos.
+ */
+export function validateInfoPublicaUrl(value: unknown, options: { required?: boolean } = {}): true | string {
+  if (value === undefined || value === null || value === '') return options.required === false ? true : 'Indique el enlace.'
+  if (typeof value !== 'string') return 'El enlace debe ser texto.'
+  if (value.startsWith('/')) {
+    return INTERNAL_PATH.test(value) ? true : 'Ruta interna no válida. Use una ruta como /contacto.'
+  }
+  return validateAllowedHostUrl(value, { allowedHosts: INFO_PUBLICA_HOSTS, required: options.required })
 }
 
 /**
@@ -151,4 +188,86 @@ export function validateRedUrl(value: unknown, options?: { siblingData?: { red?:
   const hosts = typeof red === 'string' ? RED_HOSTS[red] : undefined
   if (!hosts) return 'Elija primero la red social.'
   return validateAllowedHostUrl(value, { allowedHosts: hosts, required: true })
+}
+
+// ── INST-07: calendario académico (spec docs/specs/portal/CALENDARIO.md §2.1) ────────────────────────────────────
+
+/** Eventos estándar de un semestre. Las etiquetas traducidas viven en el archivo `pages.calendario-academico.json` de cada idioma. */
+export const CALENDARIO_EVENTOS = ['inicio-clases', 'inscripcion-tardia', 'parciales-1', 'parciales-2', 'cierre-semestre', 'otro'] as const
+
+/** Convierte un valor de fecha (texto ISO o `Date`) a milisegundos, o `null` si no es una fecha válida. */
+function toTime(value: unknown): number | null {
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value.getTime()
+  if (typeof value !== 'string' || !value.trim()) return null
+  const t = Date.parse(value)
+  return Number.isNaN(t) ? null : t
+}
+
+/**
+ * INST-07: `fin` es opcional, pero si existe debe ser una fecha válida y no anterior a `inicio` (misma fila).
+ * Amenaza que evita: publicar un período con las fechas invertidas («28 mar – 16 mar»), que confundiría a estudiantes.
+ * Límite: compara instantes; el campo es de día completo, así que no hay horas que considerar.
+ */
+export function validateCalendarioFin(value: unknown, options?: { siblingData?: { inicio?: unknown } }): true | string {
+  if (value === undefined || value === null || value === '') return true
+  const fin = toTime(value)
+  if (fin === null) return 'La fecha de fin no es válida.'
+  const inicio = toTime(options?.siblingData?.inicio)
+  if (inicio !== null && fin < inicio) return 'La fecha de fin no puede ser anterior a la de inicio.'
+  return true
+}
+
+/**
+ * INST-07: el evento es obligatorio en un semestre (las mesas de exámenes no llevan evento: el período sale de las fechas).
+ * `options.data.tipo` es el tipo del bloque. Límite: no impide cargar un evento en un bloque de exámenes (el portal lo ignora).
+ */
+export function validateCalendarioEvento(value: unknown, options?: { data?: { tipo?: unknown } }): true | string {
+  if (options?.data?.tipo !== 'semestre') return true
+  if (typeof value !== 'string' || !(CALENDARIO_EVENTOS as readonly string[]).includes(value)) return 'Elija un evento para cada fila de un semestre.'
+  return true
+}
+
+/** INST-07: la descripción es obligatoria cuando el evento es «otro» (misma fila) y se limita a 160 caracteres. */
+export function validateCalendarioDescripcion(value: unknown, options?: { siblingData?: { evento?: unknown } }): true | string {
+  const texto = typeof value === 'string' ? value.trim() : ''
+  if (texto.length > 160) return 'La descripción admite hasta 160 caracteres.'
+  if (options?.siblingData?.evento === 'otro' && !texto) return 'Escriba la descripción del evento.'
+  return true
+}
+
+/**
+ * INST-12: validadores de la colección `dependencias-contacto` (directorio de /contacto/dependencias).
+ * Amenazas que evitan: un `slug` que rompa el ancla de la página; un logo apuntando fuera de `/images/` (otro sitio, `..`,
+ * un esquema); un correo mal formado; una web `javascript:`/`data:` que llegaría a un `href`. El portal repite estas reglas al
+ * mapear (defensa en profundidad). Límite: validan forma, no que el dato sea el oficial.
+ */
+export function validateDependenciaSlug(value: unknown): true | string {
+  const slug = typeof value === 'string' ? value : ''
+  if (slug.length === 0 || slug.length > 60 || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
+    return 'Use minúsculas, números y guiones simples (hasta 60 caracteres). Ej.: ciencias-exactas.'
+  }
+  return true
+}
+
+export function validateDependenciaLogo(value: unknown): true | string {
+  const logo = typeof value === 'string' ? value : ''
+  const ok = /^\/images\/[A-Za-z0-9_\-./]+\.(png|jpe?g|webp|svg)$/i.test(logo) && !logo.includes('..') && !logo.includes('//')
+  return ok ? true : 'Use una ruta pública que empiece con /images/ y termine en .png, .jpg, .webp o .svg.'
+}
+
+export function validateDependenciaCorreo(value: unknown): true | string {
+  const correo = typeof value === 'string' ? value.trim() : ''
+  return correo.length > 0 && correo.length <= 120 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) ? true : 'Escriba un correo válido (nombre@dominio.ext).'
+}
+
+export function validateDependenciaWeb(value: unknown): true | string {
+  if (value === undefined || value === null || value === '') return true
+  if (typeof value !== 'string') return 'El sitio web no es válido.'
+  try {
+    const url = new URL(value)
+    if ((url.protocol === 'http:' || url.protocol === 'https:') && !url.username && !url.password) return true
+  } catch {
+    /* cae al mensaje */
+  }
+  return 'Use una dirección que empiece con http:// o https://, sin usuario ni contraseña.'
 }

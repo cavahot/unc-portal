@@ -1,19 +1,39 @@
 {
-  "pageTitle": "Transparencia — UNC",
-  "pageDescription": "Información institucional de cumplimiento legal según las Leyes N° 5.189/2014 y N° 5.282/2014 de la Universidad Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
-  "heading": "Transparencia Institucional",
-  "description": "En cumplimiento de las Leyes de Transparencia de la República del Paraguay, la Universidad Nacional de Concepción pone a disposición de la ciudadanía la siguiente información institucional.",
+  "pageTitle": "Tembiapo hesakãva",
+  "pageDescription": "Universidad Nacional de Concepción rembiapo renda rehegua marandu, omoañetéva Léi N° 5.189/2014 ha Léi N° 5.282/2014.",
+  "heading": "Tembiapo renda rembiapo hesakãva",
+  "description": "Omoañetévo Paraguái Retã léi tembiapo hesakãva rehegua, Universidad Nacional de Concepción ome'ẽ tetãyguakuérape ko tembiapo renda rehegua marandu.",
   "ley5189": {
-    "heading": "Ley N° 5.189/2014",
-    "description": "Que establece la obligatoriedad de la provisión de informaciones en los organismos, entidades e instituciones del Estado."
+    "heading": "Léi N° 5.189/2014",
+    "description": "Omohendáva marandu ñeme'ẽ katuete tetã rembiapo rendakuéra ha remimoĩmbykuérape."
   },
   "ley5282": {
-    "heading": "Ley N° 5.282/2014",
-    "description": "De libre acceso ciudadano a la información pública y gubernamental."
+    "heading": "Léi N° 5.282/2014",
+    "description": "Tetãygua jeike sãso marandu opavavépe ha tetã ñemboguata reheguápe."
   },
   "viewLabel": "Ehecha kuatia",
   "progress": "{withDocs} {total}-gui categoría-pe oĩ kuatia oñemoherakuãva",
   "pending": "Ndaipóri gueteri kuatia oñemoherakuãva.",
-  "unavailable": "Ndaikatúi roguerahauka marandu. Eheka jey sapy'ánte."
+  "unavailable": "Ndaikatúi roguerahauka marandu. Eheka jey sapy'ánte.",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Transparencia"
+  },
+  "docs": {
+    "title": "Información por ley",
+    "intro": "Los documentos se publican según lo que exige cada ley. Elija la que le interesa."
+  },
+  "infoPublica": {
+    "heading": "Acceso a la información pública",
+    "description": "Cómo solicitar información a la universidad: vías de solicitud, datos requeridos y portal oficial del Gobierno.",
+    "action": "Ver cómo solicitar",
+    "status": "{count} vías para presentar la solicitud"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
 }

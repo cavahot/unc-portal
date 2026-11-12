@@ -1,59 +1,60 @@
 {
   "meta": {
-    "title": "Legalizations | Universidad Nacional de Concepción",
-    "description": "Document authentication and legalization service from UNC: diplomas, academic certificates and transcripts."
-  },
-  "breadcrumb": { "home": "Home", "page": "Legalizations" },
-  "hero": {
-    "label": "General Secretariat",
     "title": "Legalizations",
-    "description": "Authentication and legalization of university documents"
+    "description": "Documents to submit, fee, timeframe and steps to legalize degrees, transcripts and admission files at the National University of Concepción."
   },
-  "services": {
-    "label": "Available services",
-    "title": "Which documents can I have legalized?",
-    "description": "The General Secretariat of UNC offers a legalization service for documents issued by the institution for official use nationally and internationally.",
-    "s1": {
-      "eyebrow": "Service 01",
-      "title": "Diploma Legalization",
-      "description": "Official authentication of undergraduate or postgraduate diplomas issued by UNC, for use with public bodies, employers and foreign institutions.",
-      "req1": "Original diploma issued by UNC",
-      "req2": "Valid national ID of the holder",
-      "req3": "Plain photocopy of the diploma",
-      "req4": "Completed application form",
-      "req5": "Proof of payment of the applicable fee",
-      "reqsLabel": "Requirements"
-    },
-    "s2": {
-      "eyebrow": "Service 02",
-      "title": "Academic Certificate Legalization",
-      "description": "Official certification of the student's academic record, with the seal and signature of the competent institutional authority.",
-      "req1": "Original academic certificate issued by UNC",
-      "req2": "Valid national ID",
-      "req3": "Completed application form",
-      "req4": "Proof of payment of the applicable fee",
-      "reqsLabel": "Requirements"
-    },
-    "s3": {
-      "eyebrow": "Service 03",
-      "title": "Transcript Legalization",
-      "description": "Authentication of the official academic transcript for use in admission processes, scholarships or recognition of studies abroad.",
-      "req1": "Original official academic transcript",
-      "req2": "Valid national ID",
-      "req3": "Completed application form",
-      "req4": "Proof of payment of the applicable fee",
-      "reqsLabel": "Requirements"
-    },
-    "requestBtn": "Apply"
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Legalizations"
   },
-  "contact": {
-    "label": "Contact",
-    "title": "Service information",
-    "description": "For inquiries about the document legalization process, please visit in person:",
-    "office": "General Secretariat",
-    "address1": "Rectorate — Universidad Nacional de Concepción",
-    "address2": "Concepción, Paraguay",
-    "hours": "Office hours: Monday to Friday, 07:00 to 13:00.",
-    "link": "View all procedures"
+  "hero": {
+    "titulo": "Document legalization",
+    "updated": "Last updated: {date}"
+  },
+  "facts": {
+    "label": "Procedure details",
+    "plazo": "Processing time",
+    "plazoValue": "{min} to {max} business hours",
+    "arancel": "Fee",
+    "arancelPending": "Check the current amount",
+    "arancelLink": "See the Rectorate fees",
+    "unidad": "Responsible unit"
+  },
+  "index": {
+    "label": "Choose the category of your document",
+    "countOne": "1 requirement",
+    "countOther": "{count} requirements"
+  },
+  "documents": {
+    "title": "Documents to submit",
+    "intro": "The requirements change according to the category of the document you want to legalize. Identify your case and gather those documents before coming in.",
+    "listLabel": "Requirements: {tipo}"
+  },
+  "procedure": {
+    "title": "Step by step",
+    "intro": "Legalization is processed at {unidad}.",
+    "total": "Estimated total time: {min} to {max} business hours.",
+    "step": "Step {number}",
+    "responsible": "Responsible"
+  },
+  "states": {
+    "empty": "The information for this procedure has not been published yet. Please check again later or contact the University.",
+    "unavailable": "We could not load the information for this procedure right now. Please try again in a few minutes.",
+    "retry": "Try again",
+    "contact": "Go to Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "A problem occurred while loading the procedure information. You can try again or contact the University.",
+    "retry": "Try again",
+    "contact": "Go to Contact",
+    "reference": "Support reference: {digest}"
+  },
+  "cta": {
+    "title": "Do you need to register a degree?",
+    "description": "Degree registration is a separate procedure. You can also check the Rectorate fees or write to us.",
+    "titulos": "See degree registration",
+    "aranceles": "Rectorate fees",
+    "contacto": "Contact"
   }
 }

@@ -1,44 +1,33 @@
+// Aseguramiento de la Calidad: título, descripción y áreas salen del catálogo por idioma (pages.aseguramiento-calidad);
+// la página ya no conserva textos de contenido en el código, así que /en, /pt-BR y /gn no muestran español.
+// Límite: el catálogo es editorial (no CMS); el gn está pendiente de revisión nativa.
 import type { Metadata } from 'next'
 import AcademicSectionPage from '@/components/pages/AcademicSectionPage'
+import { getT } from '@/lib/i18n/server'
 
-export const metadata: Metadata = {
-  title: 'Aseguramiento de la Calidad',
-  description:
-    'La UNC impulsa la mejora continua de sus procesos académicos e institucionales a través de sistemas de evaluación, acreditación y aseguramiento de la calidad educativa.',
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.aseguramiento-calidad')
+  return { title: t('meta.title'), description: t('meta.description') }
 }
 
-const AREAS = [
-  {
-    icon: '📋',
-    title: 'Autoevaluación institucional',
-    description:
-      'Procesos periódicos de autoevaluación que identifican fortalezas, debilidades y oportunidades de mejora en las funciones sustantivas de la universidad.',
-  },
-  {
-    icon: '✅',
-    title: 'Acreditación de carreras',
-    description:
-      'Acompañamiento a facultades en los procesos de acreditación nacional e internacional ante organismos como ANEAES y ARCUSUR.',
-  },
-  {
-    icon: '📈',
-    title: 'Indicadores de calidad',
-    description:
-      'Sistema de indicadores para el seguimiento y evaluación de la calidad educativa: eficiencia terminal, titulación, desempeño docente y satisfacción estudiantil.',
-  },
-]
+const ICONS = ['📋', '✅', '📈']
 
-export default function AseguramientoCalidadPage() {
+export default async function AseguramientoCalidadPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.aseguramiento-calidad')
+  const areas = ICONS.map((icon, i) => ({ icon, title: t(`areas.a${i + 1}.title`), description: t(`areas.a${i + 1}.description`) }))
+
   return (
     <AcademicSectionPage
-      title="Aseguramiento de la Calidad"
-      label="Academia · Calidad"
-      description="La UNC está comprometida con la mejora continua de sus estándares educativos. El área de aseguramiento de la calidad coordina procesos de evaluación, acreditación y desarrollo institucional."
-      breadcrumb={[{ label: 'Academia', href: '#' }]}
-      areas={AREAS}
-      areasTitle="Procesos clave"
+      title={t('hero.title')}
+      label={t('hero.label')}
+      description={t('hero.description')}
+      breadcrumb={[{ label: t('breadcrumb'), href: '#' }]}
+      areas={areas}
+      areasTitle={t('areasTitle')}
       contactEmail="secgral@unc.edu.py"
-      contactLabel="¿Consultas sobre acreditación o calidad?"
+      contactLabel={t('contactLabel')}
     />
   )
 }

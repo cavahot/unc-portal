@@ -1,7 +1,6 @@
 {
-  "pageTitle": "Transparência — UNC",
+  "pageTitle": "Transparência",
   "pageDescription": "Informações institucionais de cumprimento legal segundo as Leis N° 5.189/2014 e N° 5.282/2014 da Universidade Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
   "heading": "Transparência Institucional",
   "description": "Em cumprimento às Leis de Transparência da República do Paraguai, a Universidade Nacional de Concepción disponibiliza à cidadania as seguintes informações institucionais.",
   "ley5189": {
@@ -15,5 +14,26 @@
   "viewLabel": "Ver documentos",
   "progress": "{withDocs} de {total} categorias com documentos publicados",
   "pending": "Ainda não há documentos publicados.",
-  "unavailable": "Não foi possível carregar as informações. Tente novamente em alguns minutos."
+  "unavailable": "Não foi possível carregar as informações. Tente novamente em alguns minutos.",
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Transparência"
+  },
+  "docs": {
+    "title": "Informação por lei",
+    "intro": "Os documentos são publicados conforme o que cada lei exige. Escolha a que lhe interessa."
+  },
+  "infoPublica": {
+    "heading": "Acesso à informação pública",
+    "description": "Como solicitar informação à universidade: formas de solicitação, dados exigidos e portal oficial do Governo.",
+    "action": "Ver como solicitar",
+    "status": "{count} formas de apresentar o pedido"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
+  }
 }

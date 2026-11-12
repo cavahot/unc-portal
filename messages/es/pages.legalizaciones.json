@@ -1,59 +1,60 @@
 {
   "meta": {
-    "title": "Legalizaciones | Universidad Nacional de Concepción",
-    "description": "Servicio de autenticación y legalización de documentos universitarios de la UNC: diplomas, certificados de estudios y notas."
-  },
-  "breadcrumb": { "home": "Inicio", "page": "Legalizaciones" },
-  "hero": {
-    "label": "Secretaría General",
     "title": "Legalizaciones",
-    "description": "Autenticación y legalización de documentos universitarios"
+    "description": "Documentos que debe presentar, arancel, plazo y pasos para legalizar en la Universidad Nacional de Concepción títulos, certificados de estudios y expedientes de ingreso."
   },
-  "services": {
-    "label": "Servicios disponibles",
-    "title": "¿Qué documentos puedo legalizar?",
-    "description": "La Secretaría General de la UNC ofrece el servicio de legalización de los documentos emitidos por la institución para uso oficial a nivel nacional e internacional.",
-    "s1": {
-      "eyebrow": "Servicio 01",
-      "title": "Legalización de Diplomas",
-      "description": "Autenticación oficial del diploma de grado o posgrado emitido por la UNC, para uso ante organismos públicos, empleadores e instituciones del exterior.",
-      "req1": "Diploma original emitido por la UNC",
-      "req2": "Cédula de identidad vigente del titular",
-      "req3": "Fotocopia simple del diploma",
-      "req4": "Formulario de solicitud completo",
-      "req5": "Comprobante de pago del arancel vigente",
-      "reqsLabel": "Requisitos"
-    },
-    "s2": {
-      "eyebrow": "Servicio 02",
-      "title": "Legalización de Certificados de Estudios",
-      "description": "Certificación oficial del historial académico del estudiante, con sello y firma de la autoridad competente de la institución.",
-      "req1": "Certificado de estudios original emitido por la UNC",
-      "req2": "Cédula de identidad vigente",
-      "req3": "Formulario de solicitud completo",
-      "req4": "Comprobante de pago del arancel vigente",
-      "reqsLabel": "Requisitos"
-    },
-    "s3": {
-      "eyebrow": "Servicio 03",
-      "title": "Legalización de Notas / Calificaciones",
-      "description": "Autenticación del certificado analítico de calificaciones para uso en procesos de admisión, becas o reconocimiento de estudios en el exterior.",
-      "req1": "Certificado analítico de calificaciones original",
-      "req2": "Cédula de identidad vigente",
-      "req3": "Formulario de solicitud completo",
-      "req4": "Comprobante de pago del arancel vigente",
-      "reqsLabel": "Requisitos"
-    },
-    "requestBtn": "Solicitar"
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Legalizaciones"
   },
-  "contact": {
-    "label": "Contacto",
-    "title": "Información de atención",
-    "description": "Para consultas sobre el proceso de legalización de documentos, dirigirse personalmente a:",
-    "office": "Secretaría General",
-    "address1": "Rectorado — Universidad Nacional de Concepción",
-    "address2": "Concepción, Paraguay",
-    "hours": "Horario de atención: lunes a viernes, de 07:00 a 13:00 hs.",
-    "link": "Ver todos los trámites"
+  "hero": {
+    "titulo": "Legalización de documentos",
+    "updated": "Última actualización: {date}"
+  },
+  "facts": {
+    "label": "Datos del trámite",
+    "plazo": "Plazo",
+    "plazoValue": "{min} a {max} horas hábiles",
+    "arancel": "Arancel",
+    "arancelPending": "Consulte el monto vigente",
+    "arancelLink": "Ver los aranceles del Rectorado",
+    "unidad": "Unidad responsable"
+  },
+  "index": {
+    "label": "Elija la categoría de su documento",
+    "countOne": "1 requisito",
+    "countOther": "{count} requisitos"
+  },
+  "documents": {
+    "title": "Qué documentos presentar",
+    "intro": "Los requisitos cambian según la categoría del documento que quiere legalizar. Identifique su caso y reúna esos documentos antes de presentarse.",
+    "listLabel": "Requisitos: {tipo}"
+  },
+  "procedure": {
+    "title": "Paso a paso",
+    "intro": "La legalización se tramita en {unidad}.",
+    "total": "Tiempo total estimado: {min} a {max} horas hábiles.",
+    "step": "Paso {number}",
+    "responsible": "Responsable"
+  },
+  "states": {
+    "empty": "La información de este trámite todavía no está publicada. Vuelva a consultar más tarde o comuníquese con la Universidad.",
+    "unavailable": "No pudimos cargar la información de este trámite en este momento. Intente de nuevo en unos minutos.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema al cargar la información del trámite. Puede intentarlo de nuevo o comunicarse con la Universidad.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  },
+  "cta": {
+    "title": "¿Necesita inscribir un título?",
+    "description": "La inscripción de títulos es otro trámite. También puede consultar los aranceles del Rectorado o escribirnos.",
+    "titulos": "Ver inscripción de títulos",
+    "aranceles": "Aranceles del Rectorado",
+    "contacto": "Contacto"
   }
 }

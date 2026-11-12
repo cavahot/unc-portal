@@ -1,56 +1,33 @@
+// Bienestar Institucional: título, descripción y servicios salen del catálogo por idioma (pages.bienestar-institucional);
+// sin textos de contenido en el código. Español en «usted» (antes usaba voseo).
+// Límite: el catálogo es editorial (no CMS); el gn está pendiente de revisión nativa.
 import type { Metadata } from 'next'
 import AcademicSectionPage from '@/components/pages/AcademicSectionPage'
+import { getT } from '@/lib/i18n/server'
 
-export const metadata: Metadata = {
-  title: 'Bienestar Institucional',
-  description:
-    'El área de Bienestar Institucional de la UNC promueve la salud integral, la inclusión y la permanencia de estudiantes, docentes y funcionarios en el ámbito universitario.',
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.bienestar-institucional')
+  return { title: t('meta.title'), description: t('meta.description') }
 }
 
-const AREAS = [
-  {
-    icon: '🧠',
-    title: 'Salud mental',
-    description:
-      'Servicio de acompañamiento psicológico gratuito para estudiantes, docentes y funcionarios. Atención individual y talleres de manejo del estrés y bienestar emocional.',
-  },
-  {
-    icon: '♿',
-    title: 'Inclusión y accesibilidad',
-    description:
-      'Programas y adaptaciones curriculares para garantizar la plena participación de personas con discapacidad en la vida universitaria.',
-  },
-  {
-    icon: '🎒',
-    title: 'Becas y apoyo económico',
-    description:
-      'Gestión de becas nacionales e internacionales, comedores universitarios y apoyos económicos para estudiantes en situación de vulnerabilidad.',
-  },
-  {
-    icon: '🏃',
-    title: 'Deporte y recreación',
-    description:
-      'Actividades deportivas, torneos inter-facultades y espacios de esparcimiento para fomentar la vida saludable en la comunidad universitaria.',
-  },
-  {
-    icon: '🤝',
-    title: 'Convivencia universitaria',
-    description:
-      'Protocolos de prevención de violencia y acoso, mediación de conflictos y promoción de un clima institucional inclusivo y respetuoso.',
-  },
-]
+const ICONS = ['🧠', '♿', '🎒', '🏃', '🤝']
 
-export default function BienestarInstitucionalPage() {
+export default async function BienestarInstitucionalPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.bienestar-institucional')
+  const areas = ICONS.map((icon, i) => ({ icon, title: t(`areas.a${i + 1}.title`), description: t(`areas.a${i + 1}.description`) }))
+
   return (
     <AcademicSectionPage
-      title="Bienestar Institucional"
-      label="Academia · Bienestar"
-      description="La UNC cuida a su comunidad. El área de Bienestar Institucional acompaña a estudiantes, docentes y funcionarios en su desarrollo integral, promoviendo salud, inclusión y calidad de vida dentro del campus."
-      breadcrumb={[{ label: 'Academia', href: '#' }]}
-      areas={AREAS}
-      areasTitle="Servicios disponibles"
+      title={t('hero.title')}
+      label={t('hero.label')}
+      description={t('hero.description')}
+      breadcrumb={[{ label: t('breadcrumb'), href: '#' }]}
+      areas={areas}
+      areasTitle={t('areasTitle')}
       contactEmail="bienestar@unc.edu.py"
-      contactLabel="¿Necesitás apoyo o información sobre un servicio?"
+      contactLabel={t('contactLabel')}
     />
   )
 }

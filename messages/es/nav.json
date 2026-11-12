@@ -29,6 +29,8 @@
     "academia": "Academia"
   },
   "institutional": {
+    "quienesSomos": "Quiénes somos",
+    "transparencia": "Transparencia",
     "historia": "Historia",
     "misionVisionValores": "Misión, Visión y Valores",
     "marcoLegal": "Marco Legal",
@@ -57,13 +59,15 @@
     "porDependencia": "Contactos por dependencia"
   },
   "academia": {
+    "docencia": "Docencia",
     "direccionAcademica": "Dirección General Académica",
     "aseguramientoCalidad": "Aseguramiento de la Calidad",
     "investigacion": "Investigación",
     "extensionVinculacion": "Extensión y Vinculación",
     "bienestarInstitucional": "Bienestar Institucional",
     "revistasAcademicas": "Revistas Académicas",
-    "bibliotecaDigital": "Biblioteca Digital"
+    "bibliotecaDigital": "Biblioteca Digital",
+    "tesisAcademicas": "Tesis Académicas"
   },
   "footer": {
     "institutional": {

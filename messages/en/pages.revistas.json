@@ -1,8 +1,29 @@
 {
-  "pageTitle": "Journals — UNC",
+  "pageTitle": "Journals — National University of Concepción",
   "pageDescription": "Academic and scientific journals of the National University of Concepción.",
-  "portalLabel": "UNC Portal",
-  "heading": "UNC Academic Journals",
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Journals"
+  },
+  "heading": "Academic journals",
   "subheading": "Academic and scientific publications of the National University of Concepción.",
-  "empty": "No journals available at this time."
+  "desde": "Since {year}",
+  "list": {
+    "label": "Journals",
+    "visit": "Go to the journal",
+    "newTab": "(external site, opens in a new tab)"
+  },
+  "states": {
+    "unavailable": "We could not load the journals right now. Please try again in a few minutes or contact us.",
+    "empty": "No journals have been published yet. To ask about them, please contact us.",
+    "retry": "Try again",
+    "contact": "Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
+  }
 }

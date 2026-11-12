@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "title": "Garantia da Qualidade",
+    "description": "A UNC promove a melhoria contínua de seus processos acadêmicos e institucionais por meio de sistemas de avaliação, acreditação e garantia da qualidade educacional."
+  },
+  "hero": {
+    "title": "Garantia da Qualidade",
+    "label": "Academia · Qualidade",
+    "description": "A UNC está comprometida com a melhoria contínua de seus padrões educacionais. A área de garantia da qualidade coordena processos de avaliação, acreditação e desenvolvimento institucional."
+  },
+  "breadcrumb": "Academia",
+  "contactLabel": "Dúvidas sobre acreditação ou qualidade?",
+  "areasTitle": "Processos-chave",
+  "areas": {
+    "a1": {
+      "title": "Autoavaliação institucional",
+      "description": "Processos periódicos de autoavaliação que identificam pontos fortes, fracos e oportunidades de melhoria nas funções essenciais da universidade."
+    },
+    "a2": {
+      "title": "Acreditação de cursos",
+      "description": "Apoio às faculdades nos processos de acreditação nacional e internacional perante órgãos como ANEAES e ARCUSUR."
+    },
+    "a3": {
+      "title": "Indicadores de qualidade",
+      "description": "Sistema de indicadores para o acompanhamento e a avaliação da qualidade educacional: eficiência terminal, titulação, desempenho docente e satisfação estudantil."
+    }
+  }
+}

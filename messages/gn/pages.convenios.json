@@ -1,11 +1,11 @@
 {
   "meta": {
     "nacional": {
-      "title": "Convenio nacional-kuéra | Universidad Nacional de Concepción",
+      "title": "Convenio nacional-kuéra",
       "description": "Convenios Universidad Nacional de Concepción ofirmava Paraguái instituciones ha empresas ndive, peteĩteĩ kuatia ndive."
     },
     "internacional": {
-      "title": "Convenio internacional-kuéra | Universidad Nacional de Concepción",
+      "title": "Convenio internacional-kuéra",
       "description": "Convenios Universidad Nacional de Concepción oguerekóva ambue tetã universidades ha instituciones ndive."
     }
   },
@@ -79,7 +79,7 @@
       "nacional": "Convenio nacional-kuéra ary ñemboheraguapy rupi, ipyahuvéva guive itujavéva peve",
       "internacional": "Convenio internacional-kuéra ary ñemboheraguapy rupi, ipyahuvéva guive itujavéva peve"
     },
-    "countOne": "1 convenio",
+    "countOne": "1 ñe'ẽme'ẽ",
     "countOther": "{count} convenio",
     "notRecorded": "Ndaipóri marandu",
     "noObjective": "Ndaipóri jehupytyrã oñeñongatúva"

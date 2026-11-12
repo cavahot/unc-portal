@@ -1,0 +1,16 @@
+{
+  "notFound": {
+    "code": "Error 404",
+    "title": "We could not find this page",
+    "body": "The address you entered does not exist on the portal. Check the URL or browse from the home page.",
+    "home": "Go to home",
+    "news": "See news"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred while loading the page. You can try again or contact the University.",
+    "retry": "Try again",
+    "contact": "Go to Contact",
+    "reference": "Support reference: {digest}"
+  }
+}

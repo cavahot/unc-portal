@@ -1,42 +1,43 @@
 {
   "meta": {
-    "title": "Calendário Acadêmico | Universidad Nacional de Concepción",
+    "title": "Calendário Acadêmico",
     "description": "Calendário acadêmico oficial da Universidad Nacional de Concepción: inscrições, provas parciais, finais e datas-chave."
   },
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Calendário acadêmico"
+  },
   "hero": {
-    "label": "Gestão acadêmica",
     "title": "Calendário acadêmico",
-    "description": "Datas-chave do ano acadêmico 2026 da Universidad Nacional de Concepción."
+    "description": "Datas-chave do ano acadêmico de {anio} da Universidade Nacional de Concepción.",
+    "descriptionGeneric": "Datas-chave do ano acadêmico da Universidade Nacional de Concepción."
   },
-  "semesters": {
-    "s1": {
-      "label": "1º Semestre 2026",
-      "e1": { "fecha": "2 mar", "descripcion": "Início das aulas" },
-      "e2": { "fecha": "16–27 mar", "descripcion": "Período de matrícula tardia" },
-      "e3": { "fecha": "5–16 mai", "descripcion": "Provas parciais — 1ª chamada" },
-      "e4": { "fecha": "23 jun – 4 jul", "descripcion": "Provas parciais — 2ª chamada" },
-      "e5": { "fecha": "11 jul", "descripcion": "Encerramento do semestre" }
-    },
-    "s2": {
-      "label": "2º Semestre 2026",
-      "e1": { "fecha": "3 ago", "descripcion": "Início das aulas" },
-      "e2": { "fecha": "17–28 ago", "descripcion": "Período de matrícula tardia" },
-      "e3": { "fecha": "5–16 out", "descripcion": "Provas parciais — 1ª chamada" },
-      "e4": { "fecha": "23 nov – 4 dez", "descripcion": "Provas parciais — 2ª chamada" },
-      "e5": { "fecha": "11 dez", "descripcion": "Encerramento do semestre" }
-    }
+  "eventos": {
+    "inicio-clases": "Início das aulas",
+    "inscripcion-tardia": "Período de matrícula tardia",
+    "parciales-1": "Provas parciais — 1ª chamada",
+    "parciales-2": "Provas parciais — 2ª chamada",
+    "cierre-semestre": "Encerramento do semestre"
   },
-  "finals": {
+  "examenes": {
     "title": "Épocas de exames finais",
-    "headerPeriod": "Período",
-    "headerDates": "Datas",
-    "f1": { "periodo": "Dezembro 2025", "fechas": "1 – 19 dez" },
-    "f2": { "periodo": "Fevereiro 2026", "fechas": "2 – 20 fev" },
-    "f3": { "periodo": "Julho 2026", "fechas": "14 jul – 1 ago" },
-    "f4": { "periodo": "Dezembro 2026", "fechas": "1 – 19 dez" }
+    "periodo": "Período",
+    "fechas": "Datas"
   },
   "note": {
-    "label": "Nota: ",
     "body": "As datas são orientativas e podem ser alteradas por resolução do Conselho Superior. Sempre confirme com sua faculdade antes de se inscrever nos exames."
+  },
+  "states": {
+    "unavailable": "Não foi possível carregar o calendário agora. Tente novamente em alguns minutos ou entre em contato conosco.",
+    "empty": "Ainda não há datas publicadas. Para consultá-las, entre em contato com a Secretaria Acadêmica.",
+    "retry": "Tentar novamente",
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
   }
 }

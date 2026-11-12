@@ -1,12 +1,9 @@
 {
-  "pageTitle": "Noticias - Universidad Nacional de Concepción",
+  "pageTitle": "Noticias",
   "pageDescription": "Novedades y comunicados institucionales de la UNC.",
-  "portalLabel": "Portal UNC",
   "heading": "Noticias",
   "subheading": "Novedades y comunicados de la Universidad Nacional de Concepción",
   "empty": "No hay noticias disponibles en este momento.",
-  "home": "Inicio",
-  "gallery": "Galería",
   "backToNews": "Ver más noticias",
   "draftBanner": "Vista previa — esta noticia no está publicada",
   "draftExit": "Salir del preview",
@@ -17,5 +14,31 @@
     "extension": "Extensión",
     "eventos": "Eventos",
     "comunicados": "Comunicados"
+  },
+  "pageTitlePaged": "{title} — Página {page}",
+  "listLabel": "Lista de noticias",
+  "count": "{count, plural, one {# noticia} other {# noticias}} · página {page} de {total}",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Noticias"
+  },
+  "tagsLabel": "Etiquetas",
+  "pagination": {
+    "label": "Paginación de noticias",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "page": "Página {page}"
+  },
+  "states": {
+    "unavailable": "No pudimos cargar las noticias en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

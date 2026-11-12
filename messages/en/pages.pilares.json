@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "docencia": {
+      "title": "Teaching",
+      "description": "Undergraduate and graduate teaching at the National University of Concepción."
+    },
+    "investigacion": {
+      "title": "Research",
+      "description": "Research and development at the National University of Concepción."
+    },
+    "extension": {
+      "title": "Extension",
+      "description": "University extension and community outreach at the National University of Concepción."
+    }
+  },
+  "titulos": {
+    "docencia": "Teaching",
+    "investigacion": "Research",
+    "extension": "Extension"
+  },
+  "inicio": "Home",
+  "enConstruccion": "Under construction",
+  "enConstruccionTexto": "We are preparing this section. Its content will be published soon.",
+  "volver": "Back to home",
+  "estadisticas": "In figures"
+}

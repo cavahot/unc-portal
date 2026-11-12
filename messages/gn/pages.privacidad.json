@@ -1,41 +1,30 @@
 {
   "meta": {
-    "title": "Privacidad Política — Universidad Nacional de Concepción",
+    "title": "Privacidad Política",
     "description": "Universidad Nacional de Concepción rehegua privacidad ha datos personales ñangareko política."
   },
-  "hero": {
-    "label": "Legal",
-    "title": "Privacidad Política",
-    "lastUpdated": "Ipyahúva: 2026 jasypoapy guivegua"
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Política de privacidad"
   },
-  "sections": {
-    "s1": {
-      "title": "Mba'apohára",
-      "content": "Universidad Nacional de Concepción (UNC), Campus Universitario-pe oĩva, Concepción táva, Paraguái República, ha'e datos personales ñangareko mba'apohára ko portal rupi oñemboguapyva."
-    },
-    "s2": {
-      "title": "Mba'e oñemboguapyva",
-      "content": "Ko portal ikatu omboguapy navegación datos técnicoguéra (IP dirección, kundahára mba'e, arapypegua página) estadística ha pytyvõ porã hag̃ua. Datos personales identificable ani oñemboguapy usuario eñemomba'e mboyve."
-    },
-    "s3": {
-      "title": "Mba'e hag̃ua oñemboguapy",
-      "content": "Datos oñemboguapyva oñeiporu ete ñemboarandúpe navegación porã hag̃ua, estadística ha portal mba'apohára hag̃ua. Ani oñeiporu mba'e viru hag̃ua ha ani oñemomba'e ambuépe."
-    },
-    "s4": {
-      "title": "Léi rehegua mba'aporã",
-      "content": "Datos ñangareko oñemba'apo Léi N° 1682/01 \"Información privada rehegua\" ha MITIC ohechakuaáva reheve."
-    },
-    "s5": {
-      "title": "Usuario derecho",
-      "content": "Usuario oĩ iñe'ẽ hag̃ua, oñemomba'e ha oñembohavy hag̃ua idatos personales, ha ani oñeiporu hag̃ua, Paraguái léi ojurujáva reheve. Ko derecho oiporu hag̃ua, eñomongeta Secretaría General UNC pegua."
-    },
-    "s6": {
-      "title": "Cookies",
-      "content": "Ko portal ikatu oiporu cookies técnicas portal mba'apohára hag̃ua. Ani oñeiporu rastreador cookies ha publicidad ambuégui. Ikatu remombyry nde kundahára cookies ani hag̃ua, upépe portal mba'aporãkue oñembohavy hag̃ua."
-    },
-    "s7": {
-      "title": "Ñomongeta",
-      "content": "Privacidad ha datos personales rehegua ñeporandu hag̃ua, emoñe'ẽ secgral@unc.edu.py-pe térã eho Secretaría General UNC Campus Universitario-pe."
-    }
+  "hero": {
+    "title": "Privacidad Política",
+    "description": "Cómo la Universidad Nacional de Concepción trata los datos personales que recibe a través de este portal."
+  },
+  "updated": "Última actualización: {date}",
+  "toc": "En esta página",
+  "fallbackNotice": "Este texto todavía no está disponible en su idioma y se muestra en español.",
+  "states": {
+    "unavailable": "No pudimos cargar este contenido en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "empty": "Todavía no hay contenido publicado en esta página. Para consultarlo, comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

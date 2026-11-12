@@ -62,16 +62,28 @@ export async function POST(request: NextRequest) {
       // PERF-DB: lista de slugs que consume getNewsSlugs (generateStaticParams).
       'noticias-slugs',
       'navegacion',
+      // PILARES-01: tarjetas de la portada y páginas /docencia, /investigacion y /extension.
+      'pilares-academicos',
       'transparencia',
       'revistas',
       'tesis',
       'enlaces-externos',
       'facultades',
       'carreras',
+      'calendario-academico',
+      'dependencias-contacto',
+      'politica-privacidad',
+      'declaracion-accesibilidad',
+      'legalizaciones',
+      'tramites',
       'convenios',
       'tribunal-miembros',
       'tribunal-documentos',
       'aranceles-rectorado',
+      // TITULOS-01: contenido de /titulos (global del CMS; el CMS la envía al guardar el global).
+      'titulos-inscripcion',
+      'informacion-publica',
+      'institucional',
       // FAC-01: aranceles de cada facultad (el CMS la envía al guardar/borrar un arancel de facultad).
       'aranceles-facultad',
       'estadisticas',

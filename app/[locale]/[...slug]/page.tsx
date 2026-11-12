@@ -2,19 +2,22 @@ import { cookies, draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { getPageBySlug } from '@/lib/cms/queries/pages';
 import { BlockRenderer } from '@/lib/cms/blocks/renderer';
+import { getT } from '@/lib/i18n/server';
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string[] }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const fullSlug = slug.join('/');
   const pagina = await getPageBySlug(fullSlug).catch(() => null);
 
   if (!pagina) {
+    // El título de la pestaña del 404 sale del catálogo por idioma (antes era un literal en español).
+    const t = await getT(locale, 'pages.estados');
     return {
-      title: 'Página no encontrada',
+      title: t('notFound.title'),
     };
   }
 

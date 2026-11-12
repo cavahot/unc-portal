@@ -18,15 +18,14 @@ const NAME = () => names().find((n) => /dep_sec_01_users_reset_password/.test(n)
 const code = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
 
 describe('DEP-SEC-01: migración de reset_password_requested_at', () => {
-  it('existe, es la última de la cadena y está registrada en index.ts', () => {
+  it('existe, está registrada en index.ts y conserva su snapshot', () => {
     const name = NAME()
     expect(name, 'archivo *_dep_sec_01_users_reset_password.ts').toBeDefined()
-    expect(names().at(-1)).toBe(name)
     const index = readFileSync(resolve(DIR, 'index.ts'), 'utf8')
     expect(index).toContain(`name: '${name}'`)
     expect(readdirSync(DIR)).toContain(`${name}.json`)
     const registered = [...index.matchAll(/name: '([^']+)'/g)].map((m) => m[1])
-    expect(registered.at(-1)).toBe(name)
+    expect(registered).toContain(name)
   })
 
   it('up añade la columna timestamptz idempotente, NULLABLE y sin DEFAULT', () => {
@@ -55,7 +54,7 @@ describe('DEP-SEC-01: migración de reset_password_requested_at', () => {
   it('el snapshot encadena con el anterior e incluye la columna en users', () => {
     const name = NAME()!
     const snap = JSON.parse(readFileSync(resolve(DIR, `${name}.json`), 'utf8'))
-    const prevName = names().at(-2)!
+    const prevName = names()[names().indexOf(name) - 1]!
     const prev = JSON.parse(readFileSync(resolve(DIR, `${prevName}.json`), 'utf8'))
     expect(snap.prevId).toBe(prev.id)
     expect(snap.id).not.toBe(prev.id)

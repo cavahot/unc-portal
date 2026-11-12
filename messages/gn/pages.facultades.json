@@ -1,18 +1,11 @@
 {
-  "pageTitle": "Facultad — UNC",
+  "pageTitle": "Facultad",
   "pageDescription": "Eikuaa facultad Universidad Nacional de Concepción pegua.",
-  "portalLabel": "Tembiapo Apohára",
   "heading": "Ore Facultad",
   "subheading": "Tembiapo apohára Universidad Nacional de Concepción pegua",
   "verCarreras": "Ehecha aprenduka",
   "carrerasCount": "{count, plural, one {# aprenduka} other {# aprenduka}}",
   "empty": "Ndoikói facultad.",
-  "home": "Óga",
-  "facultades": "Facultad",
-  "decano": "Decano/a",
-  "contacto": "Ñomongeta",
-  "backToFacultades": "Jevy Facultad-pe",
-  "carrerasTitle": "Aprenduka ofrece",
   "detalle": {
     "meta": {
       "description": "Aprenduka, posgrado, decanato, mboimba ha ñomongeta {nombre} Universidad Nacional de Concepción pegua."
@@ -40,7 +33,7 @@
       "grado": "Aprenduka",
       "posgrado": "Posgrado",
       "decanato": "Decanato",
-      "acreditacion": "Acreditación",
+      "acreditacion": "Ñemoneĩ calidad rehegua",
       "aranceles": "Mboimba",
       "contacto": "Ñomongeta"
     },
@@ -54,8 +47,8 @@
       "posgradoIntro": "Especialización ha CONES resolución.",
       "resLabel": "Res. CONES",
       "resOpen": "CONES resolución {numero} (kuatia Google Drive-pe, ojeipe'a ambue pestaña-pe)",
-      "sede": "Sede",
-      "modalidad": "Modalidad",
+      "sede": "Tenda",
+      "modalidad": "Aporeko",
       "duracion": "{count, plural, one {# ary} other {# ary}}",
       "titulo": "Título",
       "perfil": "Egresado perfil",
@@ -68,7 +61,7 @@
       "correo": "Ehai decanato-pe"
     },
     "acreditacion": {
-      "title": "Acreditación",
+      "title": "Ñemoneĩ calidad rehegua",
       "badge": "{organismo} omoneĩva",
       "vigencia": "Oĩporã {anio} peve",
       "fuente": "Ehecha ñepyrũha"
@@ -76,9 +69,10 @@
     "aranceles": {
       "title": "Mboimba",
       "intro": "Viru guaraníes-pe facultad ohechaukáva.",
+      "limite": "Pe kuatia ndohechaukái araka'e peve ovale ko'ã montante; emoneĩ pe valor facultad ndive repaga mboyve.",
       "concept": "Mba'e",
       "amount": "Viru",
-      "currencyName": "guaraníes",
+      "currencyName": "guaraní",
       "caption": "{grupo}: mba'e ha viru",
       "grupos": {
         "multas": "Mba'e Jepysore ha ambue derecho",
@@ -94,7 +88,7 @@
       "telefono": "Pumbyry",
       "correo": "Ñe'ẽveve",
       "sitio": "Ñanduti renda",
-      "redes": "Redes sociales",
+      "redes": "Ñanduti joajuhakuéra",
       "nuevaPestana": "(ojeipe'a ambue pestaña-pe)",
       "redesNombres": {
         "facebook": "Facebook",
@@ -106,5 +100,25 @@
     "states": {
       "unavailable": "Ndaikatúi ojehupi facultad marandu ko'ág̃a. Eñeha'ã jey upéi."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Facultades"
+  },
+  "lista": {
+    "title": "Unidades académicas",
+    "intro": "Elija una facultad para ver sus carreras, autoridades, aranceles y contacto."
+  },
+  "states": {
+    "unavailable": "No pudimos cargar las facultades en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

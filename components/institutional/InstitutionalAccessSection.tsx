@@ -1,54 +1,61 @@
-import Link from 'next/link';
+// HOME-STATES-01: «Acceso ciudadano» del inicio. Qué hace: cinco accesos institucionales con el texto de los mensajes
+// (pages.home.institutionalAccess) y enlaces que conservan el idioma. Por qué: antes el texto estaba fijo en español
+// (con voseo) y el Link de next/link llevaba a quien eligió otro idioma a la versión en español. Usa el fondo claro del
+// sistema visual en lugar del bloque oscuro anterior.
+// Límite: las rutas son fijas (son páginas del portal); los textos se editan en los mensajes, no en el CMS.
+import type { ReactNode } from 'react';
+import { getLocale } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
+import { getT } from '@/lib/i18n/server';
 
 /* ── Icons ─────────────────────────────────────────────── */
 
-function ShieldCheckIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="h-7 w-7">
+const svgProps = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.6,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+  'aria-hidden': true,
+  className: 'h-7 w-7',
+};
+
+const ICONS: Record<string, ReactNode> = {
+  transparencia: (
+    <svg {...svgProps}>
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       <polyline points="9 12 11 14 15 10" />
     </svg>
-  );
-}
-
-function EyeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="h-7 w-7">
+  ),
+  infoPublica: (
+    <svg {...svgProps}>
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
-  );
-}
-
-function GraduationCapIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="h-7 w-7">
+  ),
+  solicitarTitulo: (
+    <svg {...svgProps}>
       <polygon points="12 2 22 8.5 12 15 2 8.5 12 2" />
       <line x1="12" y1="15" x2="12" y2="22" />
       <path d="M20 11v5" />
     </svg>
-  );
-}
-
-function BookOpenIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="h-7 w-7">
+  ),
+  biblioteca: (
+    <svg {...svgProps}>
       <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
       <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
     </svg>
-  );
-}
-
-function JournalIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="h-7 w-7">
+  ),
+  revistas: (
+    <svg {...svgProps}>
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
       <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
       <line x1="9" y1="7" x2="15" y2="7" />
       <line x1="9" y1="11" x2="15" y2="11" />
     </svg>
-  );
-}
+  ),
+};
 
 function ArrowRight() {
   return (
@@ -60,138 +67,77 @@ function ArrowRight() {
 
 /* ── Data ───────────────────────────────────────────────── */
 
+// Solo rutas y orden; los textos viven en los mensajes (clave = `id`).
 const ACCESS_ITEMS = [
-  {
-    id: 'transparencia',
-    href: '/transparencia',
-    badge: 'Ley 5.189 y 5.282',
-    title: 'Transparencia Institucional',
-    description:
-      'Accedé a la información pública sobre remuneraciones, presupuesto, patrimonio y gestión institucional conforme a la normativa vigente.',
-    cta: 'Ver documentos',
-    icon: ShieldCheckIcon,
-    accent: 'from-emerald-500/20 to-teal-600/10',
-    iconColor: 'text-emerald-400',
-    featured: true,
-  },
-  {
-    id: 'info-publica',
-    href: '/informacion-publica',
-    badge: 'Acceso ciudadano',
-    title: 'Información Pública',
-    description:
-      'Solicitar información al Estado conforme a la Ley de Libre Acceso.',
-    cta: 'Solicitar información',
-    icon: EyeIcon,
-    accent: 'from-sky-500/20 to-blue-600/10',
-    iconColor: 'text-sky-400',
-    featured: false,
-  },
-  {
-    id: 'solicitar-titulo',
-    href: '/solicitar-titulo',
-    badge: 'Trámite académico',
-    title: 'Solicitar Título',
-    description:
-      'Iniciá el trámite de obtención y legalización de tu diploma académico.',
-    cta: 'Iniciar trámite',
-    icon: GraduationCapIcon,
-    accent: 'from-violet-500/20 to-purple-600/10',
-    iconColor: 'text-violet-400',
-    featured: false,
-  },
-  {
-    id: 'biblioteca',
-    href: '/biblioteca',
-    badge: 'Investigación',
-    title: 'Biblioteca & Tesis',
-    description:
-      'Consultá el repositorio de tesis académicas y recursos bibliográficos digitales.',
-    cta: 'Explorar repositorio',
-    icon: BookOpenIcon,
-    accent: 'from-amber-500/20 to-orange-600/10',
-    iconColor: 'text-amber-400',
-    featured: false,
-  },
-  {
-    id: 'revistas',
-    href: '/revistas',
-    badge: 'Publicaciones',
-    title: 'Revistas Académicas',
-    description:
-      'Revistas científicas y académicas publicadas por las facultades de la UNC.',
-    cta: 'Ver publicaciones',
-    icon: JournalIcon,
-    accent: 'from-rose-500/20 to-pink-600/10',
-    iconColor: 'text-rose-400',
-    featured: false,
-  },
-];
+  { id: 'transparencia', href: '/transparencia', featured: true },
+  { id: 'infoPublica', href: '/informacion-publica', featured: false },
+  { id: 'solicitarTitulo', href: '/solicitar-titulo', featured: false },
+  { id: 'biblioteca', href: '/biblioteca', featured: false },
+  { id: 'revistas', href: '/revistas', featured: false },
+] as const;
+
+interface ItemText {
+  badge: string;
+  title: string;
+  description: string;
+  cta: string;
+}
+
+type Item = { id: string; href: string; featured: boolean; text: ItemText };
 
 /* ── Card components ────────────────────────────────────── */
 
-function FeaturedCard({ item }: { item: typeof ACCESS_ITEMS[number] }) {
-  const Icon = item.icon;
+const FOCUS =
+  'focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#00A300]';
+
+function FeaturedCard({ item }: { item: Item }) {
   return (
     <Link
       href={item.href}
-      className="group relative col-span-1 flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/30 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(52,211,153,0.08)] md:col-span-2 lg:col-span-1 xl:col-span-2 xl:row-span-2"
+      className={`group relative col-span-1 flex flex-col overflow-hidden rounded-2xl border border-[#37D448]/60 bg-[#F4F7F5] p-8 shadow-[0_18px_48px_rgba(7,42,15,0.08)] transition-[border-color,box-shadow] duration-300 hover:border-[#37D448] hover:shadow-[0_30px_65px_rgba(0,71,0,0.17)] md:col-span-2 lg:col-span-1 xl:col-span-2 xl:row-span-2 ${FOCUS}`}
     >
-      <div className={`pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br ${item.accent} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
-
-      <div className="relative flex items-start justify-between gap-4">
-        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/[0.06] ${item.iconColor} ring-1 ring-white/10`}>
-          <Icon />
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#00A300] text-white">
+          {ICONS[item.id]}
         </div>
-        <span className="mt-1 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-widest text-white/50">
-          {item.badge}
+        <span className="mt-1 rounded-full border border-[#004700]/20 bg-white px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-widest text-[#3E4A45]">
+          {item.text.badge}
         </span>
       </div>
 
-      <div className="relative mt-6 flex-1">
-        <h3 className="text-xl font-bold leading-snug text-white group-hover:text-emerald-300 transition-colors duration-300">
-          {item.title}
-        </h3>
-        <p className="mt-3 text-sm leading-relaxed text-white/50">
-          {item.description}
-        </p>
+      <div className="mt-6 flex-1">
+        <h3 className="text-xl font-bold leading-snug text-[#004700]">{item.text.title}</h3>
+        <p className="mt-3 text-sm leading-relaxed text-[#3E4A45]">{item.text.description}</p>
       </div>
 
-      <div className={`relative mt-8 flex items-center gap-2 text-sm font-semibold ${item.iconColor}`}>
-        {item.cta}
+      <div className="mt-8 flex items-center gap-2 text-sm font-semibold text-[#006B00]">
+        {item.text.cta}
         <ArrowRight />
       </div>
     </Link>
   );
 }
 
-function StandardCard({ item }: { item: typeof ACCESS_ITEMS[number] }) {
-  const Icon = item.icon;
+function StandardCard({ item }: { item: Item }) {
   return (
     <Link
       href={item.href}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/[0.07] hover:shadow-[0_0_30px_rgba(255,255,255,0.04)]"
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border border-[#D7E0DB] bg-[#F4F7F5] p-6 transition-[border-color,box-shadow] duration-300 hover:border-[#37D448] hover:shadow-[0_20px_45px_rgba(0,71,0,0.14)] ${FOCUS}`}
     >
-      <div className={`pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br ${item.accent} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
-
-      <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/[0.06] ${item.iconColor} ring-1 ring-white/10`}>
-        <Icon />
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E6FFE6] text-[#006B00]">
+        {ICONS[item.id]}
       </div>
 
-      <div className="relative mt-5 flex-1">
-        <span className="text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white/35">
-          {item.badge}
+      <div className="mt-5 flex-1">
+        <span className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#52635E]">
+          {item.text.badge}
         </span>
-        <h3 className="mt-2 text-base font-bold leading-snug text-white/90 transition-colors duration-300 group-hover:text-white">
-          {item.title}
-        </h3>
-        <p className="mt-2 text-xs leading-relaxed text-white/45">
-          {item.description}
-        </p>
+        <h3 className="mt-2 text-base font-bold leading-snug text-[#09231D]">{item.text.title}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-[#3E4A45]">{item.text.description}</p>
       </div>
 
-      <div className={`relative mt-5 flex items-center gap-1.5 text-xs font-semibold ${item.iconColor}`}>
-        {item.cta}
+      <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[#006B00]">
+        {item.text.cta}
         <ArrowRight />
       </div>
     </Link>
@@ -200,40 +146,40 @@ function StandardCard({ item }: { item: typeof ACCESS_ITEMS[number] }) {
 
 /* ── Section ────────────────────────────────────────────── */
 
-export default function InstitutionalAccessSection() {
-  const [featured, ...rest] = ACCESS_ITEMS;
+export default async function InstitutionalAccessSection() {
+  const locale = await getLocale();
+  const t = await getT(locale, 'pages.home');
+
+  const items: Item[] = ACCESS_ITEMS.map((i) => ({
+    ...i,
+    text: {
+      badge: t(`institutionalAccess.items.${i.id}.badge`),
+      title: t(`institutionalAccess.items.${i.id}.title`),
+      description: t(`institutionalAccess.items.${i.id}.description`),
+      cta: t(`institutionalAccess.items.${i.id}.cta`),
+    },
+  }));
+  const [featured, ...rest] = items;
 
   return (
     <section
       aria-labelledby="institutional-access-title"
-      className="relative overflow-hidden bg-[#071A13] py-20 sm:py-24"
+      className="relative overflow-hidden bg-white py-20 sm:py-24"
     >
-      {/* Background decoration */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-40 top-0 h-[600px] w-[600px] rounded-full bg-emerald-900/20 blur-[120px]" />
-        <div className="absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-teal-900/20 blur-[100px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(52,211,153,0.06),transparent)]" />
-      </div>
-
-      <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
-
+      <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Acceso ciudadano
+          <span className="text-xs font-extrabold uppercase tracking-[0.23em] text-[#006B00]">
+            {t('institutionalAccess.label')}
           </span>
           <h2
             id="institutional-access-title"
-            className="mt-5 font-serif text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl"
+            className="mt-4 font-serif text-3xl font-bold leading-tight tracking-tight text-[#09231D] sm:text-4xl lg:text-5xl"
           >
-            Transparencia e{' '}
-            <span className="text-emerald-400">Información</span>{' '}
-            Institucional
+            {t('institutionalAccess.title')}
           </h2>
-          <p className="mt-4 text-base leading-7 text-white/50 sm:text-lg">
-            Accedé a los documentos públicos, realizá trámites académicos y
-            consultá los recursos de investigación de la UNC.
+          <p className="mt-4 text-base leading-7 text-[#3E4A45] sm:text-lg">
+            {t('institutionalAccess.description')}
           </p>
         </div>
 
@@ -247,9 +193,6 @@ export default function InstitutionalAccessSection() {
             <StandardCard key={item.id} item={item} />
           ))}
         </div>
-
-        {/* Bottom separator line */}
-        <div className="mt-16 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </div>
     </section>
   );

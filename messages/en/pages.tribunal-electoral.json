@@ -1,17 +1,20 @@
 {
   "meta": {
-    "title": "Electoral Tribunal | UNC",
+    "title": "Electoral Tribunal",
     "description": "Meet the members and access the official documents of the Electoral Tribunal of the National University of Concepción."
   },
-  "breadcrumb": "Electoral Tribunal",
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Electoral Tribunal"
+  },
   "hero": {
-    "badge": "University Governance",
     "title": "Electoral Tribunal",
     "description": "Autonomous body responsible for ensuring the transparency and legality of university electoral processes."
   },
   "members": {
     "title": "Tribunal Composition",
-    "subtitle": "Designated authorities for the current electoral term"
+    "subtitle": "Designated authorities for the current electoral term",
+    "empty": "No members have been published yet. To check the current composition, please contact the university."
   },
   "downloads": {
     "title": "Main Documents",
@@ -25,12 +28,23 @@
     "viewDoc": "View document",
     "noDocuments": "No documents available in this section.",
     "tipos": {
-      "lista-inscriptos":  "List of Registered Candidates",
-      "formato-notas":     "Notes Format",
-      "padron-electoral":  "Electoral Roll Officialization",
-      "candidaturas":      "Disclosure of Movements and Candidacies",
-      "oficializacion":    "Officialization of Candidacies",
-      "proclamacion":      "Proclamation of Candidates"
+      "lista-inscriptos": "List of Registered Candidates",
+      "formato-notas": "Notes Format",
+      "padron-electoral": "Electoral Roll Officialization",
+      "candidaturas": "Disclosure of Movements and Candidacies",
+      "oficializacion": "Officialization of Candidacies",
+      "proclamacion": "Proclamation of Candidates"
     }
+  },
+  "newTab": "(opens in a new tab)",
+  "states": {
+    "contact": "Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
   }
 }

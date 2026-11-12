@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "title": "Preguntas frecuentes",
+    "description": "Encuentre respuestas a las preguntas más comunes sobre admisión, trámites, servicios y más en la Universidad Nacional de Concepción."
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Preguntas frecuentes"
+  },
+  "hero": {
+    "title": "Preguntas frecuentes",
+    "description": "Reunimos las consultas más frecuentes de estudiantes, docentes y la comunidad. Busque por palabra clave o explore por categoría."
+  },
+  "stats": {
+    "questions": "Preguntas",
+    "categories": "Categorías"
+  },
+  "nav": {
+    "label": "Categorías disponibles"
+  },
+  "categories": {
+    "horarios": "Horarios y atención",
+    "admision": "Admisión e inscripción",
+    "tramites": "Trámites",
+    "servicios": "Servicios",
+    "transparencia": "Transparencia",
+    "rrhh": "Recursos humanos",
+    "titulos": "Títulos y certificados"
+  },
+  "search": {
+    "label": "Buscar pregunta",
+    "placeholder": "Buscar una pregunta…",
+    "clear": "Limpiar búsqueda",
+    "filter": "Filtrar por categoría",
+    "all": "Todas"
+  },
+  "results": {
+    "none": "No encontramos resultados para «{query}»",
+    "noneHint": "Pruebe con otras palabras o explore las categorías.",
+    "showAll": "Ver todas las preguntas",
+    "countOne": "{count} resultado para «{query}»",
+    "countOther": "{count} resultados para «{query}»",
+    "questionsOne": "{count} pregunta",
+    "questionsOther": "{count} preguntas"
+  },
+  "cta": {
+    "kicker": "¿No encontró lo que buscaba?",
+    "title": "Comuníquese directamente con nosotros",
+    "body": "Respondemos en el siguiente día hábil.",
+    "button": "Ir a Contacto"
+  },
+  "states": {
+    "empty": "Todavía no hay preguntas frecuentes publicadas. Vuelva a consultar más tarde o comuníquese con la Universidad.",
+    "unavailable": "No pudimos cargar las preguntas frecuentes en este momento. Intente de nuevo en unos minutos.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema al cargar las preguntas frecuentes. Puede intentarlo de nuevo o comunicarse con la Universidad.",
+    "retry": "Intentar de nuevo",
+    "contact": "Ir a Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
+}

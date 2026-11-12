@@ -1,17 +1,20 @@
 {
   "meta": {
-    "title": "Tribunal Electoral | UNC",
+    "title": "Tribunal Electoral",
     "description": "Ehecha mba'éichapa oĩ ha mba'e marandúpe oĩva Tribunal Electoral-pe Universidad Nacional de Concepción-pe."
   },
-  "breadcrumb": "Tribunal Electoral",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Tribunal Electoral"
+  },
   "hero": {
-    "badge": "Teko Teete Mbo'ehaovusu-pe",
     "title": "Tribunal Electoral",
     "description": "Órgano autónomo oñangarekóva transparencia ha legalidad mbo'ehaovusu jeporavo-kuérape."
   },
   "members": {
     "title": "Tribunal rehegua",
-    "subtitle": "Mbo'ehao ñemomba'e rehegua"
+    "subtitle": "Mbo'ehao ñemomba'e rehegua",
+    "empty": "Aún no hay miembros publicados. Para consultar la composición vigente, comuníquese con la universidad."
   },
   "downloads": {
     "title": "Marandú Tuichavéva",
@@ -25,12 +28,23 @@
     "viewDoc": "Ehecha marandú",
     "noDocuments": "Ndaipóri marandú ko teẽ-pe.",
     "tipos": {
-      "lista-inscriptos": "Lista de Inscriptos",
-      "formato-notas": "Formato de Notas",
-      "padron-electoral": "Oficialización de Padrón Electoral",
-      "candidaturas": "Puesta de Manifiesto de Movimientos y Candidaturas",
-      "oficializacion": "Oficialización de Candidaturas",
-      "proclamacion": "Proclamación de Candidatos"
+      "lista-inscriptos": "Oñemboheraguapýva rysýi",
+      "formato-notas": "Nota kuatia aporeko",
+      "padron-electoral": "Terarysýi jeporavo rehegua ñemoneĩ",
+      "candidaturas": "Movimiento ha candidato-kuéra ñemoherakuã",
+      "oficializacion": "Oñemoneĩ candidato ramo",
+      "proclamacion": "Ojekuaauka candidato-kuéra"
     }
+  },
+  "newTab": "(se abre en una pestaña nueva)",
+  "states": {
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

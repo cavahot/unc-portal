@@ -1,54 +1,67 @@
 {
   "meta": {
-    "title": "Rectorado Mboimba | UNC",
-    "description": "Montos oficiales que cobra el Rectorado de la Universidad Nacional de Concepción por multas, documentos, servicios y programas de posgrado."
+    "title": "Rectorado Mboimba",
+    "description": "Universidad Nacional de Concepción Rectorado repykue tee multa-kuérare, kuatiáre, tembiapóre ha posgrado ñemoarandúre."
   },
-  "breadcrumb": { "inicio": "Ñepyrũ", "facultades": "Facultades", "nombre": "Rectorado Mboimba" },
+  "breadcrumb": {
+    "inicio": "Ñepyrũ",
+    "facultades": "Mbo'ehaovusu vorekuéra",
+    "nombre": "Rectorado Mboimba"
+  },
   "hero": {
     "badge": "Rectorado",
     "titulo": "Rectorado Mboimba",
-    "subtitulo": "Lo que cobra el Rectorado por multas, documentos y servicios administrativos, y por sus programas de posgrado.",
-    "currencyNote": "Montos en guaraníes. Pueden cambiar por resolución institucional: confirme el monto en el Rectorado antes de pagar."
+    "subtitulo": "Rectorado ohepyme'ẽukáva multa-kuérare, kuatiáre ha ñemboguata rembiapóre, ha posgrado ñemoarandúre.",
+    "currencyNote": "Tepykue guaraníme. Ikatu oñemoambue tembiapo renda rembiapoukapy rupi: eporandu Rectorado-pe mboýpa rehepyme'ẽva'erã, rehepyme'ẽ mboyve."
   },
-  "updated": "Última actualización: {date}",
-  "summary": "{count} conceptos en {groups} grupos",
+  "updated": "Ñembopyahu paha: {date}",
+  "summary": "{count} mba'e rehegua {groups} atýpe",
   "index": {
-    "label": "Grupos de aranceles",
-    "range": "De {min} a {max}",
-    "countOne": "1 concepto",
-    "countOther": "{count} conceptos"
+    "label": "Tepykue atykuéra",
+    "range": "{min} guive {max} peve",
+    "countOne": "1 mba'e rehegua",
+    "countOther": "{count} mba'e rehegua"
   },
   "grupos": {
-    "multas": { "title": "Mba'e Jepysore", "short": "Mba'e Jepysore" },
-    "venta": { "title": "Mba'e Ñemoña", "short": "Mba'e Ñemoña" },
-    "educativos": { "title": "Mbo'éhao Mboimba", "short": "Mbo'éhao Mboimba" }
+    "multas": {
+      "title": "Mba'e Jepysore",
+      "short": "Mba'e Jepysore"
+    },
+    "venta": {
+      "title": "Mba'e Ñemoña",
+      "short": "Mba'e Ñemoña"
+    },
+    "educativos": {
+      "title": "Mbo'éhao Mboimba",
+      "short": "Mbo'éhao Mboimba"
+    }
   },
   "table": {
-    "caption": "{group}: concepto y monto en guaraníes",
+    "caption": "{group}: mba'e rehegua ha hepykue guaraníme",
     "concept": "Mba'e",
     "amount": "Viru",
-    "currencyName": "guaraníes"
+    "currencyName": "guaraní"
   },
   "search": {
-    "label": "Buscar un arancel",
-    "placeholder": "Ej.: título, maestría o 50000",
-    "clear": "Borrar la búsqueda",
-    "statusAll": "{total} conceptos en {groups} grupos",
-    "statusOne": "1 concepto coincide con «{query}»",
-    "statusOther": "{count} conceptos coinciden con «{query}»",
-    "statusNone": "Ningún concepto coincide con «{query}»",
-    "emptyTitle": "Sin resultados para «{query}»",
-    "emptyHint": "Pruebe con otra palabra o escriba el monto sin puntos.",
-    "showAll": "Ver todos los aranceles"
+    "label": "Eheka peteĩ tepy",
+    "placeholder": "Techapyrã: título, maestría térã 50000",
+    "clear": "Embogue jeheka",
+    "statusAll": "{total} mba'e rehegua {groups} atýpe",
+    "statusOne": "1 mba'e rehegua ojogueraha «{query}» ndive",
+    "statusOther": "{count} mba'e rehegua ojogueraha «{query}» ndive",
+    "statusNone": "Mba'eve ndojoguerahái «{query}» ndive",
+    "emptyTitle": "Ndojejuhúi mba'eve «{query}» rehegua",
+    "emptyHint": "Eñeha'ã ambue ñe'ẽ reheve térã ehai tepykue kyta'ỹre.",
+    "showAll": "Ehecha opaite tepykue"
   },
   "states": {
-    "empty": "Todavía no hay aranceles publicados. Para conocer un monto, consulte en el Rectorado.",
-    "unavailable": "No se pudieron cargar los aranceles en este momento. Vuelva a intentarlo en unos minutos."
+    "empty": "Ne'ĩra oñemoherakuã tepykue. Reikuaa hag̃ua peteĩ tepykue, eporandu Rectorado-pe.",
+    "unavailable": "Ndaikatúi oñemoinge tepykue ko'ág̃a. Eñeha'ã jey sapy'ami rire."
   },
   "info": {
-    "title": "Trámites que llevan arancel",
-    "description": "La legalización de documentos y la inscripción de títulos figuran en esta lista. Cada trámite explica sus pasos y en qué momento se paga.",
-    "ctaLegalizaciones": "Ver legalizaciones",
-    "ctaTitulos": "Ver registro de títulos"
+    "title": "Trámite-kuéra ojehepyme'ẽva",
+    "description": "Kuatia ñemoneĩ ha título ñemboheraguapy oĩ ko tysýipe. Peteĩteĩ trámite omyesakã mba'épa rejapova'erã ha araka'épa rehepyme'ẽva'erã.",
+    "ctaLegalizaciones": "Ehecha kuatia ñemoneĩ",
+    "ctaTitulos": "Ehecha título ñemboheraguapy"
   }
 }

@@ -2,7 +2,9 @@
 // en el código. Los `href` llegan ya filtrados por lib/cms/facultad.ts (tel solo dígitos, correo con forma válida,
 // sitio y redes https de hosts permitidos); aquí además pasan por `safeHref` (DEP-15) por defensa en profundidad.
 import type { FacultadDetalle } from '@/lib/cms/facultad'
+import { buildFacultadEmbedUrl } from '@/lib/maps/campusMapUrls'
 import { safeHref } from '@/lib/security/safeUrl'
+import FacultadMapa from './FacultadMapa'
 
 export interface ContactoLabels {
   direccion: string
@@ -18,9 +20,10 @@ export interface ContactoLabels {
 const link =
   'inline-flex min-h-11 items-center break-all text-lg font-semibold text-white underline decoration-white/40 underline-offset-4 transition-colors hover:decoration-[#8AFF8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8AFF8A] print:text-black'
 
-function Item({ term, children }: { term: string; children: React.ReactNode }) {
+// `className` permite ubicar una tarjeta en la cuadrícula (p. ej. «Sitio web» bajo el mapa) sin duplicar el estilo base.
+function Item({ term, children, className = '' }: { term: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className="rounded-2xl bg-white/[0.07] p-5 sm:p-6 print:bg-white">
+    <div className={`rounded-2xl bg-white/[0.07] p-5 sm:p-6 print:bg-white ${className}`.trim()}>
       <dt className="text-sm text-[#B8FFB8] print:text-black">{term}</dt>
       <dd className="mt-1">{children}</dd>
     </div>
@@ -42,6 +45,7 @@ export default function ContactoPanel({ facultad, mapHref, labels }: { facultad:
           )}
         </Item>
       )}
+      {facultad.direccion && <FacultadMapa embedUrl={buildFacultadEmbedUrl(facultad.direccion)} label={labels.mapa} />}
       {facultad.telefono && (
         <Item term={labels.telefono}>
           {facultad.telHref ? (
@@ -68,7 +72,10 @@ export default function ContactoPanel({ facultad, mapHref, labels }: { facultad:
         </Item>
       )}
       {(facultad.sitioWeb || facultad.redes.length > 0) && (
-        <Item term={facultad.sitioWeb ? labels.sitio : labels.redes}>
+        // FAC-08b: en pantallas ≥ sm va en la columna derecha, justo debajo del mapa (que ocupa 2 filas), para que las
+        // tarjetas queden equilibradas: izquierda dirección/teléfono/correo, derecha mapa + sitio web. Con
+        // `col-start-2` y fila automática, la cuadrícula lo coloca en la primera fila libre de esa columna.
+        <Item term={facultad.sitioWeb ? labels.sitio : labels.redes} className="sm:col-start-2">
           {facultad.sitioWeb && (
             <a href={safeHref(facultad.sitioWeb.href)} {...external} className={link}>
               {facultad.sitioWeb.label}

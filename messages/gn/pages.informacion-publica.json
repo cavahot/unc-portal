@@ -1,13 +1,52 @@
 {
-  "pageTitle": "Información Pública — UNC",
-  "pageDescription": "Acceso a la información pública de la Universidad Nacional de Concepción según la Ley N° 5.282/2014.",
-  "portalLabel": "Portal UNC",
-  "heading": "Acceso a la Información Pública",
-  "description": "La Universidad Nacional de Concepción garantiza el acceso a la información pública en cumplimiento de la Ley N° 5.282/2014 de libre acceso ciudadano.",
-  "fallbackParagraph1": "Toda persona tiene derecho a solicitar y recibir información completa, veraz, adecuada y oportuna de cualquier institución del Estado Paraguayo, conforme a lo establecido en la Ley N° 5.282/2014.",
-  "fallbackParagraph2": "Para ejercer este derecho podés utilizar el Portal Unificado de Acceso a la Información Pública del Gobierno Nacional, disponible en el siguiente enlace.",
-  "ctaLabel": "Acceso externo",
-  "ctaHeading": "Portal de Información Pública del Paraguay",
-  "ctaNote": "Serás redirigido al portal oficial del Gobierno Nacional.",
-  "ctaButton": "Portal de Acceso de Información Pública"
+  "meta": {
+    "title": "Acceso a la información pública",
+    "description": "Cómo solicitar información pública a la Universidad Nacional de Concepción según la Ley N° 5282/2014."
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Información pública"
+  },
+  "hero": {
+    "titulo": "Acceso a la información pública"
+  },
+  "index": {
+    "label": "Elija cómo solicitar"
+  },
+  "vias": {
+    "title": "Vías de solicitud",
+    "intro": "La ley permite presentar la solicitud por distintas vías. Elija la que le resulte más conveniente.",
+    "recommended": "Vía más rápida"
+  },
+  "datos": {
+    "title": "Datos que debe aportar",
+    "intro": "Tenga estos datos a mano al presentar la solicitud, por cualquiera de las vías.",
+    "listLabel": "Datos requeridos para la solicitud"
+  },
+  "correo": {
+    "title": "Solicitudes por escrito",
+    "body": "Puede enviar su solicitud escrita al correo de la oficina de acceso a la información."
+  },
+  "portal": {
+    "redirect": "Se abrirá el portal oficial del Gobierno de la República del Paraguay.",
+    "open": "Ir al portal oficial"
+  },
+  "newTab": "(se abre en una pestaña nueva)",
+  "related": {
+    "text": "¿Busca documentos publicados por la universidad?",
+    "link": "Ver la página de Transparencia"
+  },
+  "states": {
+    "unavailable": "No pudimos cargar esta información en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "empty": "Esta información todavía no está disponible. Para solicitar información pública, comuníquese con la universidad.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
 }

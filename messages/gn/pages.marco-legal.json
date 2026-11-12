@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Marco Legal — Universidad Nacional de Concepción",
+    "title": "Marco Legal",
     "description": "UNC rehegua léi ñemombyky: ñembokatú léi, estatuto universitario ha reglamentos."
   },
   "breadcrumb": {
@@ -9,18 +9,18 @@
   },
   "hero": {
     "eyebrow": "Léi ñemombyky",
-    "title": "Marco legal",
+    "title": "Léi ñemopyenda",
     "description": "Universidad Nacional de Concepción rehegua léi ñemombyky.",
     "softwareNote": "Kuatia ojepe'a hag̃ua, eikotevẽ programa omoñe'ẽkuaáva PDF, DOC ha XLS."
   },
   "hierarchy": {
     "heading": "Marco general guive gestión peve",
     "tiers": {
-      "creacion": "Norma de creación",
-      "fundamental": "Norma fundamental",
-      "general": "Reglamentación general",
-      "especificas": "Normas específicas",
-      "gestion": "Instrumentos de gestión"
+      "creacion": "Ñemoheñói rehegua tembiapoukapy",
+      "fundamental": "Tembiapoukapy tenondegua",
+      "general": "Opavavépe g̃uarã tembiapoukapy",
+      "especificas": "Tembiapoukapy tee",
+      "gestion": "Ñemboguata rembiporukuéra"
     }
   },
   "search": {
@@ -47,16 +47,16 @@
     "dated": "Ára: {date}"
   },
   "categories": {
-    "ley-creacion": "Ley de creación",
-    "estatuto": "Estatuto universitario",
-    "reglamento-general": "Reglamento General",
-    "reglamentos-especiales": "Reglamentos especiales",
-    "codigos": "Códigos institucionales",
-    "politicas": "Políticas institucionales",
-    "planes": "Planes",
-    "manuales": "Manuales",
-    "procedimientos": "Procedimientos",
-    "protocolos": "Protocolos"
+    "ley-creacion": "Léi oñemoheñói hague",
+    "estatuto": "Mbo'ehaovusu léi guasu",
+    "reglamento-general": "Opavavépe g̃uarã tembiapoukapy",
+    "reglamentos-especiales": "Tembiapoukapy tee",
+    "codigos": "Tembiapo renda reko mbojojahakuéra",
+    "politicas": "Tembiapo renda rekorãnguéra",
+    "planes": "Tembiaporãnguéra",
+    "manuales": "Tembiapoukapy arandukakuéra",
+    "procedimientos": "Tembiapo aporeko",
+    "protocolos": "Tembiapo rape mbojojahakuéra"
   },
   "categoryDescriptions": {
     "ley-creacion": "Tetã Léi omoheñóiva Universidad Nacional de Concepción.",
@@ -71,13 +71,13 @@
     "protocolos": "Protocolo ojeporúva situación específica-pe."
   },
   "estado": {
-    "derogado": "Derogado",
-    "historico": "Histórico"
+    "derogado": "Oñemboykéva",
+    "historico": "Ymaguare"
   },
   "format": {
     "pdf": "PDF",
     "doc": "Word kuatia",
-    "xls": "Hoja de cálculo",
+    "xls": "Kuatia ñeipapaha",
     "drive": "Google Drive",
     "link": "Joaju"
   },

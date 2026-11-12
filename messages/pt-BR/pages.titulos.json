@@ -1,35 +1,64 @@
 {
   "meta": {
-    "title": "Diplomas Universitários | Universidad Nacional de Concepción",
-    "description": "Informações sobre os diplomas habilitantes expedidos pela Universidad Nacional de Concepción: solicitação, requisitos, prazos e reconhecimento de títulos."
+    "title": "Registro de títulos",
+    "description": "Documentos a apresentar, taxa, prazo e etapas para registrar na Universidad Nacional de Concepción um título expedido por outra universidade."
   },
-  "breadcrumb": { "home": "Início", "page": "Diplomas" },
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Registro de títulos"
+  },
   "hero": {
-    "label": "Secretaria Geral",
-    "title": "Diplomas Universitários",
-    "description": "Informações sobre os diplomas habilitantes expedidos pela UNC"
+    "titulo": "Registro de títulos",
+    "updated": "Última atualização: {date}"
   },
-  "infoCards": {
-    "c1": { "label": "Prazo de processamento", "value": "Consultar na secretaria", "note": "O prazo pode variar de acordo com o período do ano e a carga administrativa." },
-    "c2": { "label": "Requisitos documentais", "value": "Ver lista completa", "note": "Certidão de nascimento, RG vigente, documentação acadêmica e comprovante de pagamento." },
-    "c3": { "label": "Taxa vigente", "value": "Consultar na secretaria", "note": "Os valores são atualizados periodicamente. Sempre verifique a tarifa vigente." }
+  "facts": {
+    "label": "Dados do procedimento",
+    "plazo": "Prazo",
+    "plazoValue": "{min} a {max} horas úteis",
+    "arancel": "Taxa",
+    "arancelPending": "Consulte o valor vigente",
+    "arancelLink": "Ver as taxas da Reitoria",
+    "unidad": "Unidade responsável"
   },
-  "graduates": {
-    "label": "Para formandos",
-    "title": "Solicitação de diploma",
-    "description": "Etapas para solicitar seu diploma de formado após o cumprimento dos requisitos acadêmicos.",
-    "s1": { "title": "Verificar requisitos acadêmicos", "description": "Certifique-se de ter cumprido todas as disciplinas, estágios e o trabalho final exigido pelo seu curso." },
-    "s2": { "title": "Apresentar solicitação formal", "description": "Preencher o formulário de solicitação de diploma na Diretoria Geral Acadêmica e anexar a documentação exigida." },
-    "s3": { "title": "Pagamento de taxas", "description": "Efetuar o pagamento da taxa correspondente conforme a tabela vigente. Consultar o valor atualizado na secretaria." },
-    "s4": { "title": "Retirada do diploma", "description": "Após o processamento da solicitação, você receberá uma notificação para retirar o diploma na Secretaria Geral." }
+  "index": {
+    "label": "Escolha o tipo de universidade que expediu o seu título",
+    "countOne": "1 requisito",
+    "countOther": "{count} requisitos"
   },
-  "graduatesCta": "Iniciar solicitação de diploma",
-  "recognition": {
-    "label": "Procedimento especial",
-    "title": "Reconhecimento de diplomas",
-    "body1": "O reconhecimento de diplomas expedidos por universidades estrangeiras, ou a validação de diplomas da UNC perante organismos nacionais e internacionais, é feito por meio da Diretoria Geral Acadêmica em coordenação com o Ministério de Educação e Ciências da República do Paraguai.",
-    "body2": "Para iniciar este processo, os interessados devem apresentar a documentação original devidamente apostilada ou legalizada conforme o caso, junto com a tradução oficial para o espanhol quando os documentos estiverem em outro idioma.",
-    "linkLegalizaciones": "Ver legalizações",
-    "linkTramites": "Ver todos os procedimentos"
+  "documents": {
+    "title": "Quais documentos apresentar",
+    "intro": "Os requisitos mudam conforme o tipo de universidade que expediu o título. Identifique o seu caso e reúna esses documentos antes de comparecer.",
+    "listLabel": "Requisitos: {tipo}"
+  },
+  "cones": {
+    "link": "Ver os procedimentos no CONES",
+    "newTab": "(abre em uma nova aba)"
+  },
+  "procedure": {
+    "title": "Passo a passo",
+    "intro": "O registro é tramitado em {unidad}.",
+    "total": "Tempo total estimado: {min} a {max} horas úteis.",
+    "step": "Etapa {number}",
+    "responsible": "Responsável"
+  },
+  "states": {
+    "empty": "As informações deste procedimento ainda não foram publicadas. Volte a consultar mais tarde ou entre em contato com a Universidade.",
+    "unavailable": "Não foi possível carregar as informações deste procedimento agora. Tente novamente em alguns minutos.",
+    "retry": "Tentar novamente",
+    "contact": "Ir para Contato"
+  },
+  "error": {
+    "title": "Não foi possível exibir esta página",
+    "body": "Ocorreu um problema ao carregar as informações do procedimento. Você pode tentar novamente ou entrar em contato com a Universidade.",
+    "retry": "Tentar novamente",
+    "contact": "Ir para Contato",
+    "reference": "Referência para o suporte: {digest}"
+  },
+  "cta": {
+    "title": "Precisa legalizar o seu título?",
+    "description": "A legalização de documentos é outro procedimento. Você também pode consultar as taxas da Reitoria ou escrever para nós.",
+    "legalizaciones": "Ver legalizações",
+    "aranceles": "Taxas da Reitoria",
+    "contacto": "Contato"
   }
 }

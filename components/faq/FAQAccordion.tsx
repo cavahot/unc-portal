@@ -120,11 +120,34 @@ function FAQRow({ item, index }: { item: FAQItem; index: number }) {
 
 /* ─── Main accordion with search + category filter ───────────────────────── */
 
-interface FAQAccordionProps {
-  items: FAQItem[]
+/** Textos del acordeón ya traducidos por la página (este componente de cliente no consulta el catálogo). */
+export interface FAQLabels {
+  searchLabel: string
+  searchPlaceholder: string
+  clear: string
+  filter: string
+  all: string
+  /** Con el marcador {query}. */
+  none: string
+  noneHint: string
+  showAll: string
+  /** Con los marcadores {count} y {query}. */
+  countOne: string
+  countOther: string
+  /** Con el marcador {count}. */
+  questionsOne: string
+  questionsOther: string
 }
 
-export default function FAQAccordion({ items }: FAQAccordionProps) {
+interface FAQAccordionProps {
+  items: FAQItem[]
+  /** Categorías con su etiqueta ya traducida. */
+  categories: ReadonlyArray<{ value: string; icon: string; label: string }>
+  labels: FAQLabels
+}
+
+export default function FAQAccordion({ items, categories, labels }: FAQAccordionProps) {
+  const FAQ_CATEGORIES = categories
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<FAQCategory | 'all'>('all')
 
@@ -152,7 +175,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
     <div className="space-y-8">
       {/* ── Search bar ── */}
       <div className="relative">
-        <label htmlFor="faq-search" className="sr-only">Buscar pregunta</label>
+        <label htmlFor="faq-search" className="sr-only">{labels.searchLabel}</label>
         <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-[#9EAC9E]" aria-hidden>
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
@@ -163,13 +186,13 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar una pregunta…"
+          placeholder={labels.searchPlaceholder}
           className="w-full rounded-2xl border border-[#D7E0DB] bg-white py-4 pl-12 pr-4 text-sm text-[#09231D] placeholder:text-[#9EAC9E] shadow-sm transition-all focus:border-[#37D448] focus:outline-none focus:ring-2 focus:ring-[#5CFF5C]/30"
         />
         {query && (
           <button
             type="button"
-            aria-label="Limpiar búsqueda"
+            aria-label={labels.clear}
             onClick={() => setQuery('')}
             className="absolute inset-y-0 right-4 flex items-center text-[#9EAC9E] hover:text-[#3A4A42] transition-colors"
           >
@@ -182,7 +205,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
 
       {/* ── Category chips ── */}
       {!query && (
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar por categoría">
+        <div className="flex flex-wrap gap-2" role="group" aria-label={labels.filter}>
           <button
             type="button"
             onClick={() => setActiveCategory('all')}
@@ -192,7 +215,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
                 : 'border border-[#D7E0DB] bg-white text-[#3A4A42] hover:border-[#37D448]/50 hover:text-[#004700]'
             }`}
           >
-            Todas
+            {labels.all}
             <span className={`rounded-full px-1.5 py-0.5 text-[0.6rem] font-extrabold ${activeCategory === 'all' ? 'bg-white/20 text-white' : 'bg-[#E6FFE6] text-[#004700]'}`}>
               {items.length}
             </span>
@@ -223,14 +246,14 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center py-16 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#E6FFE6] text-3xl">🔍</div>
-          <p className="font-semibold text-[#09231D]">No encontramos resultados para <em>&quot;{query}&quot;</em></p>
-          <p className="mt-1 text-sm text-[#6C7B76]">Probá con otras palabras o explorá las categorías.</p>
+          <p className="font-semibold text-[#09231D]">{labels.none.replace('{query}', query)}</p>
+          <p className="mt-1 text-sm text-[#6C7B76]">{labels.noneHint}</p>
           <button
             type="button"
             onClick={() => { setQuery(''); setActiveCategory('all') }}
             className="mt-5 rounded-full border border-[#D7E0DB] bg-white px-5 py-2 text-sm font-semibold text-[#3A4A42] transition hover:border-[#37D448]/60 hover:text-[#004700]"
           >
-            Ver todas las preguntas
+            {labels.showAll}
           </button>
         </div>
       ) : (
@@ -248,7 +271,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
                       {cat.label}
                     </h2>
                     <div className="h-px flex-1 bg-[#D7E0DB]" aria-hidden />
-                    <span className="text-[0.65rem] font-bold text-[#9EAC9E]">{catItems.length} pregunta{catItems.length > 1 ? 's' : ''}</span>
+                    <span className="text-[0.65rem] font-bold text-[#9EAC9E]">{(catItems.length === 1 ? labels.questionsOne : labels.questionsOther).replace('{count}', String(catItems.length))}</span>
                   </div>
                   <div className="space-y-3">
                     {catItems.map((item, idx) => (
@@ -262,7 +285,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
             <div className="space-y-3">
               {query && (
                 <p className="text-sm text-[#6C7B76]">
-                  <span className="font-semibold text-[#09231D]">{filtered.length}</span> resultado{filtered.length !== 1 ? 's' : ''} para <em>&quot;{query}&quot;</em>
+                  {(filtered.length === 1 ? labels.countOne : labels.countOther).replace('{count}', String(filtered.length)).replace('{query}', query)}
                 </p>
               )}
               {filtered.map((item, idx) => (

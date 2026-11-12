@@ -1,17 +1,37 @@
 {
-  "pageTitleDefault": "Biblioteca Digital — Universidad Nacional de Concepción",
-  "pageTitleQuery": "Biblioteca: \"{q}\" — UNC",
-  "pageDescription": "Repositorio de tesis y trabajos académicos de la Universidad Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
-  "headingDefault": "Biblioteca Digital",
-  "headingResults": "Resultados para",
-  "subheading": "Explora nuestra biblioteca digital — repositorio de tesis y trabajos académicos.",
-  "resultsSingular": "resultado",
-  "resultsPlural": "resultados",
-  "searchPlaceholder": "Buscar por título o autor...",
-  "searchAriaLabel": "Buscar tesis en la biblioteca",
-  "searchButton": "Buscar",
-  "emptyPrompt": "Ingresá un término para buscar en la biblioteca digital.",
-  "noResults": "No encontramos resultados para \"{query}\"",
-  "noResultsHint": "Intentá con otras palabras o consultá la biblioteca directamente."
+  "pageTitleDefault": "Aranduka renda ñandutípe",
+  "pageTitleQuery": "Aranduka renda: \"{q}\"",
+  "pageDescription": "Universidad Nacional de Concepción tesis ha ñemoarandu rembiapokuéra ñongatuha.",
+  "headingDefault": "Aranduka renda ñandutípe",
+  "subheading": "Eheka ore aranduka renda ñandutípe — tesis ha ñemoarandu rembiapokuéra ñongatuha.",
+  "searchPlaceholder": "Título o autor",
+  "searchButton": "Eheka",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Biblioteca"
+  },
+  "searchLabel": "Buscar por título o autor",
+  "verTesis": "Ver tesis (PDF)",
+  "newTab": "(documento externo, se abre en una pestaña nueva)",
+  "results": {
+    "query": "{count, plural, one {# resultado} other {# resultados}} para «{q}»",
+    "recent": "Tesis más recientes",
+    "partial": "Se muestran {shown} de {total}. Afine la búsqueda para ver otras.",
+    "listLabel": "Tesis",
+    "clear": "Ver las tesis más recientes"
+  },
+  "states": {
+    "unavailable": "No pudimos cargar la biblioteca en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "noResults": "No encontramos resultados para «{query}». Pruebe con otras palabras o consulte la biblioteca directamente.",
+    "emptyLibrary": "El repositorio todavía no tiene tesis publicadas.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
 }
