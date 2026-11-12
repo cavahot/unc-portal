@@ -15,9 +15,8 @@ export const PASSWORD_POLICY = {
   historySize: 5,
   /** Días antes del vencimiento en que el panel empieza a avisar. */
   warnDays: 14,
-  /** Vencimiento en días: los roles que publican o administran rotan más seguido. */
-  rotationDays: { privileged: 90, standard: 180 },
-  privilegedRoles: ['superadmin', 'web-admin', 'publisher', 'reviewer'] as readonly string[],
+  /** Vencimiento en días, igual para todos los roles (decisión del propietario del 2026-11-12). */
+  rotationDays: 90,
 } as const
 
 /**
@@ -76,9 +75,9 @@ export function passwordPolicyError(password: string, opts: { email?: string | n
 
 const DAY = 24 * 60 * 60 * 1000
 
-/** Días de vigencia según el rol. */
-export function rotationDaysFor(role: string | null | undefined): number {
-  return PASSWORD_POLICY.privilegedRoles.includes(role ?? '') ? PASSWORD_POLICY.rotationDays.privileged : PASSWORD_POLICY.rotationDays.standard
+/** Días de vigencia. Recibe el rol para poder diferenciarlo en el futuro; hoy es igual para todos. */
+export function rotationDaysFor(_role: string | null | undefined): number {
+  return PASSWORD_POLICY.rotationDays
 }
 
 /**

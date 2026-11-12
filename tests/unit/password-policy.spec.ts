@@ -49,10 +49,10 @@ describe('SEC-CUENTAS-01: política de contraseñas', () => {
     expect(failing('Concepcion#123')).toContain('comun')
   })
 
-  it('vencimiento: 90 días para roles con permisos de publicación, 180 para el resto; aviso 14 días antes', () => {
+  it('vencimiento: 90 días para todos los roles (decisión del propietario, 2026-11-12); aviso 14 días antes', () => {
     const changed = new Date('2026-01-01T00:00:00Z')
     expect(passwordExpiry('publisher', changed).expiresAt.toISOString()).toBe('2026-04-01T00:00:00.000Z')
-    expect(passwordExpiry('editor', changed).expiresAt.toISOString()).toBe('2026-06-30T00:00:00.000Z')
+    expect(passwordExpiry('editor', changed).expiresAt.toISOString()).toBe('2026-04-01T00:00:00.000Z')
     expect(passwordExpiry('superadmin', changed, new Date('2026-03-15T00:00:00Z'))).toMatchObject({ expired: false, warn: false })
     expect(passwordExpiry('superadmin', changed, new Date('2026-03-20T00:00:00Z'))).toMatchObject({ expired: false, warn: true, daysLeft: 12 })
     expect(passwordExpiry('superadmin', changed, new Date('2026-04-02T00:00:00Z'))).toMatchObject({ expired: true })
@@ -63,6 +63,6 @@ describe('SEC-CUENTAS-01: política de contraseñas', () => {
   })
 
   it('los parámetros quedan en un solo lugar', () => {
-    expect(PASSWORD_POLICY).toMatchObject({ minLength: 12, minDigits: 3, minLetters: 4, historySize: 5, warnDays: 14 })
+    expect(PASSWORD_POLICY).toMatchObject({ minLength: 12, minDigits: 3, minLetters: 4, historySize: 5, warnDays: 14, rotationDays: 90 })
   })
 })
