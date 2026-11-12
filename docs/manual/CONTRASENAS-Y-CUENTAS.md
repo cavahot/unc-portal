@@ -74,6 +74,36 @@ ingreso. El primer superadministrador (pantalla de primer registro) elige la suy
 Una cuenta con el cambio pendiente o con la contraseña vencida no tiene permisos. Antes de correr los scripts de
 `docs/deploy/README-VPS.md`, ingrese una vez con cada cuenta de prueba y cambie su contraseña; repítalo cada 90 días.
 
+### Recuperación de emergencia (solo superadmin, desde el servidor)
+
+Úsela solo si **ningún** superadmin puede ingresar (olvidó la contraseña o la cuenta quedó bloqueada). Para todo lo
+demás, otro superadmin restablece desde el panel. Para no depender de esto, mantenga **dos superadmins** (por ejemplo,
+una cuenta institucional de respaldo guardada en un gestor de contraseñas).
+
+Requiere acceso SSH al servidor. En producción (`/opt/unc-portal`):
+
+```bash
+cd /opt/unc-portal
+export IMAGE_TAG="$(docker inspect -f '{{.Config.Image}}' unc-cms-prod | cut -d: -f2)"
+C="docker compose -f infrastructure/docker/compose.prod.yaml --env-file infrastructure/docker/.env.prod"
+
+# 1) Simulación: comprueba la cuenta y muestra el plan; no cambia nada.
+$C run --rm -T --no-deps cms-migrate node /app/node_modules/payload/bin.js recuperar-superadmin \
+  --email correo-del-superadmin@unc.edu.py --operador "Nombre Apellido de quien ejecuta"
+
+# 2) Ejecución.
+$C run --rm -T --no-deps cms-migrate node /app/node_modules/payload/bin.js recuperar-superadmin \
+  --email correo-del-superadmin@unc.edu.py --operador "Nombre Apellido de quien ejecuta" --confirmar
+```
+
+En una copia local: `cd apps/cms && npm run payload -- recuperar-superadmin --email ... --operador "..." [--confirmar]`.
+
+Qué hace con `--confirmar`: fija una contraseña provisoria de 16 caracteres que cumple la política y la muestra **una
+sola vez** en la terminal, exige cambiarla al ingresar, desbloquea la cuenta (intentos fallidos) y cierra todas sus
+sesiones. Solo actúa sobre cuentas superadmin. Queda en la auditoría como `restablecer_clave` con el usuario
+«recuperación de emergencia (servidor): *operador*». Entregue la contraseña por un canal seguro y borre la terminal
+(`clear`).
+
 ## 5. Qué queda en la auditoría
 
 Colección **Auditoría** (solo superadministrador): ingresos y salidas, cambios de contraseña propios (con el motivo:

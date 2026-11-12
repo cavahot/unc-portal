@@ -87,6 +87,10 @@ const smtpUser = process.env.SMTP_USER
 const smtpPassword = process.env.SMTP_PASSWORD
 
 export default buildConfig({
+  // SEC-CUENTAS-04 (S8): `payload recuperar-superadmin --email <correo> --operador "<quién>" [--confirmar]`. Recuperación
+  // de emergencia de un superadmin; solo se ejecuta en el servidor (en producción, con la imagen `cms-migrate`).
+  bin: [{ key: 'recuperar-superadmin', scriptPath: path.resolve(dirname, 'bin/recuperarSuperadmin.ts') }],
+
   // DEP-03 D2 / SEC-03: GraphQL desactivado. El portal no lo consume (solo usa REST/Local API) y el
   // esquema no se construye (tipo `Faq` duplicado). Amenaza que evita: superficie extra de consulta
   // (introspección, consultas anidadas) con las mismas ACL a vigilar. Límite: /api/graphql responde 404;

@@ -28,6 +28,8 @@ export type PasswordChangeContext = {
   modoRestablecimiento?: 'generar' | 'crear'
   /** La llamada a login solo verifica la contraseña actual; no es un ingreso (auditoría). */
   verificacionClave?: boolean
+  /** Recuperación de emergencia desde el servidor (bin/recuperarSuperadmin.ts): quién la ejecutó (auditoría). */
+  recuperacionEmergencia?: { operador: string }
 }
 
 const contextOf = (req: PayloadRequest): PasswordChangeContext => (req.context ?? {}) as PasswordChangeContext
