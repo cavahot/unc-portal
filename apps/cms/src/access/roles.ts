@@ -1,5 +1,6 @@
 import type { Access, PayloadRequest, Where } from 'payload'
 
+import { passwordExpiry } from '../config/passwordPolicy'
 import type { User } from '../payload-types'
 
 export const USER_ROLE_OPTIONS = [
@@ -17,7 +18,10 @@ export const USER_ROLE_OPTIONS = [
 export type UserRole = (typeof USER_ROLE_OPTIONS)[number]['value']
 
 type AuthenticatedUser = {
+  collection?: string
   id?: number | string
+  mustChangePassword?: boolean | null
+  passwordChangedAt?: null | string | Date
   role?: null | string
 }
 
@@ -40,11 +44,40 @@ export const getUserRole = (user: unknown): UserRole | undefined => {
     : undefined
 }
 
+/**
+ * SEC-CUENTAS-01 (odd/tasks/seguridad-cuentas.md, S1 y S4): true si la cuenta debe cambiar su contraseña antes de
+ * hacer cualquier otra cosa: un administrador fijó su contraseña con «Pedirle al usuario que cambie la contraseña»
+ * (`mustChangePassword`), o la contraseña venció (90 días) o no tiene fecha de cambio (cuentas anteriores a la política).
+ * Amenaza que evita: que una contraseña provisoria, conocida por el administrador, o una vencida siga dando acceso de rol.
+ * Límite: las estrategias de Payload marcan la sesión real con `collection: 'users'`; un objeto de usuario SIN esa marca
+ * y SIN el campo `passwordChangedAt` (usuarios sintéticos de pruebas, `user` armado a mano en la Local API) no se evalúa
+ * por vencimiento, solo por `mustChangePassword`. Una sesión real siempre trae la marca y el campo (null si falta).
+ */
+export const isPasswordChangePending = (user: unknown, now: Date = new Date()): boolean => {
+  if (!user || typeof user !== 'object') return false
+  const account = user as AuthenticatedUser
+  if (account.mustChangePassword === true) return true
+  if (!('passwordChangedAt' in account) && account.collection !== 'users') return false
+  return passwordExpiry(account.role, account.passwordChangedAt ?? null, now).expired
+}
+
+/**
+ * SEC-CUENTAS-01: rol que AUTORIZA. Igual que `getUserRole`, pero `undefined` mientras el cambio de contraseña está
+ * pendiente. Toda regla que concede algo por rol o por autoría usa esta función; `getUserRole` queda solo para
+ * identificar la cuenta (entrada al panel, auditoría).
+ */
+export const getAuthorizingRole = (user: unknown): UserRole | undefined =>
+  isPasswordChangePending(user) ? undefined : getUserRole(user)
+
+/**
+ * Comprueba si la sesión tiene uno de los roles permitidos.
+ * SEC-CUENTAS-01: niega todo rol mientras el cambio de contraseña está pendiente (ver `isPasswordChangePending`).
+ */
 export const hasRole = (
   user: unknown,
   allowedRoles: readonly UserRole[],
 ): boolean => {
-  const role = getUserRole(user)
+  const role = getAuthorizingRole(user)
 
   return role !== undefined && allowedRoles.includes(role)
 }
@@ -52,6 +85,8 @@ export const hasRole = (
 /**
  * SEC-05: exige una sesión con rol reconocido antes de abrir el panel.
  * Rechaza roles nulos o heredados desconocidos; las ACL de cada recurso siguen siendo independientes.
+ * SEC-CUENTAS-01: usa `getUserRole` (no el rol que autoriza) A PROPÓSITO: la cuenta con cambio de contraseña pendiente
+ * debe poder abrir el panel para llegar a la pantalla de cambio; todo lo demás se lo niegan las ACL de cada recurso.
  */
 export const isAuthenticated: AdminAccess = ({ req }) =>
   Boolean(req.user) && getUserRole(req.user) !== undefined
@@ -59,6 +94,12 @@ export const isAuthenticated: AdminAccess = ({ req }) =>
 export const isSuperAdmin: Access<User> = ({ req }) =>
   hasRole(req.user, ['superadmin'])
 
+/**
+ * Lectura de `users`: superadmin todo; cualquier otra sesión, solo su propia cuenta.
+ * SEC-CUENTAS-01: con el cambio de contraseña pendiente `hasRole` niega el superadmin y queda SOLO la propia ficha, que
+ * es lo que necesitan `/api/users/me` (lee con `overrideAccess: false`) y la pantalla de cambio. Límite: no oculta
+ * campos; los de seguridad tienen su propio acceso de campo.
+ */
 export const canReadUsers: Access<User> = ({ req }) => {
   const user = req.user as AuthenticatedUser | null
 
@@ -80,10 +121,16 @@ export const canReadUsers: Access<User> = ({ req }) => {
 export const canCreateUsers: Access<User> = ({ req }) =>
   hasRole(req.user, ['superadmin'])
 
+/**
+ * Edición de `users`: superadmin todo; cualquier otra sesión, solo su propia cuenta.
+ * SEC-CUENTAS-01 (S1): con el cambio de contraseña pendiente no edita NADA, ni siquiera su ficha: la única vía es
+ * `POST /api/users/cambiar-clave`, que verifica la contraseña actual (y usa `overrideAccess`). Amenaza que evita: que una
+ * sesión con contraseña provisoria o vencida cambie la contraseña sin conocer la actual o edite otros datos.
+ */
 export const canUpdateUsers: Access<User> = ({ req }) => {
   const user = req.user as AuthenticatedUser | null
 
-  if (!user?.id) {
+  if (!user?.id || isPasswordChangePending(user)) {
     return false
   }
 
@@ -110,11 +157,36 @@ export const canManageUserRoles = ({
   req: PayloadRequest
 }): boolean => hasRole(req.user, ['superadmin'])
 
+/**
+ * Lectura del campo `role`: cualquier sesión (la lectura de la fila ya la limita `canReadUsers`).
+ * SEC-CUENTAS-01: se mantiene para la cuenta con cambio pendiente porque `/me` debe devolver su `role` al panel.
+ */
 export const canReadProtectedUserFields = ({
   req,
 }: {
   req: PayloadRequest
 }): boolean => Boolean(req.user)
+
+/**
+ * SEC-CUENTAS-01 (contrato servidor ↔ panel): lectura de `mustChangePassword` y `passwordChangedAt`. Solo la propia
+ * cuenta (el panel decide si redirige a la pantalla de cambio) y el superadmin (administra las cuentas).
+ * Amenaza que evita: que otros roles enumeren qué cuentas tienen contraseña provisoria o vencida.
+ * Límite: con `overrideAccess` (Local API del servidor, estrategia JWT) el campo se lee igual.
+ */
+export const canReadOwnAccountSecurityField = ({
+  req,
+  doc,
+  id,
+}: {
+  req: PayloadRequest
+  doc?: { id?: number | string } | null
+  id?: number | string
+}): boolean => {
+  const user = req.user as AuthenticatedUser | null
+  if (!user?.id) return false
+  if (hasRole(user, ['superadmin'])) return true
+  return isSameUser(user.id, doc?.id ?? id)
+}
 
 export const isSameUser = (
   authenticatedUserID: number | string | undefined,
@@ -181,7 +253,8 @@ const sessionUserId = (user: unknown): number | string | undefined => {
 export const canUpdateEditorial =
   (slug: EditorialCollectionSlug): Access =>
   ({ req }) => {
-    if (getUserRole(req.user) === 'correspondent') {
+    // SEC-CUENTAS-01: rol que autoriza (sin rol mientras el cambio de contraseña está pendiente).
+    if (getAuthorizingRole(req.user) === 'correspondent') {
       const id = sessionUserId(req.user)
       return id !== undefined && editorialAuthorRoles(slug).includes('correspondent')
         ? { createdBy: { equals: id } }
@@ -215,7 +288,8 @@ const EDITORIAL_READ_ROLES: readonly UserRole[] = [
 export const readPublishedOrEditorial: Access = ({ req }) => {
   if (hasRole(req.user, EDITORIAL_READ_ROLES)) return true
   const published: Where = { _status: { equals: 'published' } }
-  const id = getUserRole(req.user) === 'correspondent' ? sessionUserId(req.user) : undefined
+  // SEC-CUENTAS-01: rol que autoriza (sin filtro por autoría mientras el cambio de contraseña está pendiente).
+  const id = getAuthorizingRole(req.user) === 'correspondent' ? sessionUserId(req.user) : undefined
   // DEP-03: el corresponsal lee lo publicado y lo que él creó (nunca borradores ajenos).
   return id !== undefined ? { or: [published, { createdBy: { equals: id } }] } : published
 }
@@ -228,7 +302,8 @@ export const readPublishedOrEditorial: Access = ({ req }) => {
  */
 export const canReadEditorialVersions: Access = ({ req }) => {
   if (hasRole(req.user, EDITORIAL_READ_ROLES)) return true
-  const id = getUserRole(req.user) === 'correspondent' ? sessionUserId(req.user) : undefined
+  // SEC-CUENTAS-01: rol que autoriza (sin versiones propias mientras el cambio de contraseña está pendiente).
+  const id = getAuthorizingRole(req.user) === 'correspondent' ? sessionUserId(req.user) : undefined
   return id !== undefined ? { 'version.createdBy': { equals: id } } : false
 }
 

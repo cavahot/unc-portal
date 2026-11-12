@@ -200,6 +200,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  nombre?: string | null;
+  apellido?: string | null;
   /**
    * Define las funciones y permisos institucionales del usuario dentro del CMS.
    */
@@ -221,6 +223,23 @@ export interface User {
    * ID del usuario en Telegram para recibir notificaciones
    */
   telegramUserId?: string | null;
+  /**
+   * Lo fija el sistema al restablecer la contraseña; se borra cuando el usuario la cambia.
+   */
+  mustChangePassword?: boolean | null;
+  /**
+   * Vence a los 90 días. Sin fecha, el usuario debe cambiarla en su próximo ingreso.
+   */
+  passwordChangedAt?: string | null;
+  passwordHistory?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -995,7 +1014,9 @@ export interface Auditoria {
     | 'aprobar'
     | 'rechazar'
     | 'importar'
-    | 'revalidar';
+    | 'revalidar'
+    | 'cambiar_clave'
+    | 'restablecer_clave';
   /**
    * Colección afectada (noticias, usuarios, media, etc)
    */
@@ -1798,9 +1819,14 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  nombre?: T;
+  apellido?: T;
   role?: T;
   telefono?: T;
   telegramUserId?: T;
+  mustChangePassword?: T;
+  passwordChangedAt?: T;
+  passwordHistory?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

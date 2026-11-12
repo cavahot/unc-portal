@@ -63,10 +63,22 @@ async function main(): Promise<void> {
   let ok = true
   try {
     await cleanup(payload)
+    // SEC-CUENTAS-01: contraseña que cumple la política (sufijo fijo con las clases de caracteres) y cuenta sin cambio
+    // obligatorio (`exigirCambio: false`, respetado por el hook `enforcePasswordLifecycle`; la fecha la fija el hook).
+    // Por qué: esta sonda mide la minimización de datos del autor, no el bloqueo por cambio pendiente; con el cambio
+    // pendiente el autor no tendría rol y los hooks editoriales verían otra cosa.
     const user = await payload.create({
       collection: 'users',
-      data: { email: EMAIL, password: randomBytes(24).toString('base64url'), role: 'editor', telefono: PHONE } as never,
+      data: {
+        email: EMAIL,
+        password: `${randomBytes(18).toString('base64url')}Kq#Wz482`,
+        role: 'editor',
+        telefono: PHONE,
+        mustChangePassword: false,
+        passwordChangedAt: new Date().toISOString(),
+      } as never,
       overrideAccess: true,
+      context: { exigirCambio: false },
     })
     const slug = `sonda-minimizacion-${randomBytes(4).toString('hex')}`
     const created = await payload.create({

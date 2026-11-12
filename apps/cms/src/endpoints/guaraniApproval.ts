@@ -4,11 +4,15 @@
 // Límite: la sesión y el rol los valida Payload; no sustituye la revisión lingüística humana.
 import type { Endpoint } from 'payload'
 
+import { hasRole } from '../access/roles'
+
 export const guaraniApprovalEndpoint: Endpoint = {
   path: '/guarani-review/:id/approve',
   method: 'post',
   handler: async (req) => {
-    if (req.user?.role !== 'superadmin') {
+    // SEC-CUENTAS-01 (S1): rol que AUTORIZA (`hasRole`), no el rol crudo. Este endpoint escribe con `overrideAccess`, así
+    // que es el único control: un superadmin con la contraseña provisoria o vencida no aprueba hasta cambiarla.
+    if (!req.user || !hasRole(req.user, ['superadmin'])) {
       return Response.json({ message: 'Solo un superadmin puede aprobar traducciones guaraníes.' }, { status: 403 })
     }
 

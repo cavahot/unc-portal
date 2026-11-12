@@ -21,6 +21,8 @@ const SENSITIVE_KEYS = new Set([
   'lockUntil',
   'telefono',
   'telegramUserId',
+  // SEC-CUENTAS-01: historial de hashes propios de contraseñas anteriores (utilities/passwordHash.ts).
+  'passwordHistory',
 ])
 
 type Plain = Record<string, unknown>
