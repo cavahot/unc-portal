@@ -32,6 +32,7 @@ import { PortalDashboard as PortalDashboard_92c9f1c97ca84aa05a04f4aceada2882 } f
 import { MonitoringView as MonitoringView_a7d802be92b7596af998a1161b256916 } from '../../../admin/views/MonitoringView'
 import { AuditView as AuditView_0a119c9552f93b99e17af37185495ad5 } from '../../../admin/views/AuditView'
 import { CambiarClaveView as CambiarClaveView_d688382fe70c456b4e9ce171de9a4d40 } from '../../../admin/components/cuentas/CambiarClaveView'
+import { RecuperacionCerradaView as RecuperacionCerradaView_db5903cad9f1b0f0d4975fa20c974909 } from '../../../admin/components/cuentas/RecuperacionCerradaView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -70,5 +71,6 @@ export const importMap = {
   "./admin/views/MonitoringView#MonitoringView": MonitoringView_a7d802be92b7596af998a1161b256916,
   "./admin/views/AuditView#AuditView": AuditView_0a119c9552f93b99e17af37185495ad5,
   "./admin/components/cuentas/CambiarClaveView#CambiarClaveView": CambiarClaveView_d688382fe70c456b4e9ce171de9a4d40,
+  "./admin/components/cuentas/RecuperacionCerradaView#RecuperacionCerradaView": RecuperacionCerradaView_db5903cad9f1b0f0d4975fa20c974909,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

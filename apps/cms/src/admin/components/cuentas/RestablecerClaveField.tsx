@@ -215,6 +215,9 @@ export const RestablecerClaveField: React.FC = () => {
             // Olvida la clave: ya no queda en memoria del componente.
             setResultado(null)
             setAbierto(false)
+            // La ficha abierta todavía muestra la marca y la fecha anteriores; se recarga para mostrar las que fijó el
+            // servidor (y para que nadie guarde encima un formulario desactualizado).
+            window.location.reload()
           }}
         />
       )}

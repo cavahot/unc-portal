@@ -80,6 +80,11 @@ describe('configuración real saneada por Payload', () => {
     // El resto de las rutas de autenticación siguen siendo las de Payload.
     expect(route('post', '/login')?.path).toBe('/login')
     expect(route('get', '/me')?.path).toBe('/me')
+
+    // S2: la pantalla «olvidé mi contraseña» del panel se reemplaza (la de Payload anunciaba «Correo enviado» aunque el
+    // endpoint responde 403); la vista propia explica que la recuperación la hace un administrador.
+    const views = config.admin.components?.views as Record<string, { Component?: unknown }> | undefined
+    expect(views?.forgot?.Component).toMatchObject({ exportName: 'RecuperacionCerradaView' })
     vi.unstubAllEnvs()
   }, 120_000)
 })

@@ -13,6 +13,11 @@ export const cuentasAdmin = {
     Component: { path: './admin/components/cuentas/CambiarClaveView', exportName: 'CambiarClaveView' },
     path: '/cambiar-clave',
   },
+  /** Reemplazo de la vista integrada `forgot` (clave reservada de Payload): la recuperación por correo está cerrada. */
+  forgotView: {
+    Component: { path: './admin/components/cuentas/RecuperacionCerradaView', exportName: 'RecuperacionCerradaView' },
+    path: '/forgot',
+  },
   /** Campo `ui` para la barra lateral de la ficha de Users (el botón solo aparece a un superadmin sobre otra cuenta). */
   restablecerClaveField: {
     name: 'restablecerClave',

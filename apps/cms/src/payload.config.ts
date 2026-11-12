@@ -168,6 +168,8 @@ export default buildConfig({
         },
         // SEC-CUENTAS-03 (S1, S3): pantalla de cambio de contraseña con la guía de checks (/accesoSeguro/cambiar-clave).
         [cuentasAdmin.viewKey]: cuentasAdmin.view,
+        // SEC-CUENTAS-03 (S2): «Olvidé mi contraseña» explica que la recuperación la hace un administrador.
+        forgot: cuentasAdmin.forgotView,
       },
     },
   },
