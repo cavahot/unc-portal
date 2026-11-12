@@ -85,6 +85,10 @@ describe('configuración real saneada por Payload', () => {
     // endpoint responde 403); la vista propia explica que la recuperación la hace un administrador.
     const views = config.admin.components?.views as Record<string, { Component?: unknown }> | undefined
     expect(views?.forgot?.Component).toMatchObject({ exportName: 'RecuperacionCerradaView' })
+
+    // S8: `payload recuperar-superadmin` existe y apunta al script de recuperación de emergencia.
+    const bin = (config as { bin?: Array<{ key: string; scriptPath: string }> }).bin ?? []
+    expect(bin.find((b) => b.key === 'recuperar-superadmin')?.scriptPath.replace(/\\/g, '/')).toMatch(/src\/bin\/recuperarSuperadmin\.ts$/)
     vi.unstubAllEnvs()
   }, 120_000)
 })

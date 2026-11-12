@@ -142,6 +142,17 @@ export const auditUserAfterChange: CollectionAfterChangeHook = async ({ req, ope
       mensaje: 'Cambio de contraseña propio',
       cambiosRelevantes: { motivo },
     })
+  } else if (ctx.recuperacionEmergencia) {
+    // SEC-CUENTAS-04 (S8): no hay sesión; el actor es quien ejecutó el comando en el servidor (lo declara con --operador).
+    await write(req, {
+      usuario: `recuperación de emergencia (servidor): ${ctx.recuperacionEmergencia.operador}`,
+      rol: 'system',
+      accion: 'restablecer_clave',
+      documento: docLabel(current),
+      resultado: 'exito',
+      mensaje: 'Contraseña de superadmin restablecida por recuperación de emergencia en el servidor',
+      cambiosRelevantes: { modo: 'emergencia', exigirCambio: current.mustChangePassword === true },
+    })
   } else {
     await write(req, {
       ...actor(req),

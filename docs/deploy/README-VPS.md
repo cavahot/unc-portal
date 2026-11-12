@@ -269,6 +269,10 @@ Registro completo, con secretos ocultos: `instalacion-produccion-FECHA.log`.
 
 1. **Primer superadmin:** abra `https://cms.unc.edu.py/accesoSeguro` y créelo con el correo institucional del
    propietario. La contraseña la elige el propietario, no usted.
+   **Segundo superadmin de respaldo:** con el primero, cree otra cuenta superadmin (por ejemplo, institucional, guardada
+   en un gestor de contraseñas). Ya no existe «olvidé mi contraseña» por correo: si el único superadmin pierde su
+   contraseña, solo queda la recuperación de emergencia por SSH (`docs/manual/CONTRASENAS-Y-CUENTAS.md`, sección
+   «Recuperación de emergencia»). Toda cuenta creada por un superadmin cambia su contraseña en el primer ingreso.
 2. **Cuentas `web-admin`** para quienes editarán contenidos (lista que entrega el propietario). Cada persona define su
    contraseña.
 3. **Siembras** desde su computadora, igual que en 3.4 pero contra producción:
