@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { cuentasAdmin } from './admin/cuentas'
 import { richTextEditor } from './fields/richTextEditor'
 import { es } from '@payloadcms/translations/languages/es'
 import path from 'node:path'
@@ -26,7 +27,7 @@ import { Noticias } from './collections/Noticias'
 import { Paginas } from './collections/Paginas'
 import { Revistas } from './collections/Revistas'
 import { Tesis } from './collections/Tesis'
-import { Users } from './collections/Users'
+import { resolveSessionOrigins, Users } from './collections/Users'
 import { Auditoria } from './collections/Auditoria'
 import { Autoridades } from './collections/Autoridades'
 import { Ley5189 } from './collections/Ley5189'
@@ -75,6 +76,11 @@ const mediaStorage = resolveMediaStorage(process.env)
 // multimedia (no editan contenido). El CMS sigue decidiendo qué borradores ve cada rol (DEP-02).
 const PREVIEW_ROLES = ['superadmin', 'web-admin', 'publisher', 'reviewer', 'editor', 'correspondent'] as const
 
+// SEC-CUENTAS-01 / S7 (hallazgo S-4): URL pública del CMS y lista EXACTA de orígenes de confianza (CMS y portal públicos;
+// localhost:3002/3000 solo fuera de producción). Se pasa `process.env` entero para que Next no incruste en la compilación
+// el valor de NEXT_PUBLIC_SERVER_URL (ver resolveSessionOrigins en collections/Users.ts).
+const sessionOrigins = resolveSessionOrigins(process.env)
+
 const smtpPort = Number(process.env.SMTP_PORT || 1025)
 const smtpSecure = process.env.SMTP_SECURE === 'true'
 const smtpUser = process.env.SMTP_USER
@@ -91,6 +97,14 @@ export default buildConfig({
   routes: {
     admin: ADMIN_ROUTE,
   },
+  // S7: `serverURL` solo si está configurada (sin ella Payload usa rutas relativas, como hasta ahora). `csrf`: Payload
+  // ignora la cookie de sesión si el `Origin` (o `Sec-Fetch-Site`) no corresponde a esta lista (auth/extractJWT.js);
+  // `cors`: solo estos orígenes reciben cabeceras CORS. Límite: el token por cabecera `Authorization` (portal, scripts)
+  // no depende de `csrf`. Copias separadas: Payload agrega `serverURL` a `csrf` mutando el arreglo (config/sanitize.js) y
+  // con un arreglo compartido ese duplicado aparecería también en `cors`.
+  ...(sessionOrigins.serverURL ? { serverURL: sessionOrigins.serverURL } : {}),
+  csrf: [...sessionOrigins.origins],
+  cors: [...sessionOrigins.origins],
   endpoints: [guaraniDictionaryEndpoint, guaraniApprovalEndpoint],
   admin: {
     user: Users.slug,
@@ -121,6 +135,9 @@ export default buildConfig({
       collections: ['noticias', 'paginas'],
     },
     components: {
+      // SEC-CUENTAS-03 (S1, S4): lleva a la pantalla de cambio a la cuenta con contraseña provisoria o vencida y avisa
+      // 14 días antes del vencimiento. Solo guía: el servidor ya le niega todo lo demás.
+      providers: [cuentasAdmin.provider],
       afterNavLinks: [
         {
           path: './admin/components/NavLinks',
@@ -149,6 +166,8 @@ export default buildConfig({
           },
           path: '/portal-audit',
         },
+        // SEC-CUENTAS-03 (S1, S3): pantalla de cambio de contraseña con la guía de checks (/accesoSeguro/cambiar-clave).
+        [cuentasAdmin.viewKey]: cuentasAdmin.view,
       },
     },
   },

@@ -39,6 +39,22 @@ function assertLocal(url: string): void {
 
 type Session = { actor: Actor; token?: string; id?: number | string }
 
+/**
+ * SEC-CUENTAS-01: contraseña aleatoria de sonda que cumple la política (12+, 3 dígitos, 4 letras con mayúscula y
+ * minúscula, 1 especial; odd/tasks/seguridad-cuentas.md S2). La parte aleatoria da la entropía; el sufijo fijo garantiza
+ * las clases de caracteres. Solo vive en memoria.
+ */
+const probePassword = () => `${randomBytes(18).toString('base64url')}Kq#Wz482`
+
+/**
+ * SEC-CUENTAS-01: las cuentas de sonda se crean SIN cambio obligatorio y con la contraseña recién fijada. Por qué: la
+ * matriz mide los permisos de cada ROL; una cuenta con el cambio pendiente (el valor por defecto cuando la crea un
+ * administrador o la Local API) tendría todo denegado y la matriz mediría el bloqueo, no el rol. `exigirCambio: false`
+ * es el contexto del servidor que respeta el hook `enforcePasswordLifecycle`; la fecha la fija el hook al recibir la
+ * contraseña. El bloqueo por cambio pendiente se prueba aparte (tests/unit/seguridad-cuentas-access.spec.ts).
+ */
+const PROBE_ACCOUNT_CONTEXT = { exigirCambio: false }
+
 async function http(method: string, endpoint: string, token?: string, body?: unknown): Promise<Observed> {
   const res = await fetch(`${CMS_URL}${endpoint}`, {
     method,
@@ -99,8 +115,13 @@ async function main(): Promise<number> {
     for (const actor of ACTORS) {
       if (actor === 'anonimo') continue
       const email = `${PREFIX}${actor}${EMAIL_DOMAIN}`
-      const password = `${randomBytes(24).toString('base64url')}Aa1!`
-      const user = await payload.create({ collection: 'users', data: { email, password, role: actor } as any, overrideAccess: true })
+      const password = probePassword()
+      const user = await payload.create({
+        collection: 'users',
+        data: { email, password, role: actor, mustChangePassword: false, passwordChangedAt: new Date().toISOString() } as any,
+        overrideAccess: true,
+        context: PROBE_ACCOUNT_CONTEXT,
+      })
       const login = await http('POST', '/api/users/login', undefined, { email, password })
       if (!login.body?.token) throw new Error(`No se pudo iniciar sesión con la cuenta de sonda ${actor} (HTTP ${login.status}).`)
       sessions.push({ actor, token: login.body.token, id: user.id })
@@ -146,7 +167,7 @@ async function main(): Promise<number> {
         return obs
       }
       await run('P1', 'GET', '/api/users?limit=100&depth=0')
-      await run('P2', 'POST', '/api/users', { email: `${PREFIX}creada-${s.actor}${EMAIL_DOMAIN}`, password: `${randomBytes(24).toString('base64url')}Aa1!`, role: 'viewer' })
+      await run('P2', 'POST', '/api/users', { email: `${PREFIX}creada-${s.actor}${EMAIL_DOMAIN}`, password: probePassword(), role: 'viewer' })
       if (s.actor === 'anonimo') {
         await run('P3', 'PATCH', `/api/users/${sessions[1]?.id}`, { role: 'superadmin' })
       } else {
