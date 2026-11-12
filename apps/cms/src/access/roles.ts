@@ -66,7 +66,7 @@ export const isPasswordChangePending = (user: unknown, now: Date = new Date()): 
  * pendiente. Toda regla que concede algo por rol o por autoría usa esta función; `getUserRole` queda solo para
  * identificar la cuenta (entrada al panel, auditoría).
  */
-const getAuthorizingRole = (user: unknown): UserRole | undefined =>
+export const getAuthorizingRole = (user: unknown): UserRole | undefined =>
   isPasswordChangePending(user) ? undefined : getUserRole(user)
 
 /**

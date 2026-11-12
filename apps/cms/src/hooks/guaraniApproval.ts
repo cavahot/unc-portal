@@ -5,6 +5,8 @@
 import { APIError } from 'payload'
 import type { CollectionBeforeChangeHook, CollectionBeforeDeleteHook } from 'payload'
 
+import { getAuthorizingRole, hasRole } from '../access/roles'
+
 export type GuaraniApprovalInput = {
   data: Record<string, unknown>
   originalDoc?: Record<string, unknown>
@@ -83,7 +85,8 @@ export const enforceGuaraniApproval: CollectionBeforeChangeHook = ({ data, origi
   validateGuaraniApproval({
     data: { ...original, ...(data as Record<string, unknown>), estadoRevision: next, revisado: next === 'aprobado' },
     originalDoc: original,
-    role: typeof req.user?.role === 'string' ? req.user.role : undefined,
+    // SEC-CUENTAS-01 (S1): rol que autoriza; sin rol mientras el cambio de contraseña está pendiente.
+    role: getAuthorizingRole(req.user),
   })
 
   data.estadoRevision = next
@@ -123,7 +126,8 @@ export const enforceGuaraniDeleteGuard: CollectionBeforeDeleteHook = async ({ id
     overrideAccess: true,
   })) as unknown as Record<string, unknown>
   const approved = reviewStateOf(doc) === 'aprobado' || doc.revisado === true
-  if (approved && req.user?.role !== 'superadmin') {
+  // SEC-CUENTAS-01 (S1): rol que autoriza (ver `hasRole`), no el rol crudo.
+  if (approved && !(req.user && hasRole(req.user, ['superadmin']))) {
     throw new APIError('Una glosa aprobada solo puede borrarla un superadmin.', 403, undefined, true)
   }
 }
