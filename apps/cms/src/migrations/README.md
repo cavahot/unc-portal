@@ -76,3 +76,4 @@ Fuente única del esquema de cualquier entorno persistente (DEP-07). Prohibido `
   Ventana de rollback hasta entonces: la imagen vieja sigue funcionando porque `activo` existe y tiene DEFAULT true;
   las ediciones hechas con la imagen nueva en `active` no se replican a `activo` (la imagen vieja ve el valor previo
   al deploy y las filas nuevas nacen con `activo = true`).
+- `20261114_204656_glosario_gn_institucional.ts` y `.json`: GLO-GN-INST-01, añade a `glosario_guarani` las columnas `traductor_nombre`, `traductor_cargo` y `revisor_nativo` (responsables de una traducción institucional de la UNC, obligatorios para aprobarla). Solo columnas nuevas y nulas, `IF NOT EXISTS`. Encadenada tras `seguridad_cuentas_01` (`prevId` corregido a mano). Su `down` se niega a correr si alguna fila tiene esos datos. Spec: `odd/tasks/glosario-gn-institucional.md`.

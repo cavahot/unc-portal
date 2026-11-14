@@ -16,7 +16,8 @@ export const guaraniDictionaryEndpoint: Endpoint = {
       where: {
         and: [
           { activo: { equals: true } },
-          { oficial: { equals: true } },
+          // GLO-GN-INST-01 (S3): oficiales, o traducciones institucionales de la UNC aprobadas con responsables.
+          { or: [{ oficial: { equals: true } }, { tipo: { equals: 'institucional' } }] },
           { revisado: { equals: true } },
           { estadoRevision: { equals: 'aprobado' } },
           { confianza: { in: ['A', 'B'] } },

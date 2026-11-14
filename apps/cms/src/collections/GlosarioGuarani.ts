@@ -184,6 +184,39 @@ export const GlosarioGuarani: CollectionConfig = {
       validate: (value: unknown) => validateHttpsUrl(value, { required: false }),
       admin: { description: 'Corpus o artículo que muestra el uso (p. ej. Jojajovai). Solo https.' },
     },
+    // GLO-GN-INST-01 (S1, S5): responsables de una traducción institucional de la UNC (sin fuente oficial). Son
+    // obligatorios para aprobarla (`validateGuaraniApproval`) y quedan en la auditoría; el portal nunca los recibe
+    // (`/guarani-dictionary` solo devuelve el término en español y en guaraní).
+    {
+      type: 'row',
+      admin: { condition: (data) => data?.tipo === 'institucional' },
+      fields: [
+        {
+          name: 'traductorNombre',
+          type: 'text',
+          label: 'Traductor (nombre y apellido)',
+          maxLength: MAX_FUENTE,
+          validate: maxLen(MAX_FUENTE),
+          admin: { width: '34%', description: 'Quien hizo la traducción.' },
+        },
+        {
+          name: 'traductorCargo',
+          type: 'text',
+          label: 'Cargo del traductor',
+          maxLength: MAX_FUENTE,
+          validate: maxLen(MAX_FUENTE),
+          admin: { width: '33%', description: 'Cargo o dependencia en la UNC.' },
+        },
+        {
+          name: 'revisorNativo',
+          type: 'text',
+          label: 'Revisado por (hablante nativo)',
+          maxLength: MAX_FUENTE,
+          validate: maxLen(MAX_FUENTE),
+          admin: { width: '33%', description: 'Hablante nativo que confirmó la traducción.' },
+        },
+      ],
+    },
     {
       type: 'row',
       fields: [

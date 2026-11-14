@@ -1609,6 +1609,18 @@ export interface GlosarioGuarani {
    * Corpus o artículo que muestra el uso (p. ej. Jojajovai). Solo https.
    */
   evidenciaUrl?: string | null;
+  /**
+   * Quien hizo la traducción.
+   */
+  traductorNombre?: string | null;
+  /**
+   * Cargo o dependencia en la UNC.
+   */
+  traductorCargo?: string | null;
+  /**
+   * Hablante nativo que confirmó la traducción.
+   */
+  revisorNativo?: string | null;
   oficial?: boolean | null;
   /**
    * Protege la entrada: los scripts no la modifican.
@@ -2497,6 +2509,9 @@ export interface GlosarioGuaraniSelect<T extends boolean = true> {
   fuente?: T;
   fuenteUrl?: T;
   evidenciaUrl?: T;
+  traductorNombre?: T;
+  traductorCargo?: T;
+  revisorNativo?: T;
   oficial?: T;
   revisado?: T;
   activo?: T;
