@@ -12,10 +12,11 @@ Rama `feat/glosario-gn-institucional` (desde `chain/rediseno-portal`). Entrega: 
 ## Tasks
 | ID | Specs | Ruta | Estado | Evidencia |
 | --- | --- | --- | --- | --- |
-| T1 | S1–S5 | inline (unidad única, ~200 líneas; riesgo ítem 1 por la migración) | pendiente | |
-| T2 | S1–S5 | inline | pendiente | prueba real en el panel local, documentación, PR |
+| T1 | S1–S5 | inline (unidad única, ~200 líneas; riesgo ítem 1 por la migración) | hecho | `d5e1fba`: RED (5 fallas) → GREEN; 96 pruebas del glosario; suite 208/3263; `tsc` limpio |
+| T2 | S1–S5 | inline | hecho | prueba real (L4); texto de ayuda de «Estado de revisión» corregido; PR |
 
 ## Log
 - L1 (2026-11-14, pedido original): «seguimos y ademas revisa la parte del diccionario en guaraní en el cms para poder hacer la traduccion de la palabra del castellano en guaraní e insertarlo en la bd»
 - L2 (2026-11-14): revisión: 375 términos, 0 aprobados, 41 oficiales. Cargar funciona; aprobar exige fuente oficial (`validateGuaraniApproval`), así que una traducción de la UNC no podía aprobarse nunca. Propuesta presentada al propietario.
 - L3 (2026-11-14, decisión del propietario): «Sí, habilítala».
+- L4 (2026-11-14): prueba real en el panel local con superadmin sintético: glosa `institucional` (traductor y cargo, sin revisor nativo) → aprobar = 400 «Una traducción institucional necesita el nombre del hablante nativo que la revisó.»; con revisor → 200, `aprobado`, `oficial: false`, `aprobadoPor` registrado; auditoría `aprobar` con `{tipo, traductorNombre, traductorCargo, revisorNativo}`; `/api/guarani-dictionary` devuelve la glosa sin nombres. Datos sintéticos borrados (glosario vuelve a 375). Las columnas nuevas quedaron en la base local por el push de desarrollo. En el worktree temporal, 4 pruebas ajenas fallaban solo por finales de línea CRLF de la copia de trabajo; en el checkout LF pasan.

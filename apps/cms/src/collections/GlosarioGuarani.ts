@@ -269,7 +269,7 @@ export const GlosarioGuarani: CollectionConfig = {
         { label: 'Rechazado', value: 'rechazado' },
       ],
       admin: {
-        description: 'La aprobación exige superadmin, traducción, fuente oficial y confianza A/B. El portal solo usa aprobados.',
+        description: 'La aprobación exige superadmin, traducción, confianza A/B y fuente oficial (o, si el tipo es Institucional, traductor, cargo y revisor nativo). El portal solo usa aprobados.',
       },
     },
     {
