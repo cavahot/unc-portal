@@ -59,7 +59,8 @@ export const approvalHistoryField: ArrayField = {
     // SEC-027 S-2: el historial lleva correos de revisores y publicadores y comentarios internos de rechazo. Sin regla
     // de lectura, Payload lo entregaba a cualquiera (también al anónimo) en todo contenido publicado. Lo leen los
     // mismos roles que ven la autoría (`createdBy`); una cuenta con el cambio de contraseña pendiente no (hasRole).
-    // Límite: la Local API del servidor con `overrideAccess` lo sigue leyendo (hooks y tablero editorial).
+    // Límite: los hooks lo siguen leyendo (`originalDoc` se arma con `overrideAccess`). El tablero editorial
+    // (`/api/dashboard/noticias`) lee con la sesión: el rol `auditor` ya no recibe el último comentario de rechazo.
     read: canReadEditorialAuthorship,
   },
   admin: {

@@ -54,3 +54,33 @@ describe('S-3: plantillas de correo sin HTML inyectado', () => {
     expect(cms).toMatch(/href="http[^"]+\/accesoSeguro\/collections\/noticias\/12"/)
   })
 })
+
+// Aviso 4 del verificador: una URL de entorno vacía o sin esquema no debe impedir el correo (antes se enviaba con un
+// enlace roto; `new URL` lanzaría y no saldría ningún correo), y la ruta base de PORTAL_URL se conserva.
+describe('S-3: URLs de entorno', () => {
+  const load = async (env: Record<string, string>) => {
+    vi.resetModules()
+    for (const [k, v] of Object.entries(env)) vi.stubEnv(k, v)
+    return import('../../apps/cms/src/utilities/notifications')
+  }
+
+  it('con PORTAL_URL o NEXT_PUBLIC_SERVER_URL vacías no lanza y arma el correo', async () => {
+    const mod = await load({ PORTAL_URL: '', NEXT_PUBLIC_SERVER_URL: '' })
+    for (const type of tipos) expect(() => mod.renderNotificationEmail({ ...base, type }), type).not.toThrow()
+    vi.unstubAllEnvs()
+  })
+
+  it('con una URL sin esquema no lanza y no pone un enlace inválido', async () => {
+    const mod = await load({ PORTAL_URL: 'portal-sin-esquema' })
+    const out = mod.renderNotificationEmail({ ...base, type: 'noticia_publicada' })
+    expect(out?.html).not.toContain('href="portal-sin-esquema')
+    vi.unstubAllEnvs()
+  })
+
+  it('conserva la ruta base de PORTAL_URL', async () => {
+    const mod = await load({ PORTAL_URL: 'https://www.unc.edu.py/inicio/' })
+    const out = mod.renderNotificationEmail({ ...base, type: 'noticia_publicada', noticiaSlug: 'mi-nota' })
+    expect(out?.html).toContain('href="https://www.unc.edu.py/inicio/noticias/mi-nota"')
+    vi.unstubAllEnvs()
+  })
+})

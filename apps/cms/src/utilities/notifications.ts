@@ -5,8 +5,9 @@ import type { Payload } from 'payload'
 // DEP-10: nombres canónicos dentro del CMS. NEXT_PUBLIC_SERVER_URL = URL pública del CMS (convención de
 // Payload); PORTAL_URL = URL pública del portal. NEXT_PUBLIC_CMS_URL (origen público de /api/media/file/**, www) y
 // NEXT_PUBLIC_SITE_URL son del portal.
-const CMS_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3002'
-const PORTAL_URL = process.env.PORTAL_URL ?? 'http://localhost:3000'
+// SEC-027 S-3: `||` y no `??`: el compose pasa una cadena vacía cuando la variable de origen no está definida.
+const CMS_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002'
+const PORTAL_URL = process.env.PORTAL_URL || 'http://localhost:3000'
 
 export type NotificationType =
   | 'noticia_creada'
@@ -105,9 +106,22 @@ export function escapeHtml(value: unknown): string {
 const oneLine = (value: unknown) => String(value ?? '').replace(/[\r\n\u2028\u2029]+/g, ' ').trim()
 
 /** SEC-027 S-3: enlaces armados con `new URL` y el id/slug codificados; no se pueden cerrar el atributo ni cambiar de host. */
-const cmsNoticiaUrl = (id: number) =>
-  escapeHtml(new URL(`/accesoSeguro/collections/noticias/${encodeURIComponent(String(id))}`, CMS_URL).toString())
-const portalNoticiaUrl = (slug: string) => escapeHtml(new URL(`/noticias/${encodeURIComponent(String(slug ?? ''))}`, PORTAL_URL).toString())
+// La base se une como texto (conserva una ruta base como `https://www.unc.edu.py/inicio`) y `new URL` solo valida el
+// resultado: el tramo propio va codificado, así que no puede cambiar el host. Una base vacía o sin esquema http(s) no
+// tumba el correo: devuelve '' y la plantilla omite el enlace (antes, `new URL` lanzaba y no salía ningún correo).
+const joinUrl = (base: string, path: string): string => {
+  try {
+    const url = new URL(`${base.replace(/\/+$/, '')}${path}`)
+    return url.protocol === 'https:' || url.protocol === 'http:' ? escapeHtml(url.toString()) : ''
+  } catch {
+    return ''
+  }
+}
+const cmsNoticiaUrl = (id: number) => joinUrl(CMS_URL, `/accesoSeguro/collections/noticias/${encodeURIComponent(String(id))}`)
+const portalNoticiaUrl = (slug: string) => joinUrl(PORTAL_URL, `/noticias/${encodeURIComponent(String(slug ?? ''))}`)
+
+/** Enlace de la plantilla, o nada si la URL de entorno no es válida (el correo sale igual, sin el enlace). */
+const link = (href: string, text: string) => (href ? `<p><a href="${href}">${text}</a></p>` : '')
 
 /** Valores ya escapados que usan las plantillas: ninguna plantilla toca `NotificationData` directamente. */
 type SafeNotification = {
@@ -127,7 +141,7 @@ const emailTemplates: Record<NotificationType, (d: SafeNotification) => string> 
       <p><strong>Estado:</strong> Borrador</p>
       <hr>
       <p>La noticia está lista para ser enviada a revisión.</p>
-      <p><a href="${d.cmsUrl}">Ver en CMS →</a></p>
+      ${link(d.cmsUrl, 'Ver en CMS →')}
     `,
 
   envio_revision: (d) => `
@@ -138,7 +152,7 @@ const emailTemplates: Record<NotificationType, (d: SafeNotification) => string> 
       <hr>
       <p>Hola ${d.revisor},</p>
       <p>Una noticia ha sido enviada para tu revisión. Por favor, revísala y aprueba o rechaza según sea necesario.</p>
-      <p><a href="${d.cmsUrl}">Revisar noticia →</a></p>
+      ${link(d.cmsUrl, 'Revisar noticia →')}
     `,
 
   noticia_aprobada: (d) => `
@@ -147,7 +161,7 @@ const emailTemplates: Record<NotificationType, (d: SafeNotification) => string> 
       <p><strong>Estado:</strong> Aprobada</p>
       <hr>
       <p>Tu noticia ha sido aprobada y está lista para publicación.</p>
-      <p><a href="${d.cmsUrl}">Ver en CMS →</a></p>
+      ${link(d.cmsUrl, 'Ver en CMS →')}
     `,
 
   noticia_rechazada: (d) => `
@@ -160,7 +174,7 @@ const emailTemplates: Record<NotificationType, (d: SafeNotification) => string> 
         ${d.comentario}
       </blockquote>
       <p>Por favor, revisa y vuelve a enviar cuando esté lista.</p>
-      <p><a href="${d.cmsUrl}">Editar noticia →</a></p>
+      ${link(d.cmsUrl, 'Editar noticia →')}
     `,
 
   noticia_publicada: (d) => `
@@ -169,7 +183,7 @@ const emailTemplates: Record<NotificationType, (d: SafeNotification) => string> 
       <p><strong>Estado:</strong> Publicada</p>
       <hr>
       <p>¡Felicidades! Tu noticia ha sido publicada en el portal.</p>
-      <p><a href="${d.portalUrl}">Ver en portal →</a></p>
+      ${link(d.portalUrl, 'Ver en portal →')}
     `,
 }
 
