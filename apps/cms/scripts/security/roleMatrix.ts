@@ -117,11 +117,13 @@ export const PROBES: Probe[] = [
     // corresponsal (canReadEditorialAuthorship, fields/approvalHistory.ts).
     id: 'P12',
     desc: 'GET /api/noticias/<publicada>?depth=0 (historial de aprobaciones)',
-    expectation: (a) => ([...EDITORIAL_READERS, 'correspondent'].includes(a) ? '200' : '200 sin approvalHistory'),
+    expectation: (a) => ([...EDITORIAL_READERS, 'correspondent'].includes(a) ? '200' : '200 sin filas de approvalHistory'),
     judge: (a, o) => {
       if (o.status !== 200) return false
       if ([...EDITORIAL_READERS, 'correspondent'].includes(a)) return true
-      return o.body?.approvalHistory === undefined
+      // Payload quita las filas pero puede dejar la clave como arreglo vacío: lo que no debe llegar son filas.
+      const h = o.body?.approvalHistory
+      return h === undefined || h === null || (Array.isArray(h) && h.length === 0)
     },
   },
 ]

@@ -41,6 +41,14 @@ npx tsx apps/cms/scripts/security/probe-roles.ts --cleanup  # solo borra cuentas
 
 Código de salida 0 solo si todas las sondas cumplen. El informe no incluye contraseñas ni tokens.
 
+## Resultado (2026-11-14, CMS local, rama `fix/cms-s2-s3`)
+
+Sonda nueva **P12** (hallazgo S-2): `GET /api/noticias/<publicada>?depth=0` no debe traer filas de `approvalHistory`
+(correos de revisores y publicadores, comentarios de rechazo) para anónimo, media-manager, auditor ni viewer.
+Payload quita las filas y deja la clave como arreglo vacío; la sonda falla solo si llega alguna fila. Antes del arreglo,
+el anónimo recibía las 4 filas de la noticia 1; después recibe `[]` y un superadmin sigue recibiendo las 4.
+`probe-roles.ts --apply` → **«Resultado: TODO CUMPLE»**: 12 sondas en los 9 actores (108 casos).
+
 ## Resultado (2026-11-09, CMS local, rama del tracker)
 
 `npx tsx apps/cms/scripts/security/probe-roles.ts --apply` → **«Resultado: TODO CUMPLE»**: las 11 sondas en los 9 actores (99 casos). Limpieza: 2 noticias y 8 cuentas de sonda borradas; consulta posterior a la base: 0 cuentas `sonda-%` y 0 noticias `sonda-%`.

@@ -118,6 +118,7 @@ describe('P12 — historial de aprobaciones de una noticia publicada', () => {
   it('anónimo, viewer, auditor y media-manager: debe faltar el campo', () => {
     for (const a of ['anonimo', 'viewer', 'auditor', 'media-manager'] as Actor[]) {
       expect(judge('P12', a, sinHistorial), a).toBe(true)
+      expect(judge('P12', a, ok({ id: 3, approvalHistory: [] })), a).toBe(true)
       expect(judge('P12', a, conHistorial), a).toBe(false)
     }
   })
