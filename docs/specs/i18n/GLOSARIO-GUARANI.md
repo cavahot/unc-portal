@@ -118,7 +118,7 @@ Una traducción hecha por la UNC no tiene fuente oficial; la respaldan personas 
 `odd/tasks/glosario-gn-institucional.md`.
 
 1. **Traducción → Glosario guaraní → Crear.** Complete «Término en español» y «Término en guaraní».
-2. **Tipo: Institucional.** Aparecen tres campos: «Traductor (nombre y apellido)», «Cargo del traductor» y «Revisado por
+2. **Tipo: Institucional (UNC).** Aparecen tres campos: «Traductor (nombre y apellido)», «Cargo del traductor» y «Revisado por
    (hablante nativo)». Complételos.
 3. **Confianza A o B** y **Fuente** (por ejemplo, «Traducción institucional UNC»). No hace falta URL oficial.
 4. **Guardar.** Queda pendiente.

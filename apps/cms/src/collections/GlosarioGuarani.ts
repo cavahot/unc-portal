@@ -124,7 +124,7 @@ export const GlosarioGuarani: CollectionConfig = {
             { label: 'Oficial', value: 'oficial' },
             { label: 'Préstamo', value: 'prestamo' },
             { label: 'Neologismo', value: 'neologismo' },
-            { label: 'Institucional', value: 'institucional' },
+            { label: 'Institucional (UNC)', value: 'institucional' },
             { label: 'Corpus', value: 'corpus' },
             { label: 'Localización de software', value: 'localizacion' },
           ],
