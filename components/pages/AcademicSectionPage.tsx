@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { getLocale } from 'next-intl/server'
 import Reveal from '@/components/motion/Reveal'
+import { getT } from '@/lib/i18n/server'
 import { safeHref } from '@/lib/security/safeUrl'
 // DEP-19b: migas y acciones llegan como props; hoy las pasan páginas con literales, pero el componente
 // es reutilizable y un futuro origen CMS no debe poder inyectar `javascript:` (defensa en profundidad).
@@ -42,9 +44,10 @@ export interface AcademicSectionPageProps {
   contactEmail?: string
   contactLabel?: string
 
+  // Visual direction per section: permite que Investigación tenga una composición propia sin alterar otras páginas académicas.
+  visualVariant?: 'default' | 'research'
   // Extra slot for future rich sections
   afterAreas?: ReactNode
-
   // State flag — shows tasteful "in development" chip
   underConstruction?: boolean
 }
@@ -82,13 +85,14 @@ function IconMail() {
    AREA CARD
    ========================================================= */
 
-function AreaCard({ area, index }: { area: WorkArea; index: number }) {
+function AreaCard({ area, index, research }: { area: WorkArea; index: number; research: boolean }) {
   return (
     <Reveal delay={index * 60}>
-      <div className="flex h-full flex-col rounded-[1.25rem] border border-[#D7E0DB] bg-white p-6 shadow-[0_8px_28px_rgba(7,42,15,0.06)] transition-all duration-300 hover:border-[#37D448]/60 hover:shadow-[0_18px_44px_rgba(0,71,0,0.11)]">
-        <span className="text-3xl leading-none" aria-hidden="true">{area.icon}</span>
-        <h3 className="mt-4 font-serif text-lg font-bold text-[#09231D]">{area.title}</h3>
+      <div className={`group flex h-full flex-col rounded-[1.25rem] border p-6 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-1 ${research ? 'border-[#CDE8D2] bg-white/90 shadow-[0_14px_38px_rgba(0,71,0,0.07)] hover:border-[#37D448]/70 hover:shadow-[0_20px_48px_rgba(0,71,0,0.13)]' : 'border-[#D7E0DB] bg-white shadow-[0_8px_28px_rgba(7,42,15,0.06)] hover:border-[#37D448]/60 hover:shadow-[0_18px_44px_rgba(0,71,0,0.11)]'}`}>
+        <span className={`flex h-11 w-11 items-center justify-center rounded-2xl text-2xl leading-none ${research ? 'bg-[#E6FFE6] ring-1 ring-[#B8FFB8]' : ''}`} aria-hidden="true">{area.icon}</span>
+        <h3 className="mt-5 font-serif text-lg font-bold text-[#09231D]">{area.title}</h3>
         <p className="mt-2 flex-1 text-sm leading-6 text-[#6C7B76]">{area.description}</p>
+        {research && <span className="mt-5 h-px w-10 bg-[#37D448] transition-[width] duration-200 group-hover:w-16" aria-hidden="true" />}
       </div>
     </Reveal>
   )
@@ -98,44 +102,64 @@ function AreaCard({ area, index }: { area: WorkArea; index: number }) {
    COMPONENT
    ========================================================= */
 
-export default function AcademicSectionPage({
+// Qué hace: plantilla de las secciones académicas. Es un componente de servidor asíncrono: resuelve el idioma y toma
+// los textos propios de la plantilla (migas, aviso «en preparación», bloque de contacto) del catálogo
+// `pages.seccion-academica`, de modo que /en, /pt-BR y /gn no muestran español.
+// Por qué: antes traía literales en español y un enlace a /contacto sin el prefijo del idioma.
+// Límite: el contenido de cada sección (título, áreas) lo sigue pasando la página; el correo de contacto es un dato
+// institucional que llega por prop.
+export default async function AcademicSectionPage({
   title,
   description,
-  label = 'Área académica',
+  label,
   breadcrumb = [],
   areas = [],
-  areasTitle = 'Áreas de trabajo',
+  areasTitle,
   actions = [],
   contactEmail = 'secgral@unc.edu.py',
-  contactLabel = '¿Consultas sobre esta área?',
+  contactLabel,
   afterAreas,
   underConstruction = false,
+  visualVariant = 'default',
 }: AcademicSectionPageProps) {
-  const defaultBreadcrumb = [{ label: 'Inicio', href: '/' }, ...breadcrumb]
+  const locale = await getLocale()
+  const t = await getT(locale, 'pages.seccion-academica')
+  const prefix = locale === 'es' ? '' : `/${locale}`
+  const research = visualVariant === 'research'
+  const defaultBreadcrumb = [{ label: t('home'), href: prefix || '/' }, ...breadcrumb]
+  label = label ?? t('defaultLabel')
+  areasTitle = areasTitle ?? t('areasTitle')
+  contactLabel = contactLabel ?? t('contactLabel')
 
   return (
     <>
       {/* =======================================================
           HERO
           ======================================================= */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300] pb-20 pt-28 text-white sm:pt-32">
+      <section className={`relative overflow-hidden pb-20 pt-28 text-white sm:pt-32 ${research ? 'research-hero bg-gradient-to-br from-[#003B05] via-[#005C08] to-[#10A51A]' : 'bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300]'}`}>
+        {research && <div aria-hidden="true" className="research-hero-grid pointer-events-none absolute inset-0 opacity-35" />}
         <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-0 h-[28rem] w-[28rem] rounded-full bg-[#001A00]/40 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 bottom-0 h-[22rem] w-[22rem] rounded-full bg-[#5CFF5C]/10 blur-3xl" />
 
         <div className="relative mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           {defaultBreadcrumb.length > 0 && (
-            <nav aria-label="Breadcrumb" className="mb-8">
+            <nav aria-label={t('breadcrumbLabel')} className="mb-8">
               <ol className="flex flex-wrap items-center gap-2 text-xs text-white/60">
                 {defaultBreadcrumb.map((item, i) => (
-                  <li key={item.href} className="flex items-center gap-2">
+                  <li key={item.label} className="flex items-center gap-2">
                     {i > 0 && <span aria-hidden="true" className="select-none">/</span>}
-                    <Link
-                      href={safeHref(item.href)}
-                      className="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5CFF5C]"
-                    >
-                      {item.label}
-                    </Link>
+                    {/* Una miga sin destino (href «#» o vacío) es solo texto: un enlace que no lleva a ningún lado confunde. */}
+                    {item.href && item.href !== '#' ? (
+                      <Link
+                        href={safeHref(item.href)}
+                        className="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5CFF5C]"
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <span>{item.label}</span>
+                    )}
                   </li>
                 ))}
                 <li className="flex items-center gap-2">
@@ -154,12 +178,12 @@ export default function AcademicSectionPage({
               {underConstruction && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/20 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-amber-300 ring-1 ring-amber-400/30">
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-400" aria-hidden="true" />
-                  En desarrollo
+                  {t('inDevelopment')}
                 </span>
               )}
             </div>
 
-            <h1 className="mt-4 font-serif text-4xl font-bold leading-[0.95] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl">
+            <h1 className={`mt-4 font-serif font-bold tracking-[-0.045em] text-white ${research ? 'text-[clamp(3.5rem,8vw,6.5rem)] leading-[0.88]' : 'text-4xl leading-[0.95] sm:text-5xl lg:text-6xl'}`}>
               {title}
             </h1>
 
@@ -197,7 +221,7 @@ export default function AcademicSectionPage({
           ======================================================= */}
       <section
         aria-labelledby="areas-title"
-        className="bg-[#F4F7F5] py-16 sm:py-20"
+        className={`${research ? 'research-areas bg-[#F1F8F2]' : 'bg-[#F4F7F5]'} py-16 sm:py-20`}
       >
         <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
           {areas.length > 0 ? (
@@ -213,7 +237,7 @@ export default function AcademicSectionPage({
 
               <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {areas.map((area, i) => (
-                  <AreaCard key={area.title} area={area} index={i} />
+                  <AreaCard key={area.title} area={area} index={i} research={research} />
                 ))}
               </div>
             </>
@@ -227,11 +251,10 @@ export default function AcademicSectionPage({
                   </svg>
                 </div>
                 <h2 className="font-serif text-2xl font-bold text-[#09231D]">
-                  Contenido en preparación
+                  {t('emptyTitle')}
                 </h2>
                 <p className="mt-3 text-base leading-7 text-[#6C7B76]">
-                  Esta sección está siendo desarrollada. Próximamente encontrarás aquí toda la información
-                  sobre programas, proyectos y actividades del área.
+                  {t('emptyText')}
                 </p>
               </div>
             </Reveal>
@@ -255,7 +278,7 @@ export default function AcademicSectionPage({
 
               <div className="flex-1">
                 <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-[#008000]">
-                  Contacto
+                  {t('contactKicker')}
                 </p>
                 <p className="mt-1 text-lg font-semibold text-[#09231D]">{contactLabel}</p>
                 <a
@@ -268,10 +291,10 @@ export default function AcademicSectionPage({
 
               <div className="shrink-0">
                 <Link
-                  href="/contacto"
+                  href={safeHref(`${prefix}/contacto`)}
                   className="group inline-flex items-center gap-2 rounded-full border border-[#D7E0DB] bg-[#F4F7F5] px-5 py-2.5 text-sm font-bold text-[#09231D] shadow-sm transition-all hover:border-[#37D448]/60 hover:bg-white hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]"
                 >
-                  Más información
+                  {t('moreInfo')}
                   <span className="transition-transform duration-200 group-hover:translate-x-1">
                     <IconArrow />
                   </span>

@@ -33,8 +33,8 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
           body {
             font-family: system-ui, -apple-system, sans-serif;
-            background: #020817;
-            color: #ffffff;
+            background: #F4F7F5;
+            color: #004700;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -44,10 +44,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           }
           .container { max-width: 400px; }
           h1 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; }
-          p  { font-size: 0.9375rem; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 2rem; }
+          p  { font-size: 0.9375rem; color: #3E4A45; line-height: 1.6; margin-bottom: 2rem; }
           button {
-            background: #5CFF5C;
-            color: #020817;
+            background: #004700;
+            color: #ffffff;
             border: none;
             border-radius: 9999px;
             padding: 0.625rem 1.5rem;
@@ -56,12 +56,12 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             cursor: pointer;
             font-family: inherit;
           }
-          button:hover { background: #8AFF8A; }
+          button:hover { background: #005c00; }
           .digest {
             margin-top: 2rem;
             font-family: ui-monospace, monospace;
             font-size: 0.6rem;
-            color: rgba(255,255,255,0.15);
+            color: #3E4A45;
             letter-spacing: 0.08em;
             text-transform: uppercase;
           }

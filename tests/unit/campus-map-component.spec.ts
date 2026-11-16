@@ -21,29 +21,30 @@ const labels = {
   address: 'Km 210, Ruta PY05, Concepción, Paraguay',
 }
 
+// `next/image` no deja el `src` literal en el HTML: lo reescribe a `/_next/image?url=<ruta codificada>&w=…`.
+// Se comprueba la ruta del recurso en esa forma codificada (la que realmente llega al navegador), no el texto
+// literal. Límite: no verifica que el archivo exista en `public/` (ninguna otra prueba lo hace hoy).
+const SATELLITE_SRC = encodeURIComponent('/images/campus-map-satellite.png')
+
 describe('CampusMap (estado inicial)', () => {
   const html = renderToStaticMarkup(createElement(CampusMap, { labels }))
 
-  it('no monta iframe antes de la activación', () => {
+  it('muestra el preview satelital solicitado y no monta Google antes del clic', () => {
     expect(html).not.toContain('<iframe')
-  })
-  it('no hay recursos externos que se carguen solos (src/srcset/url()/import/preload)', () => {
-    expect(html).not.toMatch(/\ssrc=/i)
-    expect(html).not.toMatch(/srcset=|url\(http|@import|rel="preload"/i)
-  })
-  it('muestra botón accesible, dirección y enlaces seguros', () => {
-    expect(html).toContain('<button')
-    expect(html).toContain('type="button"')
+    expect(html).toContain(SATELLITE_SRC)
     expect(html).toContain('Ver mapa interactivo')
+  })
+  it('mantiene dirección y enlaces seguros', () => {
     expect(html).toContain('Km 210, Ruta PY05, Concepción, Paraguay')
     expect(html.match(/rel="noopener noreferrer"/g)?.length).toBe(2)
     expect(html.match(/target="_blank"/g)?.length).toBe(2)
     expect(html).toContain('https://www.google.com/maps/dir/?api=1')
     expect(html).toContain('https://www.google.com/maps/search/?api=1')
   })
-  it('el póster es una imagen con nombre accesible y no etiqueta edificios reales', () => {
-    expect(html).toContain('role="img"')
-    expect(html).toContain('aria-label="Ilustración del campus con la ubicación del Rectorado"')
+  it('expone el preview satelital con etiqueta accesible y contraste institucional', () => {
+    expect(html).toContain(SATELLITE_SRC)
+    expect(html).toContain('alt="Ilustración del campus con la ubicación del Rectorado"')
+    expect(html).toContain('bg-[#39FF88]/12')
   })
 })
 

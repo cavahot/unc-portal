@@ -30,12 +30,30 @@ describe('pulido del inicio (HOME-ORDER-01)', () => {
       createElement(
         NextIntlClientProvider,
         { locale: 'es', messages: {} },
-        createElement(StatCounter, { value: 4985, label: 'Estudiantes' }),
+        createElement(StatCounter, { value: 4985, label: 'Estudiantes', locale: 'es' }),
       ),
     )
     expect(html).toContain('4985')
   })
 
+  it('fija el locale del formateo para que servidor y cliente produzcan el mismo HTML', () => {
+    const src = read('components/stats/StatCounter.tsx')
+    expect(src).toContain("locale: string")
+    expect(src).toContain('Intl.NumberFormat(getStableNumberLocale(locale))')
+    expect(src).not.toContain('useFormatter')
+  })
+
+  it('normaliza Guaraní a un locale numérico compartido por Node y Chromium', () => {
+    const html = renderToStaticMarkup(
+      createElement(
+        NextIntlClientProvider,
+        { locale: 'gn', messages: {} },
+        createElement(StatCounter, { value: 6302, label: 'Mba\'apo ára', locale: 'gn' }),
+      ),
+    )
+    expect(html).toContain('6.302')
+    expect(read('components/stats/StatCounter.tsx')).toMatch(/locale === 'gn' \? 'es-PY' : locale/)
+  })
   it('el contador respeta la preferencia de movimiento reducido', () => {
     expect(read('components/stats/StatCounter.tsx')).toMatch(/prefers-reduced-motion: reduce/)
   })

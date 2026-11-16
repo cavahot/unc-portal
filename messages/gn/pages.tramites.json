@@ -1,48 +1,38 @@
 {
   "meta": {
-    "title": "Trámites — Universidad Nacional de Concepción",
+    "title": "Trámites",
     "description": "UNC rehegua trámite mbo'ehao pytyvõrãnguéra rupi: mba'e oñeikotevẽva ha mba'éicha oñemba'apo."
   },
   "hero": {
-    "label": "Pytyvõ institucional",
     "title": "Trámites",
     "description": "Mbo'ehao pytyvõrãnguéra rupi trámite mba'e oñeikotevẽva"
   },
-  "tramites": {
-    "t1": {
-      "nombre": "Título jerure",
-      "descripcion": "Emoñepyrũ proceso oficial rehupyty hag̃ua nde diploma grado térã posgrado.",
-      "duracion": "15 ára hábil"
-    },
-    "t2": {
-      "nombre": "Kuatia legalización",
-      "descripcion": "Certificado ha kuatia académico legalización ha apostilla.",
-      "duracion": "10 ára hábil"
-    },
-    "t3": {
-      "nombre": "Certificado de Estudios",
-      "descripcion": "Constancia oficial materia ojehupytýva ha situación académica ko'ag̃agua rehegua.",
-      "duracion": "5 ára hábil"
-    },
-    "t4": {
-      "nombre": "Constancia de Alumno Regular",
-      "descripcion": "Kuatia ohechaukáva ndeha'eha temimbo'e activo UNC-pe.",
-      "duracion": "3 ára hábil"
-    },
-    "t5": {
-      "nombre": "Certificado de Notas",
-      "descripcion": "Historial académico completo opaite materia calificación ndive.",
-      "duracion": "5 ára hábil"
-    },
-    "t6": {
-      "nombre": "Beca jerure",
-      "descripcion": "Jeike programa de becas nacional ha internacional UNC temimbo'ekuérape g̃uarã.",
-      "duracion": "Convocatoria he'iháicha"
-    }
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Trámites"
   },
-  "seeMore": "Ehecha hetave",
+  "index": {
+    "label": "Ir a una facultad"
+  },
+  "requisitos": "Requisitos",
+  "nota": "Nota",
+  "listaDe": "Trámites de {facultad}",
   "help": {
-    "title": "¿Reñeporandu?",
-    "description": "Eñomongeta Secretaría General pegua:"
+    "title": "¿Necesita ayuda?",
+    "description": "Para consultas sobre trámites, diríjase a la Secretaría General en el campus universitario o comuníquese con nosotros.",
+    "action": "Contacto"
+  },
+  "states": {
+    "unavailable": "No pudimos cargar los trámites en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "empty": "Todavía no hay trámites publicados. Para consultar los requisitos, comuníquese con la Secretaría General.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

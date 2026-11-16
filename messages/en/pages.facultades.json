@@ -1,18 +1,11 @@
 {
-  "pageTitle": "Faculties — UNC",
+  "pageTitle": "Faculties",
   "pageDescription": "Learn about the faculties of the National University of Concepción.",
-  "portalLabel": "Academic Structure",
   "heading": "Our Faculties",
   "subheading": "Academic units that make up the National University of Concepción",
   "verCarreras": "View programs",
   "carrerasCount": "{count, plural, one {# program} other {# programs}}",
   "empty": "No faculties found.",
-  "home": "Home",
-  "facultades": "Faculties",
-  "decano": "Dean",
-  "contacto": "Contact",
-  "backToFacultades": "Back to Faculties",
-  "carrerasTitle": "Available programs",
   "detalle": {
     "meta": {
       "description": "Undergraduate programs, graduate programs, dean's office, fees and contact for the {nombre} of the National University of Concepción."
@@ -76,6 +69,7 @@
     "aranceles": {
       "title": "Fees",
       "intro": "Amounts in guaraníes published by the faculty.",
+      "limite": "The page does not state the validity period of these amounts; confirm the value with the faculty before paying.",
       "concept": "Item",
       "amount": "Amount",
       "currencyName": "guaraníes",
@@ -106,5 +100,25 @@
     "states": {
       "unavailable": "We couldn't load the faculty information right now. Please try again later."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Faculties"
+  },
+  "lista": {
+    "title": "Academic units",
+    "intro": "Choose a faculty to see its programs, deans, fees and contact details."
+  },
+  "states": {
+    "unavailable": "We could not load the faculties right now. Please try again in a few minutes or contact us.",
+    "retry": "Try again",
+    "contact": "Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
   }
 }

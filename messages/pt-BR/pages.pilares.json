@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "docencia": {
+      "title": "Ensino",
+      "description": "Ensino de graduação e pós-graduação da Universidade Nacional de Concepción."
+    },
+    "investigacion": {
+      "title": "Pesquisa",
+      "description": "Pesquisa e desenvolvimento na Universidade Nacional de Concepción."
+    },
+    "extension": {
+      "title": "Extensão",
+      "description": "Extensão universitária e vínculo com a comunidade da Universidade Nacional de Concepción."
+    }
+  },
+  "titulos": {
+    "docencia": "Ensino",
+    "investigacion": "Pesquisa",
+    "extension": "Extensão"
+  },
+  "inicio": "Início",
+  "enConstruccion": "Em construção",
+  "enConstruccionTexto": "Estamos preparando esta seção. Em breve publicaremos o conteúdo.",
+  "volver": "Voltar ao início",
+  "estadisticas": "Em números"
+}

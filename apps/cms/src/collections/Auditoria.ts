@@ -60,6 +60,10 @@ export const Auditoria: CollectionConfig = {
         { label: 'Rechazar', value: 'rechazar' },
         { label: 'Importar', value: 'importar' },
         { label: 'Revalidar', value: 'revalidar' },
+        // SEC-CUENTAS-01 (S5): cambio de contraseña propio (con motivo) y restablecimiento por un administrador
+        // (generada o creada, si exige cambio). Nunca se registra la contraseña ni su hash.
+        { label: 'Cambiar contraseña', value: 'cambiar_clave' },
+        { label: 'Restablecer contraseña', value: 'restablecer_clave' },
       ],
       index: true,
     },

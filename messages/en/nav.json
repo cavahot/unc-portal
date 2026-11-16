@@ -26,9 +26,11 @@
     "noticias": "News",
     "preguntasFrecuentes": "FAQ",
     "contactos": "Contact",
-    "academia": "Academia"
+    "academia": "Academics"
   },
   "institutional": {
+    "quienesSomos": "About us",
+    "transparencia": "Transparency",
     "historia": "History",
     "misionVisionValores": "Mission, Vision & Values",
     "marcoLegal": "Legal Framework",
@@ -57,13 +59,15 @@
     "porDependencia": "Contacts by department"
   },
   "academia": {
+    "docencia": "Teaching",
     "direccionAcademica": "Academic Affairs Office",
     "aseguramientoCalidad": "Quality Assurance",
     "investigacion": "Research",
     "extensionVinculacion": "Extension and Outreach",
     "bienestarInstitucional": "Institutional Welfare",
     "revistasAcademicas": "Academic Journals",
-    "bibliotecaDigital": "Digital Library"
+    "bibliotecaDigital": "Digital Library",
+    "tesisAcademicas": "Academic Theses"
   },
   "footer": {
     "institutional": {
@@ -83,7 +87,7 @@
       "contacto": "Contact"
     },
     "academia": {
-      "title": "Academia",
+      "title": "Academics",
       "ariaLabel": "Academic links",
       "investigacion": "Research",
       "extension": "University extension",

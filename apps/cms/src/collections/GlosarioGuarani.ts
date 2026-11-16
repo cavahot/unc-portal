@@ -2,6 +2,8 @@ import type { CollectionConfig } from 'payload'
 import { canWriteInstitutional } from '../access/roles'
 import { makeAuditAfterChange, makeAuditAfterDelete } from '../hooks/audit/auditInstitutionalChange'
 import { validateHttpsUrl, validateOfficialSourceUrl } from '../utilities/validators'
+import { enforceGuaraniApproval, enforceGuaraniDeleteGuard } from '../hooks/guaraniApproval'
+import { auditGuaraniReviewTransition } from '../hooks/guaraniReviewAudit'
 
 // GLO-GN-01: glosario español → guaraní que usan los traductores del portal y el actualizador de fuentes
 // oficiales (scripts/update-glosario-guarani.mjs). Herramienta interna: NO se publica en el portal.
@@ -64,9 +66,16 @@ export const GlosarioGuarani: CollectionConfig = {
   // GLO-GN-01: un término por fuente. Evita filas duplicadas al re-ejecutar la siembra o el actualizador;
   // el mismo término puede tener varias filas si vienen de fuentes distintas (así se ven los conflictos).
   indexes: [{ fields: ['terminoEs', 'fuente'], unique: true }],
-  // Rastro de auditoría de cada cambio. Sin revalidación: el portal no lee esta colección.
+  // Rastro de auditoría de cada cambio y, aparte, de cada decisión de revisión (GLO-GN-APPROVAL-03).
+  // Sin revalidación activa: el portal lee solo las glosas aprobadas por /guarani-dictionary con caché corta
+  // (ver ese endpoint); retirar una aprobación tarda en verse el tiempo de esa caché.
   hooks: {
-    afterChange: [makeAuditAfterChange('glosario-guarani', 'Término del glosario guaraní')],
+    beforeChange: [enforceGuaraniApproval],
+    beforeDelete: [enforceGuaraniDeleteGuard],
+    afterChange: [
+      auditGuaraniReviewTransition,
+      makeAuditAfterChange('glosario-guarani', 'Término del glosario guaraní'),
+    ],
     afterDelete: [makeAuditAfterDelete('glosario-guarani', 'Término del glosario guaraní')],
   },
   fields: [
@@ -115,7 +124,7 @@ export const GlosarioGuarani: CollectionConfig = {
             { label: 'Oficial', value: 'oficial' },
             { label: 'Préstamo', value: 'prestamo' },
             { label: 'Neologismo', value: 'neologismo' },
-            { label: 'Institucional', value: 'institucional' },
+            { label: 'Institucional (UNC)', value: 'institucional' },
             { label: 'Corpus', value: 'corpus' },
             { label: 'Localización de software', value: 'localizacion' },
           ],
@@ -175,6 +184,39 @@ export const GlosarioGuarani: CollectionConfig = {
       validate: (value: unknown) => validateHttpsUrl(value, { required: false }),
       admin: { description: 'Corpus o artículo que muestra el uso (p. ej. Jojajovai). Solo https.' },
     },
+    // GLO-GN-INST-01 (S1, S5): responsables de una traducción institucional de la UNC (sin fuente oficial). Son
+    // obligatorios para aprobarla (`validateGuaraniApproval`) y quedan en la auditoría; el portal nunca los recibe
+    // (`/guarani-dictionary` solo devuelve el término en español y en guaraní).
+    {
+      type: 'row',
+      admin: { condition: (data) => data?.tipo === 'institucional' },
+      fields: [
+        {
+          name: 'traductorNombre',
+          type: 'text',
+          label: 'Traductor (nombre y apellido)',
+          maxLength: MAX_FUENTE,
+          validate: maxLen(MAX_FUENTE),
+          admin: { width: '34%', description: 'Quien hizo la traducción.' },
+        },
+        {
+          name: 'traductorCargo',
+          type: 'text',
+          label: 'Cargo del traductor',
+          maxLength: MAX_FUENTE,
+          validate: maxLen(MAX_FUENTE),
+          admin: { width: '33%', description: 'Cargo o dependencia en la UNC.' },
+        },
+        {
+          name: 'revisorNativo',
+          type: 'text',
+          label: 'Revisado por (hablante nativo)',
+          maxLength: MAX_FUENTE,
+          validate: maxLen(MAX_FUENTE),
+          admin: { width: '33%', description: 'Hablante nativo que confirmó la traducción.' },
+        },
+      ],
+    },
     {
       type: 'row',
       fields: [
@@ -214,6 +256,42 @@ export const GlosarioGuarani: CollectionConfig = {
           admin: { width: '25%', description: 'El actualizador solo modifica sus propias filas.' },
         },
       ],
+    },
+    {
+      name: 'estadoRevision',
+      type: 'select',
+      label: 'Estado de revisión',
+      defaultValue: 'pendiente',
+      index: true,
+      options: [
+        { label: 'Pendiente de aprobación', value: 'pendiente' },
+        { label: 'Aprobado por superadmin', value: 'aprobado' },
+        { label: 'Rechazado', value: 'rechazado' },
+      ],
+      admin: {
+        description: 'La aprobación exige superadmin, traducción, confianza A/B y fuente oficial (o, si el tipo es Institucional, traductor, cargo y revisor nativo). El portal solo usa aprobados.',
+      },
+    },
+    {
+      name: 'aprobadoPor',
+      type: 'relationship',
+      relationTo: 'users',
+      label: 'Aprobado por',
+      admin: { readOnly: true },
+    },
+    {
+      name: 'fechaAprobacion',
+      type: 'date',
+      label: 'Fecha de aprobación',
+      admin: { readOnly: true, date: { pickerAppearance: 'dayOnly' } },
+    },
+    {
+      name: 'comentarioRevision',
+      type: 'textarea',
+      label: 'Comentario de revisión',
+      maxLength: MAX_NOTA,
+      validate: maxLen(MAX_NOTA),
+      admin: { description: 'Motivo de aprobación, rechazo o solicitud de corrección.' },
     },
     {
       name: 'fechaConsulta',

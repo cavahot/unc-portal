@@ -129,6 +129,19 @@ export const Paginas: CollectionConfig = {
           await revalidatePortalTag(`paginas:${doc.slug}`)
           await revalidatePortalTag('paginas-slugs')
         }
+
+        // MENU-CMS-01: el megamenú resuelve «Relación (Página)» como `/<slug>` y la etiqueta `navegacion` no la tocaba
+        // ninguna página: publicar, despublicar o cambiar el slug dejaba el menú con el destino anterior (o con «#»).
+        // Se invalida solo cuando cambia algo que el menú ve (estado publicado o slug), no en cada guardado de borrador.
+        const slugChanged = Boolean(previousDoc?.slug) && previousDoc?.slug !== doc.slug
+        if (slugChanged) {
+          await revalidatePortalTag(`paginas:${previousDoc.slug}`)
+          await revalidatePortalTag(`paginas:${doc.slug}`)
+          await revalidatePortalTag('paginas-slugs')
+        }
+        if (isPublishTransition || slugChanged) {
+          await revalidatePortalTag('navegacion')
+        }
       },
     ],
     afterDelete: [
@@ -150,6 +163,8 @@ export const Paginas: CollectionConfig = {
 
         await revalidatePortalTag(`paginas:${doc.slug}`)
         await revalidatePortalTag('paginas-slugs')
+        // MENU-CMS-01: una página borrada deja de resolverse en el menú; se refresca para que el enlace se omita.
+        await revalidatePortalTag('navegacion')
       },
     ],
   },

@@ -1,6 +1,5 @@
 import type { PayloadRequest, Payload } from 'payload'
 import { getPayload } from 'payload'
-import config from '../payload.config'
 
 export type AuditAction =
   | 'login'
@@ -15,6 +14,9 @@ export type AuditAction =
   | 'rechazar'
   | 'importar'
   | 'revalidar'
+  // SEC-CUENTAS-01 (S5): cambio de contraseña propio y restablecimiento por un administrador.
+  | 'cambiar_clave'
+  | 'restablecer_clave'
 
 export type AuditResult = 'exito' | 'error' | 'advertencia'
 
@@ -30,9 +32,16 @@ export interface AuditLogData {
   cambiosRelevantes?: Record<string, unknown>
 }
 
+/**
+ * Escribe un evento en `auditoria` por Local API (sin ACL) y nunca lanza.
+ * SEC-CUENTAS-01: la configuración se importa solo si no llega una instancia de Payload. Antes se importaba al cargar el
+ * módulo y formaba un ciclo `payload.config` → colección → hook → `audit` → `payload.config` que, además, obligaba a
+ * cualquier módulo que importara un hook auditado (p. ej. la colección `users`) a evaluar toda la configuración.
+ * Límite: sin instancia, la primera llamada paga la carga de la configuración (igual que antes, pero diferida).
+ */
 export async function logAudit(data: AuditLogData, payloadInstance?: Payload): Promise<void> {
   try {
-    const payload = payloadInstance ?? await getPayload({ config })
+    const payload = payloadInstance ?? await getPayload({ config: (await import('../payload.config')).default })
 
     await payload.create({
       collection: 'auditoria',
@@ -64,20 +73,5 @@ export function getClientIP(req: PayloadRequest | undefined): string {
   return ip || 'unknown'
 }
 
-export function extractChanges(
-  before: Record<string, unknown>,
-  after: Record<string, unknown>
-): Record<string, { antes: unknown; despues: unknown }> {
-  const changes: Record<string, { antes: unknown; despues: unknown }> = {}
-
-  for (const key in after) {
-    if (JSON.stringify(before[key]) !== JSON.stringify(after[key])) {
-      changes[key] = {
-        antes: before[key],
-        despues: after[key],
-      }
-    }
-  }
-
-  return Object.keys(changes).length > 0 ? changes : {}
-}
+// SEC-027: la comparación minimizada vive en auditChanges.ts (módulo puro, con pruebas propias).
+export { extractChanges } from './auditChanges'

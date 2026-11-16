@@ -1,9 +1,9 @@
 /**
  * autoridadesSeedData.mjs — AUT-01
  *
- * Datos de las 8 autoridades que la página /autoridades ya mostraba (lista que estaba escrita a mano en
- * app/[locale]/autoridades/page.tsx y coincidía con el seed anterior). Salen del código para que el CMS sea
- * la única fuente de verdad: después de sembrar, se editan desde el panel.
+ * Datos base de autoridades institucionales. La actualización específica de FACET-UNC se mantiene en
+ * `facetAutoridadesSeedData.mjs`, porque incluye el iframe oficial, directivos y fotos de origen.
+ * El CMS sigue siendo la única fuente de verdad después de sembrar.
  *
  * Clave natural: `name` (exacto). Facultad de los decanos: por `slug` (el CMS la resuelve a ID).
  * Límite: los nombres y cargos NO se verificaron contra www.unc.edu.py en esta tarea; el PO debe
@@ -31,7 +31,7 @@ export const AUTORIDADES = [
   { name: 'Prof. Mg. Gerardo Lang Ferri', role: 'Decano', type: 'decano', facultadSlug: 'facultad-de-ciencias-economicas-y-administrativas', order: 12 },
   { name: 'Prof. Dr. Roberto Gustavo Barrios', role: 'Decano', type: 'decano', facultadSlug: 'facultad-de-medicina', order: 13 },
   { name: 'Prof. Dra. María Concepción Araujo De Benítez', role: 'Decana', type: 'decano', facultadSlug: 'facultad-de-humanidades-y-ciencias-de-la-educacion', order: 14 },
-  { name: 'Prof. Dr. Jorge Daniel Mello Román', role: 'Decano', type: 'decano', facultadSlug: 'facultad-de-ciencias-exactas-y-tecnologicas', order: 15 },
+  { name: 'Prof. Mg. Jorge Elías Sanz Cabrera', role: 'Decano', type: 'decano', facultadSlug: 'facultad-de-ciencias-exactas-y-tecnologicas', order: 15 },
 ]
 
 /**

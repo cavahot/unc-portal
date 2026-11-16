@@ -1,21 +1,44 @@
 {
-  "pageTitle": "Marandu - Universidad Nacional de Concepción",
+  "pageTitle": "Marandu",
   "pageDescription": "UNC marandu pyahu ha comunicado institucional-kuéra.",
-  "portalLabel": "Portal UNC",
   "heading": "Marandu",
   "subheading": "Universidad Nacional de Concepción marandu pyahu ha comunicado-kuéra",
   "empty": "Ko'ág̃a ndaipóri marandu.",
-  "home": "Ñepyrũ",
-  "gallery": "Ta'ãngakuéra",
   "backToNews": "Ehecha hetave marandu",
   "draftBanner": "Jehecha ypy — ko marandu ndojeikuaaukái gueteri",
   "draftExit": "Esẽ jehecha ypýgui",
   "categories": {
     "institucional": "Temimoĩmby",
-    "academica": "Académica",
+    "academica": "Ñemoarandu rehegua",
     "investigacion": "Jeporekapy",
-    "extension": "Extensión",
+    "extension": "Ñemoasãi",
     "eventos": "Evento-kuéra",
     "comunicados": "Comunicado-kuéra"
+  },
+  "pageTitlePaged": "{title} — Página {page}",
+  "listLabel": "Lista de noticias",
+  "count": "{count, plural, one {# noticia} other {# noticias}} · página {page} de {total}",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Noticias"
+  },
+  "tagsLabel": "Etiquetas",
+  "pagination": {
+    "label": "Paginación de noticias",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "page": "Página {page}"
+  },
+  "states": {
+    "unavailable": "No pudimos cargar las noticias en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

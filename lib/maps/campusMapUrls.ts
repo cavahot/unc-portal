@@ -41,12 +41,34 @@ function assertAllowed(url: string): string {
 }
 
 /**
- * URL del iframe (formato de inserción sin clave: `maps?q=…&output=embed`).
- * Sin parámetros a propósito: no existe entrada de usuario que pueda alterar el destino.
- * Se omite `t=k` (satélite) porque no está documentado oficialmente.
+ * URL del iframe en vista satélite (formato de inserción sin clave: `maps?q=…&t=k&output=embed`).
+ * La vista `t=k` es la que corresponde a la imagen aérea solicitada; no se agregan coordenadas ni claves.
  */
 export function buildCampusEmbedUrl(): string {
-  return assertAllowed(`${GOOGLE_ORIGIN}/maps?q=${encodeURIComponent(CAMPUS_MAP_QUERY)}&z=16&output=embed`)
+  return assertAllowed(`${GOOGLE_ORIGIN}/maps?q=${encodeURIComponent(CAMPUS_MAP_QUERY)}&t=k&z=16&output=embed`)
+}
+
+/**
+ * FAC-08b: indica si la dirección del CMS es la del campus (Ruta PY05, km 210), donde están las facultades.
+ * Por qué: las direcciones del CMS son texto libre («Campus Universitario: Ruta Py05, Km 210.») y Google no las
+ * resuelve bien (caía en el barrio «retiro san roque» sin dibujar el campus); la consulta validada del Rectorado sí.
+ * Límite: reconoce el patrón, no verifica que la dirección sea real.
+ */
+export function isCampusAddress(direccion: string): boolean {
+  return /ruta\s*py0?5/i.test(direccion) && /km\s*210/i.test(direccion)
+}
+
+/**
+ * FAC-08b: URL del iframe para una facultad. Si la dirección es la del campus devuelve la URL validada del
+ * Rectorado; si no, arma la consulta con la dirección codificada (`encodeURIComponent`, así `&`, comillas o
+ * `<script` del CMS no alteran la URL), en vista satélite y dentro de la allowlist.
+ * Amenaza que evita: que un texto del CMS cambie parámetros de la URL o apunte a otro origen.
+ */
+export function buildFacultadEmbedUrl(direccion: string): string {
+  if (isCampusAddress(direccion)) return buildCampusEmbedUrl()
+  const normalized = direccion.replace(/\.\s*$/, '')
+  const query = /paraguay/i.test(normalized) ? normalized : `${normalized}, Concepción, Paraguay`
+  return assertAllowed(`${GOOGLE_ORIGIN}/maps?q=${encodeURIComponent(query)}&t=k&z=16&output=embed`)
 }
 
 /** Enlace "Cómo llegar" (Maps URLs oficial: `dir/?api=1&destination=`). Sin parámetros, ver arriba. */

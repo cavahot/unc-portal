@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import LocaleSwitcher from '@/components/layout/LocaleSwitcher';
 import { createPortal } from 'react-dom';
@@ -11,55 +11,17 @@ import {
   useState,
 } from 'react';
 import type { Navegacion } from '@unc/cms-types';
+import { mapCmsNavigation, translateMenu, type MenuItem } from '@/lib/cms/navegacion';
 import { safeHref } from '@/lib/security/safeUrl';
-
-interface MenuItem {
-  label: string;
-  href: string;
-  description?: string;
-  children?: MenuItem[];
-}
 
 interface MegaMenuProps {
   navigation?: Navegacion;
 }
 
-/**
- * Resuelve un enlace de navegación del CMS a un href del portal (DEP-19b).
- * - `relationship`: `/<slug>` de la página relacionada.
- * - `manual`: la URL guardada, siempre filtrada por `safeHref`.
- * Amenaza que evita: quien edite el global Navegación (o una cuenta comprometida)
- * guarda `javascript:`/`data:`/`//host` y el clic ejecuta código o sale a otro origen.
- * Límite: no valida que el destino exista; una ruta relativa sin barra queda en `#`.
- */
-function resolveHref(link: {
-  type: 'manual' | 'relationship';
-  url?: string | null;
-  page?: number | { slug: string } | null;
-}): string {
-  if (link.type === 'relationship' && link.page && typeof link.page === 'object') {
-    return safeHref(`/${link.page.slug}`);
-  }
+/** Reexporta el helper compartido (INST-09): el menú y el mapa del sitio usan la misma conversión y el mismo saneado. */
+export { mapCmsNavigation }
 
-  return safeHref(link.url);
-}
-
-/**
- * Convierte el global Navegación en elementos de menú con hrefs saneados (DEP-19b).
- * Se exporta para poder probar la defensa sin renderizar el menú completo.
- */
-export function mapCmsNavigation(navigation: Navegacion): MenuItem[] {
-  return (navigation.links || []).map((link) => ({
-    label: link.label,
-    href: resolveHref(link),
-    children: (link.children || []).map((child) => ({
-      label: child.label,
-      href: resolveHref(child),
-    })),
-  }));
-}
-
-const fallbackMenuData: MenuItem[] = [
+export const fallbackMenuData: MenuItem[] = [
   {
     label: 'Inicio',
     href: '/',
@@ -68,6 +30,8 @@ const fallbackMenuData: MenuItem[] = [
     label: 'Institucional',
     href: '/institucional',
     children: [
+      // INST-01: «Quiénes somos» lleva a esa sección del hub /institucional (id `inst-sobre`).
+      { label: 'Quiénes somos', href: '/institucional#inst-sobre' },
       { label: 'Historia', href: '/historia' },
       { label: 'Misión, Visión y Valores', href: '/mision-vision-y-valores' },
       { label: 'Marco Legal', href: '/marco-legal' },
@@ -119,11 +83,14 @@ const fallbackMenuData: MenuItem[] = [
     children: [
       { label: 'Dirección General Académica', href: '/direccion-general-academica' },
       { label: 'Aseguramiento de la Calidad', href: '/aseguramiento-calidad' },
+      { label: 'Docencia', href: '/docencia' },
       { label: 'Investigación', href: '/investigacion' },
       { label: 'Extensión y Vinculación', href: '/extension' },
       { label: 'Bienestar Institucional', href: '/bienestar-institucional' },
       { label: 'Revistas Académicas', href: '/revistas' },
       { label: 'Biblioteca Digital', href: '/biblioteca' },
+      // MENU-CMS-04: lista de tesis de /biblioteca.
+      { label: 'Tesis Académicas', href: '/biblioteca#tesis' },
     ],
   },
 ];
@@ -220,12 +187,15 @@ function isExternal(href: string) {
 
 export default function MegaMenu({ navigation }: MegaMenuProps) {
   const t = useTranslations('nav');
+  const locale = useLocale();
   const pathname = usePathname();
 
-  const menuData =
+  // Las etiquetas se traducen por el destino del enlace con el catálogo `nav`; en español manda el texto del CMS.
+  const baseMenu =
     navigation && navigation.links && navigation.links.length > 0
       ? mapCmsNavigation(navigation)
       : fallbackMenuData;
+  const menuData = translateMenu(baseMenu, locale, (key) => (t.has(key) ? t(key) : undefined));
 
   const [activeIndex, setActiveIndex] =
     useState<number | null>(null);

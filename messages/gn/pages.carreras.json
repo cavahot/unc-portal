@@ -1,16 +1,52 @@
 {
-  "pageTitle": "Aprenduka — UNC",
+  "pageTitle": "Aprenduka",
   "pageDescription": "Ehecha aprenduka rehe Universidad Nacional de Concepción-pe.",
-  "portalLabel": "Aprenduka Ofrece",
   "heading": "Ore Aprenduka",
   "subheading": "Aprenduka porã Concepción-pe, Paraguái",
-  "duration": "{years} año",
   "modalidad": "Mba'éichapa ojapo",
   "titulo": "Título jegua",
   "verDetalle": "Ehecha aprenduka",
   "verFacultad": "Ehecha facultad",
   "empty": "Ndoikói aprenduka.",
-  "home": "Óga",
-  "carreras": "Aprenduka",
-  "backToCarreras": "Jevy Aprenduka-pe"
+  "backToCarreras": "Jevy Aprenduka-pe",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Carreras"
+  },
+  "summary": "{programs, plural, one {# programa} other {# programas}} en {faculties, plural, one {# facultad} other {# facultades}}",
+  "index": {
+    "label": "Ir a una facultad"
+  },
+  "tipos": {
+    "grado": "Carreras de grado",
+    "posgrado": "Posgrados",
+    "otros": "Otros programas"
+  },
+  "sinFacultad": "Sin facultad asignada",
+  "sede": "Sede",
+  "duracion": "{count, plural, one {# año} other {# años}}",
+  "states": {
+    "unavailable": "No pudimos cargar las carreras en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  },
+  "detalle": {
+    "tipo": "Tipo",
+    "duracion": "Duración",
+    "fichaLabel": "Datos del programa",
+    "resoluciones": {
+      "title": "Resoluciones del CONES",
+      "intro": "Documentos oficiales que habilitan el programa.",
+      "open": "Resolución CONES {numero} (documento externo, se abre en otra pestaña)"
+    },
+    "perfil": "Perfil del egresado",
+    "facultadTexto": "Conozca la facultad que ofrece este programa: autoridades, aranceles y contacto."
+  }
 }

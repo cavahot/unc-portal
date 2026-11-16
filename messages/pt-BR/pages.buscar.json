@@ -1,18 +1,50 @@
 {
   "pageTitleDefault": "Pesquisar — Universidade Nacional de Concepción",
-  "pageTitleQuery": "Busca: \"{q}\" — UNC",
+  "pageTitleQuery": "Busca: \"{q}\"",
   "pageDescription": "Pesquisar notícias e conteúdo no portal da Universidade Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
-  "headingExplore": "Explorar notícias",
-  "headingResults": "Resultados para",
-  "resultsSingular": "resultado",
-  "resultsPlural": "resultados",
-  "searchPlaceholder": "Pesquisar notícias...",
-  "searchAriaLabel": "Pesquisar no portal",
-  "searchButton": "Pesquisar",
-  "noResults": "Não encontramos resultados para \"{query}\"",
-  "noResultsHint": "Tente com outras palavras",
-  "viewAllNews": "Ver todas as notícias",
-  "sectionNews": "Notícias",
-  "sectionTesis": "Teses"
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Buscar"
+  },
+  "heading": "Buscar no portal",
+  "subheading": "Encontre notícias e teses da Universidade Nacional de Concepción.",
+  "searchLabel": "Buscar notícias ou teses",
+  "searchPlaceholder": "Uma palavra, um título ou um autor",
+  "searchButton": "Buscar",
+  "verTesis": "Ver tese (PDF)",
+  "newTab": "(documento externo, abre em uma nova aba)",
+  "results": {
+    "query": "{count, plural, one {# resultado} other {# resultados}} para «{q}»",
+    "latest": "Notícias mais recentes"
+  },
+  "sections": {
+    "news": "Notícias",
+    "tesis": "Teses"
+  },
+  "lists": {
+    "news": "Notícias",
+    "tesis": "Teses"
+  },
+  "links": {
+    "clear": "Ver as notícias mais recentes",
+    "news": "Ver todas as notícias",
+    "library": "Ir para a biblioteca"
+  },
+  "states": {
+    "unavailable": "Não foi possível fazer a busca agora. Tente novamente em alguns minutos ou entre em contato conosco.",
+    "newsUnavailable": "Não foi possível buscar nas notícias agora.",
+    "tesisUnavailable": "Não foi possível buscar nas teses agora.",
+    "noResults": "Não encontramos resultados para «{query}».",
+    "noResultsHint": "Tente outras palavras.",
+    "empty": "Ainda não há notícias publicadas.",
+    "retry": "Tentar novamente",
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
+  }
 }

@@ -1,11 +1,11 @@
 {
   "meta": {
     "nacional": {
-      "title": "Convenios nacionales | Universidad Nacional de Concepción",
+      "title": "Convenios nacionales",
       "description": "Convenios que la Universidad Nacional de Concepción firmó con instituciones y empresas del Paraguay, con el documento de cada uno."
     },
     "internacional": {
-      "title": "Convenios internacionales | Universidad Nacional de Concepción",
+      "title": "Convenios internacionales",
       "description": "Convenios de la Universidad Nacional de Concepción con universidades e instituciones de otros países, con el documento de cada uno."
     }
   },

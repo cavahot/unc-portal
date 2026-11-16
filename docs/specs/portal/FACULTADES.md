@@ -314,3 +314,22 @@ erDiagram
     bool verificado
   }
 ```
+
+## 10. FAC-02 — Agrarias y sembrador genérico
+
+**Qué cambió.** `app/[locale]/facultades/agrarias/page.tsx` pasó de 366 líneas con aranceles y carreras de demostración escritos en el código a un contenedor fino sobre `FacultadView` (slug CMS `facultad-de-ciencias-agrarias`, `revalidate = 60`, URL pública `/facultades/agrarias` intacta). Sin datos en el CMS, la página muestra el aviso honesto de «no disponible» o de «sin carreras», nunca cifras de demostración. Se eliminaron `messages/{es,en,pt-BR,gn}/pages.facultades.agrarias.json` y su entrada en `i18n/request.ts` (nadie más los consumía; los textos viven en `pages.facultades.detalle`).
+
+**Sembrador genérico.** `scripts/seed-facultad.mjs` lee `scripts/lib/<nombre>SeedData.mjs` (exporta `FACULTAD_SLUG`, `FACULTAD_NOMBRE`, `FACULTAD_FIELDS`, `CARRERAS`, `ARANCELES`, cada hecho con `sourceUrl`). `seed-odontologia.mjs` es ahora un envoltorio con la misma CLI. Controles: simulacro por omisión, CMS local salvo `--allow-remote` con https, `requireCmsPassword`, idempotencia por clave natural, solo completa campos vacíos, rechazo de marcadores (`REEMPLAZAR`, `example.com`) antes de cualquier solicitud, y nombre de módulo validado contra rutas.
+
+**Sembrar otra facultad** (con el CMS local encendido y `CMS_EMAIL`/`CMS_PASSWORD` definidos):
+
+```
+node scripts/seed-facultad.mjs --faculty=<nombre>            # simulacro, sin red
+node scripts/seed-facultad.mjs --faculty=<nombre> --apply    # escribe en el CMS
+```
+
+Pasos para una facultad nueva: crear `scripts/lib/<nombre>SeedData.mjs` con datos verificados, reemplazar su página fija por el mismo contenedor (cambiando solo `SLUG`) y borrar su JSON de mensajes si nadie lo consume.
+
+**Rollback.** Revertir el commit restaura la página y los mensajes. Los datos sembrados se quitan desde el panel del CMS (filas de `carreras` y `aranceles-facultad` de la facultad); el sembrador nunca borra ni pisa ediciones del PO.
+
+**Pendiente.** Las otras cuatro páginas fijas (medicina, humanidades, ciencias-exactas, ciencias-economicas) siguen con datos de demostración. La ruta dinámica `[slug]` es una vista mínima y no sustituye aún a `FacultadView` (ver informe).

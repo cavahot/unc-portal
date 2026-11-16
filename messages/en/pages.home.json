@@ -49,7 +49,8 @@
     "description": "Information about academic activities, research, university outreach and institutional management.",
     "viewAll": "View all news",
     "readNews": "Read news: {title}",
-    "defaultCategory": "Institutional"
+    "defaultCategory": "Institutional",
+    "empty": "No news has been published yet. Please check back soon or visit the news section."
   },
   "stats": {
     "sectionLabel": "UNC in numbers",
@@ -61,7 +62,8 @@
       "docentesColaboradores": "Faculty and staff",
       "facultades": "Schools",
       "egresados": "Graduates"
-    }
+    },
+    "unavailable": "Institutional figures are not available at the moment. Please try again in a few minutes."
   },
   "transparency": {
     "sectionLabel": "Public management",
@@ -115,5 +117,42 @@
     "label": "Public university",
     "title": "Academic excellence, research and innovation",
     "description": "Committed to the sustainable development of Concepción and Paraguay."
+  },
+  "institutionalAccess": {
+    "label": "Citizen access",
+    "title": "Transparency and institutional information",
+    "description": "Access public documents, complete academic procedures and consult UNC's research resources.",
+    "items": {
+      "transparencia": {
+        "badge": "Laws 5,189 and 5,282",
+        "title": "Institutional transparency",
+        "description": "Access public information on salaries, budget, assets and institutional management in line with current regulations.",
+        "cta": "View documents"
+      },
+      "infoPublica": {
+        "badge": "Citizen access",
+        "title": "Public information",
+        "description": "Request information from the State under the Free Access Law.",
+        "cta": "Request information"
+      },
+      "solicitarTitulo": {
+        "badge": "Academic procedure",
+        "title": "Request your degree",
+        "description": "Start the process to obtain and legalize your academic diploma.",
+        "cta": "Start procedure"
+      },
+      "biblioteca": {
+        "badge": "Research",
+        "title": "Library and theses",
+        "description": "Browse the repository of academic theses and digital bibliographic resources.",
+        "cta": "Explore repository"
+      },
+      "revistas": {
+        "badge": "Publications",
+        "title": "Academic journals",
+        "description": "Scientific and academic journals published by the UNC faculties.",
+        "cta": "View publications"
+      }
+    }
   }
 }

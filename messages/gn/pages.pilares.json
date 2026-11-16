@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "docencia": {
+      "title": "Docencia",
+      "description": "Docencia de grado y posgrado de la Universidad Nacional de Concepción."
+    },
+    "investigacion": {
+      "title": "Investigación",
+      "description": "Investigación y desarrollo en la Universidad Nacional de Concepción."
+    },
+    "extension": {
+      "title": "Extensión",
+      "description": "Extensión universitaria y vinculación con la comunidad de la Universidad Nacional de Concepción."
+    }
+  },
+  "titulos": {
+    "docencia": "Docencia",
+    "investigacion": "Investigación",
+    "extension": "Extensión"
+  },
+  "inicio": "Ñepyrũ",
+  "enConstruccion": "En construcción",
+  "enConstruccionTexto": "Estamos preparando esta sección. Pronto publicaremos su contenido.",
+  "volver": "Volver al inicio",
+  "estadisticas": "En cifras"
+}

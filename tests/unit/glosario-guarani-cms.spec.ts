@@ -39,7 +39,7 @@ const optionValues = (f?: F) => (f?.options ?? []).map((o) => (typeof o === 'str
 describe('GLO-GN-01: validador de URL oficial', () => {
   it('la lista de hosts es exacta y coincide con la del actualizador', () => {
     expect([...GLOSARIO_OFFICIAL_HOSTS].sort()).toEqual(
-      ['datos.gov.py', 'repositorio.conacyt.gov.py', 'spl.gov.py', 'www.datos.gov.py', 'www.spl.gov.py'].sort(),
+      ['corpus.spl.gov.py', 'datos.gov.py', 'repositorio.conacyt.gov.py', 'spl.gov.py', 'www.datos.gov.py', 'www.spl.gov.py'].sort(),
     )
     expect([...SCRIPT_OFFICIAL_HOSTS].sort()).toEqual([...GLOSARIO_OFFICIAL_HOSTS].sort())
   })
@@ -67,7 +67,17 @@ describe('GLO-GN-01: validador de URL oficial', () => {
   })
 })
 
-describe('GLO-GN-01: acceso (escenarios 1–3)', () => {
+describe('GLO-GN-DYN-01: endpoint dinámico', () => {
+  it('expone solo el endpoint dinámico del diccionario aprobado', () => {
+    const src = readFileSync(resolve(ROOT, 'apps/cms/src/endpoints/guaraniDictionary.ts'), 'utf8')
+    const config = readFileSync(resolve(ROOT, 'apps/cms/src/payload.config.ts'), 'utf8')
+    expect(src).toMatch(/path: '\/guarani-dictionary'/)
+    expect(src).toMatch(/oficial: \{ equals: true \}/)
+    expect(src).toMatch(/revisado: \{ equals: true \}/)
+    expect(config).toMatch(/endpoints: \[guaraniDictionaryEndpoint, guaraniApprovalEndpoint\]/)
+  })
+
+
   it('lectura y escritura solo institucional; anónimo y demás roles denegados', async () => {
     expect(GlosarioGuarani.slug).toBe('glosario-guarani')
     for (const op of ['read', 'create', 'update', 'delete'] as const) {

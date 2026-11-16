@@ -65,8 +65,8 @@ export function buildCSP(nonce: string): string {
       `form-action 'self'`,
       // Sentry Session Replay uses an inline Web Worker (blob: URL)
       `worker-src blob:`,
-      // Google Maps embed on /contacto
-      `frame-src  https://www.google.com`,
+      // Google Maps embed on /contacto; VIDEO-01: YouTube videos only from the privacy-enhanced origin
+      `frame-src  https://www.google.com https://www.youtube-nocookie.com`,
       `frame-ancestors 'none'`,
     ]
       .join('; ')
@@ -92,8 +92,8 @@ export function buildCSP(nonce: string): string {
     `form-action 'self'`,
     // Sentry Session Replay uses an inline Web Worker (blob: URL)
     `worker-src  blob:`,
-    // Google Maps embed on /contacto
-    `frame-src   https://www.google.com`,
+    // Google Maps embed on /contacto; VIDEO-01: YouTube videos only from the privacy-enhanced origin
+    `frame-src   https://www.google.com https://www.youtube-nocookie.com`,
     `frame-ancestors 'none'`,
     `upgrade-insecure-requests`,
   ]

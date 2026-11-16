@@ -1,161 +1,116 @@
-import { getFAQs, FAQ_CATEGORIES } from '@/lib/cms/queries/faqs'
-import FAQAccordion from '@/components/faq/FAQAccordion'
+// Preguntas frecuentes en el sistema visual del portal (cabecera verde común, fondo claro, avisos en línea).
+// Las preguntas y respuestas vienen del CMS (colección `faqs`) y son la ÚNICA fuente: si el CMS está vacío o caído se muestra
+// un aviso en línea con una salida, nunca preguntas escritas en el código. Los textos de la página (cabecera, búsqueda,
+// categorías, contacto) salen del catálogo `pages.preguntas-frecuentes`, así que /en, /pt-BR y /gn no muestran español.
+// Límite: las preguntas y respuestas del CMS hoy existen solo en español; el aspecto visual se verifica en el navegador.
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import PageHero from '@/components/pages/PageHero'
+import StatePanel from '@/components/pages/StatePanel'
+import FAQAccordion from '@/components/faq/FAQAccordion'
+import { FAQ_CATEGORIES, getFAQsResult } from '@/lib/cms/queries/faqs'
+import { getT } from '@/lib/i18n/server'
 
-// ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible»/«vacío» cuando el build
-// corre sin CMS alcanzable. Límite: la página puede mostrar datos hasta 60 s viejos (las etiquetas lo acortan).
+// ISR: revalida cada 60 s para no hornear el aviso de «no disponible» si el build corre sin CMS alcanzable.
+// Límite: la página puede mostrar datos hasta 60 s viejos (las etiquetas de revalidación lo acortan).
 export const revalidate = 60
 
-export const metadata: Metadata = {
-  title: 'Preguntas Frecuentes — UNC',
-  description:
-    'Encontrá respuestas a las preguntas más comunes sobre admisión, trámites, servicios y más en la Universidad Nacional de Concepción.',
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.preguntas-frecuentes')
+  return { title: t('meta.title'), description: t('meta.description') }
 }
 
-export default async function PreguntasFrecuentesPage() {
-  const items = await getFAQs()
+export default async function PreguntasFrecuentesPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.preguntas-frecuentes')
+  const prefix = locale === 'es' ? '' : `${locale}/`
+  const result = await getFAQsResult()
+  const items = result.status === 'ok' ? result.data : []
 
-  const totalCategories = new Set(items.map((i) => i.category)).size
+  const categories = FAQ_CATEGORIES.map((c) => ({ value: c.value, icon: c.icon, label: t(`categories.${c.value}`) }))
+  // El acordeón es un componente de cliente y no recibe funciones: los textos con valores viajan con marcadores literales
+  // {query} y {count} que el cliente sustituye (el valor pasado a t() no se vuelve a interpretar como ICU).
+  const tokens = { query: '{query}', count: '{count}' }
 
   return (
-    <div className="min-h-screen bg-[#F4F7F5]">
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-[#09231D] px-4 pb-20 pt-16 text-white">
-        {/* Decorative blobs */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-[#004700]/40 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-16 right-0 h-72 w-72 rounded-full bg-[#37D448]/15 blur-3xl"
-        />
+    <>
+      <PageHero
+        homeHref={`/${locale === 'es' ? '' : locale}`}
+        homeLabel={t('breadcrumb.inicio')}
+        pageName={t('breadcrumb.nombre')}
+        title={t('hero.title')}
+        description={t('hero.description')}
+      />
 
-        <div className="relative mx-auto max-w-3xl text-center">
-          {/* Eyebrow */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#37D448]/30 bg-[#37D448]/10 px-4 py-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#37D448]" aria-hidden />
-            <span className="text-[0.7rem] font-bold uppercase tracking-widest text-[#37D448]">
-              Ayuda institucional
-            </span>
-          </div>
+      <section className="relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem]">
+        <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8">
+          {result.status === 'ok' ? (
+            <>
+              {/* Resumen por categoría — solo escritorio */}
+              <nav aria-label={t('nav.label')} className="mb-10 hidden gap-3 sm:flex sm:flex-wrap">
+                {categories.map((cat) => {
+                  const count = items.filter((i) => i.category === cat.value).length
+                  if (count === 0) return null
+                  return (
+                    <div
+                      key={cat.value}
+                      className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-[#3A4A42] shadow-sm ring-1 ring-[#D7E0DB]"
+                    >
+                      <span aria-hidden>{cat.icon}</span>
+                      {cat.label}
+                      <span className="ml-0.5 rounded-full bg-[#E6FFE6] px-1.5 py-0.5 text-[0.65rem] font-extrabold text-[#004700]">{count}</span>
+                    </div>
+                  )
+                })}
+              </nav>
 
-          <h1 className="mb-4 font-serif text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-            ¿En qué podemos{' '}
-            <span className="relative inline-block">
-              <span className="relative z-10 text-[#37D448]">ayudarte?</span>
-              <span
-                aria-hidden
-                className="absolute -bottom-1 left-0 h-1 w-full rounded-full bg-[#37D448]/40"
+              <FAQAccordion
+                items={items}
+                categories={categories}
+                labels={{
+                  searchLabel: t('search.label'),
+                  searchPlaceholder: t('search.placeholder'),
+                  clear: t('search.clear'),
+                  filter: t('search.filter'),
+                  all: t('search.all'),
+                  none: t('results.none', tokens),
+                  noneHint: t('results.noneHint'),
+                  showAll: t('results.showAll'),
+                  countOne: t('results.countOne', tokens),
+                  countOther: t('results.countOther', tokens),
+                  questionsOne: t('results.questionsOne', tokens),
+                  questionsOther: t('results.questionsOther', tokens),
+                }}
               />
-            </span>
-          </h1>
+            </>
+          ) : (
+            // Error capturado en el diseño: aviso en línea (no un modal), accesible y con una salida.
+            <StatePanel
+              message={t(result.status === 'unavailable' ? 'states.unavailable' : 'states.empty')}
+              retry={result.status === 'unavailable' ? { href: `/${prefix}preguntas-frecuentes`, label: t('states.retry') } : undefined}
+              contact={{ href: `/${prefix}contacto`, label: t('states.contact') }}
+            />
+          )}
 
-          <p className="mx-auto max-w-xl text-base leading-relaxed text-white/70">
-            Reunimos las consultas más frecuentes de estudiantes, docentes y la comunidad.
-            Buscá por palabra clave o explorá por categoría.
-          </p>
-
-          {/* Stats row */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
-            <div className="flex flex-col items-center">
-              <span className="font-serif text-3xl font-extrabold text-[#37D448]">
-                {items.length}
-              </span>
-              <span className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-white/50">
-                Preguntas
-              </span>
-            </div>
-            <div className="h-8 w-px bg-white/10" aria-hidden />
-            <div className="flex flex-col items-center">
-              <span className="font-serif text-3xl font-extrabold text-[#37D448]">
-                {totalCategories}
-              </span>
-              <span className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-white/50">
-                Categorías
-              </span>
-            </div>
-            <div className="h-8 w-px bg-white/10" aria-hidden />
-            <div className="flex flex-col items-center">
-              <span className="font-serif text-3xl font-extrabold text-[#37D448]">24/7</span>
-              <span className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-white/50">
-                Disponible
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Curved bottom edge */}
-        <div
-          aria-hidden
-          className="absolute -bottom-px left-0 right-0 h-12 bg-[#F4F7F5]"
-          style={{ clipPath: 'ellipse(55% 100% at 50% 100%)' }}
-        />
-      </section>
-
-      {/* ── Main content ── */}
-      <section className="mx-auto max-w-3xl px-4 pb-24 pt-12">
-        {/* Category quick-nav — desktop only */}
-        <nav
-          aria-label="Categorías disponibles"
-          className="mb-10 hidden gap-3 sm:flex sm:flex-wrap"
-        >
-          {FAQ_CATEGORIES.map((cat) => {
-            const count = items.filter((i) => i.category === cat.value).length
-            if (count === 0) return null
-            return (
-              <div
-                key={cat.value}
-                className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[0.7rem] font-semibold text-[#3A4A42] shadow-sm ring-1 ring-[#D7E0DB]"
-              >
-                <span aria-hidden>{cat.icon}</span>
-                {cat.label}
-                <span className="ml-0.5 rounded-full bg-[#E6FFE6] px-1.5 py-0.5 text-[0.6rem] font-extrabold text-[#004700]">
-                  {count}
-                </span>
+          {/* Cierre: salida a Contacto */}
+          <div className="mt-16 overflow-hidden rounded-3xl bg-[#004700] px-8 py-10 text-white print:hidden">
+            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#B8FFB8]">{t('cta.kicker')}</p>
+                <h2 className="mt-1 font-serif text-xl font-bold leading-snug">{t('cta.title')}</h2>
+                <p className="mt-1 text-sm text-white/80">{t('cta.body')}</p>
               </div>
-            )
-          })}
-        </nav>
-
-        {/* FAQ accordion (client component) */}
-        <FAQAccordion items={items} />
-
-        {/* ── Contact CTA ── */}
-        <div className="mt-16 overflow-hidden rounded-3xl bg-[#09231D] px-8 py-10 text-white">
-          <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-[0.65rem] font-bold uppercase tracking-widest text-[#37D448]">
-                ¿No encontraste lo que buscabas?
-              </p>
-              <h2 className="mt-1 font-serif text-xl font-bold leading-snug">
-                Contactá directamente con nosotros
-              </h2>
-              <p className="mt-1 text-sm text-white/60">
-                Respondemos en el siguiente día hábil.
-              </p>
-            </div>
-            <a
-              href="/contacto"
-              className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-[#37D448] px-6 py-3 text-sm font-bold text-[#09231D] transition hover:bg-[#5CFF5C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#09231D]"
-            >
-              Ir a Contacto
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden
+              <Link
+                href={`/${prefix}contacto`}
+                className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-[#8AFF8A] px-7 text-sm font-bold text-[#001A00] transition-colors hover:bg-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </a>
+                {t('cta.button')}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
-    </div>
+    </>
   )
 }

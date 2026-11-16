@@ -1,18 +1,11 @@
 {
-  "pageTitle": "Facultades — UNC",
-  "pageDescription": "Conoce las facultades de la Universidad Nacional de Concepción.",
-  "portalLabel": "Estructura Académica",
+  "pageTitle": "Facultades",
+  "pageDescription": "Conozca las facultades de la Universidad Nacional de Concepción.",
   "heading": "Nuestras Facultades",
   "subheading": "Unidades académicas que conforman la Universidad Nacional de Concepción",
   "verCarreras": "Ver carreras",
   "carrerasCount": "{count, plural, one {# carrera} other {# carreras}}",
   "empty": "No se encontraron facultades.",
-  "home": "Inicio",
-  "facultades": "Facultades",
-  "decano": "Decano/a",
-  "contacto": "Contacto",
-  "backToFacultades": "Volver a Facultades",
-  "carrerasTitle": "Carreras ofrecidas",
   "detalle": {
     "meta": {
       "description": "Carreras de grado, posgrados, decanato, aranceles y contacto de la {nombre} de la Universidad Nacional de Concepción."
@@ -76,6 +69,7 @@
     "aranceles": {
       "title": "Aranceles",
       "intro": "Montos en guaraníes publicados por la facultad.",
+      "limite": "La página no indica la vigencia de estos montos; confirme el valor con la facultad antes de pagar.",
       "concept": "Concepto",
       "amount": "Monto",
       "currencyName": "guaraníes",
@@ -106,5 +100,25 @@
     "states": {
       "unavailable": "No pudimos cargar la información de la facultad en este momento. Intente de nuevo más tarde."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Facultades"
+  },
+  "lista": {
+    "title": "Unidades académicas",
+    "intro": "Elija una facultad para ver sus carreras, autoridades, aranceles y contacto."
+  },
+  "states": {
+    "unavailable": "No pudimos cargar las facultades en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
   }
 }

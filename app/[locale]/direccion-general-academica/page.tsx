@@ -1,22 +1,29 @@
+// Dirección General Académica: título y descripción salen del catálogo por idioma (pages.direccion-general-academica).
+// La sección sigue «en desarrollo» (sin áreas): la plantilla muestra su aviso traducido.
+// Límite: el catálogo es editorial (no CMS); el gn está pendiente de revisión nativa.
 import type { Metadata } from 'next'
 import AcademicSectionPage from '@/components/pages/AcademicSectionPage'
+import { getT } from '@/lib/i18n/server'
 
-export const metadata: Metadata = {
-  title: 'Dirección General Académica',
-  description:
-    'La Dirección General Académica de la UNC coordina los procesos académicos, curriculares y de evaluación de la oferta educativa universitaria.',
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.direccion-general-academica')
+  return { title: t('meta.title'), description: t('meta.description') }
 }
 
-export default function DireccionGeneralAcademicaPage() {
+export default async function DireccionGeneralAcademicaPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getT(locale, 'pages.direccion-general-academica')
+
   return (
     <AcademicSectionPage
-      title="Dirección General Académica"
-      label="Academia · DGA"
-      description="La Dirección General Académica articula los procesos de planificación curricular, evaluación docente y regulación académica de todas las unidades de la Universidad Nacional de Concepción."
-      breadcrumb={[{ label: 'Academia', href: '#' }]}
+      title={t('hero.title')}
+      label={t('hero.label')}
+      description={t('hero.description')}
+      breadcrumb={[{ label: t('breadcrumb'), href: '#' }]}
       underConstruction
       contactEmail="secgral@unc.edu.py"
-      contactLabel="¿Consultas sobre gestión académica?"
+      contactLabel={t('contactLabel')}
     />
   )
 }

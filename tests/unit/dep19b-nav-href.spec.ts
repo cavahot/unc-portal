@@ -7,7 +7,8 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 // Simulaciones mínimas: next-intl y la navegación localizada no son el objeto de la prueba.
-vi.mock('next-intl', () => ({ useTranslations: () => (key: string) => key }))
+// useLocale: el menú traduce sus etiquetas por idioma; en español (aquí) no se consulta el catálogo.
+vi.mock('next-intl', () => ({ useTranslations: () => (key: string) => key, useLocale: () => 'es' }))
 vi.mock('@/i18n/navigation', () => ({
   Link: (props: any) => React.createElement('a', { ...props, href: String(props.href) }, props.children),
   usePathname: () => '/',

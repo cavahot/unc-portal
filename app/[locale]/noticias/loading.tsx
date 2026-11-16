@@ -1,34 +1,29 @@
+// INST-03: esqueleto de /noticias con la misma estructura que la página (cabecera verde y lista de filas), para que
+// el cambio al contenido real no salte de un fondo oscuro a uno claro. `motion-reduce` quita el pulso.
 export default function NoticiasLoading() {
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-20 animate-pulse">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Heading skeleton */}
-        <div className="mb-10">
-          <div className="h-9 w-48 rounded-lg bg-white/5 mb-3" />
-          <div className="h-4 w-72 rounded bg-white/5" />
+    <div aria-busy="true" aria-live="polite">
+      <div className="bg-gradient-to-br from-[#004700] via-[#005c00] to-[#00A300] pb-24 pt-28 sm:pt-32 lg:pb-28">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <div className="mb-8 h-4 w-40 rounded bg-white/20" />
+          <div className="h-14 w-72 max-w-full rounded-lg bg-white/20 sm:h-16" />
+          <div className="mt-6 h-5 w-full max-w-xl rounded bg-white/15" />
         </div>
-
-        {/* Filter bar skeleton */}
-        <div className="mb-8 flex gap-2 flex-wrap">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-8 w-24 rounded-full bg-white/5" />
-          ))}
-        </div>
-
-        {/* Card grid skeleton */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-white/5 bg-white/[0.03] overflow-hidden">
-              <div className="h-48 bg-white/5" />
-              <div className="p-5 space-y-3">
-                <div className="h-3 w-20 rounded bg-white/5" />
-                <div className="h-5 w-full rounded bg-white/5" />
-                <div className="h-5 w-4/5 rounded bg-white/5" />
-                <div className="h-4 w-full rounded bg-white/5" />
-                <div className="h-4 w-3/4 rounded bg-white/5" />
-              </div>
-            </div>
-          ))}
+      </div>
+      <div className="relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem]">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <ul className="divide-y divide-[#D7E0DB] overflow-hidden rounded-2xl bg-white animate-pulse motion-reduce:animate-none">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <li key={i} className="grid gap-5 px-6 py-6 sm:grid-cols-[13rem_minmax(0,1fr)] sm:px-8">
+                <div className="aspect-[4/3] rounded-xl bg-[#E3EDE7]" />
+                <div className="space-y-3">
+                  <div className="h-6 w-4/5 rounded bg-[#E3EDE7]" />
+                  <div className="h-4 w-full rounded bg-[#E3EDE7]" />
+                  <div className="h-4 w-2/3 rounded bg-[#E3EDE7]" />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

@@ -48,7 +48,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const nonce = headersList.get('x-nonce') ?? ''
 
   return (
-    <html lang="es" nonce={nonce} suppressHydrationWarning>
+    // NAV-SCROLL-01: `data-scroll-behavior="smooth"` permite a Next 16 desactivar el desplazamiento suave (globals.css)
+    // durante la navegación; sin él, al cambiar de idioma la página nueva no empezaba arriba sino en una sección intermedia.
+    <html lang="es" nonce={nonce} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
         className={`${inter.className} bg-slate-950 text-white antialiased`}
         suppressHydrationWarning

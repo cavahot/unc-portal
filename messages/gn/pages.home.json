@@ -1,10 +1,10 @@
 {
   "hero": {
-    "tagline": "Marcando el Norte",
+    "tagline": "Yvate gotyo ñanderape",
     "imageAlt": "Universidad Nacional de Concepción jeikeha guasu",
     "title1": "Peguahẽ porãite",
     "title2": "Universidad Nacional",
-    "title3": "de Concepción",
+    "title3": "Concepción pegua",
     "description": "Tetã mbo'ehaovusu ombojoajúva identidad, excelencia académica, jeporekapy, innovación ha compromiso Paraguái yvate jekakuaa sostenible ndive.",
     "ctaExplore": "Eheka carrera-kuéra",
     "ctaAbout": "Eikuaa UNC",
@@ -24,7 +24,7 @@
       "carreras": {
         "title": "Carrera-kuéra",
         "description": "Ehecha oferta académica facultad ha nivel rupi.",
-        "label": "Oferta académica"
+        "label": "Ñemoarandu oñekuave'ẽva"
       },
       "calendario": {
         "title": "Arapapaha Académico",
@@ -34,10 +34,10 @@
       "titulos": {
         "title": "Título-kuéra ha Legalizaciones",
         "description": "Marandu trámite ha kuatia académico rehegua.",
-        "label": "Gestiones académicas"
+        "label": "Ñemoarandu rehegua trámite"
       },
       "aulaVirtual": {
-        "title": "Aula Virtual",
+        "title": "Mbo'esyry ñandutípe",
         "description": "Eike plataforma institucional ñehekombo'e reheguápe.",
         "label": "Plataforma tekombo'e rehegua"
       }
@@ -49,7 +49,8 @@
     "description": "Marandu tembiapo académico, jeporekapy, extensión universitaria ha gestión institucional rehegua.",
     "viewAll": "Ehecha opaite marandu",
     "readNews": "Emoñe'ẽ marandu: {title}",
-    "defaultCategory": "Temimoĩmby"
+    "defaultCategory": "Temimoĩmby",
+    "empty": "Ndaipóri marandu ojehaíva gueteri. Eju jey pya'e."
   },
   "stats": {
     "sectionLabel": "UNC papapýpe",
@@ -61,11 +62,12 @@
       "docentesColaboradores": "Mbo'ehára ha pytyvõhára",
       "facultades": "Facultad-kuéra",
       "egresados": "Egresado-kuéra"
-    }
+    },
+    "unavailable": "Cifra institucional ndaipóri ko'ágã. Eñeha'ã jey mbovy minuto rire."
   },
   "transparency": {
-    "sectionLabel": "Gestión pública",
-    "title": "Transparencia activa",
+    "sectionLabel": "Tetã rembiapo ñemboguata",
+    "title": "Tembiapo marandu ñemoherakuã",
     "description": "Eike Universidad Nacional de Concepción kuatia, normativa ha tetãgua marandúpe.",
     "viewPortal": "Ehecha portal de transparencia",
     "items": {
@@ -89,16 +91,16 @@
     "externalHint": "ojepe'a tendayke pyahúpe",
     "editionsTitle": "Edición ojehechakuaa hag̃uépe UNC",
     "distinction": {
-      "premio": "Premio",
+      "premio": "Jopói",
       "premioCategoria": "Premio categoría rupi",
-      "mencionEspecial": "Mención especial",
+      "mencionEspecial": "Ñemomba'e hechapyrãva",
       "reconocimiento": "Jehechakuaa"
     },
     "accreditations": {
       "title": "Acreditación-kuéra",
       "body": "Agencia Nacional de Evaluación y Acreditación de la Educación Superior (ANEAES)",
       "model": {
-        "modeloNacional": "Modelo Nacional",
+        "modeloNacional": "Tetã modelo",
         "arcuSur": "ARCU-SUR"
       },
       "organism": {
@@ -115,5 +117,42 @@
     "label": "Tetã mbo'ehaovusu",
     "title": "Excelencia académica, jeporekapy ha innovación",
     "description": "Compromiso Concepción ha Paraguái jekakuaa sostenible ndive."
+  },
+  "institutionalAccess": {
+    "label": "Tetãygua jeike",
+    "title": "Transparencia ha marandu institucional",
+    "description": "Eike kuatia públicokuérape, ejapo trámite académico ha eheka umi marandu ñemoarandu rehegua UNC-pe.",
+    "items": {
+      "transparencia": {
+        "badge": "Ley 5.189 ha 5.282",
+        "title": "Transparencia institucional",
+        "description": "Eike marandu públicope sueldo, presupuesto, patrimonio ha gestión institucional rehegua, ley oĩháicha.",
+        "cta": "Ehecha kuatia"
+      },
+      "infoPublica": {
+        "badge": "Tetãygua jeike",
+        "title": "Marandu pública",
+        "description": "Ejerure marandu Estado-gui Ley de Libre Acceso he'iháicha.",
+        "cta": "Ejerure marandu"
+      },
+      "solicitarTitulo": {
+        "badge": "Trámite académico",
+        "title": "Ejerure título",
+        "description": "Eñepyrũ trámite eguerahavo ha eñemoneĩ ne diploma académico.",
+        "cta": "Eñepyrũ trámite"
+      },
+      "biblioteca": {
+        "badge": "Ñemoarandu",
+        "title": "Biblioteca ha tesis",
+        "description": "Eheka tesis académica ha recurso bibliográfico digital repositorio-pe.",
+        "cta": "Ehecha repositorio"
+      },
+      "revistas": {
+        "badge": "Ñemoherakuã",
+        "title": "Revista-kuéra académica",
+        "description": "Revista científica ha académica ojapóva facultad-kuéra UNC-gua.",
+        "cta": "Ehecha ñemoherakuã"
+      }
+    }
   }
 }

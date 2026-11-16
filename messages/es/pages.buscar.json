@@ -1,18 +1,50 @@
 {
-  "pageTitleDefault": "Buscar — Universidad Nacional de Concepción",
-  "pageTitleQuery": "Búsqueda: \"{q}\" — UNC",
+  "pageTitleDefault": "Buscar",
+  "pageTitleQuery": "Búsqueda: \"{q}\"",
   "pageDescription": "Buscar noticias y contenido en el portal de la Universidad Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
-  "headingExplore": "Explorar noticias",
-  "headingResults": "Resultados para",
-  "resultsSingular": "resultado",
-  "resultsPlural": "resultados",
-  "searchPlaceholder": "Buscar noticias...",
-  "searchAriaLabel": "Buscar en el portal",
+  "breadcrumb": {
+    "inicio": "Inicio",
+    "nombre": "Buscar"
+  },
+  "heading": "Buscar en el portal",
+  "subheading": "Encuentre noticias y tesis de la Universidad Nacional de Concepción.",
+  "searchLabel": "Buscar noticias o tesis",
+  "searchPlaceholder": "Una palabra, un título o un autor",
   "searchButton": "Buscar",
-  "noResults": "No encontramos resultados para \"{query}\"",
-  "noResultsHint": "Intentá con otras palabras",
-  "viewAllNews": "Ver todas las noticias",
-  "sectionNews": "Noticias",
-  "sectionTesis": "Tesis"
+  "verTesis": "Ver tesis (PDF)",
+  "newTab": "(documento externo, se abre en una pestaña nueva)",
+  "results": {
+    "query": "{count, plural, one {# resultado} other {# resultados}} para «{q}»",
+    "latest": "Noticias más recientes"
+  },
+  "sections": {
+    "news": "Noticias",
+    "tesis": "Tesis"
+  },
+  "lists": {
+    "news": "Noticias",
+    "tesis": "Tesis"
+  },
+  "links": {
+    "clear": "Ver las noticias más recientes",
+    "news": "Ver todas las noticias",
+    "library": "Ir a la biblioteca"
+  },
+  "states": {
+    "unavailable": "No pudimos realizar la búsqueda en este momento. Intente de nuevo en unos minutos o comuníquese con nosotros.",
+    "newsUnavailable": "No pudimos buscar en las noticias en este momento.",
+    "tesisUnavailable": "No pudimos buscar en las tesis en este momento.",
+    "noResults": "No encontramos resultados para «{query}».",
+    "noResultsHint": "Pruebe con otras palabras.",
+    "empty": "Todavía no hay noticias publicadas.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto"
+  },
+  "error": {
+    "title": "No pudimos mostrar esta página",
+    "body": "Ocurrió un problema inesperado. Puede intentarlo de nuevo o comunicarse con nosotros.",
+    "retry": "Intentar de nuevo",
+    "contact": "Contacto",
+    "reference": "Referencia para soporte: {digest}"
+  }
 }

@@ -1,6 +1,6 @@
 import type { ArrayField, TextareaField } from 'payload'
 
-import { EDITORIAL_REVIEWER_ROLES, hasRole } from '../access/roles'
+import { canReadEditorialAuthorship, EDITORIAL_REVIEWER_ROLES, hasRole } from '../access/roles'
 
 /**
  * Shared approvalHistory field — used by Noticias and Paginas.
@@ -56,6 +56,12 @@ export const approvalHistoryField: ArrayField = {
   access: {
     create: () => false,
     update: () => false,
+    // SEC-027 S-2: el historial lleva correos de revisores y publicadores y comentarios internos de rechazo. Sin regla
+    // de lectura, Payload lo entregaba a cualquiera (también al anónimo) en todo contenido publicado. Lo leen los
+    // mismos roles que ven la autoría (`createdBy`); una cuenta con el cambio de contraseña pendiente no (hasRole).
+    // Límite: los hooks lo siguen leyendo (`originalDoc` se arma con `overrideAccess`). El tablero editorial
+    // (`/api/dashboard/noticias`) lee con la sesión: el rol `auditor` ya no recibe el último comentario de rechazo.
+    read: canReadEditorialAuthorship,
   },
   admin: {
     description: 'Registro automático de cambios de estado de aprobación.',

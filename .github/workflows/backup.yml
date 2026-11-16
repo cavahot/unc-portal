@@ -3,15 +3,19 @@ name: Backup
 # BKP-01: el repositorio es PÚBLICO. El volcado se CIFRA dentro del runner (gpg AES256, frase de paso en
 # el secreto BACKUP_ENCRYPTION_PASSPHRASE) y solo el .gpg + su sha256 se suben como artefacto; el .dump
 # en claro nunca sale del runner y se borra siempre. Restauración: docs/BACKUP_RECOVERY.md (sección
-# «Copia diaria cifrada»). Límite: la DATABASE_URL debe ser alcanzable desde el runner; si la BD no está
-# expuesta a Internet este job no puede funcionar y la vía recomendada es scripts/backup/backup.sh + cron
-# en el VPS con copia externa cifrada.
+# «Copia diaria cifrada»).
+#
+# DECISIÓN (2026-11-08, SEC-027): este flujo YA NO SE PROGRAMA SOLO; queda únicamente el disparo manual.
+# Por qué: la base de datos de producción vive dentro de Docker y no publica ningún puerto. Para que un runner de GitHub la
+# alcanzara habría que abrir Postgres a Internet y guardar `DATABASE_URL` como secreto de GitHub (amenazas: una puerta más
+# para atacar y una credencial con acceso a todos los datos), y el volcado cifrado de TODA la base quedaría como artefacto en
+# un repositorio PÚBLICO, expuesto a fuerza bruta de la frase de paso fuera de línea. Antes corría a diario y fallaba cada día
+# (sin `DATABASE_URL` alcanzable), acostumbrando a ignorar la alerta.
+# El respaldo real se hace EN EL VPS: scripts/backup/backup-prod.sh por cron (ver scripts/backup/crontab.example), cifrado y
+# con copia externa (scripts/backup/configure-offsite.sh). Límite: solo úselo a mano si una base de PRUEBA es alcanzable.
 
 on:
-  # Run daily at 02:00 Paraguay time (UTC-4 → 06:00 UTC)
-  schedule:
-    - cron: '0 6 * * *'
-  # Allow manual trigger from the Actions tab
+  # Solo disparo manual desde la pestaña Actions (sin `schedule`; ver la decisión de arriba).
   workflow_dispatch:
     inputs:
       reason:

@@ -13,6 +13,8 @@ export const SOURCES = {
 }
 
 export const FACULTAD_SLUG = 'facultad-de-odontologia'
+/** Nombre con el que se crea la facultad si el CMS aún no la tiene (contrato de seed-facultad.mjs). */
+export const FACULTAD_NOMBRE = 'Facultad de Odontología'
 
 /** Campos de `facultades`; cada uno con su fuente. Solo se escriben si el campo del CMS está vacío. */
 export const FACULTAD_FIELDS = {

@@ -112,6 +112,23 @@
 
 Ver la sección 10 («Panel»).
 
+### 9.1 Traducción institucional de la UNC (GLO-GN-INST-01, decisión del propietario 2026-11-14)
+
+Una traducción hecha por la UNC no tiene fuente oficial; la respaldan personas identificadas. Spec:
+`odd/tasks/glosario-gn-institucional.md`.
+
+1. **Traducción → Glosario guaraní → Crear.** Complete «Término en español» y «Término en guaraní».
+2. **Tipo: Institucional (UNC).** Aparecen tres campos: «Traductor (nombre y apellido)», «Cargo del traductor» y «Revisado por
+   (hablante nativo)». Complételos.
+3. **Confianza A o B** y **Fuente** (por ejemplo, «Traducción institucional UNC»). No hace falta URL oficial.
+4. **Guardar.** Queda pendiente.
+5. **Aprobar (solo superadmin):** «Estado de revisión» → «Aprobado por superadmin» → Guardar. Si falta alguno de los
+   tres responsables, el panel responde con el campo que falta.
+
+Al aprobarla, el portal la usa (`/api/guarani-dictionary` devuelve solo el término en español y en guaraní, nunca los
+nombres) y la auditoría registra la aprobación con traductor, cargo y revisor nativo. Los demás tipos siguen exigiendo
+fuente oficial y su URL. Columnas nuevas: migración `20261114_204656_glosario_gn_institucional`.
+
 ## 10. Uso
 
 ```text

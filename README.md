@@ -2,6 +2,15 @@
 
 Universidad Nacional de Concepcion - Portal web moderno con Next.js.
 
+## Instalación en el servidor y versiones
+
+- **Guía de instalación en el VPS (traspaso):** [`docs/deploy/README-VPS.md`](docs/deploy/README-VPS.md)
+- **Qué recibe quien instala:** [`docs/deploy/ENTREGA.md`](docs/deploy/ENTREGA.md)
+- **Versiones y publicación:** [`docs/deploy/VERSIONES.md`](docs/deploy/VERSIONES.md) · [`CHANGELOG.md`](CHANGELOG.md) · [Releases](https://github.com/cavahot/unc-portal/releases)
+- **Antes de publicar:** [`docs/deploy/CHECKLIST-PUBLICACION.md`](docs/deploy/CHECKLIST-PUBLICACION.md)
+
+> La sección «Deploy en Vercel» de más abajo es histórica: el portal se instala en un VPS propio con Docker.
+
 ## Estructura
 
 - `/app` - Rutas y paginas del portal

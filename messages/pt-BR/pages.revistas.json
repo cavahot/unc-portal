@@ -1,8 +1,29 @@
 {
-  "pageTitle": "Revistas — UNC",
+  "pageTitle": "Revistas — Universidade Nacional de Concepción",
   "pageDescription": "Revistas acadêmicas e científicas da Universidade Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
-  "heading": "Revistas Acadêmicas UNC",
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Revistas"
+  },
+  "heading": "Revistas acadêmicas",
   "subheading": "Publicações acadêmicas e científicas da Universidade Nacional de Concepción.",
-  "empty": "Não há revistas disponíveis no momento."
+  "desde": "Desde {year}",
+  "list": {
+    "label": "Revistas",
+    "visit": "Ir para a revista",
+    "newTab": "(site externo, abre em uma nova aba)"
+  },
+  "states": {
+    "unavailable": "Não foi possível carregar as revistas agora. Tente novamente em alguns minutos ou entre em contato conosco.",
+    "empty": "Ainda não há revistas publicadas. Para consultá-las, entre em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
+  }
 }

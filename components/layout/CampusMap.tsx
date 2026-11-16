@@ -1,9 +1,9 @@
 'use client'
 
-// MAP-01: mapa del campus con "facade" de clic para cargar. Spec: docs/specs/portal/CAMPUS-MAP.md.
-// Los textos llegan por props (el padre, servidor, los traduce): así el componente no depende de next-intl.
+// MAP-03: preview satelital local solicitado por diseño; el iframe real queda bajo interacción.
+import Image from 'next/image'
 import { useState } from 'react'
-import { safeHref } from '@/lib/security/safeUrl' // defensa en profundidad: ya son constantes validadas
+import { safeHref } from '@/lib/security/safeUrl' // defensa en profundidad para enlaces externos
 import {
   buildCampusDirectionsUrl,
   buildCampusEmbedUrl,
@@ -90,34 +90,49 @@ function CampusPoster({ label }: { label: string }) {
 }
 
 /**
- * Bloque de mapa con carga diferida: póster (4:3) con la dirección como pie, botón verde y
- * dos enlaces en una fila. El iframe de Google solo se monta cuando el visitante pulsa el botón
- * (teclado incluido: es un `<button>` nativo). Los enlaces están siempre visibles y no cargan
- * nada hasta el clic. Al activarse, el iframe ocupa el mismo recuadro: no hay saltos de altura.
+ * Preview satelital local para que el diseño solicitado sea visible de inmediato.
+ * La acción conserva el mapa de Google real para zoom y arrastre, pero evita que Google
+ * reemplace la vista aérea por el mapa de calles durante el render inicial.
  */
 export default function CampusMap({ labels }: { labels: CampusMapLabels }) {
   const [active, setActive] = useState(false)
-
   const linkClass =
     'inline-flex flex-1 items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-center text-xs font-semibold text-white/85 transition-colors hover:border-[#8AFF8A]/60 hover:text-[#8AFF8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C]'
 
   return (
     <div>
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/15 bg-[#001A00] shadow-[0_18px_40px_-24px_rgba(0,0,0,0.9)]">
-        {active ? <CampusMapFrame title={labels.iframeTitle} /> : <CampusPoster label={labels.posterLabel} />}
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#8AFF8A]/25 bg-[#001A00] shadow-[0_18px_40px_-24px_rgba(0,0,0,0.9)]">
+        {active ? (
+          <div className="absolute inset-0 grayscale" style={{ filter: 'grayscale(0.04) saturate(1.12) hue-rotate(15deg) brightness(0.82) contrast(1.05)' }}>
+            <CampusMapFrame title={labels.iframeTitle} />
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setActive(true)}
+            aria-label={labels.loadButton}
+            className="group absolute inset-0 block h-full w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AFF8A] focus-visible:ring-inset"
+          >
+            {/* MAP-03: imagen entregada por el usuario, usada como preview satelital estable. */}
+            <Image
+              src="/images/campus-map-satellite.png"
+              alt={labels.posterLabel}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+            />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[#39FF88]/12 mix-blend-screen" />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_0%,rgba(138,255,138,0.16)_48%,transparent_56%)] campus-map-sheen" />
+            <span className="absolute bottom-3 left-3 rounded-full bg-[#00290D]/85 px-3 py-1 text-xs font-semibold text-[#C8FFCE] backdrop-blur-sm">
+              {labels.loadButton}
+            </span>
+          </button>
+        )}
+        {active && <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[#39FF88]/12 mix-blend-screen" />}
+        {active && <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-[#00290D]/85 px-3 py-1 text-xs font-semibold text-[#C8FFCE] backdrop-blur-sm">{labels.title}</span>}
       </div>
 
       <p className="mt-2 text-xs leading-5 text-white/70">{labels.address}</p>
-
-      {!active && (
-        <button
-          type="button"
-          onClick={() => setActive(true)}
-          className="mt-3 w-full rounded-full bg-[#8AFF8A] px-4 py-2.5 text-sm font-bold text-[#001A00] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5CFF5C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001A00]"
-        >
-          {labels.loadButton}
-        </button>
-      )}
 
       <div className="mt-3 flex gap-2">
         <a href={safeHref(buildCampusDirectionsUrl())} target="_blank" rel="noopener noreferrer" className={linkClass}>

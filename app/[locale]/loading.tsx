@@ -1,20 +1,16 @@
-// Generic route-level loading state.
-// Shown during any navigation within [locale]/ that doesn't have
-// a more specific loading.tsx sibling.
+// Estado de carga genérico de las rutas localizadas que no tienen su propio loading.tsx. Estilo claro del portal (antes oscuro).
+// `motion-reduce` quita el pulso para quien prefiere menos movimiento.
 export default function LocaleLoading() {
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-20 animate-pulse">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        {/* Page title */}
+    <div aria-busy="true" aria-live="polite" className="min-h-screen bg-[#F4F7F5] pb-20 pt-28">
+      <div className="mx-auto max-w-4xl animate-pulse px-4 motion-reduce:animate-none sm:px-6 lg:px-8">
         <div className="mb-8">
-          <div className="h-9 w-56 rounded-lg bg-white/5 mb-3" />
-          <div className="h-4 w-80 rounded bg-white/5" />
+          <div className="mb-3 h-9 w-56 rounded-lg bg-[#E3EDE7]" />
+          <div className="h-4 w-80 max-w-full rounded bg-[#E3EDE7]" />
         </div>
-
-        {/* Content block */}
         <div className="space-y-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-4 rounded bg-white/5" style={{ width: `${60 + i * 6}%` }} />
+            <div key={i} className="h-4 rounded bg-[#E3EDE7]" style={{ width: `${60 + i * 6}%` }} />
           ))}
         </div>
       </div>

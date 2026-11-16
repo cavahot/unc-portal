@@ -1,91 +1,95 @@
-// DEP-15: los href que provienen del CMS pasan por safeHref (bloquea javascript:/data:).
-import { safeHref } from '@/lib/security/safeUrl'
+// INST-02: /solicitar-titulo en el sistema visual del portal (cabecera compartida, aviso en línea, error en línea).
+// La URL del formulario sale del global `enlaces-externos` del CMS (`formularioTitulos`); NO hay una URL de respaldo
+// escrita en el código. Si el CMS no la entrega (o no pasa `safeHref`), se muestra un aviso en línea con una salida
+// (reintentar y contacto) en vez de un botón roto o un formulario que nadie confirmó.
+// Errores: `getEnlacesExternos` no lanza (devuelve vacío ante una caída); un error inesperado de render lo recoge
+// `error.tsx` de esta ruta con el mismo estilo del portal. Sin modales.
+import type { Metadata } from 'next'
+import PageHero from '@/components/pages/PageHero'
+import StatePanel from '@/components/pages/StatePanel'
 import { getT } from '@/lib/i18n/server'
 import { getEnlacesExternos } from '@/lib/cms/queries/institutional'
-import ExternalCTA from '@/components/institutional/ExternalCTA'
+import { safeHref } from '@/lib/security/safeUrl' // DEP-15: los href que provienen del CMS pasan por safeHref
 
-// ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible»/«vacío» cuando el build
+// ISR (R4): revalida la página cada 60 s. Evita HTML horneado en «no disponible» cuando el build
 // corre sin CMS alcanzable. Límite: la página puede mostrar datos hasta 60 s viejos (las etiquetas lo acortan).
 export const revalidate = 60
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   const t = await getT(locale, 'pages.solicitar-titulo')
-  return {
-    title: t('pageTitle'),
-    description: t('pageDescription'),
-  }
+  return { title: t('pageTitle'), description: t('pageDescription') }
 }
-
-const FALLBACK_FORM_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSekLymnL6bc1Gg2mWFflwKTR0VW4Ui3Y6CkDAm8NtgTsSI0pA/viewform'
 
 const STEP_KEYS = ['step01', 'step02', 'step03', 'step04'] as const
 
-export default async function SolicitarTituloPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
+export default async function SolicitarTituloPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const t = await getT(locale, 'pages.solicitar-titulo')
+  const prefix = locale === 'es' ? '' : `${locale}/`
 
-  let formUrl = FALLBACK_FORM_URL
-
-  try {
-    const enlaces = await getEnlacesExternos()
-    if (enlaces.formularioTitulos) {
-      formUrl = enlaces.formularioTitulos
-    }
-  } catch {
-    // CMS unavailable — use fallback URL silently
-  }
+  const enlaces = await getEnlacesExternos()
+  const formHref = safeHref(enlaces.formularioTitulos)
+  const hasForm = formHref !== '#'
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-28 pb-20">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <>
+      <PageHero
+        homeHref={`/${locale === 'es' ? '' : locale}`}
+        homeLabel={t('breadcrumb.inicio')}
+        pageName={t('breadcrumb.nombre')}
+        title={t('heading')}
+        description={t('description')}
+      />
 
-        {/* Hero */}
-        <div className="mb-14">
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('portalLabel')}</p>
-          <h1 className="text-4xl font-bold text-white">{t('heading')}</h1>
-          <p className="mt-3 max-w-2xl text-white/50">{t('description')}</p>
-        </div>
-
-        {/* Prominent CTA */}
-        <div className="mb-16 rounded-2xl border border-[#5CFF5C]/20 bg-[#5CFF5C]/[0.05] p-8 text-center">
-          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#5CFF5C]">{t('ctaLabel')}</p>
-          <h2 className="mb-4 text-2xl font-bold text-white">{t('ctaHeading')}</h2>
-          <p className="mb-6 text-sm text-white/40">{t('ctaNote')}</p>
-          <ExternalCTA href={safeHref(formUrl)} label={t('ctaButton')} />
-        </div>
-
-        {/* Process steps */}
-        <div>
-          <h2 className="mb-8 text-xl font-semibold text-white">{t('processHeading')}</h2>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {STEP_KEYS.map((key, index) => (
-              <div
-                key={key}
-                className="flex gap-4 rounded-xl border border-white/10 bg-white/[0.04] p-5"
-              >
-                <span className="shrink-0 text-3xl font-bold text-[#5CFF5C]/30">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
+      <section className="relative z-10 -mt-10 bg-[#F4F7F5] pb-20 pt-10 sm:pb-28 sm:pt-14 lg:rounded-t-[2rem] print:mt-0 print:bg-white print:pt-2">
+        <div className="mx-auto max-w-[1260px] px-5 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-20">
+            {hasForm ? (
+              <aside aria-labelledby="solicitud-cta" className="rounded-2xl bg-[#004700] p-8 text-white sm:p-10 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12">
                 <div>
-                  <h3 className="font-semibold text-white">{t(`steps.${key}.title`)}</h3>
-                  <p className="mt-1 text-sm text-white/45">{t(`steps.${key}.description`)}</p>
+                  <h2 id="solicitud-cta" className="font-serif text-2xl font-bold tracking-[-0.03em] sm:text-3xl">{t('ctaHeading')}</h2>
+                  <p className="mt-3 max-w-[65ch] text-base leading-7 text-white/85">{t('ctaNote')}</p>
                 </div>
-              </div>
-            ))}
+                <a
+                  href={formHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#8AFF8A] px-7 text-sm font-bold text-[#001A00] transition-colors hover:bg-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-white lg:mt-0"
+                >
+                  {t('ctaButton')}
+                  <span className="sr-only"> {t('newTab')}</span>
+                </a>
+              </aside>
+            ) : (
+              <StatePanel
+                message={t('states.unavailable')}
+                retry={{ href: `/${prefix}solicitar-titulo`, label: t('states.retry') }}
+                contact={{ href: `/${prefix}contacto`, label: t('states.contact') }}
+              />
+            )}
+
+            <section aria-labelledby="proceso">
+              <h2 id="proceso" className="font-serif text-3xl font-bold tracking-[-0.03em] text-[#004700] sm:text-4xl">
+                {t('processHeading')}
+              </h2>
+              <ol className="mt-10 divide-y divide-[#D7E0DB] overflow-hidden rounded-2xl bg-white">
+                {STEP_KEYS.map((key, index) => (
+                  <li key={key} className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-6 px-6 py-6 sm:px-8">
+                    <span aria-hidden="true" className="font-serif text-3xl font-bold tabular-nums text-[#00A300]">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#09231D]">{t(`steps.${key}.title`)}</h3>
+                      <p className="mt-1 max-w-[65ch] text-base leading-7 text-[#3E4A45]">{t(`steps.${key}.description`)}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
           </div>
         </div>
-
-      </div>
-    </div>
+      </section>
+    </>
   )
 }

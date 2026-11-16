@@ -1,18 +1,11 @@
 {
-  "pageTitle": "Faculdades — UNC",
+  "pageTitle": "Faculdades",
   "pageDescription": "Conheça as faculdades da Universidade Nacional de Concepción.",
-  "portalLabel": "Estrutura Acadêmica",
   "heading": "Nossas Faculdades",
   "subheading": "Unidades acadêmicas que compõem a Universidade Nacional de Concepción",
   "verCarreras": "Ver cursos",
   "carrerasCount": "{count, plural, one {# curso} other {# cursos}}",
   "empty": "Nenhuma faculdade encontrada.",
-  "home": "Início",
-  "facultades": "Faculdades",
-  "decano": "Decano/a",
-  "contacto": "Contato",
-  "backToFacultades": "Voltar às Faculdades",
-  "carrerasTitle": "Cursos oferecidos",
   "detalle": {
     "meta": {
       "description": "Cursos de graduação, pós-graduação, direção, taxas e contato da {nombre} da Universidade Nacional de Concepción."
@@ -75,7 +68,8 @@
     },
     "aranceles": {
       "title": "Taxas",
-      "intro": "Valores em guaranis publicados pela faculdade.",
+      "intro": "Montantes em guaranis publicados pela faculdade.",
+      "limite": "A página não informa a vigência desses montantes; confirme o valor com a faculdade antes de pagar.",
       "concept": "Item",
       "amount": "Valor",
       "currencyName": "guaranis",
@@ -106,5 +100,25 @@
     "states": {
       "unavailable": "Não foi possível carregar as informações da faculdade agora. Tente novamente mais tarde."
     }
+  },
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Faculdades"
+  },
+  "lista": {
+    "title": "Unidades acadêmicas",
+    "intro": "Escolha uma faculdade para ver seus cursos, autoridades, taxas e contato."
+  },
+  "states": {
+    "unavailable": "Não foi possível carregar as faculdades agora. Tente novamente em alguns minutos ou entre em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
   }
 }

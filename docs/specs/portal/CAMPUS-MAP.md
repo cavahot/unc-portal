@@ -4,8 +4,8 @@
 
 ## Comportamiento
 
-- `components/layout/CampusMap.tsx` (cliente) muestra un póster SVG autocontenido (bloques isométricos abstractos, **no** edificios reales), la dirección y el botón «Ver mapa interactivo». Solo al activarlo se monta el `<iframe>` de Google Maps.
-- Siempre visibles: «Cómo llegar» y «Abrir en Google Maps» (`target="_blank" rel="noopener noreferrer"`); no cargan nada hasta que el visitante los pulsa.
+- `components/layout/CampusMap.tsx` (cliente) muestra primero el preview satelital local entregado por diseño (`public/images/campus-map-satellite.png`), con capa verde y movimiento sutil. Al activarlo monta el iframe real de Google Maps para conservar zoom y arrastre.
+- Siempre visibles: la dirección y «Cómo llegar»/«Abrir en Google Maps» (`target="_blank" rel="noopener noreferrer"`).
 - `lib/maps/campusMapUrls.ts` construye las tres URLs desde una constante (`CAMPUS_MAP_QUERY`), sin parámetros, y las valida con `isAllowedGoogleMapsUrl` (usa `safeHref` + host exacto `www.google.com`, https, sin credenciales ni puerto, ruta bajo `/maps`).
 - Iframe: `title` localizado, `loading="lazy"`, `referrerPolicy="no-referrer"`, `sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, sin `allowFullScreen`.
 - Footer: tarjeta de contacto, bloque bajo la dirección. `/contacto`: reemplaza el iframe anterior (usaba un place id `0x945c5a1b1b1b…` con aspecto de marcador de posición y `v1234567890`).

@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "Contatos por unidade",
+    "description": "Diretório de contatos da Reitoria e de todas as faculdades da Universidad Nacional de Concepción: telefones, e-mails e sites institucionais."
+  },
+  "breadcrumb": {
+    "inicio": "Início",
+    "contacto": "Contato",
+    "nombre": "Por unidade"
+  },
+  "hero": {
+    "title": "Contatos por unidade",
+    "description": "Encontre os dados de contato da Reitoria e de todas as faculdades da Universidad Nacional de Concepción: telefones, e-mails e sites institucionais."
+  },
+  "nav": {
+    "label": "Ir para uma unidade"
+  },
+  "logoAlt": "Logotipo de {nombre}",
+  "back": "Voltar à página de contato",
+  "states": {
+    "empty": "O diretório de contatos ainda não foi publicado. Volte mais tarde ou entre em contato com a Universidade.",
+    "unavailable": "Não foi possível carregar o diretório de contatos neste momento. Tente novamente em alguns minutos.",
+    "retry": "Tentar novamente",
+    "contact": "Ir para Contato"
+  },
+  "error": {
+    "title": "Não foi possível exibir esta página",
+    "body": "Ocorreu um problema ao carregar o diretório de contatos. Você pode tentar novamente ou entrar em contato com a Universidade.",
+    "retry": "Tentar novamente",
+    "contact": "Ir para Contato",
+    "reference": "Referência para suporte: {digest}"
+  }
+}

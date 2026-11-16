@@ -1,5 +1,8 @@
 import type { Block } from 'payload'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { richTextEditor } from '../fields/richTextEditor'
+
+// BLOQUE-2COL: bloque «Dos columnas» de las páginas. Sus columnas usan el editor común (imágenes y «Video de YouTube»),
+// porque el portal ahora las dibuja con el mismo renderizado que el cuerpo de las noticias (components/blocks/TwoColumn.tsx).
 
 export const TwoColumn: Block = {
   slug: 'twoColumn',
@@ -21,13 +24,13 @@ export const TwoColumn: Block = {
     {
       name: 'left',
       type: 'richText',
-      editor: lexicalEditor(),
+      editor: richTextEditor,
       required: false,
     },
     {
       name: 'right',
       type: 'richText',
-      editor: lexicalEditor(),
+      editor: richTextEditor,
       required: false,
     },
   ],

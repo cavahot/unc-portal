@@ -1,6 +1,7 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { cuentasAdmin } from './admin/cuentas'
+import { richTextEditor } from './fields/richTextEditor'
 import { es } from '@payloadcms/translations/languages/es'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -9,6 +10,12 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 
 import { Carreras } from './collections/Carreras'
+import { PoliticaPrivacidad } from './globals/PoliticaPrivacidad'
+import { DeclaracionAccesibilidad } from './globals/DeclaracionAccesibilidad'
+import { Legalizaciones } from './globals/Legalizaciones'
+import { Tramites } from './collections/Tramites'
+import { CalendarioAcademico } from './collections/CalendarioAcademico'
+import { DependenciasContacto } from './collections/DependenciasContacto'
 import { Facultades } from './collections/Facultades'
 import { MarcoLegal } from './collections/MarcoLegal'
 // LT-01: hitos de la línea de tiempo de /historia (docs/specs/portal/LINEA-TIEMPO.md).
@@ -20,7 +27,7 @@ import { Noticias } from './collections/Noticias'
 import { Paginas } from './collections/Paginas'
 import { Revistas } from './collections/Revistas'
 import { Tesis } from './collections/Tesis'
-import { Users } from './collections/Users'
+import { resolveSessionOrigins, Users } from './collections/Users'
 import { Auditoria } from './collections/Auditoria'
 import { Autoridades } from './collections/Autoridades'
 import { Ley5189 } from './collections/Ley5189'
@@ -39,12 +46,18 @@ import { Navegacion } from './globals/Navegacion'
 import { Transparencia } from './globals/Transparencia'
 import { EnlacesExternos } from './globals/EnlacesExternos'
 import { Estadisticas } from './globals/Estadisticas'
+import { TitulosInscripcion } from './globals/TitulosInscripcion'
+import { PilaresAcademicos } from './globals/PilaresAcademicos'
+import { InformacionPublica } from './globals/InformacionPublica'
+import { Institucional } from './globals/Institucional'
 import { getDatabaseURL } from './config/database'
 import { buildUploadOptions, resolveMediaStorage } from './config/mediaStorage'
 import { hasRole } from './access/roles'
 import { resolvePayloadSecret } from './config/secrets'
 import { ADMIN_ROUTE } from './config/adminRoute'
 import { signPreviewToken } from './utilities/previewToken'
+import { guaraniDictionaryEndpoint } from './endpoints/guaraniDictionary'
+import { guaraniApprovalEndpoint } from './endpoints/guaraniApproval'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -63,12 +76,21 @@ const mediaStorage = resolveMediaStorage(process.env)
 // multimedia (no editan contenido). El CMS sigue decidiendo qué borradores ve cada rol (DEP-02).
 const PREVIEW_ROLES = ['superadmin', 'web-admin', 'publisher', 'reviewer', 'editor', 'correspondent'] as const
 
+// SEC-CUENTAS-01 / S7 (hallazgo S-4): URL pública del CMS y lista EXACTA de orígenes de confianza (CMS y portal públicos;
+// localhost:3002/3000 solo fuera de producción). Se pasa `process.env` entero para que Next no incruste en la compilación
+// el valor de NEXT_PUBLIC_SERVER_URL (ver resolveSessionOrigins en collections/Users.ts).
+const sessionOrigins = resolveSessionOrigins(process.env)
+
 const smtpPort = Number(process.env.SMTP_PORT || 1025)
 const smtpSecure = process.env.SMTP_SECURE === 'true'
 const smtpUser = process.env.SMTP_USER
 const smtpPassword = process.env.SMTP_PASSWORD
 
 export default buildConfig({
+  // SEC-CUENTAS-04 (S8): `payload recuperar-superadmin --email <correo> --operador "<quién>" [--confirmar]`. Recuperación
+  // de emergencia de un superadmin; solo se ejecuta en el servidor (en producción, con la imagen `cms-migrate`).
+  bin: [{ key: 'recuperar-superadmin', scriptPath: path.resolve(dirname, 'bin/recuperarSuperadmin.ts') }],
+
   // DEP-03 D2 / SEC-03: GraphQL desactivado. El portal no lo consume (solo usa REST/Local API) y el
   // esquema no se construye (tipo `Faq` duplicado). Amenaza que evita: superficie extra de consulta
   // (introspección, consultas anidadas) con las mismas ACL a vigilar. Límite: /api/graphql responde 404;
@@ -79,6 +101,15 @@ export default buildConfig({
   routes: {
     admin: ADMIN_ROUTE,
   },
+  // S7: `serverURL` solo si está configurada (sin ella Payload usa rutas relativas, como hasta ahora). `csrf`: Payload
+  // ignora la cookie de sesión si el `Origin` (o `Sec-Fetch-Site`) no corresponde a esta lista (auth/extractJWT.js);
+  // `cors`: solo estos orígenes reciben cabeceras CORS. Límite: el token por cabecera `Authorization` (portal, scripts)
+  // no depende de `csrf`. Copias separadas: Payload agrega `serverURL` a `csrf` mutando el arreglo (config/sanitize.js) y
+  // con un arreglo compartido ese duplicado aparecería también en `cors`.
+  ...(sessionOrigins.serverURL ? { serverURL: sessionOrigins.serverURL } : {}),
+  csrf: [...sessionOrigins.origins],
+  cors: [...sessionOrigins.origins],
+  endpoints: [guaraniDictionaryEndpoint, guaraniApprovalEndpoint],
   admin: {
     user: Users.slug,
     importMap: {
@@ -108,6 +139,9 @@ export default buildConfig({
       collections: ['noticias', 'paginas'],
     },
     components: {
+      // SEC-CUENTAS-03 (S1, S4): lleva a la pantalla de cambio a la cuenta con contraseña provisoria o vencida y avisa
+      // 14 días antes del vencimiento. Solo guía: el servidor ya le niega todo lo demás.
+      providers: [cuentasAdmin.provider],
       afterNavLinks: [
         {
           path: './admin/components/NavLinks',
@@ -136,8 +170,25 @@ export default buildConfig({
           },
           path: '/portal-audit',
         },
+        // SEC-CUENTAS-03 (S1, S3): pantalla de cambio de contraseña con la guía de checks (/accesoSeguro/cambiar-clave).
+        [cuentasAdmin.viewKey]: cuentasAdmin.view,
+        // SEC-CUENTAS-03 (S2): «Olvidé mi contraseña» explica que la recuperación la hace un administrador.
+        forgot: cuentasAdmin.forgotView,
       },
     },
+  },
+
+  // INST-08: localización de contenido SOLO para los campos marcados `localized` (política de privacidad y declaración de
+  // accesibilidad: un texto por idioma). El resto del CMS no cambia. `fallback` devuelve el español si falta otro idioma.
+  localization: {
+    locales: [
+      { label: 'Español', code: 'es' },
+      { label: 'English', code: 'en' },
+      { label: 'Português (Brasil)', code: 'pt-BR' },
+      { label: 'Guaraní', code: 'gn' },
+    ],
+    defaultLocale: 'es',
+    fallback: true,
   },
 
   i18n: {
@@ -156,6 +207,9 @@ export default buildConfig({
     Tesis,
     Facultades,
     Carreras,
+    CalendarioAcademico,
+    DependenciasContacto,
+    Tramites,
     MarcoLegal,
     LineaTiempo,
     Auditoria,
@@ -174,9 +228,22 @@ export default buildConfig({
     GlosarioGuarani,
   ],
 
-  globals: [Navegacion, Transparencia, EnlacesExternos, Estadisticas],
+  globals: [
+    Navegacion,
+    Transparencia,
+    EnlacesExternos,
+    Estadisticas,
+    TitulosInscripcion,
+    PilaresAcademicos,
+    InformacionPublica,
+    Institucional,
+    PoliticaPrivacidad,
+    DeclaracionAccesibilidad,
+    Legalizaciones,
+  ],
 
-  editor: lexicalEditor(),
+  // VIDEO-01: editor común con el bloque «Video de YouTube» (fields/richTextEditor.ts).
+  editor: richTextEditor,
 
   email: nodemailerAdapter({
     defaultFromAddress:

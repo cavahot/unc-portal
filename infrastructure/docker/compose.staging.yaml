@@ -1,0 +1,150 @@
+# ============================================================
+# Portal UNC — Staging con datos sintéticos (SEC-027, opción B)
+# ============================================================
+# Qué es: un segundo despliegue, en el MISMO servidor que producción, para ensayar migraciones, siembras y
+# el recorrido de las páginas nuevas con datos inventados antes de fusionar a `main`.
+# Cómo se aísla de producción (lo vigila tests/deploy/staging-isolation.test.mjs):
+#   - proyecto `unc-staging`, contenedores `-staging`, volúmenes `*_staging` y red propia `unc-staging-internal`;
+#   - su propio Postgres (otra base, otro volumen, otra contraseña) y su propio .env.staging; nunca .env.prod;
+#   - los puertos se publican SOLO en 127.0.0.1 (3100 portal, 3102 CMS): se entra por túnel SSH, nada queda en internet;
+#   - sin nginx, sin S3 real y sin SMTP: no toca el certificado, el bucket ni envía correo a personas reales;
+#   - las imágenes se construyen en el servidor desde el commit a ensayar (el CI solo publica imágenes de `main`).
+# Límite: al no pasar por nginx NO ensaya nginx, TLS, `x-real-ip` ni el límite de tasa por IP, ni la ruta pública
+#   /api/media/file. Eso sigue «no cubierto» en SEC-027. Guía: docs/deploy/STAGING.md.
+# Uso:
+#   docker compose -f infrastructure/docker/compose.staging.yaml --env-file infrastructure/docker/.env.staging up -d --build
+# Tarea: SEC-027 | Spec: docs/specs/deploy/STAGING.md
+# ============================================================
+
+name: unc-staging
+
+x-cms-env: &cms-env
+    NODE_ENV:               production
+    PAYLOAD_SECRET:         ${PAYLOAD_SECRET}
+    DATABASE_URI:           ${DATABASE_URI}
+    POSTGRES_SSL:           "false"
+    NEXT_PUBLIC_SERVER_URL: ${CMS_PUBLIC_URL}
+    PORTAL_URL:             ${PORTAL_PUBLIC_URL}
+    # Medios en disco del propio staging; nunca el almacén S3 de producción.
+    MEDIA_STORAGE:   local
+    MEDIA_DIR:       /app/media
+    MEDIA_MAX_BYTES: ${MEDIA_MAX_BYTES:-10485760}
+    # Sin SMTP: staging no envía correo a personas reales (la recuperación de contraseña no se prueba aquí).
+    SMTP_HOST:         ${SMTP_HOST:-}
+    SMTP_PORT:         ${SMTP_PORT:-}
+    SMTP_SECURE:       ${SMTP_SECURE:-}
+    SMTP_USER:         ${SMTP_USER:-}
+    SMTP_PASSWORD:     ${SMTP_PASSWORD:-}
+    SMTP_FROM_ADDRESS: ${SMTP_FROM_ADDRESS:-}
+    SMTP_FROM_NAME:    ${SMTP_FROM_NAME:-}
+    PREVIEW_SECRET:      ${PREVIEW_SECRET}
+    REVALIDATION_SECRET: ${REVALIDATION_SECRET}
+    N8N_WEBHOOK_URL: ""
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: unc-postgres-staging
+    restart: unless-stopped
+    networks: [internal]
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout:  5s
+      retries:  10
+      start_period: 20s
+    stop_grace_period: 30s
+
+  cms-migrate:
+    image: unc-staging-cms-migrator:local
+    build:
+      context:    ../../
+      dockerfile: apps/cms/Dockerfile
+      target:     migrator
+    container_name: unc-cms-migrate-staging
+    restart: "no"
+    networks: [internal]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment: *cms-env
+
+  cms:
+    image: unc-staging-cms:local
+    build:
+      context:    ../../
+      dockerfile: apps/cms/Dockerfile
+    container_name: unc-cms-staging
+    restart: unless-stopped
+    networks: [internal]
+    ports:
+      - "127.0.0.1:3102:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      cms-migrate:
+        condition: service_completed_successfully
+    environment: *cms-env
+    volumes:
+      - cms_media:/app/media
+    healthcheck:
+      test:         ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health/ready || exit 1"]
+      interval:     15s
+      timeout:      5s
+      retries:      6
+      start_period: 30s
+
+  portal:
+    image: unc-staging-portal:local
+    build:
+      context:    ../../
+      dockerfile: Dockerfile
+    container_name: unc-portal-staging
+    restart: unless-stopped
+    networks: [internal]
+    ports:
+      - "127.0.0.1:3100:3000"
+    depends_on:
+      cms:
+        condition: service_healthy
+    environment:
+      NODE_ENV:               production
+      NEXT_PUBLIC_CMS_URL:    ${MEDIA_PUBLIC_ORIGIN}
+      NEXT_PUBLIC_SITE_URL:   ${PORTAL_PUBLIC_URL}
+      REVALIDATION_SECRET:    ${REVALIDATION_SECRET}
+      MEDIA_HOSTNAME:         ${MEDIA_HOSTNAME}
+      CMS_URL:                http://cms:3000
+      PREVIEW_SECRET:         ${PREVIEW_SECRET}
+      SMTP_HOST:              ${SMTP_HOST:-}
+      SMTP_PORT:              ${SMTP_PORT:-}
+      SMTP_SECURE:            ${SMTP_SECURE:-}
+      SMTP_USER:              ${SMTP_USER:-}
+      SMTP_PASSWORD:          ${SMTP_PASSWORD:-}
+      SMTP_FROM_ADDRESS:      ${SMTP_FROM_ADDRESS:-}
+      CONTACT_TO:             ${CONTACT_TO}
+      # Sin Sentry: los errores de staging no se mezclan con los de producción.
+      NEXT_PUBLIC_SENTRY_DSN: ""
+    healthcheck:
+      test:         ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health || exit 1"]
+      interval:     15s
+      timeout:      5s
+      retries:      6
+      start_period: 30s
+
+volumes:
+  postgres_data:
+    name: unc_postgres_data_staging
+  cms_media:
+    name: unc_cms_media_staging
+
+networks:
+  internal:
+    name: unc-staging-internal
+    driver: bridge

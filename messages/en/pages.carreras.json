@@ -1,16 +1,52 @@
 {
-  "pageTitle": "Programs — UNC",
+  "pageTitle": "Programs",
   "pageDescription": "Explore the degree programs of the National University of Concepción.",
-  "portalLabel": "Academic Offerings",
   "heading": "Our Programs",
   "subheading": "Excellence in university education in Concepción, Paraguay",
-  "duration": "{years} years",
   "modalidad": "Modality",
   "titulo": "Degree awarded",
   "verDetalle": "View program",
   "verFacultad": "View faculty",
   "empty": "No programs found.",
-  "home": "Home",
-  "carreras": "Programs",
-  "backToCarreras": "Back to Programs"
+  "backToCarreras": "Back to Programs",
+  "breadcrumb": {
+    "inicio": "Home",
+    "nombre": "Programs"
+  },
+  "summary": "{programs, plural, one {# program} other {# programs}} in {faculties, plural, one {# faculty} other {# faculties}}",
+  "index": {
+    "label": "Go to a faculty"
+  },
+  "tipos": {
+    "grado": "Undergraduate programs",
+    "posgrado": "Graduate programs",
+    "otros": "Other programs"
+  },
+  "sinFacultad": "No faculty assigned",
+  "sede": "Campus",
+  "duracion": "{count, plural, one {# year} other {# years}}",
+  "states": {
+    "unavailable": "We could not load the programs right now. Please try again in a few minutes or contact us.",
+    "retry": "Try again",
+    "contact": "Contact"
+  },
+  "error": {
+    "title": "We could not show this page",
+    "body": "An unexpected problem occurred. You can try again or contact us.",
+    "retry": "Try again",
+    "contact": "Contact",
+    "reference": "Support reference: {digest}"
+  },
+  "detalle": {
+    "tipo": "Level",
+    "duracion": "Duration",
+    "fichaLabel": "Program details",
+    "resoluciones": {
+      "title": "CONES resolutions",
+      "intro": "Official documents that authorize the program.",
+      "open": "CONES resolution {numero} (external document, opens in a new tab)"
+    },
+    "perfil": "Graduate profile",
+    "facultadTexto": "Learn about the faculty that offers this program: authorities, fees and contact details."
+  }
 }

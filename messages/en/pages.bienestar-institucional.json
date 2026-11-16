@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "title": "Institutional Well-being",
+    "description": "The Institutional Well-being area of UNC promotes comprehensive health, inclusion and retention of students, faculty and staff in the university setting."
+  },
+  "hero": {
+    "title": "Institutional Well-being",
+    "label": "Academics · Well-being",
+    "description": "UNC looks after its community. The Institutional Well-being area supports students, faculty and staff in their overall development, promoting health, inclusion and quality of life on campus."
+  },
+  "breadcrumb": "Academics",
+  "contactLabel": "Need support or information about a service?",
+  "areasTitle": "Available services",
+  "areas": {
+    "a1": {
+      "title": "Mental health",
+      "description": "Free psychological support service for students, faculty and staff. Individual care and workshops on stress management and emotional well-being."
+    },
+    "a2": {
+      "title": "Inclusion and accessibility",
+      "description": "Programs and curricular adaptations to ensure the full participation of people with disabilities in university life."
+    },
+    "a3": {
+      "title": "Scholarships and financial support",
+      "description": "Management of national and international scholarships, university canteens and financial support for students in vulnerable situations."
+    },
+    "a4": {
+      "title": "Sports and recreation",
+      "description": "Sports activities, inter-faculty tournaments and leisure spaces that encourage healthy living in the university community."
+    },
+    "a5": {
+      "title": "University coexistence",
+      "description": "Protocols to prevent violence and harassment, conflict mediation and promotion of an inclusive and respectful institutional climate."
+    }
+  }
+}

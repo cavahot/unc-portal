@@ -1,17 +1,37 @@
 {
   "pageTitleDefault": "Biblioteca Digital — Universidade Nacional de Concepción",
-  "pageTitleQuery": "Biblioteca: \"{q}\" — UNC",
+  "pageTitleQuery": "Biblioteca: \"{q}\"",
   "pageDescription": "Repositório de teses e trabalhos acadêmicos da Universidade Nacional de Concepción.",
-  "portalLabel": "Portal UNC",
   "headingDefault": "Biblioteca Digital",
-  "headingResults": "Resultados para",
   "subheading": "Explore nossa biblioteca digital — repositório de teses e trabalhos acadêmicos.",
-  "resultsSingular": "resultado",
-  "resultsPlural": "resultados",
-  "searchPlaceholder": "Pesquisar por título ou autor...",
-  "searchAriaLabel": "Pesquisar teses na biblioteca",
+  "searchPlaceholder": "Título ou autor",
   "searchButton": "Pesquisar",
-  "emptyPrompt": "Digite um termo para pesquisar na biblioteca digital.",
-  "noResults": "Não encontramos resultados para \"{query}\"",
-  "noResultsHint": "Tente com outras palavras ou consulte a biblioteca diretamente."
+  "breadcrumb": {
+    "inicio": "Início",
+    "nombre": "Biblioteca"
+  },
+  "searchLabel": "Buscar por título ou autor",
+  "verTesis": "Ver tese (PDF)",
+  "newTab": "(documento externo, abre em uma nova aba)",
+  "results": {
+    "query": "{count, plural, one {# resultado} other {# resultados}} para «{q}»",
+    "recent": "Teses mais recentes",
+    "partial": "Mostrando {shown} de {total}. Refine a busca para ver outras.",
+    "listLabel": "Teses",
+    "clear": "Ver as teses mais recentes"
+  },
+  "states": {
+    "unavailable": "Não foi possível carregar a biblioteca agora. Tente novamente em alguns minutos ou entre em contato conosco.",
+    "noResults": "Não encontramos resultados para «{query}». Tente outras palavras ou consulte a biblioteca diretamente.",
+    "emptyLibrary": "O repositório ainda não tem teses publicadas.",
+    "retry": "Tentar novamente",
+    "contact": "Contato"
+  },
+  "error": {
+    "title": "Não foi possível mostrar esta página",
+    "body": "Ocorreu um problema inesperado. Pode tentar novamente ou entrar em contato conosco.",
+    "retry": "Tentar novamente",
+    "contact": "Contato",
+    "reference": "Referência para suporte: {digest}"
+  }
 }

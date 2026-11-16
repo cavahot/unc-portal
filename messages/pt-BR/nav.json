@@ -26,9 +26,11 @@
     "noticias": "Notícias",
     "preguntasFrecuentes": "Perguntas Frequentes",
     "contactos": "Contatos",
-    "academia": "Academia"
+    "academia": "Acadêmico"
   },
   "institutional": {
+    "quienesSomos": "Quem somos",
+    "transparencia": "Transparência",
     "historia": "História",
     "misionVisionValores": "Missão, Visão e Valores",
     "marcoLegal": "Marco Legal",
@@ -57,13 +59,15 @@
     "porDependencia": "Contatos por departamento"
   },
   "academia": {
+    "docencia": "Ensino",
     "direccionAcademica": "Diretoria Acadêmica Geral",
     "aseguramientoCalidad": "Garantia de Qualidade",
     "investigacion": "Pesquisa",
     "extensionVinculacion": "Extensão e Vinculação",
     "bienestarInstitucional": "Bem-estar Institucional",
     "revistasAcademicas": "Revistas Acadêmicas",
-    "bibliotecaDigital": "Biblioteca Digital"
+    "bibliotecaDigital": "Biblioteca Digital",
+    "tesisAcademicas": "Teses Acadêmicas"
   },
   "footer": {
     "institutional": {
@@ -83,7 +87,7 @@
       "contacto": "Contato"
     },
     "academia": {
-      "title": "Academia",
+      "title": "Acadêmico",
       "ariaLabel": "Links acadêmicos",
       "investigacion": "Pesquisa",
       "extension": "Extensão universitária",
