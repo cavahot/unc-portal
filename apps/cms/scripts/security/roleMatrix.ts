@@ -112,4 +112,18 @@ export const PROBES: Probe[] = [
       return a === 'anonimo' ? docs.length === 0 : onlySelf(docs, c.selfId)
     },
   },
+  {
+    // SEC-027 S-2: `approvalHistory` (correos del personal, comentarios de rechazo) solo para roles editoriales y
+    // corresponsal (canReadEditorialAuthorship, fields/approvalHistory.ts).
+    id: 'P12',
+    desc: 'GET /api/noticias/<publicada>?depth=0 (historial de aprobaciones)',
+    expectation: (a) => ([...EDITORIAL_READERS, 'correspondent'].includes(a) ? '200' : '200 sin filas de approvalHistory'),
+    judge: (a, o) => {
+      if (o.status !== 200) return false
+      if ([...EDITORIAL_READERS, 'correspondent'].includes(a)) return true
+      // Payload quita las filas pero puede dejar la clave como arreglo vacío: lo que no debe llegar son filas.
+      const h = o.body?.approvalHistory
+      return h === undefined || h === null || (Array.isArray(h) && h.length === 0)
+    },
+  },
 ]

@@ -2,7 +2,7 @@
  * probe-roles.ts — SEC-027, matriz de roles con cuentas reales (spec: docs/security/SEC-027-MATRIZ-ROLES.md)
  *
  * Qué hace: crea en el CMS LOCAL una cuenta sintética por rol no superadmin (`sonda-<rol>@example.invalid`, contraseña
- *   aleatoria que solo vive en memoria), inicia sesión con cada una, ejecuta las sondas P1–P11 de `roleMatrix.ts` por REST
+ *   aleatoria que solo vive en memoria), inicia sesión con cada una, ejecuta las sondas P1–P12 de `roleMatrix.ts` por REST
  *   y GraphQL (también como anónimo), imprime la matriz observada y SIEMPRE borra las cuentas y lo que hayan creado.
  * Por qué existe: la adenda SEC-027 del 07-11 solo tenía revisión con superadmin; faltaban los casos que deben dar 401/403.
  * Amenazas que evita: probar contra un destino equivocado (solo localhost), dejar cuentas con permisos en la base (limpieza
@@ -181,6 +181,7 @@ async function main(): Promise<number> {
       await run('P8', 'DELETE', `/api/media/${MISSING_ID}`)
       await run('P9', 'GET', `/api/noticias/${draftId}?draft=true&depth=0`)
       await run('P10', 'GET', `/api/noticias/${publishedId}?depth=1`)
+      await run('P12', 'GET', `/api/noticias/${publishedId}?depth=0`)
       await run('P11', 'POST', '/api/graphql', { query: '{ Users(limit: 100) { docs { id email } } }' })
     }
 

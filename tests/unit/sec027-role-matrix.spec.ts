@@ -20,9 +20,9 @@ const probe = (id: string) => {
 const judge = (id: string, actor: Actor, obs: Observed, extra: Record<string, unknown> = {}) => probe(id).judge(actor, obs, { ...ctx, ...extra })
 
 describe('cobertura', () => {
-  it('9 actores (anónimo y 8 roles no superadmin) y 11 sondas P1–P11', () => {
+  it('9 actores (anónimo y 8 roles no superadmin) y 12 sondas P1–P12', () => {
     expect(ACTORS).toEqual(['anonimo', 'web-admin', 'publisher', 'reviewer', 'editor', 'correspondent', 'media-manager', 'auditor', 'viewer'])
-    expect(PROBES.map((p) => p.id)).toEqual(['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11'])
+    expect(PROBES.map((p) => p.id)).toEqual(['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12'])
     for (const p of PROBES) for (const a of ACTORS) expect(typeof p.expectation(a), `${p.id}/${a}`).toBe('string')
   })
 })
@@ -108,5 +108,22 @@ describe('P10 — datos del creador en una noticia publicada', () => {
     expect(judge('P10', 'editor', ok({ id: 1, createdBy: { id: 4, email: 'a@b' } }))).toBe(false)
     expect(judge('P10', 'reviewer', ok({ id: 1, createdBy: { id: 4, sessions: [] } }))).toBe(false)
     expect(judge('P10', 'viewer', ok({ id: 1, createdBy: { id: 4, telefono: null } }))).toBe(false)
+  })
+})
+
+// SEC-027 S-2: el historial de aprobaciones lleva correos del personal y comentarios internos de rechazo.
+describe('P12 — historial de aprobaciones de una noticia publicada', () => {
+  const conHistorial = ok({ id: 3, approvalHistory: [{ revisor: 'revisor@unc.edu.py', accion: 'rejected', comentario: 'Falta la fuente' }] })
+  const sinHistorial = ok({ id: 3 })
+  it('anónimo, viewer, auditor y media-manager: debe faltar el campo', () => {
+    for (const a of ['anonimo', 'viewer', 'auditor', 'media-manager'] as Actor[]) {
+      expect(judge('P12', a, sinHistorial), a).toBe(true)
+      expect(judge('P12', a, ok({ id: 3, approvalHistory: [] })), a).toBe(true)
+      expect(judge('P12', a, conHistorial), a).toBe(false)
+    }
+  })
+  it('roles editoriales y corresponsal: 200 (pueden ver el historial)', () => {
+    for (const a of ['web-admin', 'publisher', 'reviewer', 'editor', 'correspondent'] as Actor[]) expect(judge('P12', a, conHistorial), a).toBe(true)
+    expect(judge('P12', 'editor', denied)).toBe(false)
   })
 })
