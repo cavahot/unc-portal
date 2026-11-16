@@ -22,6 +22,7 @@ import * as migration_20261107_200336_legalizaciones_01_global from './20261107_
 import * as migration_20261108_163903_dependencias_01 from './20261108_163903_dependencias_01';
 import * as migration_20261110_125232_pilares_academicos_01 from './20261110_125232_pilares_academicos_01';
 import * as migration_20261112_202013_seguridad_cuentas_01 from './20261112_202013_seguridad_cuentas_01';
+import * as migration_20261114_204656_glosario_gn_institucional from './20261114_204656_glosario_gn_institucional';
 
 export const migrations = [
   {
@@ -142,6 +143,11 @@ export const migrations = [
   {
     up: migration_20261112_202013_seguridad_cuentas_01.up,
     down: migration_20261112_202013_seguridad_cuentas_01.down,
-    name: '20261112_202013_seguridad_cuentas_01'
+    name: '20261112_202013_seguridad_cuentas_01',
+  },
+  {
+    up: migration_20261114_204656_glosario_gn_institucional.up,
+    down: migration_20261114_204656_glosario_gn_institucional.down,
+    name: '20261114_204656_glosario_gn_institucional'
   },
 ];

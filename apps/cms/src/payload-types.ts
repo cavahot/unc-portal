@@ -1609,6 +1609,18 @@ export interface GlosarioGuarani {
    * Corpus o artículo que muestra el uso (p. ej. Jojajovai). Solo https.
    */
   evidenciaUrl?: string | null;
+  /**
+   * Quien hizo la traducción.
+   */
+  traductorNombre?: string | null;
+  /**
+   * Cargo o dependencia en la UNC.
+   */
+  traductorCargo?: string | null;
+  /**
+   * Hablante nativo que confirmó la traducción.
+   */
+  revisorNativo?: string | null;
   oficial?: boolean | null;
   /**
    * Protege la entrada: los scripts no la modifican.
@@ -1623,7 +1635,7 @@ export interface GlosarioGuarani {
    */
   origen?: ('glosario-po' | 'actualizador' | 'panel') | null;
   /**
-   * La aprobación exige superadmin, traducción, fuente oficial y confianza A/B. El portal solo usa aprobados.
+   * La aprobación exige superadmin, traducción, confianza A/B y fuente oficial (o, si el tipo es Institucional, traductor, cargo y revisor nativo). El portal solo usa aprobados.
    */
   estadoRevision?: ('pendiente' | 'aprobado' | 'rechazado') | null;
   aprobadoPor?: (number | null) | User;
@@ -2497,6 +2509,9 @@ export interface GlosarioGuaraniSelect<T extends boolean = true> {
   fuente?: T;
   fuenteUrl?: T;
   evidenciaUrl?: T;
+  traductorNombre?: T;
+  traductorCargo?: T;
+  revisorNativo?: T;
   oficial?: T;
   revisado?: T;
   activo?: T;

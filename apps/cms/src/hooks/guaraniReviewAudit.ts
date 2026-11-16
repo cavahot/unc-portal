@@ -34,6 +34,17 @@ export const auditGuaraniReviewTransition: CollectionAfterChangeHook = async ({ 
           ip: getClientIP(req),
           resultado: 'exito',
           mensaje,
+          // GLO-GN-INST-01 (S4): quién responde por una traducción institucional aprobada.
+          ...(after === 'aprobado' && (doc as Record<string, unknown>)?.tipo === 'institucional'
+            ? {
+                cambiosRelevantes: {
+                  tipo: 'institucional',
+                  traductorNombre: (doc as Record<string, unknown>).traductorNombre ?? null,
+                  traductorCargo: (doc as Record<string, unknown>).traductorCargo ?? null,
+                  revisorNativo: (doc as Record<string, unknown>).revisorNativo ?? null,
+                },
+              }
+            : {}),
         },
         req.payload,
       )

@@ -27,7 +27,18 @@ export function validateGuaraniApproval({ data, originalDoc = {}, role }: Guaran
   if (typeof data.terminoGn !== 'string' || !data.terminoGn.trim()) {
     throw new APIError('No se puede aprobar una entrada sin traducción en guaraní.', 400, undefined, true)
   }
-  if (data.oficial !== true || typeof data.fuenteUrl !== 'string' || !data.fuenteUrl.trim()) {
+  if (data.tipo === 'institucional') {
+    // GLO-GN-INST-01 (S1, decisión del propietario 2026-11-14): una traducción de la UNC no tiene fuente oficial; la
+    // respaldan personas identificadas. Amenaza que evita: publicar una glosa sin nadie que responda por ella. Límite:
+    // no verifica que las personas existan ni su dominio del guaraní; eso lo decide el superadmin que aprueba.
+    const filled = (v: unknown) => typeof v === 'string' && v.trim().length > 0
+    if (!filled(data.traductorNombre) || !filled(data.traductorCargo)) {
+      throw new APIError('Una traducción institucional necesita el nombre y el cargo del traductor.', 400, undefined, true)
+    }
+    if (!filled(data.revisorNativo)) {
+      throw new APIError('Una traducción institucional necesita el nombre del hablante nativo que la revisó.', 400, undefined, true)
+    }
+  } else if (data.oficial !== true || typeof data.fuenteUrl !== 'string' || !data.fuenteUrl.trim()) {
     throw new APIError('La aprobación necesita una fuente oficial y su URL.', 400, undefined, true)
   }
   if (data.confianza !== 'A' && data.confianza !== 'B') {
