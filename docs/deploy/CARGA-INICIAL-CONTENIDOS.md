@@ -47,9 +47,9 @@ node scripts/wp-export-noticias.mjs --xml="<carpeta del volcado>/m1gr4unc_dbWP.x
 Resultado esperado: `Resumen: {"noticias":273,"protegidas":0,"adjuntos":115,...}`. El guion se niega a escribir
 dentro del repositorio. Deja afuera las noticias protegidas con contraseña y los adjuntos que no pertenecen a una noticia.
 
-Opcional, antes de entregar: recuperar del Internet Archive (Wayback Machine) las imágenes de 2016 a 2023 que
-todavía existen allí, guardándolas en la misma carpeta `uploads/` (88 archivos disponibles; solo descarga de
-`web.archive.org`, una cada 2 segundos, y nunca sobrescribe):
+Recuperación desde el Internet Archive (Wayback Machine) de las imágenes de 2016 a 2023 que todavía existen allí.
+**Ya está hecha en la carpeta entregada** el 17-11-2026: 87 recuperadas, 1 no disponible y 0 rechazadas. Solo hay
+que repetirla si se rearma la carpeta. Descarga solo de `web.archive.org`, una cada 2 segundos, y nunca sobrescribe:
 
 ```bash
 OUT0=$(mktemp -d)
@@ -64,7 +64,7 @@ Entregar al desarrollador la carpeta `entrega-desarrollador` (o su .zip) por un 
 |---|---|---|
 | `01-manual/` | Este manual y `consulta-datos-bd.sql` | Todo el proceso |
 | `02-noticias/noticias-wp.xml` | Extracto saneado de noticias (1,6 MB) | B9 y B10 |
-| `03-imagenes/uploads/` | Imágenes de noticias por `AAAA/MM/` (237 + las recuperadas) | B10 |
+| `03-imagenes/uploads/` | Imágenes de noticias por `AAAA/MM/`: 237 del sitio + 87 del Internet Archive | B10 |
 | `04-transparencia/` | CSV con las 11 carpetas de Drive de la Ley 5189 | B8 |
 | `05-glosario/` | Glosario guaraní completado (propuestas para revisión) | B8 |
 | `06-fotos-autoridades/` | Fotos de 5 decanos y la tabla de a quién corresponde cada una | B11 |
@@ -343,9 +343,10 @@ node scripts/load-news-images.mjs --xml=$X --uploads=$U --out=$OUT --dry-run
 node scripts/load-news-images.mjs --xml=$X --uploads=$U --out=$OUT --cms=$CMS_URL --allow-remote --only-upload --link
 ```
 
-Sin las imágenes del Internet Archive, el simulacro dice: `archivos: 237 (válidos 237, rechazados 0); noticias: 273
-(con imagen 49, sin imagen 224)` y la carga sube 76 imágenes (49 destacadas y 11 galerías). Si César agregó las
-recuperadas (Parte 0), los números suben: anotar los que dé el simulacro, porque son los que se verifican en la Parte C.
+Con la carpeta entregada (237 imágenes del sitio y 87 recuperadas del Internet Archive), el simulacro dice:
+`archivos: 324 (válidos 324, rechazados 0); noticias: 273 (con imagen 63, sin imagen 210); huérfanas: 161`. La carga
+sube las 163 imágenes que usan las noticias y las enlaza: 63 imágenes destacadas y 19 galerías. Sin las recuperadas
+serían 237 archivos, 49 destacadas y 76 imágenes subidas.
 
 - Código de salida `3`: hubo errores transitorios de red. Repetir **el mismo** comando con el mismo `$OUT`.
 - De las noticias sin imagen, 148 nunca tuvieron una referencia de imagen en el volcado. El resto apunta a archivos que
@@ -392,7 +393,7 @@ Sección 2, valores esperados:
 | tribunal_miembros | 5 |
 | tribunal_documentos | 8 |
 | noticias | 273 |
-| media | 76 + las recuperadas del Internet Archive + 5 fotos (según B10 y B11) |
+| media | 168 (163 de noticias del Paso 7 + 5 fotos de decanos del Paso 8) |
 | tesis | 0 (sin fuente, ver la Parte E) |
 
 ### C2. Prueba de no duplicación
