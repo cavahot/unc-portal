@@ -246,6 +246,27 @@ describe('PRA-01 seed: idempotencia y no pisar al PO (CMS simulado)', () => {
     expect(cms.db.facultades.find((f) => f.slug === 'facultad-de-medicina')?.siglas).toBe('FM-PO')
   })
 
+  // SEED-PROD B3: producción se siembra por https con --allow-remote (misma guardia que seed-facultad).
+  // Amenaza: crear facultades mínimas (sin datos verificados) en el CMS real; en remoto solo se enlazan las existentes.
+  it('remoto: con allowRemote y https siembra, pero no crea facultades que falten', async () => {
+    const cms = fakeCms({ facultades: [{ id: 1, slug: 'facultad-de-medicina', nombre: 'Facultad de Medicina' }] })
+    const remote = { ...deps(cms.fetch), env: { ...env, CMS_URL: 'https://cms.unc.edu.py' } }
+    const out = await run({ allowRemote: true, deps: remote })
+    expect(cms.db.facultades).toHaveLength(1)
+    expect(out.counts.facultades.creadas).toBe(0)
+    expect(out.counts.facultades.faltantes).toBe(5)
+    expect(cms.db.reconocimientos).toHaveLength(1)
+    expect(cms.db.acreditaciones).toHaveLength(7)
+    const second = await run({ allowRemote: true, deps: remote })
+    expect(second.counts.acreditaciones).toMatchObject({ creadas: 0, existentes: 7 })
+  })
+
+  it('remoto: rechaza http aunque se pase allowRemote, antes de la red', async () => {
+    const fetch = vi.fn()
+    await expect(run({ allowRemote: true, deps: { ...deps(fetch), env: { ...env, CMS_URL: 'http://cms.unc.edu.py' } } })).rejects.toThrow(/https/)
+    expect(fetch).not.toHaveBeenCalled()
+  })
+
   it('si falta el archivo del logo no se envía logoPath y se informa el pendiente', async () => {
     const cms = fakeCms()
     const out = await run({ deps: { ...deps(cms.fetch), logoExists: false } })

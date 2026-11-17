@@ -8,19 +8,23 @@
  * Uso:
  *   node scripts/seed-reconocimientos-acreditaciones.mjs --dry-run      # sin red: muestra qué haría
  *   CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-reconocimientos-acreditaciones.mjs
+ *   CMS_URL=https://... CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-reconocimientos-acreditaciones.mjs --allow-remote
  *
  * Reglas de seguridad (amenaza → control):
- *   - Escribir en un CMS equivocado (staging/producción) → solo se ejecuta contra localhost/127.0.0.1/[::1].
+ *   - Escribir en un CMS equivocado → local por defecto; un destino remoto exige --allow-remote y https
+ *     (`resolveCmsTarget`, SEED-PROD B3: carga inicial de producción).
  *   - Credencial débil o literal → `requireCmsPassword` (SEC-08); el correo viene de CMS_EMAIL; nada se imprime.
  *   - Publicar datos sin confirmar → todo se crea con active=false y verificado=false (lo fuerza el módulo de datos).
  *   - Pisar ediciones del PO al re-ejecutar → idempotente: si la fila existe por su clave natural NO se toca;
  *     en facultades solo se completan siglas/logoPath cuando están vacíos.
- *   - Facultades: solo se crean (mínimas: nombre + activa) si faltan y únicamente en una BD local.
+ *   - Facultades: solo se crean (mínimas: nombre + activa) si faltan y únicamente en una BD local. En remoto se
+ *     informan como faltantes: allí las crea `seed-facultad.mjs` con datos verificados, que debe correr antes.
  * Límite: no sube archivos a `media` ni consulta a CONACYT/ANEAES; el logo debe existir ya en `public/`.
  */
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { resolveCmsTarget } from './lib/cmsTarget.mjs'
 import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
 import {
   ACREDITACIONES,
@@ -61,7 +65,7 @@ export function buildPlan({ logoExists = true } = {}) {
  * Ejecuta la siembra. `deps` permite inyectar `fetch`, `env`, `logoExists` y `log` (pruebas).
  * Devuelve los contadores. Con `dryRun` NO llama a la red ni exige credenciales.
  */
-export async function run({ dryRun = false, deps = {} } = {}) {
+export async function run({ dryRun = false, allowRemote = false, deps = {} } = {}) {
   const env = deps.env ?? process.env
   const log = deps.log ?? ((m) => console.log(m))
   const doFetch = deps.fetch ?? globalThis.fetch
@@ -73,7 +77,7 @@ export async function run({ dryRun = false, deps = {} } = {}) {
   const counts = {
     reconocimientos: { creados: 0, existentes: 0 },
     acreditaciones: { creadas: 0, existentes: 0 },
-    facultades: { creadas: 0, actualizadas: 0, sinCambios: 0 },
+    facultades: { creadas: 0, actualizadas: 0, sinCambios: 0, faltantes: 0 },
     errores: 0,
     logoPremio: logoExists ? 'presente' : 'pendiente',
   }
@@ -88,9 +92,9 @@ export async function run({ dryRun = false, deps = {} } = {}) {
     return { dryRun: true, plan }
   }
 
-  if (!isLocalCmsUrl(cmsUrl)) {
-    throw new Error(`Este guion solo escribe en un CMS local (localhost/127.0.0.1); destino rechazado: ${cmsUrl}`)
-  }
+  // Lanza antes de la red si el destino no es local y falta --allow-remote, o si no es https.
+  resolveCmsTarget({ url: cmsUrl, allowRemote })
+  const remote = !isLocalCmsUrl(cmsUrl)
   const email = (env.CMS_EMAIL || '').trim()
   if (!email) throw new Error('Falta CMS_EMAIL (correo del usuario con rol superadmin o web-admin).')
   const password = requireCmsPassword(env)
@@ -122,6 +126,12 @@ export async function run({ dryRun = false, deps = {} } = {}) {
   const facultadIds = new Map()
   for (const f of FACULTADES) {
     let doc = await findOne('facultades', q('slug', f.slug))
+    if (!doc && remote) {
+      // SEED-PROD B3: en el CMS real no se crean facultades mínimas; se informa y se continúa sin enlazarla.
+      counts.facultades.faltantes++
+      log(`  ! Falta la facultad «${f.nombre}» en el CMS remoto: ejecute antes seed-facultad.mjs. Se continúa.`)
+      continue
+    }
     if (!doc) {
       const r = await api('POST', 'facultades', { nombre: f.nombre, activa: true })
       await pace(PACE_MS)
@@ -200,7 +210,7 @@ export async function run({ dryRun = false, deps = {} } = {}) {
 
 // Ejecución directa (no al importar desde las pruebas).
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  run({ dryRun: process.argv.includes('--dry-run') }).catch((err) => {
+  run({ dryRun: process.argv.includes('--dry-run'), allowRemote: process.argv.includes('--allow-remote') }).catch((err) => {
     console.error(`Error: ${err.message}`)
     process.exit(1)
   })
