@@ -47,11 +47,27 @@ node scripts/wp-export-noticias.mjs --xml="<carpeta del volcado>/m1gr4unc_dbWP.x
 Resultado esperado: `Resumen: {"noticias":273,"protegidas":0,"adjuntos":115,...}`. El guion se niega a escribir
 dentro del repositorio. Deja afuera las noticias protegidas con contraseña y los adjuntos que no pertenecen a una noticia.
 
-Entregar al desarrollador, por un canal privado (no por el repositorio):
+Opcional, antes de entregar: recuperar del Internet Archive (Wayback Machine) las imágenes de 2016 a 2023 que
+todavía existen allí, guardándolas en la misma carpeta `uploads/` (88 archivos disponibles; solo descarga de
+`web.archive.org`, una cada 2 segundos, y nunca sobrescribe):
 
-1. `noticias-wp.xml` (alrededor de 1,6 MB).
-2. La carpeta `uploads/` de la migración completa, con sus subcarpetas `2024/`,
-   `2025/` y `2026/` (237 imágenes, 35 MB). Por ejemplo, comprimida en un .zip.
+```bash
+OUT0=$(mktemp -d)
+node scripts/load-news-images.mjs --xml=<entrega>/02-noticias/noticias-wp.xml --uploads=<entrega>/03-imagenes/uploads --out=$OUT0 --dry-run
+node scripts/recover-wayback-images.mjs --manifest=$OUT0/manifest.json --uploads=<entrega>/03-imagenes/uploads            # plan
+node scripts/recover-wayback-images.mjs --manifest=$OUT0/manifest.json --uploads=<entrega>/03-imagenes/uploads --apply    # descarga
+```
+
+Entregar al desarrollador la carpeta `entrega-desarrollador` (o su .zip) por un canal privado, no por el repositorio:
+
+| Carpeta | Contenido | Se usa en |
+|---|---|---|
+| `01-manual/` | Este manual y `consulta-datos-bd.sql` | Todo el proceso |
+| `02-noticias/noticias-wp.xml` | Extracto saneado de noticias (1,6 MB) | B9 y B10 |
+| `03-imagenes/uploads/` | Imágenes de noticias por `AAAA/MM/` (237 + las recuperadas) | B10 |
+| `04-transparencia/` | CSV con las 11 carpetas de Drive de la Ley 5189 | B8 |
+| `05-glosario/` | Glosario guaraní completado (propuestas para revisión) | B8 |
+| `06-fotos-autoridades/` | Fotos de 5 decanos y la tabla de a quién corresponde cada una | B11 |
 
 ---
 
@@ -140,9 +156,14 @@ Parte D. Borrar estos dos archivos sin cifrar cuando la carga esté verificada.
 ```bash
 git clone https://github.com/cavahot/unc-portal.git
 cd unc-portal
+git checkout feat/carga-inicial-produccion   # hasta que se fusione; después, la rama que se despliega
 ```
 
-- Los archivos de la Parte 0, descomprimidos, por ejemplo en `~/carga-unc/noticias-wp.xml` y `~/carga-unc/uploads/`.
+- La carpeta `entrega-desarrollador` de la Parte 0, descomprimida, por ejemplo en `~/entrega-desarrollador/`. Definir:
+
+```bash
+E=~/entrega-desarrollador
+```
 
 ### B2. Cuentas del CMS
 
@@ -275,6 +296,20 @@ marco legal, 128 términos del glosario, 5 miembros y 8 documentos del tribunal,
 - `seed-tribunal` y `seed-faqs` no tienen simulacro.
 - `seed-faqs` funciona en modo todo o nada: si ya hay alguna pregunta, no crea ninguna.
 
+Documentos de la Ley 5189 (las 11 carpetas de Drive que publicaba el sitio anterior; necesita el Paso 3) y propuestas
+del glosario guaraní (entran como «pendiente»: el portal solo las usa cuando un superadmin las aprueba). Los dos
+simulan sin `--apply`:
+
+```bash
+node scripts/seed-transparencia-leyes.mjs --file $E/04-transparencia/transparencia-ley5189-sitio-anterior.csv --allow-remote
+node scripts/seed-transparencia-leyes.mjs --file $E/04-transparencia/transparencia-ley5189-sitio-anterior.csv --apply --allow-remote
+node scripts/import-glosario-completado.mjs --file $E/05-glosario/UNC-Glosario-Guarani-completado.md --allow-remote
+node scripts/import-glosario-completado.mjs --file $E/05-glosario/UNC-Glosario-Guarani-completado.md --apply --allow-remote
+```
+
+Esperado: 11 documentos de la Ley 5189 (`filas válidas: 11 | con error: 0` en el simulacro). El importador del
+glosario solo completa términos sin traducción; el número exacto lo informa su resumen.
+
 ### B9. Paso 6 — Noticias históricas
 
 Agregar las cuentas de revisor y publicador en la misma terminal:
@@ -284,8 +319,8 @@ read -rp  "CMS_REVIEWER_EMAIL: " CMS_REVIEWER_EMAIL && export CMS_REVIEWER_EMAIL
 read -rsp "CMS_REVIEWER_PASSWORD: " CMS_REVIEWER_PASSWORD && echo && export CMS_REVIEWER_PASSWORD
 read -rp  "CMS_PUBLISHER_EMAIL: " CMS_PUBLISHER_EMAIL && export CMS_PUBLISHER_EMAIL
 read -rsp "CMS_PUBLISHER_PASSWORD: " CMS_PUBLISHER_PASSWORD && echo && export CMS_PUBLISHER_PASSWORD
-X=~/carga-unc/noticias-wp.xml
-U=~/carga-unc/uploads
+X=$E/02-noticias/noticias-wp.xml
+U=$E/03-imagenes/uploads
 ```
 
 ```bash
@@ -308,11 +343,19 @@ node scripts/load-news-images.mjs --xml=$X --uploads=$U --out=$OUT --dry-run
 node scripts/load-news-images.mjs --xml=$X --uploads=$U --out=$OUT --cms=$CMS_URL --allow-remote --only-upload --link
 ```
 
-El simulacro debe decir: `archivos: 237 (válidos 237, rechazados 0); noticias: 273 (con imagen 49, sin imagen 224)`.
-La carga sube las 76 imágenes que usan las noticias y las enlaza: 49 imágenes destacadas y 11 galerías.
+Sin las imágenes del Internet Archive, el simulacro dice: `archivos: 237 (válidos 237, rechazados 0); noticias: 273
+(con imagen 49, sin imagen 224)` y la carga sube 76 imágenes (49 destacadas y 11 galerías). Si César agregó las
+recuperadas (Parte 0), los números suben: anotar los que dé el simulacro, porque son los que se verifican en la Parte C.
 
 - Código de salida `3`: hubo errores transitorios de red. Repetir **el mismo** comando con el mismo `$OUT`.
-- Las 224 noticias de 2016 a 2023 quedan sin imagen: esos archivos no se recuperaron (ver la Parte E).
+- De las noticias sin imagen, 148 nunca tuvieron una referencia de imagen en el volcado. El resto apunta a archivos que
+  no están en ninguna fuente disponible (ver la Parte E).
+
+### B11. Paso 8 — Fotos de los decanos (a mano, en el CMS)
+
+La siembra de autoridades no sube fotos. En `$E/06-fotos-autoridades/` están las fotos de 5 decanos y
+`fotos-decanos.csv`, que dice a quién corresponde cada archivo. Para cada fila: CMS → Media → subir el archivo con su
+texto alternativo; luego CMS → Autoridades → abrir la persona → campo Foto → elegir la imagen → guardar.
 
 Al terminar, cerrar la terminal para que se borren las contraseñas de la memoria de la sesión.
 
@@ -342,13 +385,14 @@ Sección 2, valores esperados:
 | linea_tiempo | 6 |
 | marco_legal | 44 |
 | transparencia_items | 28 |
-| glosario_guarani | 128 |
+| glosario_guarani | 128 + las que agregue el importador del glosario (su resumen) |
+| ley5189 | 11 |
 | reconocimientos | 1 |
 | acreditaciones | 7 |
 | tribunal_miembros | 5 |
 | tribunal_documentos | 8 |
 | noticias | 273 |
-| media | 76 |
+| media | 76 + las recuperadas del Internet Archive + 5 fotos (según B10 y B11) |
 | tesis | 0 (sin fuente, ver la Parte E) |
 
 ### C2. Prueba de no duplicación
@@ -397,11 +441,11 @@ Después, repetir la consulta A2: debe coincidir con `backups/estado-antes-de-la
 
 | Pendiente | Por qué | Quién |
 |---|---|---|
-| Imágenes de 2016 a 2023 (224 noticias) | No están en el sitio nuevo ni en el volcado. Solo existen en el hosting anterior (MITIC o el respaldo de WPvivid) | César pide `wp-content/uploads` al hosting anterior; después se repite el Paso 7 con esa carpeta |
-| Tesis | No hay una fuente de datos para cargarlas | Se define aparte |
-| Documentos de las leyes 5189 y 5282 | `seed-transparencia-leyes.mjs --file=<csv>` necesita el CSV de la institución | Unidad de transparencia |
-| Traducciones completas del glosario guaraní | `import-glosario-completado.mjs` necesita el archivo del PO | César |
-| Fotos de las autoridades | Las URL de las fotos apuntaban al WordPress anterior | Se suben desde el CMS |
+| Imágenes de noticias que no están en el Internet Archive | El sitio anterior ya no las sirve. Además, 199 noticias tienen un `_thumbnail_id` cuyo adjunto no está en el volcado, así que ni siquiera se conoce el nombre del archivo | César pide al hosting anterior (MITIC o el respaldo de WPvivid) la carpeta `wp-content/uploads` y un volcado completo de la base; con eso se repiten la Parte 0 y el Paso 7 |
+| Tesis | No hay tesis en el WordPress anterior, ni en el volcado de 2026-08-08, ni en la base local | Dirección de Posgrado o Biblioteca: definir la fuente (lista o repositorio institucional) |
+| Documentos de la Ley 5282 | La página del sitio anterior era un ejemplo sin enlaces | Unidad de transparencia: completar `docs/specs/portal/plantilla-transparencia-leyes.csv` |
+| Autoridades de la FACET (29) y sus fotos | Su guion (`seedFacetAutoridades.ts`) usa la API local de Payload y no puede apuntar a producción | Pendiente de portarlo a la API REST |
+| Fotos del rector, el vicerrector y el decano de la FACET | No están en la carpeta de imágenes recuperadas | Se suben desde el CMS cuando se tengan |
 
 **No usar** `setup/seed.dump.gz` ni `scripts/setup/restore-data-prod.sh` (DEPLOY.md, Paso 15). Ese volcado copia la
 tabla `users` de desarrollo, que tiene datos personales y hashes, no coincide con el esquema actual y ya no está en

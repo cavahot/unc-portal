@@ -21,7 +21,7 @@ WHERE t.table_schema = 'public' AND t.table_type = 'BASE TABLE'
   AND t.table_name IN ('facultades', 'carreras', 'aranceles_facultad', 'aranceles_rectorado', 'autoridades', 'tramites',
                        'calendario_academico', 'dependencias_contacto', 'convenios', 'linea_tiempo', 'marco_legal',
                        'transparencia_items', 'glosario_guarani', 'reconocimientos', 'acreditaciones', 'tribunal_miembros',
-                       'tribunal_documentos', 'faqs', 'noticias', 'media', 'tesis', 'users')
+                       'tribunal_documentos', 'faqs', 'ley5189', 'ley5282', 'noticias', 'media', 'tesis', 'users')
 ORDER BY tabla;
 
 \echo '== 3. Todas las tablas con datos (filas > 0) =='
