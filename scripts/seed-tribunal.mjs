@@ -3,18 +3,24 @@
  * seed-tribunal.mjs
  * Seeds TribunalMiembros and TribunalDocumentos collections in Payload CMS.
  *
- * Usage:
- *   $env:CMS_EMAIL = "admin@unc.edu.py"
- *   $env:CMS_PASSWORD = "your-password"
- *   node scripts/seed-tribunal.mjs
+ * Uso (local por defecto; remoto solo https y con --allow-remote):
+ *   CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-tribunal.mjs
+ *   CMS_URL=https://cms.unc.edu.py CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-tribunal.mjs --allow-remote
+ *
+ * Idempotente: cada miembro (por nombre) y documento (por título) que ya existe se omite; nunca se modifica.
+ * SEED-PROD B4: misma guardia que el resto de las siembras (`resolveCmsTarget`, `requireCmsEmail`,
+ * `requireCmsPassword`). Amenaza que evita: enviar credenciales a un host equivocado o con una clave débil.
  */
+import { requireCmsEmail, resolveCmsTarget } from './lib/cmsTarget.mjs'
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
 
-const CMS_URL      = process.env.CMS_URL      || 'http://localhost:3002'
-const CMS_EMAIL    = process.env.CMS_EMAIL    || ''
-const CMS_PASSWORD = process.env.CMS_PASSWORD || ''
-
-if (!CMS_EMAIL || !CMS_PASSWORD) {
-  console.error('ERROR: Set CMS_EMAIL and CMS_PASSWORD environment variables first.')
+let CMS_URL, CMS_EMAIL, CMS_PASSWORD
+try {
+  CMS_URL = resolveCmsTarget({ url: process.env.CMS_URL || 'http://localhost:3002', allowRemote: process.argv.includes('--allow-remote') })
+  CMS_EMAIL = requireCmsEmail()
+  CMS_PASSWORD = requireCmsPassword()
+} catch (err) {
+  console.error(`ERROR: ${err.message}`)
   process.exit(1)
 }
 

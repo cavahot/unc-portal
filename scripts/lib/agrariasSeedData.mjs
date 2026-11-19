@@ -17,6 +17,8 @@ export const SOURCES = {
 }
 
 export const FACULTAD_SLUG = 'facultad-de-ciencias-agrarias'
+// SEED-PROD B1: nombre oficial (S1) para que seed-facultad pueda crear la facultad en un CMS vacío; si ya existe, no se toca.
+export const FACULTAD_NOMBRE = 'Facultad de Ciencias Agrarias'
 
 /** Campos de `facultades`; cada uno con su fuente. Solo se escriben si el campo del CMS está vacío. */
 export const FACULTAD_FIELDS = {

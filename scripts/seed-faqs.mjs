@@ -2,26 +2,32 @@
  * seed-faqs.mjs
  * Seeds the FAQs collection in Payload CMS.
  *
- * Usage:
- *   node scripts/seed-faqs.mjs
+ * Uso (local por defecto; remoto solo https y con --allow-remote):
+ *   CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-faqs.mjs
+ *   CMS_URL=https://cms.unc.edu.py CMS_EMAIL=... CMS_PASSWORD=... node scripts/seed-faqs.mjs --allow-remote
  *
- * Requires:
- *   PAYLOAD_SECRET and DATABASE_URI env vars (from apps/cms/.env)
+ * Idempotente por diseño "todo o nada": si la colección ya tiene alguna FAQ, no crea ninguna.
+ * SEED-PROD B4: misma guardia que el resto de las siembras. Amenazas que evita: enviar credenciales a un host
+ * equivocado, iniciar sesión con la cuenta adivinable `admin@unc.edu.py` (antes era el valor por defecto) y leer
+ * credenciales de desarrollo de `apps/cms/.env` al apuntar a producción (ya no se carga ese archivo).
+ * SEED_USER_EMAIL / SEED_USER_PASSWORD se aceptan solo como nombres antiguos de CMS_EMAIL / CMS_PASSWORD.
  */
 
-import dotenv from 'dotenv'
-import { resolve, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { requireCmsEmail, resolveCmsTarget } from './lib/cmsTarget.mjs'
+import { requireCmsPassword } from './lib/requireCmsPassword.mjs'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-dotenv.config({ path: resolve(__dirname, '../apps/cms/.env') })
-
-const CMS_URL = process.env.CMS_URL || 'http://localhost:3002'
-const EMAIL = process.env.SEED_USER_EMAIL || 'admin@unc.edu.py'
-const PASSWORD = process.env.SEED_USER_PASSWORD
-
-if (!PASSWORD) {
-  console.error('❌  Set SEED_USER_PASSWORD in env (or apps/cms/.env)')
+const credEnv = {
+  ...process.env,
+  CMS_EMAIL: process.env.CMS_EMAIL ?? process.env.SEED_USER_EMAIL,
+  CMS_PASSWORD: process.env.CMS_PASSWORD ?? process.env.SEED_USER_PASSWORD,
+}
+let CMS_URL, EMAIL, PASSWORD
+try {
+  CMS_URL = resolveCmsTarget({ url: process.env.CMS_URL || 'http://localhost:3002', allowRemote: process.argv.includes('--allow-remote') })
+  EMAIL = requireCmsEmail(credEnv)
+  PASSWORD = requireCmsPassword(credEnv)
+} catch (err) {
+  console.error(`ERROR: ${err.message}`)
   process.exit(1)
 }
 

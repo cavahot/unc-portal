@@ -4,7 +4,7 @@
 // Límite: no compara con el sitio en vivo (se hizo al armar el módulo; ver docs/specs/portal/FACULTAD-AGRARIAS-DATOS.md).
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { ARANCELES, CARRERAS, FACULTAD_FIELDS, FACULTAD_SLUG, SOURCES } from '../../scripts/lib/agrariasSeedData.mjs'
+import { ARANCELES, CARRERAS, FACULTAD_FIELDS, FACULTAD_NOMBRE, FACULTAD_SLUG, SOURCES } from '../../scripts/lib/agrariasSeedData.mjs'
 import * as odontologia from '../../scripts/lib/odontologiaSeedData.mjs'
 import { validateHttpsUrl, validateRedUrl, validateResolucionEnlace, validateResolucionNumero } from '../../apps/cms/src/utilities/validators'
 
@@ -16,6 +16,11 @@ describe('datos: procedencia y no invención', () => {
   it('slug real de la facultad y fuentes https', () => {
     expect(FACULTAD_SLUG).toBe('facultad-de-ciencias-agrarias')
     for (const s of ALLOWED_SOURCES) expect(validateHttpsUrl(s)).toBe(true)
+  })
+  // SEED-PROD B1: en un CMS vacío la siembra debe poder CREAR la facultad; sin nombre abortaba
+  // («La facultad no existe en el CMS y el módulo de datos no exporta FACULTAD_NOMBRE»).
+  it('exporta el nombre oficial para crear la facultad en un CMS vacío', () => {
+    expect(FACULTAD_NOMBRE).toBe('Facultad de Ciencias Agrarias')
   })
   it('cada campo, carrera y arancel tiene sourceUrl de la lista de fuentes', () => {
     for (const f of Object.values(FACULTAD_FIELDS)) expect(ALLOWED_SOURCES.has(f.sourceUrl)).toBe(true)
